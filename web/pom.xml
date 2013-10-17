@@ -17,6 +17,9 @@
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>2.5</servlet.version>
+		<webjars-bootstrap.version>3.0.0</webjars-bootstrap.version>
+		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
+		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -59,6 +62,24 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		
+		<!-- Webjars (static dependencies distributed as JAR files) -->
+		<dependency> 
+			<groupId>org.webjars</groupId>
+			<artifactId>bootstrap</artifactId>
+			<version>${webjars-bootstrap.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery-ui</artifactId>
+			<version>${webjars-jquery-ui.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>jquery</artifactId>
+			<version>${webjars-jquery.version}</version>
+		</dependency>
+		
 
 
 
