@@ -1,0 +1,88 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.opengeoportal</groupId>
+	<artifactId>ogpharvester</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Open GeoPortal Harvester</name>
+	<description>The Open Geoportal Harvester is an open source web application that provides the automation of customized Solr harvesting from intuitional partner Solr, Geonetwork, CSW metadata nodes as well as direct metadata XML files within a web directory. As a result, an organization can create a custom OGP or Geonetwork instance including only selected records and criteria. The OGP Harvester supports a variety of metadata formats. It also has an administrative section to manager and register new node services.</description>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<spring.version>3.2.4.RELEASE</spring.version>
+		<junit.version>4.11</junit.version>
+		<jackson.version>2.2.3</jackson.version>
+		<!-- Logging -->
+		<logback.version>1.0.13</logback.version>
+		<slf4j.version>1.7.5</slf4j.version>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>buildnumber-maven-plugin</artifactId>
+					<version>1.2</version>
+					<executions>
+						<execution>
+							<phase>validate</phase>
+							<goals>
+								<goal>create</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<doCheck>false</doCheck>
+						<doUpdate>false</doUpdate>
+						<shortRevisionLength>8</shortRevisionLength>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<!-- Logging with SLF4J & LogBack -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<url>https://github.com/OpenGeoportal/ogpHarvester</url>
+	<scm>
+		<url>scm:git:https://github.com/OpenGeoportal/ogpHarvester.git</url>
+		<developerConnection>scm:git:https://github.com/OpenGeoportal/ogpHarvester.git</developerConnection>
+		<connection>scm:git:https://github.com/OpenGeoportal/ogpHarvester.git</connection>
+	</scm>
+	<modules>
+		<module>web</module>
+	</modules>
+</project>
