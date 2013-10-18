@@ -84,5 +84,6 @@
 	</scm>
 	<modules>
 		<module>web</module>
+		<module>harvester-api</module>
 	</modules>
 </project>

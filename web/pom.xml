@@ -11,7 +11,7 @@
 	<artifactId>web</artifactId>
 	<packaging>war</packaging>
 	<name>OGP Harvester War</name>
-	<url>http://maven.apache.org</url>
+	<url>https://github.com/OpenGeoportal/ogpHarvester</url>
 	<properties>
 		<!-- Java EE / Java SE dependencies -->
 		<jsp.version>2.2</jsp.version>
