@@ -12,6 +12,14 @@
 	<artifactId>harvester-api</artifactId>
 	<name>harvester-api</name>
 	<url>https://github.com/OpenGeoportal/ogpHarvester</url>
+	<inceptionYear>2013</inceptionYear>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>

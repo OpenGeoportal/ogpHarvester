@@ -12,6 +12,14 @@
 	<packaging>war</packaging>
 	<name>OGP Harvester War</name>
 	<url>https://github.com/OpenGeoportal/ogpHarvester</url>
+	<inceptionYear>2013</inceptionYear>
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+		</license>
+	</licenses>
+
 	<properties>
 		<!-- Java EE / Java SE dependencies -->
 		<jsp.version>2.2</jsp.version>
@@ -62,9 +70,9 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<!-- Webjars (static dependencies distributed as JAR files) -->
-		<dependency> 
+		<dependency>
 			<groupId>org.webjars</groupId>
 			<artifactId>bootstrap</artifactId>
 			<version>${webjars-bootstrap.version}</version>
@@ -79,7 +87,7 @@
 			<artifactId>jquery</artifactId>
 			<version>${webjars-jquery.version}</version>
 		</dependency>
-		
+
 
 
 

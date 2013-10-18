@@ -86,4 +86,5 @@
 		<module>web</module>
 		<module>harvester-api</module>
 	</modules>
+	<inceptionYear>2013</inceptionYear>
 </project>
