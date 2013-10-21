@@ -4,11 +4,13 @@
 	Structure:
 	- Header
 */
-
-/* Header */
-.header {
+body {
+	font-family: "Arial regular", arial, sans-serif;
+	font-size: 14px;
+	color: #000000;
 }
 
+/* Header */
 .navbar {
 	min-height: 87px;
 	margin-bottom: 0;
@@ -17,25 +19,38 @@
 		rgba(0, 0, 0, 0.075);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 5px 10px
 		rgba(0, 0, 0, 0.075);
-	
+	background-image: none;
 }
+
 .header .navbar-btn {
 	margin-top: 25px;
 	margin-bottom: 22px;
 }
 
 .navbar-brand {
-  float: left;
-  padding: 7px 15px;
-  font-size: 18px;
-  line-height: 20px;
+	float: left;
+	padding: 7px 15px;
+	font-size: 18px;
+	line-height: 20px;
 }
 
+/* Headings */
+h1,h2,h3,h4,h5,h6 {
+	font-family: "Arial regular", arial, sans-serif;
+}
+
+h1 {
+	font-size: 21px;
+}
+
+h2 {
+	font-size: 18px;
+	color: #3172AE;
+}
 
 /* Sidebar */
 .nav-list {
-    font-family: arial,sans-serif;
-    font-size: 16px;
+	font-size: 16px;
 }
 
 .nav-list a {
@@ -44,12 +59,52 @@
 
 .nav-list a.active {
 	color: #3172AE;
-}  
-
-.nav > li > a {
-	padding: 10px 15px 10px 0;
-	border-bottom: black 1px solid;	
 }
-.nav > li:last-child > a {
-	border-bottom: none;	
+
+.nav>li>a {
+	padding: 10px 15px 10px 0;
+	border-bottom: black 1px solid;
+}
+
+.nav>li:last-child>a {
+	border-bottom: none;
+}
+
+/* Right column */
+.right-column {
+	padding-top: 14px;
+	padding-left: 22px;
+}
+
+.right-column .col-md-6, .right-column .col-md-5, .right-column .col-md-4,
+.right-column .col-md-3, .right-column .col-md-2, .right-column .col-md-1, 
+.right-column .col-md-7, .right-column .col-md-8, .right-column .col-md-9,
+.right-column .col-md-10
+{
+	padding-left: 0;
+}
+
+/* Form controls*/
+.form-control {
+	display: block;
+	font-size: 14px;
+	font-family: Verdana, Geneva, sans-serif;
+	line-height: 1.428571429;
+	color: #000000;
+	vertical-align: middle;
+	background-color: #F8F8F8;
+	border: 1px solid #808080;
+	border-radius: 3px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-webkit-transition: border-color ease-in-out 0.15s, box-shadow
+		ease-in-out 0.15s;
+	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+label {
+	font-weight: normal; 
+}
+input.form-control {
+	border-radius: 0;
 }

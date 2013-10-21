@@ -75,7 +75,59 @@
 			</div>
 			<!-- // span3 -->
 
-			<div class="col-md-9">dfsdfad</div>
+			<div class="col-md-9 right-column">
+				<h1>
+					<spring:message code="ingestExternalRecords.heading" />
+				</h1>
+				<spring:message code="ingestExternalRecords.subheading" />
+
+				<h2>
+					<spring:message code="ingestExternalRecords.sourceRepository" />
+				</h2>
+				<form action="" role="form">
+					<div class="form-group col-md-9">
+						<div class="col-md-6">
+							<label for="typeOfInstance"> <spring:message
+									code="ingestExternalRecords.form.typeInstance" />
+							</label> <select id="typeOfInstance" name="typeOfInstance"
+								class="form-control">
+								<option value="remoteogp"><spring:message
+										code="ingestExternalRecords.form.typeInstance.remoteOGPInstance" /></option>
+								<option value="geonetwork"><spring:message
+										code="ingestExternalRecords.form.typeInstance.geonetwork" /></option>
+								<option value="csw"><spring:message
+										code="ingestExternalRecords.form.typeInstance.csw" /></option>
+								<option value="webdav"><spring:message
+										code="ingestExternalRecords.form.typeInstance.webDAV" /></option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group col-md-9">
+						<div class="col-md-6">
+							<label for="catalogOfServices"> <spring:message
+									code="ingestExternalRecords.form.catalogOfServices" />
+							</label> <select id="catalogOfServices" name="catalogOfServices"
+								class="form-control col-md-6">
+								<option value="">Example catalog 1</option>
+								<option value="">Example catalog 2</option>
+								<option value="">Example catalog 3</option>
+								<option value="">Example catalog 4</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group col-md-9">
+						<div class="col-md-10">
+							<label for="url"> <spring:message
+									code="ingestExternalRecords.form.url" />
+							</label> <input id="url" name="url" class="form-control col-md-6">
+
+						</div>
+					</div>
+
+
+				</form>
+
+			</div>
 		</div>
 		<!-- //row-fluid -->
 	</div>
