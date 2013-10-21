@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+/*
+	Structure:
+	- Header
+*/
+
+/* Header */
+.header {
+}
+
+.navbar {
+	min-height: 87px;
+	margin-bottom: 0;
+	background-image: none;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 5px 10px
+		rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 5px 10px
+		rgba(0, 0, 0, 0.075);
+	
+}
+.header .navbar-btn {
+	margin-top: 25px;
+	margin-bottom: 22px;
+}
+
+.navbar-brand {
+  float: left;
+  padding: 7px 15px;
+  font-size: 18px;
+  line-height: 20px;
+}
