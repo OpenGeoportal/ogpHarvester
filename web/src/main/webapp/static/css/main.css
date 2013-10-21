@@ -30,3 +30,26 @@
   font-size: 18px;
   line-height: 20px;
 }
+
+
+/* Sidebar */
+.nav-list {
+    font-family: arial,sans-serif;
+    font-size: 16px;
+}
+
+.nav-list a {
+	color: #000000;
+}
+
+.nav-list a.active {
+	color: #3172AE;
+}  
+
+.nav > li > a {
+	padding: 10px 15px 10px 0;
+	border-bottom: black 1px solid;	
+}
+.nav > li:last-child > a {
+	border-bottom: none;	
+}

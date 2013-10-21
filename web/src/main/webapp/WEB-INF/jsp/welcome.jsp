@@ -59,7 +59,7 @@
 						<li><a href="${uploadMetadataURL}"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
-						<li><a href="${ingestExternalURL}"><spring:message
+						<li><a href="${ingestExternalURL}" class="active"><spring:message
 									code="sidebar.ingestExternal" /></a></li>
 						<li><a href="${manageIngestsURL}"><spring:message
 									code="sidebar.manageIngests" /></a></li>
