@@ -34,8 +34,8 @@
 	<!-- - Message source for this context, loaded from localized "messages_xx" 
 		files. - Files are stored inside src/main/resources -->
 	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource"
-		p:basename="messages/messages" />
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		p:basename="classpath:messages/messages" />
 
 	<!-- - This bean resolves specific types of exceptions to corresponding 
 		logical - view names for error views. -->

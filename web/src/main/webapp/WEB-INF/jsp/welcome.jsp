@@ -1,19 +1,85 @@
 <!DOCTYPE html>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-<html lang="en">
+<html>
+<head>
+<title>Open GeoPortal Harvester</title>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Latest compiled and minified CSS -->
+<spring:url value="/webjars/bootstrap/3.0.0/css/bootstrap.css"
+	var="bootstrapCss" />
+<link rel="stylesheet" href="${bootstrapCss}">
+
+<!-- Optional theme -->
+<spring:url value="/webjars/bootstrap/3.0.0/css/bootstrap-theme.css"
+	var="bootstrapTheme" />
+<link rel="stylesheet" href="${bootstrapTheme}">
+
+<spring:url value="/static/css/main.css" var="mainCss" />
+<link rel="stylesheet" href="${mainCss}">
+
+
+</head>
 
 
 <body>
-	<div class="container">
-
-		<h2>
-			<fmt:message key="welcome" />
-		</h2>
+	<spring:url value="/webjars/jquery/1.10.2/jquery.js" var="jQuery" />
+	<script src="${jQuery}"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<spring:url value="/webjars/bootstrap/3.0.0/js/bootstrap.min.js"
+		var="bootstrapJs" />
+	<script src="${bootstrapJs}"></script>
+	<div class="navbar header">
+		<div class="container">
+			<a href="#" class="navbar-brand"> <img
+				src="/web/static/img/header_banner.png" class=".img-responsive" />
+			</a>
+			<button class="btn btn-default navbar-btn navbar-right">Login</button>
+		</div>
 	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="well sidebar-nav">
+					<ul class="nav nav-list">
+						<spring:url value="/uploadMetadata" var="${uploadMetadataURL}" />
+						<spring:url value="/ingestExternal" var="${ingestExternalURL}" />
+						<spring:url value="/manageIngests" var="${manageIngestsURL}" />
+						<spring:url value="/editMetadata" var="${editMetadataURL}" />
+						<spring:url value="/deleteRecords" var="${deleteRecordsURL}" />
+						<spring:url value="/admin" var="${adminURL}" />
+
+						<li><a href="${uploadMetadataURL}"> <spring:message
+									code="sidebar.uploadMetadata" />
+						</a></li>
+						<li><a href="${ingestExternalURL}"><spring:message
+									code="sidebar.ingestExternal" /></a></li>
+						<li><a href="${manageIngestsURL}"><spring:message
+									code="sidebar.manageIngests" /></a></li>
+						<li><a href="${editMetadataURL}"><spring:message
+									code="sidebar.editMetadata" /></a></li>
+						<li><a href="${deleteRecordsURL}"><spring:message
+									code="sidebar.deleteRecords" /></a></li>
+						<li><a href="${adminURL}"><spring:message
+									code="sidebar.adminPage" /></a></li>
+					</ul>
+				</div>
+				<!-- //sidebar-nav -->
+			</div>
+			<!-- // span3 -->
+
+			<div class="col-md-9">dfsdfad</div>
+		</div>
+		<!-- //row-fluid -->
+	</div>
+	<!-- // container-fluid -->
 </body>
 
 </html>
