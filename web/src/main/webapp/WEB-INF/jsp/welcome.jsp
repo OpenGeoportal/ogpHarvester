@@ -123,6 +123,11 @@
 
 						</div>
 					</div>
+					<div class="form-group col-md-9">
+						<button type="submit" class="btn btn-primary">
+							Schedule ingest <span class="glyphicon glyphicon-play"></span>
+						</button>
+					</div>
 
 
 				</form>
