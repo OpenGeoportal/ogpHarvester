@@ -150,10 +150,14 @@ input.form-control {
 	min-height: 77px;
 }
 
+
 .custom-panel.last {
 	border-bottom: 1px solid #eeeeee;
 	margin-bottom: 15px;
 	
+}
+.custom-panel-heading.collapsed .glyphicon-chevron-up:before {
+	content: "\e114";
 }
 
 .black {

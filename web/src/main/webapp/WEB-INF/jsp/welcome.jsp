@@ -157,12 +157,12 @@
 					<div class="clearfix"></div>
 
 					<div class="custom-panel">
-						<div class="custom-panel-heading" data-toggle="collapse"
+						<div class="custom-panel-heading collapsed" data-toggle="collapse"
 							data-target="#collapseSearchCriteria">
 							<h2>
 								Search criteria (optional) <span
 									class="glyphicon glyphicon-question-sign black"></span> <span
-									class="glyphicon glyphicon-chevron-down pull-right black"></span>
+									class="glyphicon glyphicon-chevron-up pull-right black"></span>
 							</h2>
 						</div>
 						<div class="custom-panel-body collapse"
@@ -337,12 +337,12 @@
 					<!-- //search criteria panel-->
 
 					<div class="custom-panel last">
-						<div class="custom-panel-heading" data-toggle="collapse"
+						<div class="custom-panel-heading collapsed" data-toggle="collapse"
 							data-target="#requiredFields">
 							<h2>
 								<spring:message code="ingestExternalRecords.requiredFields" />
 								<span class="glyphicon glyphicon-question-sign black"></span> <span
-									class="glyphicon glyphicon-chevron-down pull-right black"></span>
+									class="glyphicon glyphicon-chevron-up pull-right black"></span>
 							</h2>
 						</div>
 						<div class="custom-panel-body collapse" id="requiredFields">
