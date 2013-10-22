@@ -89,7 +89,6 @@ h2 {
 	line-height: 1.428571429;
 	color: #000000;
 	vertical-align: middle;
-	background-color: #F8F8F8;
 	border: 1px solid #808080;
 	border-radius: 3px;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
@@ -99,12 +98,27 @@ h2 {
 	transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
+select.form-control {
+	background-color: #F8F8F8;	
+}
+
 label {
 	font-weight: normal;
 }
 
 input.form-control {
 	border-radius: 0;
+}
+
+.input-group-addon {
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: 1;
+  text-align: center;
+  background-color: #eeeeee;
+  border: 1px solid #000000;
+  border-radius: 0;
 }
 
 .btn-primary {
@@ -128,4 +142,32 @@ input.form-control {
 	/* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5191d6',
 		endColorstr='#3172ae', GradientType=0); /* IE6-9 */
+}
+
+.custom-panel {
+	border: 0;
+	border-top: 1px solid #eeeeee;
+	min-height: 77px;
+}
+
+
+.custom-panel.last {
+	border-bottom: 1px solid #eeeeee;
+	margin-bottom: 15px;
+	
+}
+.custom-panel-heading.collapsed .glyphicon-chevron-up:before {
+	content: "\e114";
+}
+
+.black {
+	color: black;
+}
+
+.no-margin {
+	margin: 0;
+}
+
+.no-left-padding {
+	padding-left: 0;
 }
