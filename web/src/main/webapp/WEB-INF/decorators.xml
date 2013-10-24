@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<decorators defaultdir="/WEB-INF/decorators">
+	<decorator name="headerFooter" page="headerFooter.jsp">
+		<pattern>/login</pattern>
+		<pattern>/loginfailed</pattern>
+		<pattern>/accessDenied.jsp</pattern>
+	</decorator>
+	
+	<decorator name="default" page="headerFooterMenu.jsp">
+		<pattern>/*</pattern>
+	</decorator>
+</decorators> 

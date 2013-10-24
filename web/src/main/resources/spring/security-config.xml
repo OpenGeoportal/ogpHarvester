@@ -7,14 +7,13 @@
                     http://www.springframework.org/schema/security
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
 
-    <security:http pattern="/resources/**" security="none" />
+    <security:http pattern="/static/**" security="none" />
+    <security:http pattern="/webjars/**" security="none" />
 
     <security:http use-expressions="true" access-denied-page="/accessDenied">
         <security:intercept-url pattern="/login*" access="permitAll"/>
         <!--<security:intercept-url pattern="/solrDelete" access="hasRole('ROLE_ADMIN')"/>-->
         <security:form-login login-page="/login" default-target-url="/ingest" authentication-failure-url="/loginfailed" />
-        <security:intercept-url pattern="/static/**" access="hasRole('ROLE_ANONYMOUS')" />
-        <security:intercept-url pattern="/webjars/**" access="hasRole('ROLE_ANONYMOUS')" />
         <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')" /> <!-- requires-channel="https"/> -->
         <security:logout/>
     </security:http>
