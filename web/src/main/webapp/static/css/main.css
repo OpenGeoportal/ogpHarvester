@@ -39,11 +39,11 @@ h1,h2,h3,h4,h5,h6 {
 	font-family: "Arial regular", arial, sans-serif;
 }
 
-h1.right-column {
+.right-column h1 {
 	font-size: 21px;
 }
 
-h2.right-column {
+.right-column h2 {
 	font-size: 18px;
 	color: #3172AE;
 }
@@ -143,8 +143,9 @@ input.form-control {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5191d6',
 		endColorstr='#3172ae', GradientType=0); /* IE6-9 */
 }
+
 .btn-lg {
-  border-radius: 3px;
+	border-radius: 3px;
 }
 
 .custom-panel {
@@ -228,4 +229,45 @@ input.form-control {
 	margin-bottom: 10px;
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
+}
+
+/* Tooltips */
+.tooltip {
+	font-size: 14px;
+}
+
+.tooltip-inner {
+	background-color: #0755AC;
+	border-radius: 3px;
+}
+.tooltip.top .tooltip-arrow {
+	border-top-color: #0755AC;
+}
+
+.tooltip.top-left .tooltip-arrow {
+	border-top-color: #0755AC;
+}
+
+.tooltip.top-right .tooltip-arrow {
+	border-top-color: #0755AC;
+}
+
+.tooltip.right .tooltip-arrow {
+	border-right-color: #0755AC;
+}
+
+.tooltip.left .tooltip-arrow {
+	border-left-color: #0755AC;
+}
+
+.tooltip.bottom .tooltip-arrow {
+	border-bottom-color: #0755AC;
+}
+
+.tooltip.bottom-left .tooltip-arrow {
+	border-bottom-color: #0755AC;
+}
+
+.tooltip.bottom-right .tooltip-arrow {
+	border-bottom-color: #000000;
 }
