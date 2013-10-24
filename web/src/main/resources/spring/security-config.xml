@@ -1,0 +1,31 @@
+<beans:beans
+        xmlns:beans="http://www.springframework.org/schema/beans"
+        xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+                    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                    http://www.springframework.org/schema/security
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+
+    <security:http pattern="/resources/**" security="none" />
+
+    <security:http use-expressions="true" access-denied-page="/accessDenied">
+        <security:intercept-url pattern="/login*" access="permitAll"/>
+        <!--<security:intercept-url pattern="/solrDelete" access="hasRole('ROLE_ADMIN')"/>-->
+        <security:form-login login-page="/login" default-target-url="/ingest" authentication-failure-url="/loginfailed" />
+        <security:intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')" /> <!-- requires-channel="https"/> -->
+        <security:logout/>
+    </security:http>
+
+    <!-- <security:ldap-server url="ldaps://ldap.tufts.edu:636/ou=People,dc=tufts,dc=edu" />-->
+    <security:authentication-manager alias="authenticationManager" >
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" password="ogpharvester"
+                               authorities="ROLE_ADMIN, ROLE_USER" />
+            </security:user-service>
+        </security:authentication-provider>
+        <!-- <security:ldap-authentication-provider user-search-filter="(uid={0})"
+        user-context-mapper-ref="userDetailsMapper.custom" />-->
+    </security:authentication-manager>
+</beans:beans>
