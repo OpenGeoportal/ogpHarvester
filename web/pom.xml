@@ -25,6 +25,7 @@
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>2.5</servlet.version>
+		<sitemesh.version>2.4.2</sitemesh.version>
 		<webjars-bootstrap.version>3.0.0</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
@@ -71,32 +72,32 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-        <!-- Spring security -->
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>${springsec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-            <version>${springsec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-ldap</artifactId>
-            <version>${springsec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>${springsec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-            <version>${springsec.version}</version>
-        </dependency>
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${springsec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${springsec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+			<version>${springsec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+			<version>${springsec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+			<version>${springsec.version}</version>
+		</dependency>
 
 		<!-- Webjars (static dependencies distributed as JAR files) -->
 		<dependency>
@@ -113,6 +114,13 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
 			<version>${webjars-jquery.version}</version>
+		</dependency>
+
+		<!-- Sitemesh -->
+		<dependency>
+			<groupId>opensymphony</groupId>
+			<artifactId>sitemesh</artifactId>
+			<version>${sitemesh.version}</version>
 		</dependency>
 
 
@@ -143,28 +151,28 @@
 	<build>
 		<finalName>ogp-harvester</finalName>
 
-        <plugins>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <version>7.5.0.v20110901</version>
-                <configuration>
-                    <stopKey>JETTY_STOP</stopKey>
-                    <stopPort>8090</stopPort>
-                    <connectors>
-                        <connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
-                            <port>8080</port>
-                            <maxIdleTime>10000</maxIdleTime>
-                            <requestHeaderSize>20000</requestHeaderSize>
-                        </connector>
-                    </connectors>
-                    <webApp>
-                        <contextPath>/</contextPath>
-                        <descriptor>${project.build.directory}/WEB-INF/web.xml</descriptor>
-                    </webApp>
+		<plugins>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>7.5.0.v20110901</version>
+				<configuration>
+					<stopKey>JETTY_STOP</stopKey>
+					<stopPort>8090</stopPort>
+					<connectors>
+						<connector implementation="org.eclipse.jetty.server.bio.SocketConnector">
+							<port>8080</port>
+							<maxIdleTime>10000</maxIdleTime>
+							<requestHeaderSize>20000</requestHeaderSize>
+						</connector>
+					</connectors>
+					<webApp>
+						<contextPath>/</contextPath>
+						<descriptor>${project.build.directory}/WEB-INF/web.xml</descriptor>
+					</webApp>
 
-                </configuration>
-            </plugin>
-        </plugins>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>
