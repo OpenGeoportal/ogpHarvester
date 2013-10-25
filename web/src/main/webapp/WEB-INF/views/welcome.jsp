@@ -71,7 +71,7 @@
 				</div>
 			</div>
 			<div id="fragment">
-				<jsp:include page="partial/geonetwork.jsp" />
+				<jsp:include page="partial/webdav.jsp" />
 			</div>
 
 			<div class="custom-panel last">

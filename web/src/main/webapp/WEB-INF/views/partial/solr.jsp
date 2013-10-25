@@ -19,9 +19,9 @@
 </div>
 <div class="form-group col-md-9">
 	<div class="col-md-10">
-		<label for="url"> <spring:message
-				code="ingestExternalRecords.form.url" />
-		</label> <input id="url" name="url" class="form-control col-md-6">
+		<label for="cswUrl"> <spring:message
+				code="ingestExternalRecords.form.cswUrl" />
+		</label> <input id="cswUrl" name="cswUrl" class="form-control col-md-6">
 
 	</div>
 </div>
@@ -128,13 +128,13 @@
 				title='<spring:message code="ingestExternalRecords.tooltip.dataRangeContent"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
-				<div class='input-group date col-md-5' id='rangeFrom'>
+				<div class='input-group date col-md-4' id='rangeFrom'>
 					<input type='text' class="form-control" /> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
-				<span class="col-md-2 text-center">to</span>
-				<div class='input-group date col-md-5' id='rangeTo'>
+				<span class="col-md-1 text-center">to</span>
+				<div class='input-group date col-md-4' id='rangeTo'>
 					<input type='text' class="form-control" /> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>

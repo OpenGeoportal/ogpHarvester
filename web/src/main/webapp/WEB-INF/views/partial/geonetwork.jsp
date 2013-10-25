@@ -11,20 +11,17 @@
 	</label> <input id="geonetworkUrl" name="geonetworkUrl" class="form-control">
 </div>
 
-<div class="form-group col-md-9">
-	<div class="col-md-6">
-		<label for="ogpRepository"><spring:message
-				code="ingestExternalRecords.form.ogpRepository" /></label> <select
-			name="ogpRepository" id="ogpRepository" class="form-control">
-			<option value="" disabled selected style='display: none;'><spring:message
-					code="ingestExternalRecords.form.ogpRepository.placeholder" /></option>
-			<option value="">Repository 1</option>
-			<option value="">Repository 2</option>
-			<option value="">Repository 3</option>
-			<option value="">Repository 4</option>
-			<option value="">Repository 5</option>
-		</select>
-	</div>
+<div class="clearfix"></div>
+<div class="form-group multiselect">
+	<label for="ogpRepository"><spring:message
+			code="ingestExternalRecords.form.ogpRepository" /></label> <select
+		multiple="multiple" data-role="multiselect" name="ogpRepository"
+		id="ogpRepository" class="form-control">
+		<option value="unocha">UN Ocha</option>
+		<option value="worldBank">World Bank</option>
+		<option value="harvard">Harvard</option>
+		<option value="oklahoma">Oklahoma</option>
+	</select>
 </div>
 
 <div class="clearfix"></div>
