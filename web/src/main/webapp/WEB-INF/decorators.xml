@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <decorators defaultdir="/WEB-INF/decorators">
+	<!-- Excludes will never be decorated by Sitemesh. -->
+	<excludes>
+		<pattern>/fragments*</pattern>
+		<pattern>/static/*</pattern>
+		<pattern>/webjars/*</pattern>
+	</excludes>
+
 	<decorator name="headerFooter" page="headerFooter.jsp">
 		<pattern>/login</pattern>
 		<pattern>/loginfailed</pattern>
 		<pattern>/accessDenied.jsp</pattern>
 	</decorator>
-	
+
 	<decorator name="default" page="headerFooterMenu.jsp">
 		<pattern>/*</pattern>
 	</decorator>
