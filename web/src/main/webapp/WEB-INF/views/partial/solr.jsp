@@ -129,13 +129,13 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-4' id='rangeFrom'>
-					<input type='text' class="form-control" /> <span
+					<input type='text' class="form-control" name="rangeFrom"/> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-1 text-center">to</span>
 				<div class='input-group date col-md-4' id='rangeTo'>
-					<input type='text' class="form-control" /> <span
+					<input type='text' class="form-control" name="rangeTo"/> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
@@ -204,13 +204,13 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-5' id='rangeSolrFrom'>
-					<input type='text' class="form-control" /> <span
+					<input type='text' class="form-control" name="rangeSolrFrom"/> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-2 text-center">to</span>
 				<div class='input-group date col-md-5' id='rangeSolrTo'>
-					<input type='text' class="form-control" /> <span
+					<input type='text' class="form-control" name="rangeSolrTo" /> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>

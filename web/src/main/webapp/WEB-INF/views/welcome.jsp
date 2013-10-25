@@ -18,24 +18,35 @@
 
 
 <body>
-
+	<spring:url value="/fragments" var="fragmentsUrl" />
 	<script type="text/javascript">
 		$(function() {
-			$('#rangeFrom').datetimepicker({
+			$('.date').datetimepicker({
 				pickTime : false
 			});
-			$('#rangeTo').datetimepicker({
-				pickTime : false
-			});
-			$('#rangeSolrFrom').datetimepicker({
-				pickTime : false
-			});
-			$('#rangeSolrTo').datetimepicker({
-				pickTime : false
-			});
+			
 			$(".right-column").tooltip({
 				selector : "[data-toggle=tooltip]"
 			});
+		});
+		$(function() {
+			$("#typeOfInstance").on("change", function() {
+				var value = $(this).val();
+				var url = "${fragmentsUrl}";
+				$("#fragment").load(url, {
+					instanceType : value
+				}, function(response, status, xhr) {
+					if (status === "success") {
+						$("#fragment select[data-role=multiselect]").multiselect();
+						$('#fragment .date').datetimepicker({
+							pickTime : false
+						});
+						
+						
+					}
+				});
+			});
+
 		});
 	</script>
 
@@ -71,7 +82,7 @@
 				</div>
 			</div>
 			<div id="fragment">
-				<jsp:include page="partial/webdav.jsp" />
+				<jsp:include page="partial/solr.jsp" />
 			</div>
 
 			<div class="custom-panel last">
