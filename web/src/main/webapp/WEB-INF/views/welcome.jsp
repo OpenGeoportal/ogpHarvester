@@ -3,6 +3,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 
 <html>
@@ -24,25 +25,33 @@
 			$('.date').datetimepicker({
 				pickTime : false
 			});
-			
+
 			$(".right-column").tooltip({
 				selector : "[data-toggle=tooltip]"
 			});
 		});
 		$(function() {
-			$("#typeOfInstance").on("change", function() {
-				var value = $(this).val();
-				var url = "${fragmentsUrl}";
-				$("#fragment").load(url, {
-					instanceType : value
-				}, function(response, status, xhr) {
-					if (status === "success") {
-						$("#fragment select[data-role=multiselect]").multiselect();
-						$('#fragment .date').datetimepicker({
+			$("#typeOfInstance")
+					.on("change",
+	function() {
+			var value = $(this).val();
+			var url = "${fragmentsUrl}";
+			$("#fragment")
+				.load(
+					url,
+					{
+						instanceType : value
+					},
+					function(response, status, xhr) {
+						if (status === "success") {
+						$(
+							"#fragment select[data-role=multiselect]")
+							.multiselect();
+						$('#fragment .date')
+							.datetimepicker(
+						{
 							pickTime : false
 						});
-						
-						
 					}
 				});
 			});
@@ -63,26 +72,36 @@
 		<h2>
 			<spring:message code="ingestExternalRecords.sourceRepository" />
 		</h2>
-		<form action="" role="form">
+		<spring:url value="/" var="formUrl" />
+		<form:form action="${formUrl}" method="POST" role="form" modelAttribute="ingestFormBean">
 			<div class="form-group col-md-9">
 				<div class="col-md-6">
 					<label for="typeOfInstance"> <spring:message
 							code="ingestExternalRecords.form.typeInstance" />
-					</label> <select id="typeOfInstance" name="typeOfInstance"
-						class="form-control">
-						<option value="solr"><spring:message
-								code="ingestExternalRecords.form.typeInstance.remoteOGPInstance" /></option>
-						<option value="geonetwork"><spring:message
-								code="ingestExternalRecords.form.typeInstance.geonetwork" /></option>
-						<option value="csw"><spring:message
-								code="ingestExternalRecords.form.typeInstance.csw" /></option>
-						<option value="webdav"><spring:message
-								code="ingestExternalRecords.form.typeInstance.webDAV" /></option>
-					</select>
+					</label>
+					<form:select id="typeOfInstance" path="typeOfInstance"
+						cssClass="form-control">
+						<form:option value="solr">
+							<spring:message
+								code="ingestExternalRecords.form.typeInstance.remoteOGPInstance" />
+						</form:option>
+						<form:option value="geonetwork">
+							<spring:message
+								code="ingestExternalRecords.form.typeInstance.geonetwork" />
+						</form:option>
+						<form:option value="csw">
+							<spring:message
+								code="ingestExternalRecords.form.typeInstance.csw" />
+						</form:option>
+						<form:option value="webdav">
+							<spring:message
+								code="ingestExternalRecords.form.typeInstance.webDAV" />
+						</form:option>
+					</form:select>
 				</div>
 			</div>
 			<div id="fragment">
-				<jsp:include page="partial/solr.jsp" />
+				<jsp:include page="partial/webdav.jsp" />
 			</div>
 
 			<div class="custom-panel last">
@@ -100,52 +119,51 @@
 					<div class="form-group container no-left-padding">
 						<div class="col-md-4">
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label> <form:checkbox path="requiredFields"
+										id="requiredFields" value="extent"/> <spring:message
 										code="ingestExternalRecords.form.requiredFields.extent" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields" value="themeKeyword"/> <spring:message
 										code="ingestExternalRecords.form.requiredFields.themeKeyword" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="placeKeyword" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.placeKeyword" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="webServices" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.webServices" /></label>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="topic" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.topic" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="dateOfContent" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dateOfContent" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="originator" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.originator" /></label>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="dataType" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dataType" /></label>
 							</div>
 							<div class="checkbox">
-								<label><input type="checkbox" name="requiredFields"
-									value=""> <spring:message
+								<label><form:checkbox path="requiredFields"
+									value="dataRepository" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dataRepository" /></label>
 							</div>
 						</div>
@@ -160,9 +178,7 @@
 					Schedule ingest <span class="glyphicon glyphicon-play"></span>
 				</button>
 			</div>
-
-		</form>
-
+		</form:form>
 	</div>
 
 

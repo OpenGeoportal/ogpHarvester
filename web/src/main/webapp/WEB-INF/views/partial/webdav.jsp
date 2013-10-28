@@ -3,12 +3,13 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 
 <div class="form-group col-md-9">
 	<div class="col-md-10">
 		<label for="webDavUrl"> <spring:message
 				code="ingestExternalRecords.form.webDavUrl" />
-		</label> <input id="webDavUrl" name="webDavUrl" class="form-control col-md-6">
+		</label> <form:input id="webDavUrl" path="webDavUrl" cssClass="form-control col-md-6" />
 		<spring:url value="/admin" var="adminUrl" />
 		<spring:message code="ingestExternalRecords.form.webDavUrl.help.link"
 			arguments="${adminUrl}" var="adminUrlLink" />
@@ -22,14 +23,14 @@
 <div class="clearfix"></div>
 <div class="form-group multiselect">
 	<label for="ogpRepository"><spring:message
-			code="ingestExternalRecords.form.ogpRepository" /></label> <select
-		multiple="multiple" data-role="multiselect" name="ogpRepository"
-		id="ogpRepository" class="form-control">
-		<option value="unocha">UN Ocha</option>
-		<option value="worldBank">World Bank</option>
-		<option value="harvard">Harvard</option>
-		<option value="oklahoma">Oklahoma</option>
-	</select>
+			code="ingestExternalRecords.form.ogpRepository" /></label> <form:select
+		multiple="true" data-role="multiselect" path="ogpRepository"
+		id="ogpRepository" cssClass="form-control">
+		<form:option value="unocha">UN Ocha</form:option>
+		<form:option value="worldBank">World Bank</form:option>
+		<form:option value="harvard">Harvard</form:option>
+		<form:option value="oklahoma">Oklahoma</form:option>
+	</form:select>
 </div>
 
 
@@ -53,14 +54,14 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-4'>
-					<input type='text' class="form-control" id='lastModifiedFrom'
-						name="lastModifiedFrom" /> <span class="input-group-addon"><span
+					<form:input cssClass="form-control" id='lastModifiedFrom'
+						path="lastModifiedFrom" /> <span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-1 text-center">to</span>
 				<div class='input-group date col-md-4'>
-					<input type='text' class="form-control" id='lastModifiedTo'
-						name="lastMofifiedTo" /> <span class="input-group-addon"><span
+					<form:input cssClass="form-control" id='lastModifiedTo'
+						path="lastMofifiedTo" /> <span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 			</div>
