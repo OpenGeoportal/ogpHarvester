@@ -29,32 +29,55 @@
 			$(".right-column").tooltip({
 				selector : "[data-toggle=tooltip]"
 			});
+
+/* 			$("#ingestFormBean").submit(function() {
+				if($("#typeOfInstance").hasClass("changed")) {
+					var $form = $("#ingestFormBean");
+					var $inputs = $("#fragment input");
+					var $textareas = $("#fragment textarea");
+					var $selects = $("#fragment select");
+					$inputs.each(function() {
+						$(this).appendTo($form);
+						}); 
+					$textareas.each(function() {
+						$(this).appendTo($form);
+						});
+					$selects.each(function() {
+						$(this).appendTo($form);
+						});
+
+					
+				}
+				
+			}); */
 		});
 		$(function() {
 			$("#typeOfInstance")
-					.on("change",
-	function() {
-			var value = $(this).val();
-			var url = "${fragmentsUrl}";
-			$("#fragment")
-				.load(
-					url,
-					{
-						instanceType : value
-					},
-					function(response, status, xhr) {
-						if (status === "success") {
-						$(
-							"#fragment select[data-role=multiselect]")
-							.multiselect();
-						$('#fragment .date')
-							.datetimepicker(
-						{
-							pickTime : false
-						});
-					}
-				});
-			});
+					.on(
+							"change",
+							function() {
+								$(this).addClass("changed");
+								var value = $(this).val();
+								var url = "${fragmentsUrl}";
+								$("#fragment")
+										.load(
+												url,
+												{
+													instanceType : value
+												},
+												function(response, status, xhr) {
+													if (status === "success") {
+														$(
+																"#fragment select[data-role=multiselect]")
+																.multiselect();
+														$('#fragment .date')
+																.datetimepicker(
+																		{
+																			pickTime : false
+																		});
+													}
+												});
+							});
 
 		});
 	</script>
@@ -73,7 +96,8 @@
 			<spring:message code="ingestExternalRecords.sourceRepository" />
 		</h2>
 		<spring:url value="/ingest/schedule" var="formUrl" />
-		<form:form action="${formUrl}" method="POST" role="form" modelAttribute="ingestFormBean">
+		<form:form action="${formUrl}" method="POST" role="form"
+			modelAttribute="ingestFormBean">
 			<div class="form-group col-md-9">
 				<div class="col-md-6">
 					<label for="typeOfInstance"> <spring:message
@@ -101,7 +125,23 @@
 				</div>
 			</div>
 			<div id="fragment">
-				<jsp:include page="partial/webdav.jsp" />
+				<c:choose>
+					<c:when test="${ingestFormBean.typeOfInstance eq 'solr' }">
+						<jsp:include page="partial/solr.jsp" />
+					</c:when>
+					<c:when test="${ingestFormBean.typeOfInstance eq 'geonetwork' }">
+						<jsp:include page="partial/geonetwork.jsp" />
+					</c:when>
+					<c:when test="${ingestFormBean.typeOfInstance eq 'csw' }">
+						<jsp:include page="partial/csw.jsp" />
+					</c:when>
+					<c:when test="${ingestFormBean.typeOfInstance eq 'webdav' }">
+						<jsp:include page="partial/webdav.jsp" />
+					</c:when>
+					<c:otherwise>
+						<jsp:include page="partial/solr.jsp" />
+					</c:otherwise>
+				</c:choose>
 			</div>
 
 			<div class="custom-panel last">
@@ -120,50 +160,51 @@
 						<div class="col-md-4">
 							<div class="checkbox">
 								<label> <form:checkbox path="requiredFields"
-										id="requiredFields" value="extent"/> <spring:message
+										id="requiredFields" value="extent" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.extent" /></label>
 							</div>
 							<div class="checkbox">
-								<label><form:checkbox path="requiredFields" value="themeKeyword"/> <spring:message
+								<label><form:checkbox path="requiredFields"
+										value="themeKeyword" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.themeKeyword" /></label>
 							</div>
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="placeKeyword" /> <spring:message
+										value="placeKeyword" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.placeKeyword" /></label>
 							</div>
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="webServices" /> <spring:message
+										value="webServices" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.webServices" /></label>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="topic" /> <spring:message
+										value="topic" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.topic" /></label>
 							</div>
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="dateOfContent" /> <spring:message
+										value="dateOfContent" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dateOfContent" /></label>
 							</div>
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="originator" /> <spring:message
+										value="originator" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.originator" /></label>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="dataType" /> <spring:message
+										value="dataType" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dataType" /></label>
 							</div>
 							<div class="checkbox">
 								<label><form:checkbox path="requiredFields"
-									value="dataRepository" /> <spring:message
+										value="dataRepository" /> <spring:message
 										code="ingestExternalRecords.form.requiredFields.dataRepository" /></label>
 							</div>
 						</div>
@@ -175,7 +216,8 @@
 
 			<div class="form-group col-md-9">
 				<button type="submit" class="btn btn-primary">
-					<spring:message code="ingestExternalRecords.form.ingestButton"/><span class="glyphicon glyphicon-play"></span>
+					<spring:message code="ingestExternalRecords.form.ingestButton" />
+					<span class="glyphicon glyphicon-play"></span>
 				</button>
 			</div>
 		</form:form>

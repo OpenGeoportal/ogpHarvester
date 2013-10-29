@@ -9,7 +9,9 @@
 	<div class="col-md-10">
 		<label for="webDavUrl"> <spring:message
 				code="ingestExternalRecords.form.webDavUrl" />
-		</label> <form:input id="webDavUrl" path="webDavUrl" cssClass="form-control col-md-6" />
+		</label>
+		<form:input id="webDavUrl" path="webDavUrl" name="webDavUrl"
+			cssClass="form-control col-md-6" />
 		<spring:url value="/admin" var="adminUrl" />
 		<spring:message code="ingestExternalRecords.form.webDavUrl.help.link"
 			arguments="${adminUrl}" var="adminUrlLink" />
@@ -23,9 +25,10 @@
 <div class="clearfix"></div>
 <div class="form-group multiselect">
 	<label for="ogpRepository"><spring:message
-			code="ingestExternalRecords.form.ogpRepository" /></label> <form:select
-		multiple="true" data-role="multiselect" path="ogpRepository"
-		id="ogpRepository" cssClass="form-control">
+			code="ingestExternalRecords.form.ogpRepository" /></label>
+	<form:select multiple="true" data-role="multiselect"
+		path="ogpRepository" id="ogpRepository" name="ogpRepository"
+		cssClass="form-control">
 		<form:option value="unocha">UN Ocha</form:option>
 		<form:option value="worldBank">World Bank</form:option>
 		<form:option value="harvard">Harvard</form:option>
@@ -55,13 +58,15 @@
 			<div class="row no-margin">
 				<div class='input-group date col-md-4'>
 					<form:input cssClass="form-control" id='lastModifiedFrom'
-						path="lastModifiedFrom" /> <span class="input-group-addon"><span
+						path="lastModifiedFrom" name="lastModifiedFrom" />
+					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-1 text-center">to</span>
 				<div class='input-group date col-md-4'>
 					<form:input cssClass="form-control" id='lastModifiedTo'
-						path="lastMofifiedTo" /> <span class="input-group-addon"><span
+						path="lastModifiedTo" name="lastModifiedTo" />
+					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 			</div>

@@ -112,7 +112,7 @@ public class IngestController {
 		model.put("url", "");
 		model.put("webDavUrl", "");
 		model.put("lastModifiedFrom", "");
-		model.put("lastMofifiedTo", "");
+		model.put("lastModifiedTo", "");
 
 		String partialForm = "partial/solr";
 

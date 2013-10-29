@@ -9,17 +9,19 @@
 	<div class="col-md-10">
 		<label for="url"> <spring:message
 				code="ingestExternalRecords.form.url" />
-		</label> <form:input id="url" path="url" cssClass="form-control col-md-6" />
-
+		</label>
+		<form:input id="url" path="url" name="url"
+			cssClass="form-control col-md-6" />
 	</div>
 </div>
 
 <div class="clearfix"></div>
 <div class="form-group multiselect">
 	<label for="ogpRepository"><spring:message
-			code="ingestExternalRecords.form.ogpRepository" /></label> <form:select
-		multiple="true" data-role="multiselect" path="ogpRepository"
-		id="ogpRepository" cssClass="form-control">
+			code="ingestExternalRecords.form.ogpRepository" /></label>
+	<form:select multiple="true" data-role="multiselect"
+		name="ogpRepository" path="ogpRepository" id="ogpRepository"
+		cssClass="form-control">
 		<form:option value="unocha">UN Ocha</form:option>
 		<form:option value="worldBank">World Bank</form:option>
 		<form:option value="harvard">Harvard</form:option>
@@ -47,16 +49,18 @@
 					code="ingestExternalRecords.form.location" /></label> <a href="#"
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.location"/>'><span
-				class="glyphicon glyphicon-question-sign black"></span></a> <form:input
-				cssClass="form-control" id="location" path="location" />
+				class="glyphicon glyphicon-question-sign black"></span></a>
+			<form:input cssClass="form-control" id="location" path="location"
+				name="location" />
 		</div>
 		<div class="form-group col-md-9">
 			<label for="title"><spring:message
 					code="ingestExternalRecords.form.title" /></label> <a href="#"
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.title"/>'><span
-				class="glyphicon glyphicon-question-sign black"></span></a> <form:input
-				cssClass="form-control" id="title" path="title" />
+				class="glyphicon glyphicon-question-sign black"></span></a>
+			<form:input cssClass="form-control" id="title" path="title"
+				name="title" />
 		</div>
 		<div class="form-group col-md-9">
 			<label for="subject"><spring:message
@@ -64,7 +68,8 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.subject"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:textarea cssClass="form-control" rows="3" path="subject" id="subject" />
+			<form:textarea cssClass="form-control" rows="3" path="subject"
+				id="subject" name="subject" />
 		</div>
 
 		<div class="form-group col-md-9">
@@ -73,7 +78,8 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.freeText"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:textarea cssClass="form-control" rows="3" path="freeText" id="freeText" />
+			<form:textarea cssClass="form-control" rows="3" path="freeText"
+				id="freeText" name="freeText" />
 		</div>
 		<div class="clearfix"></div>
 
@@ -85,14 +91,15 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-4' id='rangeFrom'>
-					<form:input cssClass="form-control" path="rangeFrom" /> <span
-						class="input-group-addon"><span
+					<form:input cssClass="form-control" path="rangeFrom"
+						name="rangeFrom" />
+					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-1 text-center">to</span>
 				<div class='input-group date col-md-4' id='rangeTo'>
-					<form:input cssClass="form-control" path="rangeTo" /> <span
-						class="input-group-addon"><span
+					<form:input cssClass="form-control" path="rangeTo" name="rangeTo" />
+					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 			</div>
@@ -105,7 +112,7 @@
 				title='<spring:message code="ingestExternalRecords.tooltip.customCswQuery"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<form:textarea cssClass="form-control" rows="3" path="customCswQuery"
-				id="customCswQuery" />
+				id="customCswQuery" name="customCswQuery" />
 		</div>
 		<div class="clearfix"></div>
 

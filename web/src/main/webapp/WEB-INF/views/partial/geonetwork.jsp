@@ -11,7 +11,7 @@
 	<label for="geonetworkUrl"> <spring:message
 			code="ingestExternalRecords.form.geonetworkUrl" />
 	</label>
-	<form:input id="geonetworkUrl" path="geonetworkUrl"
+	<form:input id="geonetworkUrl" path="geonetworkUrl" name="geonetworkUrl"
 		cssClass="form-control" />
 </div>
 
@@ -19,7 +19,7 @@
 <div class="form-group multiselect">
 	<label for="ogpRepository"><spring:message
 			code="ingestExternalRecords.form.ogpRepository" /></label>
-	<form:select multiple="true" data-role="multiselect"
+	<form:select multiple="true" data-role="multiselect" name="ogpRepository"
 		path="ogpRepository" id="ogpRepository" cssClass="form-control">
 		<form:option value="unocha">UN Ocha</form:option>
 		<form:option value="worldBank">World Bank</form:option>
@@ -49,7 +49,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.title"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a> <form:input
-				cssClass="form-control" id="title" path="title" />
+				cssClass="form-control" id="title" path="title" name="title" />
 		</div>
 		<div class="form-group col-md-9">
 			<label for="keyword"><spring:message
@@ -57,7 +57,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.keyword"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a> <form:input
-				cssClass="form-control" id="keyword" path="keyword" />
+				cssClass="form-control" id="keyword" path="keyword" name="keyword" />
 		</div>
 		<div class="form-group col-md-9">
 			<label for="abstractText"><spring:message
@@ -66,7 +66,7 @@
 				title='<spring:message code="ingestExternalRecords.tooltip.abstractText"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<form:textarea cssClass="form-control" rows="3" path="abstractText"
-				id="abstractText" />
+				id="abstractText" name="abstractText"/>
 		</div>
 		<div class="form-group col-md-9">
 			<label for="freeText"><spring:message
@@ -74,7 +74,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.freeText"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:textarea cssClass="form-control" rows="3" path="freeText" id="freeText" />
+			<form:textarea cssClass="form-control" rows="3" path="freeText" id="freeText" name="freeText"/>
 		</div>
 		<div class="clearfix"></div>
 		<div class="form-group multiselect">
@@ -83,7 +83,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.geonetworkSources"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a> <form:select
-				multiple="true" data-role="multiselect" path="geonetworkSources"
+				multiple="true" data-role="multiselect" path="geonetworkSources" name="geonetworkSources"
 				id="geonetworkSources" cssClass="form-control" items="${geonetworkSourcesList}" itemLabel="value" itemValue="key">
 
 			</form:select>

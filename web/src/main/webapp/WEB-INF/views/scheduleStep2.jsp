@@ -76,9 +76,10 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="form-group">
-				<spring:url value="/ingest/step1" var="ingestStep1Url"/>
-				<a href="${ingestStep1Url}" class="btn btn-default"><span class="glyphicon glyphicon-chevron-left"></span> 
-				<spring:message code="ingestSchedule2.form.backButton" /></a>
+				<spring:url value="/ingest/step1" var="ingestStep1Url" />
+				<a href="${ingestStep1Url}" class="btn btn-default"><span
+					class="glyphicon glyphicon-chevron-left"></span> <spring:message
+						code="ingestSchedule2.form.backButton" /></a>
 				<button type="submit" class="btn btn-primary">
 					<spring:message code="ingestSchedule2.form.ingestButton" />
 				</button>

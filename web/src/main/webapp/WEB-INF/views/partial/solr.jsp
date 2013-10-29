@@ -13,7 +13,7 @@
 		<label for="catalogOfServices"> <spring:message
 				code="ingestExternalRecords.form.catalogOfServices" />
 		</label>
-		<form:select path="catalogOfServices" id="catalogOfServices"
+		<form:select path="catalogOfServices" id="catalogOfServices" name="catalogOfServices"
 			cssClass="form-control col-md-6">
 			<form:options items="${catalogOfServicesList}" itemLabel="value"
 				itemValue="key" />
@@ -22,10 +22,10 @@
 </div>
 <div class="form-group col-md-9">
 	<div class="col-md-10">
-		<label for="cswUrl"> <spring:message
-				code="ingestExternalRecords.form.cswUrl" />
+		<label for="url"> <spring:message
+				code="ingestExternalRecords.form.solrUrl" />
 		</label>
-		<form:input id="cswUrl" path="cswUrl" cssClass="form-control col-md-6" />
+		<form:input id="url" path="url" name="url" cssClass="form-control col-md-6" />
 
 	</div>
 </div>
@@ -54,7 +54,7 @@
 			<a href="#" data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.extent"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:hidden path="extent" />
+			<form:hidden path="extent" name="extent"/>
 		</div>
 		<div class="form-group">
 			<label for="themeKeyword"><spring:message
@@ -63,7 +63,7 @@
 				title='<spring:message code="ingestExternalRecords.tooltip.theme"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<form:input cssClass="form-control" id="themeKeyword"
-				path="themeKeyword" />
+				path="themeKeyword" name="themeKeyword" />
 		</div>
 		<div class="form-group">
 			<label for="placeKeyword"><spring:message
@@ -72,7 +72,7 @@
 				title='<spring:message code="ingestExternalRecords.tooltip.place"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<form:input cssClass="form-control" id="placeKeyword"
-				path="placeKeyword" />
+				path="placeKeyword" name="placeKeyword" />
 		</div>
 		<div class="form-group">
 			<label for=topic><spring:message
@@ -80,7 +80,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.topic"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:select cssClass="form-control" id="topic" path="topic">
+			<form:select cssClass="form-control" id="topic" path="topic" name="topic">
 				<form:option value="">
 					<spring:message code="ingestExternalRecords.form.topic.option.none" />
 				</form:option>
@@ -175,13 +175,13 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-4' id='rangeFrom'>
-					<form:input cssClass="form-control" path="rangeFrom" />
+					<form:input cssClass="form-control" path="rangeFrom" name="rangeFrom" />
 					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-1 text-center">to</span>
 				<div class='input-group date col-md-4' id='rangeTo'>
-					<form:input cssClass="form-control" path="rangeTo" />
+					<form:input cssClass="form-control" path="rangeTo" name="rangeTo" />
 					<span class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
@@ -193,7 +193,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.originator"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:input cssClass="form-control" id="originator" path="originator" />
+			<form:input cssClass="form-control" id="originator" path="originator" name="originator" />
 		</div>
 		<div class="form-group multiselect">
 			<label for="dataType"><spring:message
@@ -201,7 +201,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.dataType"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:select path="dataType" multiple="true" id="dataType"
+			<form:select path="dataType" multiple="true" id="dataType" name="dataType"
 				cssClass="form-control" data-role="multiselect">
 				<option value="point"><spring:message
 						code="ingestExternalRecords.form.dataType.point" /></option>
@@ -221,7 +221,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.dataRepository"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:select cssClass="form-control" id="dataRepository"
+			<form:select cssClass="form-control" id="dataRepository" name="dataRepository"
 				path="dataRepository" data-role="multiselect" multiple="true">
 				<form:options items="${dataRepositoryList}" itemLabel="value"
 					itemValue="key" />
@@ -231,7 +231,7 @@
 		<div class="form-group">
 			<div class="col-md-12 no-left-padding">
 				<div class="checkbox">
-					<label> <form:checkbox path="excludeRestricted" value="false" />
+					<label> <form:checkbox path="excludeRestricted" name="excludeRestricted" value="false" />
 						<spring:message
 							code="ingestExternalRecords.form.excludeRestricted" />
 					</label> <a href="#" data-toggle="tooltip"
@@ -249,13 +249,13 @@
 				class="glyphicon glyphicon-question-sign black"></span></a>
 			<div class="row no-margin">
 				<div class='input-group date col-md-5' id='rangeSolrFrom'>
-					<form:input cssClass="form-control" path="rangeSolrFrom" /> <span
+					<form:input cssClass="form-control" path="rangeSolrFrom" name="rangeSolrFrom" /> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
 				<span class="col-md-2 text-center">to</span>
 				<div class='input-group date col-md-5' id='rangeSolrTo'>
-					<form:input cssClass="form-control" path="rangeSolrTo" /> <span
+					<form:input cssClass="form-control" path="rangeSolrTo" name="rangeSolrTo" /> <span
 						class="input-group-addon"><span
 						class="glyphicon glyphicon-calendar"></span> </span>
 				</div>
@@ -268,7 +268,7 @@
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.customSolrQuery"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>
-			<form:textarea cssClass="form-control" rows="3" path="customSolrQuery"
+			<form:textarea cssClass="form-control" rows="3" path="customSolrQuery" name="customSolrQuery"
 				id="customSolrQuery" />
 
 		</div>
