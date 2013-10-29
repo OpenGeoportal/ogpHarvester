@@ -72,7 +72,7 @@
 		<h2>
 			<spring:message code="ingestExternalRecords.sourceRepository" />
 		</h2>
-		<spring:url value="/" var="formUrl" />
+		<spring:url value="/ingest/schedule" var="formUrl" />
 		<form:form action="${formUrl}" method="POST" role="form" modelAttribute="ingestFormBean">
 			<div class="form-group col-md-9">
 				<div class="col-md-6">
@@ -175,7 +175,7 @@
 
 			<div class="form-group col-md-9">
 				<button type="submit" class="btn btn-primary">
-					Schedule ingest <span class="glyphicon glyphicon-play"></span>
+					<spring:message code="ingestExternalRecords.form.ingestButton"/><span class="glyphicon glyphicon-play"></span>
 				</button>
 			</div>
 		</form:form>

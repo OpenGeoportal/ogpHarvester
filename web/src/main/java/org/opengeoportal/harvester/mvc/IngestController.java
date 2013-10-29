@@ -9,18 +9,24 @@ import org.opengeoportal.harvester.mvc.exception.FormNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.support.BindStatus;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 @Controller
+@SessionAttributes(types = { IngestFormBean.class })
 public class IngestController {
-	@RequestMapping(value = "/ingest", method = RequestMethod.GET)
+	@RequestMapping(value = "/ingest")
 	public String ingest(ModelMap model) {
 		IngestFormBean formBean = new IngestFormBean();
-		String[] requiredFields = new String[] { "extent", "themeKeyword" };
-		formBean.setRequiredFields(requiredFields);
-		model.put("ingestFormBean", formBean);
+		ingestStep1(formBean, model);
+
+		return "welcome";
+	}
+
+	@RequestMapping(value = "/ingest/step1")
+	public String ingestStep1(IngestFormBean ingestFormBean, ModelMap model) {
+		model.put("ingestFormBean", ingestFormBean);
 
 		List<SimpleEntry<String, String>> catalogOfServices = new ArrayList<SimpleEntry<String, String>>();
 		catalogOfServices.add(new SimpleEntry<String, String>("catalog1",
@@ -48,7 +54,21 @@ public class IngestController {
 		model.put("geonetworkSourcesList", geonetworkSourcesList);
 
 		return "welcome";
+	}
 
+	@RequestMapping(value = "/ingest/schedule")
+	public String ingestStep2(IngestFormBean ingestFormBean, ModelMap model) {
+		model.put("ingestFormBean", ingestFormBean);
+
+		return "scheduleStep2";
+
+	}
+
+	@RequestMapping(value = "/ingest/startIngest")
+	public String ingestFinalStep(IngestFormBean ingestFormBean,
+			ModelMap model, SessionStatus sessionStatus) {
+		sessionStatus.setComplete();
+		return "list";
 	}
 
 	@RequestMapping(value = "/fragments")
@@ -93,7 +113,6 @@ public class IngestController {
 		model.put("webDavUrl", "");
 		model.put("lastModifiedFrom", "");
 		model.put("lastMofifiedTo", "");
-		
 
 		String partialForm = "partial/solr";
 

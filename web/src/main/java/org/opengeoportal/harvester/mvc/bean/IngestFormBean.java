@@ -75,6 +75,11 @@ public class IngestFormBean {
 	private Date lastModifiedFrom;
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date lastMofifiedTo;
+	
+	private String ingestName;
+	@DateTimeFormat(pattern = "dd/MM/yyyy")	
+	private Date beginDate;
+	private String frequency;
 
 	/**
 	 * @return the dataRepository
@@ -536,6 +541,48 @@ public class IngestFormBean {
 	 */
 	public void setLastMofifiedTo(Date lastMofifiedTo) {
 		this.lastMofifiedTo = lastMofifiedTo;
+	}
+
+	/**
+	 * @return the ingestName
+	 */
+	public String getIngestName() {
+		return ingestName;
+	}
+
+	/**
+	 * @param ingestName the ingestName to set
+	 */
+	public void setIngestName(String ingestName) {
+		this.ingestName = ingestName;
+	}
+
+	/**
+	 * @return the beginDate
+	 */
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+	/**
+	 * @param beginDate the beginDate to set
+	 */
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	/**
+	 * @return the frequency
+	 */
+	public String getFrequency() {
+		return frequency;
+	}
+
+	/**
+	 * @param frequency the frequency to set
+	 */
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
 	}
 
 }
