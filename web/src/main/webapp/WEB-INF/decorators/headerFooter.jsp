@@ -36,21 +36,7 @@
 <decorator:head />
 </head>
 <body>
-	<!-- header -->
-	<spring:url value="/login" var="loginPageUrl" />
-	<div class="navbar header">
-		<div class="container">
-			<spring:url value="/static/img/header_banner.png" var="headerBanner" />
-			<a href="#" class="navbar-brand"> <img src="${headerBanner}"
-				class=".img-responsive" />
-			</a> <a href="${loginPageUrl}">
-				<button class="btn btn-default navbar-btn navbar-right">
-					<spring:message code="header.loginButton" />
-				</button>
-			</a>
-		</div>
-	</div>
-
+	<jsp:include page="header.jsp" />
 	<!-- Container -->
 	<div class="container">
 		<decorator:body />
