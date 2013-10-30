@@ -144,6 +144,12 @@ input.form-control {
 		endColorstr='#3172ae', GradientType=0); /* IE6-9 */
 }
 
+.btn-default {
+	border-radius: 3px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
 .btn-lg {
 	border-radius: 3px;
 }
@@ -270,4 +276,19 @@ input.form-control {
 
 .tooltip.bottom-right .tooltip-arrow {
 	border-bottom-color: #000000;
+}
+
+.step2 label {
+	font-size: 18px;
+	color: #3172AE;
+}
+
+.step2 .fields-container {
+	border: 0;
+	min-height: 77px;
+	border-bottom: 1px solid #eeeeee;
+	padding-bottom: 40px;
+	margin-bottom: 20px;	
+
+	
 }
