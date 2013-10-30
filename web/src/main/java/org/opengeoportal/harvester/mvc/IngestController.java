@@ -2,6 +2,7 @@ package org.opengeoportal.harvester.mvc;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.opengeoportal.harvester.mvc.bean.IngestFormBean;
@@ -68,7 +69,8 @@ public class IngestController {
 	public String ingestFinalStep(IngestFormBean ingestFormBean,
 			ModelMap model, SessionStatus sessionStatus) {
 		sessionStatus.setComplete();
-		return "list";
+		model.put("nextRunDate", new Date());
+		return "scheduleStepFinal";
 	}
 
 	@RequestMapping(value = "/fragments")

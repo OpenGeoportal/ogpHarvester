@@ -77,9 +77,9 @@ public class IngestFormBean {
 	private Date lastMofifiedTo;
 	
 	private String ingestName;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")	
+	@DateTimeFormat(pattern = "MM/dd/yyyy")	
 	private Date beginDate;
-	private String frequency;
+	private String frequency; 
 
 	/**
 	 * @return the dataRepository
