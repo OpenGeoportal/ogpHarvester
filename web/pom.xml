@@ -152,6 +152,12 @@
             <version>1.6</version>
         </dependency>
 
+        <!-- Postgres JDBC4 for Java 1.6 -->
+        <dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.version}</version>
+        </dependency>
 
 		<!-- Jackson JSON support -->
 		<dependency>
