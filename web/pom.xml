@@ -29,6 +29,7 @@
 		<webjars-bootstrap.version>3.0.0</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
+		<webjars-angularjs.version>1.0.8</webjars-angularjs.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -130,6 +131,11 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>jquery</artifactId>
 			<version>${webjars-jquery.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>angularjs</artifactId>
+			<version>${webjars-angularjs.version}</version>
 		</dependency>
 
 		<!-- Sitemesh -->
