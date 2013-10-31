@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <ingest id="2" name="ingest2" url="http://ingest2" beginDate="2010-10-01" frequency="dayly" />
+</dataset>

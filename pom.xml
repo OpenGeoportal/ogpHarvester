@@ -12,6 +12,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<springsec.version>3.1.4.RELEASE</springsec.version>
+        <springdatajpa.version>1.4.2.RELEASE</springdatajpa.version>
+        <hibernate.version>4.2.6.Final</hibernate.version>
+        <!--<hibernate.version>4.3.0.Beta5</hibernate.version>-->
+        <postgres.version>9.1-901.jdbc4</postgres.version>
 		<junit.version>4.11</junit.version>
 		<jackson.version>2.2.3</jackson.version>
 		<!-- Logging -->
@@ -90,6 +94,6 @@
 	<modules>
 		<module>web</module>
 		<module>harvester-api</module>
-	</modules>
+    </modules>
 	<inceptionYear>2013</inceptionYear>
 </project>

@@ -13,7 +13,7 @@
 	<import resource="mvc-view-config.xml" />
 
 	<!-- - POJOs labeled with the @Controller and @Service annotations are auto-detected. -->
-	<context:component-scan base-package="org.opengeoportal.harvester.web" />
+	<context:component-scan base-package="org.opengeoportal.harvester" />
 
 	<mvc:annotation-driven />
 
