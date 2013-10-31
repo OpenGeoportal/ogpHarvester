@@ -16,12 +16,6 @@
 		<a href="#" class="navbar-brand"> <img src="${headerBanner}"
 			class="img-responsive" alt="${headerLogoAlt}" />
 		</a>
-		<security:authorize access="isAnonymous()">
-			<a href="${loginPageUrl}"
-				class="btn btn-default navbar-btn navbar-right"> <spring:message
-					code="header.loginButton" />
-			</a>
-		</security:authorize>
 		<security:authorize access="isAuthenticated()">
 			<spring:url value="/myIngests" var="myIngestsUrl" />
 			<spring:url value="/j_spring_security_logout" var="logoutUrl" />
