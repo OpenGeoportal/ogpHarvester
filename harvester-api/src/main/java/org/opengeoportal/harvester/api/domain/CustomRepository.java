@@ -27,35 +27,43 @@
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
  */
-package org.opengeoportal.harvester.api.service;
+package org.opengeoportal.harvester.api.domain;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opengeoportal.harvester.api.domain.Ingest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
-public class IngestServiceImplTest {
+import javax.persistence.*;
 
-    @Autowired
-    private IngestService ingestService;
+@Entity
+@Access(AccessType.PROPERTY)
+public class CustomRepository extends AbstractPersistable<Long> {
+    @Column(unique = true, nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String url;
+    @Column(nullable = false)
+    private String serviceType;
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+    public String getName() {
+        return name;
+    }
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 }

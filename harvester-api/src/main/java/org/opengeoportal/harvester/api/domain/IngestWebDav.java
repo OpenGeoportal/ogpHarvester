@@ -27,35 +27,36 @@
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
  */
-package org.opengeoportal.harvester.api.service;
+package org.opengeoportal.harvester.api.domain;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.opengeoportal.harvester.api.domain.Ingest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import javax.persistence.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
-public class IngestServiceImplTest {
+@Entity
+@Access(AccessType.PROPERTY)
+@DiscriminatorValue("WEBDAV")
+public class IngestWebDav extends Ingest {
+    @Column
+    private Date dateFrom;
 
-    @Autowired
-    private IngestService ingestService;
+    @Column
+    private Date dateTo;
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+    public Date getDateFrom() {
+        return dateFrom;
+    }
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
+    }
+
+    public Date getDateTo() {
+        return dateTo;
+    }
+
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
     }
 }

@@ -34,6 +34,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -45,17 +46,17 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-public class IngestServiceImplTest {
+public class CustomRepositoryServiceImplTest {
 
     @Autowired
-    private IngestService ingestService;
+    private CustomRepositoryService customRepositoryService;
 
     @Test
-    @DatabaseSetup("ingestData.xml")
+    @DatabaseSetup("customRepositoryData.xml")
     public void testFindIngest() {
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
+        CustomRepository customRepository = customRepositoryService.findByName("repo1");
+        Assert.assertNotNull(customRepository);
+        Assert.assertEquals("repo1", customRepository.getName());
     }
 }

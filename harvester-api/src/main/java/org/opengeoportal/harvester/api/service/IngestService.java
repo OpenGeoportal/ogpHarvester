@@ -33,7 +33,7 @@ import org.opengeoportal.harvester.api.domain.Ingest;
 
 public interface IngestService {
 
-    public Ingest save(Ingest shop);
+    public Ingest save(Ingest ingest);
     public void delete(Long id);
     public Ingest findByName(String name);
 }

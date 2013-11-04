@@ -29,56 +29,83 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
 
 @Entity
-@Inheritance (strategy=InheritanceType.SINGLE_TABLE)
 @Access(AccessType.PROPERTY)
-public abstract class Ingest extends AbstractPersistable<Long> {
-    @Column(unique = true, nullable = false)
-    private String name;
+@DiscriminatorValue("CSW")
+public class IngestCsw extends Ingest {
+    @Column
+    private Date dateFrom;
+    @Column
+    private Date dateTo;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date beginDate;
+    @Column
+    private String location;
+    @Column
+    private String title;
+    @Column
+    private String subject;
+    @Column
+    private String freeText;
 
-    private String frequency;
+    @Column
+    private String customCswQuery;
 
-    @Column(nullable = false)
-    private String url;
-
-    public String getName() {
-        return name;
+    public Date getDateFrom() {
+        return dateFrom;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDateFrom(Date dateFrom) {
+        this.dateFrom = dateFrom;
     }
 
-    public String getUrl() {
-        return url;
+    public Date getDateTo() {
+        return dateTo;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setDateTo(Date dateTo) {
+        this.dateTo = dateTo;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
+    public String getLocation() {
+        return location;
     }
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public String getFrequency() {
-        return frequency;
+    public String getTitle() {
+        return title;
     }
 
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getFreeText() {
+        return freeText;
+    }
+
+    public void setFreeText(String freeText) {
+        this.freeText = freeText;
+    }
+
+    public String getCustomCswQuery() {
+        return customCswQuery;
+    }
+
+    public void setCustomCswQuery(String customCswQuery) {
+        this.customCswQuery = customCswQuery;
     }
 }

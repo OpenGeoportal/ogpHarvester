@@ -31,11 +31,11 @@ package org.opengeoportal.harvester.api.dao;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -43,6 +43,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
@@ -52,6 +53,7 @@ public class IngestRepositoryTest {
     @Autowired
     private IngestRepository ingestRepository;
 
+    @Test
     @DatabaseSetup("ingestData.xml")
     public void testFindIngest() {
 
@@ -62,30 +64,32 @@ public class IngestRepositoryTest {
 
     @Test
     @DatabaseSetup("ingestData.xml")
-    @ExpectedDatabase("afterDeleteIngestData.xml")
     public void testDeleteIngest() {
         ingestRepository.delete(1L);
+
+        List<Ingest> ingests = ingestRepository.findAll();
+        Assert.assertEquals(1, ingests.size());
     }
 
     @Test
     @DatabaseSetup("ingestData.xml")
-    @ExpectedDatabase("afterUpdateIngestData.xml")
     public void testUpdateIngest() {
 
         Ingest ingest = ingestRepository.findByName("ingest2");
         ingest.setName("ingest2 changed");
-        ingestRepository.save(ingest);
+        Ingest ingestSaved = ingestRepository.save(ingest);
+
+        Assert.assertEquals("ingest2 changed", ingestSaved.getName());
     }
 
     @Test
-    public void testInsertUser() {
-
-        Ingest ingest = new Ingest();
+    public void testInsertIngest() {
+        Ingest ingest = new IngestOGP();
         ingest.setName("ingest3");
         ingest.setUrl("http://ingest3");
         ingest.setBeginDate(new Date());
         ingest.setFrequency("dayly");
-        Ingest ingestCreated = ingestRepository.saveAndFlush(ingest);
+        Ingest ingestCreated = ingestRepository.save(ingest);
 
         Assert.assertNotNull(ingestCreated);
 

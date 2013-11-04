@@ -29,56 +29,63 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
 
 @Entity
-@Inheritance (strategy=InheritanceType.SINGLE_TABLE)
 @Access(AccessType.PROPERTY)
-public abstract class Ingest extends AbstractPersistable<Long> {
-    @Column(unique = true, nullable = false)
-    private String name;
+@DiscriminatorValue("GN")
+public class IngestGeonetwork extends Ingest {
+    @Column
+    private String title;
+    @Column
+    private String keyword;
+    @Column
+    private String abstractText;
+    @Column
+    private String freeText;
+    @Column
+    private String geonetworkSource;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date beginDate;
-
-    private String frequency;
-
-    @Column(nullable = false)
-    private String url;
-
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getUrl() {
-        return url;
+    public String getKeyword() {
+        return keyword;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
-    public Date getBeginDate() {
-        return beginDate;
+    public String getAbstractText() {
+        return abstractText;
     }
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
+    public void setAbstractText(String abstractText) {
+        this.abstractText = abstractText;
     }
 
-    public String getFrequency() {
-        return frequency;
+    public String getFreeText() {
+        return freeText;
     }
 
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
+    public void setFreeText(String freeText) {
+        this.freeText = freeText;
+    }
+
+    public String getGeonetworkSource() {
+        return geonetworkSource;
+    }
+
+    public void setGeonetworkSource(String geonetworkSource) {
+        this.geonetworkSource = geonetworkSource;
     }
 }

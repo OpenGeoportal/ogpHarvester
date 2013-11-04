@@ -29,33 +29,36 @@
  */
 package org.opengeoportal.harvester.api.service;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
+import org.opengeoportal.harvester.api.dao.IngestRepository;
+import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
-@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
-public class IngestServiceImplTest {
+import javax.annotation.Resource;
 
-    @Autowired
-    private IngestService ingestService;
+@Service
+public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+    @Resource
+    private CustomRepositoryRepository customRepositoryRepository;
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
+    @Override
+    @Transactional
+    public CustomRepository save(CustomRepository customRepository) {
+        return customRepositoryRepository.save(customRepository);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        customRepositoryRepository.delete(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public CustomRepository findByName(String name) {
+        return customRepositoryRepository.findByName(name);
     }
 }

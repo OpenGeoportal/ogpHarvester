@@ -27,35 +27,63 @@
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
  */
-package org.opengeoportal.harvester.api.service;
+package org.opengeoportal.harvester.api.dao;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 
+import java.util.List;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
-public class IngestServiceImplTest {
+public class CustomRepositoryTest {
 
     @Autowired
-    private IngestService ingestService;
+    private CustomRepositoryRepository customRepositoryRepository;
 
     @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+    @DatabaseSetup("customRepositoryData.xml")
+    public void testFindCustomRepository() {
+        CustomRepository customRepository1 = new CustomRepository();
+        customRepository1.setUrl("");
+        CustomRepository customRepository = customRepositoryRepository.findOne(1L);
+        Assert.assertNotNull(customRepository);
+        Assert.assertEquals("repo1", customRepository.getName());
+    }
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
+    @Test
+    @DatabaseSetup("customRepositoryData.xml")
+    public void testDeleteCustomRepository() {
+        customRepositoryRepository.delete(1L);
+
+        List<CustomRepository> ingests = customRepositoryRepository.findAll();
+        Assert.assertEquals(1, ingests.size());
+    }
+
+    @Test
+    @DatabaseSetup("customRepositoryData.xml")
+    public void testUpdateCustomRepository() {
+
+        CustomRepository customRepository = customRepositoryRepository.findByName("repo2");
+        customRepository.setName("repo2 changed");
+        CustomRepository customRepositorySaved = customRepositoryRepository.save(customRepository);
+
+        Assert.assertEquals("repo2 changed", customRepositorySaved.getName());
+    }
+
+    @Test
+    public void testInsertCustomRepository() {
+
     }
 }
