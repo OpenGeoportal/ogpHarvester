@@ -30,9 +30,13 @@
 package org.opengeoportal.harvester.api.service;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface CustomRepositoryService {
     public CustomRepository save(CustomRepository customRepository);
     public void delete(Long id);
+
     public CustomRepository findByName(String name);
+    public Page<CustomRepository> findAll(Pageable pageable);
 }

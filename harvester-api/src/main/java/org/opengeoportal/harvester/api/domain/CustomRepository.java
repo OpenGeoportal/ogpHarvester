@@ -34,7 +34,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 import javax.persistence.*;
 
 @Entity
-@Access(AccessType.PROPERTY)
 public class CustomRepository extends AbstractPersistable<Long> {
     @Column(unique = true, nullable = false)
     private String name;

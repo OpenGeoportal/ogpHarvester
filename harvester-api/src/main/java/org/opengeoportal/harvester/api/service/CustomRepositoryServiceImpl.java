@@ -30,9 +30,9 @@
 package org.opengeoportal.harvester.api.service;
 
 import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
-import org.opengeoportal.harvester.api.dao.IngestRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
-import org.opengeoportal.harvester.api.domain.Ingest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,5 +60,12 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
     @Transactional(readOnly = true)
     public CustomRepository findByName(String name) {
         return customRepositoryRepository.findByName(name);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CustomRepository> findAll(Pageable pageable) {
+        Page<CustomRepository> page = customRepositoryRepository.findAll(pageable);
+        return page;
     }
 }

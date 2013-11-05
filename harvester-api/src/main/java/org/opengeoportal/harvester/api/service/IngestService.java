@@ -30,10 +30,13 @@
 package org.opengeoportal.harvester.api.service;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface IngestService {
-
     public Ingest save(Ingest ingest);
     public void delete(Long id);
+
     public Ingest findByName(String name);
+    public Page<Ingest> findAll(Pageable pageable);
 }

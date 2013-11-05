@@ -31,13 +31,13 @@ package org.opengeoportal.harvester.api.domain;
 
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.util.Assert;
 
 import javax.persistence.*;
 import java.util.*;
 
 @Entity
 @Inheritance (strategy=InheritanceType.SINGLE_TABLE)
-@Access(AccessType.PROPERTY)
 public abstract class Ingest extends AbstractPersistable<Long> {
     @Column(unique = true, nullable = false)
     private String name;
@@ -49,6 +49,12 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 
     @Column(nullable = false)
     private String url;
+
+    @ElementCollection
+    private Set<String> requiredFields = new HashSet<String>();
+
+    @Transient
+    protected Set<String> validRequiredFields = new HashSet<String>();
 
     public String getName() {
         return name;
@@ -81,4 +87,35 @@ public abstract class Ingest extends AbstractPersistable<Long> {
     public void setFrequency(String frequency) {
         this.frequency = frequency;
     }
+
+    /**
+     * Sets the attribute with the given name to the given value.
+     *
+     * @param field must not be {@literal null} or empty.
+     */
+    public void addRequiredField(String field) {
+        Assert.hasText(field);
+
+        if (validRequiredFields.contains(field)) requiredFields.add(field);
+    }
+
+    /**
+     * Returns all the required fields of the {@link Ingest}.
+     *
+     * @return
+     */
+    public Set<String> getRequiredFields() {
+        return Collections.unmodifiableSet(requiredFields);
+    }
+
+
+    /**
+     * Returns all the valid required fields that can be added to the {@link Ingest}.
+     *
+     * @return
+     */
+    public Set<String> getValidRequiredFields() {
+        return Collections.unmodifiableSet(validRequiredFields);
+    }
+
 }

@@ -40,13 +40,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
+@Transactional
 public class CustomRepositoryTest {
 
     @Autowired
@@ -84,6 +90,17 @@ public class CustomRepositoryTest {
 
     @Test
     public void testInsertCustomRepository() {
+        CustomRepository customRepository = new CustomRepository();
+        customRepository.setName("repo3");
+        customRepository.setUrl("http://repo3");
+        customRepository.setServiceType("OGP");
 
+        CustomRepository customRepositoryCreated = customRepositoryRepository.save(customRepository);
+
+        Assert.assertNotNull(customRepositoryCreated);
+
+        CustomRepository customRepositoryRetrieved = customRepositoryRepository.findByName("repo3");
+
+        Assert.assertEquals(customRepositoryCreated, customRepositoryRetrieved);
     }
 }

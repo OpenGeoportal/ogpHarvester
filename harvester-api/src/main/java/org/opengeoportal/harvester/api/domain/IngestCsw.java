@@ -30,10 +30,11 @@
 package org.opengeoportal.harvester.api.domain;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 
 @Entity
-@Access(AccessType.PROPERTY)
 @DiscriminatorValue("CSW")
 public class IngestCsw extends Ingest {
     @Column
@@ -52,6 +53,17 @@ public class IngestCsw extends Ingest {
 
     @Column
     private String customCswQuery;
+
+    public IngestCsw() {
+        super();
+        validRequiredFields = new HashSet<String>(
+                Arrays.asList(
+                        new String[]{
+                                "geographicExtent", "themeKeyword", "placeKeyword",
+                                "topic", "dateOfContent", "originator",
+                                "dataType", "dataRepository"}));
+    }
+
 
     public Date getDateFrom() {
         return dateFrom;

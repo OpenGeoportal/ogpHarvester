@@ -2,4 +2,5 @@
 <dataset>
     <ingest id="1" name="ingest1" url="http://ingest1" beginDate="2010-10-01" frequency="dayly" dtype="OGP" excludeRestrictedData="false" />
     <ingest id="2" name="ingest2" url="http://ingest2" beginDate="2010-10-01" frequency="dayly" dtype="OGP" excludeRestrictedData="false" />
+    <ingest id="3" name="ingest3" url="http://ingest3" beginDate="2010-10-01" frequency="dayly" dtype="OGP" excludeRestrictedData="false" />
 </dataset>

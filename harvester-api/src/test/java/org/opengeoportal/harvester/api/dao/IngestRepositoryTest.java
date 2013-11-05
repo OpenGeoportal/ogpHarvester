@@ -41,6 +41,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -48,7 +51,10 @@ import java.util.List;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
+@Transactional
 public class IngestRepositoryTest {
     @Autowired
     private IngestRepository ingestRepository;
@@ -89,6 +95,8 @@ public class IngestRepositoryTest {
         ingest.setUrl("http://ingest3");
         ingest.setBeginDate(new Date());
         ingest.setFrequency("dayly");
+        ingest.addRequiredField("themeKeyword");
+
         Ingest ingestCreated = ingestRepository.save(ingest);
 
         Assert.assertNotNull(ingestCreated);

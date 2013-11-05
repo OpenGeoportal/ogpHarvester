@@ -35,17 +35,24 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
-import org.opengeoportal.harvester.api.domain.Ingest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
 public class CustomRepositoryServiceImplTest {
 
     @Autowired
@@ -58,5 +65,22 @@ public class CustomRepositoryServiceImplTest {
         CustomRepository customRepository = customRepositoryService.findByName("repo1");
         Assert.assertNotNull(customRepository);
         Assert.assertEquals("repo1", customRepository.getName());
+    }
+
+
+    @Test
+    @DatabaseSetup("customRepositoryData.xml")
+    public void testFindAll() {
+        PageRequest pageable = new PageRequest(0, 2);
+
+        Page<CustomRepository> page = customRepositoryService.findAll(pageable);
+        Assert.assertNotNull(page);
+
+        Assert.assertEquals(3, page.getTotalPages());
+        Assert.assertEquals(2, page.getNumberOfElements());
+        Assert.assertEquals(5, page.getTotalElements());
+
+        List<CustomRepository> customRepositories = page.getContent();
+        Assert.assertEquals(2, customRepositories.size());
     }
 }

@@ -35,7 +35,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 @Entity
-@Access(AccessType.PROPERTY)
 @DiscriminatorValue("WEBDAV")
 public class IngestWebDav extends Ingest {
     @Column
@@ -43,6 +42,17 @@ public class IngestWebDav extends Ingest {
 
     @Column
     private Date dateTo;
+
+
+    public IngestWebDav() {
+        super();
+        validRequiredFields = new HashSet<String>(
+                Arrays.asList(
+                        new String[]{
+                                "geographicExtent", "themeKeyword", "placeKeyword",
+                                "topic", "dateOfContent", "originator",
+                                "dataType", "dataRepository"}));
+    }
 
     public Date getDateFrom() {
         return dateFrom;

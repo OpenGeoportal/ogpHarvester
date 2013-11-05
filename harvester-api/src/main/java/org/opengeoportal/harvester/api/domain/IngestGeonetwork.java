@@ -35,7 +35,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 @Entity
-@Access(AccessType.PROPERTY)
 @DiscriminatorValue("GN")
 public class IngestGeonetwork extends Ingest {
     @Column
@@ -48,6 +47,17 @@ public class IngestGeonetwork extends Ingest {
     private String freeText;
     @Column
     private String geonetworkSource;
+
+
+    public IngestGeonetwork() {
+        super();
+        validRequiredFields = new HashSet<String>(
+                Arrays.asList(
+                        new String[]{
+                                "geographicExtent", "themeKeyword", "placeKeyword",
+                                "topic", "dateOfContent", "originator",
+                                "dataType", "dataRepository", "creationDate"}));
+    }
 
     public String getTitle() {
         return title;

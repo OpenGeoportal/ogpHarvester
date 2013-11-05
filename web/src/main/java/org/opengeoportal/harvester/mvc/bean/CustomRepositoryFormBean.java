@@ -27,45 +27,34 @@
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
  */
-package org.opengeoportal.harvester.api.service;
+package org.opengeoportal.harvester.mvc.bean;
 
-import org.opengeoportal.harvester.api.dao.IngestRepository;
-import org.opengeoportal.harvester.api.domain.Ingest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+public class CustomRepositoryFormBean {
+    private String name;
+    private String url;
+    private String type;
 
-import javax.annotation.Resource;
-
-@Service
-public class IngestServiceImpl implements IngestService {
-
-    @Resource
-    private IngestRepository ingestRepository;
-
-    @Override
-    @Transactional
-    public Ingest save(Ingest ingest) {
-        return ingestRepository.save(ingest);
+    public String getName() {
+        return name;
     }
 
-    @Override
-    @Transactional
-    public void delete(Long id) {
-        ingestRepository.delete(id);
+    public void setName(String name) {
+        this.name = name;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Ingest findByName(String name) {
-        return ingestRepository.findByName(name);
+    public String getUrl() {
+        return url;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public Page<Ingest> findAll(Pageable pageable) {
-        Page<Ingest> page = ingestRepository.findAll(pageable);
-        return page;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -35,7 +35,6 @@ import java.util.Date;
 import java.util.HashSet;
 
 @Entity
-@Access(AccessType.PROPERTY)
 @DiscriminatorValue("OGP")
 public class IngestOGP extends Ingest {
     @Column
@@ -78,6 +77,15 @@ public class IngestOGP extends Ingest {
     @Column
     private Double bboxSouth;
 
+    public IngestOGP() {
+        super();
+        validRequiredFields = new HashSet<String>(
+                Arrays.asList(
+                        new String[]{
+                                "geographicExtent", "themeKeyword", "placeKeyword",
+                                "webServices", "topic", "dateOfContent",
+                                "originator", "dataType", "dataRepository" }));
+    }
 
     public Date getDateFrom() {
         return dateFrom;

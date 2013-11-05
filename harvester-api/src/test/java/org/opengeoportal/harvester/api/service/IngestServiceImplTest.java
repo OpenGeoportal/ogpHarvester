@@ -36,15 +36,25 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class })
+        DbUnitTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class})
 public class IngestServiceImplTest {
 
     @Autowired
@@ -57,5 +67,22 @@ public class IngestServiceImplTest {
         Ingest ingest = ingestService.findByName("ingest1");
         Assert.assertNotNull(ingest);
         Assert.assertEquals("ingest1", ingest.getName());
+    }
+
+
+    @Test
+    @DatabaseSetup("ingestData.xml")
+    public void testFindAll() {
+        PageRequest pageable = new PageRequest(0, 2);
+
+        Page<Ingest> page = ingestService.findAll(pageable);
+        Assert.assertNotNull(page);
+
+        Assert.assertEquals(2, page.getTotalPages());
+        Assert.assertEquals(2, page.getNumberOfElements());
+        Assert.assertEquals(3, page.getTotalElements());
+
+        List<Ingest> ingests = page.getContent();
+        Assert.assertEquals(2, ingests.size());
     }
 }

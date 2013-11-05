@@ -7,7 +7,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <context:component-scan base-package="org.opengeoportal.harvester.api" />
+    <context:component-scan base-package="org.opengeoportal.harvester.api.service" />
     <context:annotation-config />
 
     <tx:annotation-driven />
@@ -19,38 +19,18 @@
                       entity-manager-factory-ref="entityManagerFactory"
                       transaction-manager-ref="transactionManager"/>
 
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="org.opengeoportal.harvester.api.domain"/>
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="access" value="PROPERTY"/>
-                <entry key="hibernate.id.new_generator_mappings" value="true"/>
-                <entry key="hibernate.cache.use_second_level_cache" value="false"/>
-                <entry key="hibernate.jdbc.batch_size" value="3"/>
-                <entry key="hibernate.jdbc.batch_versioned_data" value="true"/>
-            </map>
-        </property>
-    </bean>
-
-
-    <bean lazy-init="true" id="jpaVendorAdapter"
-          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="generateDdl" ref="generateDdl"/>
-        <property name="showSql" value="true"/>
-        <property name="database" ref="jpaVendorAdapterDatabaseParam"/>
-    </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
     </bean>
 
-    <bean id="jpaVendorAdapterDatabaseParam" class="java.lang.String">
-        <constructor-arg value="H2"/>
-    </bean>
-
-    <bean id="generateDdl" class="java.lang.String">
-        <constructor-arg value="true"/>
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="packagesToScan" value="org.opengeoportal.harvester.api.domain" />
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="database" value="H2" />
+                <property name="generateDdl" value="true" />
+            </bean>
+        </property>
     </bean>
 </beans>
