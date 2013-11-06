@@ -1,0 +1,24 @@
+<div ng-controller="ManageIngestsCtrl" class="col-md-9 right-column ingest-list">
+<h1 translate="MANAGE_INGESTS.HEADER"></h1>
+<table class="table">
+	<thead>
+		<tr>
+			<th>{{'MANAGE_INGESTS.LIST_HEADER_NAME' | translate}}</th>
+			<th>{{'MANAGE_INGESTS.LIST_HEADER_LAST' | translate}}</th>
+			<th>{{'MANAGE_INGESTS.LIST_HEADER_NEXT' | translate}}</th>
+			<th>{{'MANAGE_INGESTS.LIST_HEADER_REPOS' | translate}}</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="ingest in data.ingests">
+			<td class="ingest-name">{{ingest.name}}</td>
+			<td>{{ingest.lastRun}}</td>
+			<td>{{ingest.nextRun}}</td>
+			<td>{{ingest.repositories}}</td>
+			<td><a href="#/manageIngests/view/{{ingest.id}}" translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" class="btn btn-default btn-md" ></button></td>
+
+		</tr>
+	</tbody>
+</table>
+</div> 

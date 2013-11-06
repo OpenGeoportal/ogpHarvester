@@ -8,7 +8,7 @@
 <%@ taglib uri="http://www.springframework.org/security/tags"
 	prefix="security"%>
 <!DOCTYPE html>
-<html>
+<html ng-app="ogpHarvester">
 <head>
 <title>Open GeoPortal Harvester</title>
 
@@ -82,5 +82,34 @@
 		<!-- //row -->
 	</div>
 	<!-- //container -->
+	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular.js"
+		var="angularjsUrl" />
+	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-route.js"
+		var="angularRouteUrl" />
+	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-resource.js"
+		var="angularResourceUrl" />
+	<spring:url value="/static/js/angular-translate/angular-translate.js"
+		var="angularTranslateUrl" />
+	<spring:url
+		value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
+		var="angularTranslateLoaderStaticFilesUrl" />
+	<spring:url value="/static/js/angularjs/ogpHarvester.js"
+		var="ogpHarvesterUrl" />
+	<spring:url value="/static/js/angularjs/services.js" var="servicesUrl" />
+	<spring:url value="/static/js/angularjs/controllers.js"
+		var="controllersUrl" />
+	<spring:url value="/static/js/angularjs/filters.js" var="filtersUrl" />
+	<spring:url value="/static/js/angularjs/directives.js"
+		var="directivesUrl" />
+	<script src="${angularjsUrl}"></script>
+	<script src="${angularRouteUrl}"></script>
+	<script src="${angularResourceUrl}"></script>
+	<script src="${angularTranslateUrl}"></script>
+	<script src="${angularTranslateLoaderStaticFilesUrl}"></script>
+	<script src="${ogpHarvesterUrl}"></script>
+	<script src="${servicesUrl}"></script>
+	<script src="${controllersUrl}"></script>
+	<script src="${filtersUrl}"></script>
+	<script src="${directivesUrl}"></script>
 </body>
 </html>

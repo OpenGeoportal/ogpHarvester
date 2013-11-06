@@ -288,7 +288,12 @@ input.form-control {
 	min-height: 77px;
 	border-bottom: 1px solid #eeeeee;
 	padding-bottom: 40px;
-	margin-bottom: 20px;	
+	margin-bottom: 20px;		
+}
 
-	
+.ingest-name {
+	text-decoration: underline;
+}
+.ingest-list .btn-default {
+	font-size: 14px;
 }

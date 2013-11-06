@@ -15,18 +15,33 @@
 	<!-- - POJOs labeled with the @Controller and @Service annotations are auto-detected. -->
 	<context:component-scan base-package="org.opengeoportal.harvester" />
 
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+						<property name="dateFormat">
+							<bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat" />
+								
+						</property>
+					</bean>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 
 	<!-- all resources inside folder src/main/webapp/resources are mapped so 
 		they can be refered to inside JSP files (see header.jsp for more details) -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />
+	<mvc:resources mapping="/static/**" location="/static/" />
 
 	<!-- uses WebJars so Javascript and CSS libs can be declared as Maven dependencies 
 		(Bootstrap, jQuery...) -->
 	<mvc:resources mapping="/webjars/**"
 		location="classpath:/META-INF/resources/webjars/" />
 
-	<mvc:view-controller path="/ingest"/>
+	<mvc:view-controller path="/ingest" />
 
 	<!-- serve static resources (*.html, ...) from src/main/webapp/ -->
 	<mvc:default-servlet-handler />
