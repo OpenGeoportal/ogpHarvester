@@ -52,7 +52,7 @@ public class ManageIngestController {
 		return "ngView";
 	}
 
-	@RequestMapping("/ingests")
+	@RequestMapping("/rest/ingests")
 	@ResponseBody
 	public List<Map<String, Object>> getAllIngests(ModelMap model) {
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
@@ -84,7 +84,7 @@ public class ManageIngestController {
 		return resultList;
 	}
 	
-	@RequestMapping("/ingests/{id}")
+	@RequestMapping("/rest/ingests/{id}")
 	@ResponseBody
 	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable String id) {
 		Map<String, Object> ingest = new HashMap<String, Object>();

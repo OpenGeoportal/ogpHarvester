@@ -6,6 +6,16 @@
 		"LIST_HEADER_NEXT": "Next Ingest",
 		"LIST_HEADER_REPOS": "Repositories",
 		"VIEW_REPORT_BUTTON": "View Report"
+	},
+	"INGEST_DETAILS": {
+		"HEADER": "Ingest Report, {{name}} - {{lastRun}}",
+		"PASSED_HEADER": "Passed:",
+		"WARNING_HEADER": "Warning:",
+		"FAILED_HEADER": "Failed:",
+		"RECORD_COUNT": "{{count}} Records",
+		"PASSED_TOOLTIP": "Please add the passed tooltip text",
+		"WARNING_TOOLTIP": "Please add the waring tooltip text",
+		"FAILED_TOOLTIP": "Please add the failed tooltip text"
 	}
 
 }

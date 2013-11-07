@@ -1,3 +1,24 @@
-<div ng-controller="IngestDetailsCtrl" class="right-column md-9 ingest-details" >
-	{{params}}
+<div ng-controller="IngestDetailsCtrl" class="right-column col-md-9 ingest-details">
+	<h1 translate="INGEST_DETAILS.HEADER" translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}"></h1>
+	<div class="panel panel-success">
+		<div class="panel-heading">
+			<strong class="bold" translate="INGEST_DETAILS.PASSED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalPassed}}
+			<a data-toggle="tooltip" title="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="panel-body">
+
+		</div>
+	</div>
+	<div class="panel panel-warning">
+		<div class="panel-heading">
+			<strong class="bold" translate="INGEST_DETAILS.WARNING_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="panel-body"></div>
+	</div>
+	<div class="panel panel-danger">
+		<div class="panel-heading">
+			<strong class="bold" translate="INGEST_DETAILS.FAILED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="panel-body"></div>
+	</div>
 </div>

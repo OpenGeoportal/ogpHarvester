@@ -15,7 +15,7 @@ angular.module(
 				templateUrl: '../resources/ingestsList.html',
 				controller: 'ManageIngestsCtrl'
 			});
-			$routeProvider.when('/manageIngests/view/:idIngest', {
+			$routeProvider.when('/manageIngests/view/:id', {
 				templateUrl: '../resources/ingestDetails.html',
 				controller: 'IngestDetailsCtrl'
 
