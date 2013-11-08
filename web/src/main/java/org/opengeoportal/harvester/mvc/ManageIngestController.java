@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.AbstractMap.SimpleEntry; 
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -108,6 +109,49 @@ public class ManageIngestController {
 		errorsMap.put("requiredFields", 745);
 		errorsMap.put("webServiceErrors", 120);
 		errorsMap.put("systemErrors", 58);
+		List<SimpleEntry<String, Integer>> requiredFieldSubcat = new ArrayList<SimpleEntry<String,Integer>>();
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("extent", 245));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("themeKeyword", 105));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("placeKeyword", 200));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("topic", 125));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dateOfContent", 400));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("originator", 32));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataType", 400));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataRepository", 320));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("editDate", 126));
+		
+		errorsMap.put("requiredFieldsList", requiredFieldSubcat);
+		
+		List<SimpleEntry<String, Integer>> webServiceErrorList = new ArrayList<SimpleEntry<String,Integer>>();
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error1", 120));
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error2", 120));
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error3", 120));
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error4", 120));
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error5", 120));
+		webServiceErrorList.add(new SimpleEntry<String, Integer>("error6", 120));
+		errorsMap.put("webServiceErrorList", webServiceErrorList);
+		
+		List<SimpleEntry<String, Integer>> systemErrorList = new ArrayList<SimpleEntry<String,Integer>>();
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror1", 120));
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror2", 120));
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror3", 120));
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror4", 120));
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror5", 120));
+		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
+		errorsMap.put("systemErrorList", systemErrorList);
+		
+
+		
+		
+		
+
+		
+		
+		
+		
+		
+		
+		
 		ingest.put("error", errorsMap);
 		
 		

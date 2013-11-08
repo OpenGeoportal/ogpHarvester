@@ -22,6 +22,61 @@ angular.module('ogpHarvester.controllers')
 				})
 			});
 
+			var isSelectedAll = function($event, elementList) {
+				var allSelected = elementList !== undefined;
+				for (var i = 0; allSelected && (i < elementList.length); i++) {
+					if (!elementList[i].isChecked) {
+						allSelected = false;
+					}
+				}
+				return allSelected;
+			}
+
+			$scope.isSelectedAll = isSelectedAll;
+
+			var selectAll = function($event, elementList) {
+				var checkbox = $event.target;
+				if (elementList !== undefined) {
+					for (var i = 0; i < elementList.length; i++) {
+						elementList[i].isChecked = checkbox.checked;
+					}
+				}
+			}
+			$scope.selectAll = selectAll;
+
+			var anySelected = function(listOfList) {
+				var mergedList = [];
+				var oneSelected = false;
+				if (listOfList !== undefined) {
+					for (var i = 0; i < listOfList.length; i++) {
+						if (listOfList[i] !== undefined) {
+							$.merge(mergedList, listOfList[i]);
+						}
+					}
+					for (var i = 0; i < mergedList.length && !oneSelected; i++) {
+						if (mergedList[i].isChecked) {
+							oneSelected = true;
+						}
+					}
+				}
+				return oneSelected;
+			}
+			$scope.anySelected = anySelected;
+
+			var downloadMetadata = function(listOfList) {
+				var selected = [];
+				for (var i = 0; i < listOfList.length; i++) {
+					$.merge(selected, $(listOfList[i]).map(function() {
+						if (this.isChecked) {
+							return this.key;
+						}
+					}));
+				}
+				console.log(selected);
+			}
+			$scope.downloadMetadata = downloadMetadata;
+
+
 
 			$scope.params = $routeParams;
 			var ingestDetails = Ingest.get({
@@ -37,6 +92,19 @@ angular.module('ogpHarvester.controllers')
 				$scope.totalFailed = {
 					count: ingestDetails.error.requiredFields + ingestDetails.error.webServiceErrors + ingestDetails.error.systemErrors
 				};
+				$scope.ingestDetails.error.allRequired = false;
+				$scope.ingestDetails.error.allWebservice = false;
+				$scope.ingestDetails.error.allSystem = false;
+
+				$scope.$watch('ingestDetails.error.allRequired', function(value) {
+					angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
+						requiredField.isChecked = value;
+					});
+				});
+				angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
+					$scope.$watch()
+
+				});
 			});
 		}
 	]);
