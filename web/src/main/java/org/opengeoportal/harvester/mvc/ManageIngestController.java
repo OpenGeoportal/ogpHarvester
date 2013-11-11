@@ -29,25 +29,22 @@
  */
 package org.opengeoportal.harvester.mvc;
 
-import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.AbstractMap.SimpleEntry; 
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author jlrodriguez

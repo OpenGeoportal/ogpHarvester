@@ -3,6 +3,8 @@
 /* Controllers */
 
 angular.module('ogpHarvester.controllers', []);
+
+
 angular.module("ogpHarvester.controllers")
 	.controller('ManageIngestsCtrl', ['$scope', 'Ingest',
 		function($scope, Ingest) {
@@ -112,5 +114,19 @@ angular.module('ogpHarvester.controllers')
 
 				});
 			});
+		}
+	]);
+
+/** Menu controller */
+angular.module('ogpHarvester.controllers').controller('MenuCtrl', ['$scope', '$location',
+		function($scope, $location) {
+			$scope.getClass = function(baseUrl, path) {
+				var loc = $location.absUrl().substring($location.absUrl().indexOf(baseUrl) + baseUrl.length - 1, $location.absUrl().length);
+				 if (loc.substr(0, path.length) == path) {
+      				return "active";
+    			} else {
+      				return "";
+    			}
+			}
 		}
 	]);

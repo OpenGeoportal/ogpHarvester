@@ -45,29 +45,30 @@
 	<!-- Container -->
 	<div class="container">
 		<div class="row">
-			<div class="col-md-3">
+			<div class="col-md-3" ng-controller="MenuCtrl">
 				<div class="well sidebar-nav">
 					<ul class="nav nav-list">
-						<spring:url value="/uploadMetadata" var="${uploadMetadataURL}" />
-						<spring:url value="/ingestExternal" var="${ingestExternalURL}" />
-						<spring:url value="/manageIngests" var="${manageIngestsURL}" />
-						<spring:url value="/editMetadata" var="${editMetadataURL}" />
-						<spring:url value="/deleteRecords" var="${deleteRecordsURL}" />
-						<spring:url value="/admin" var="${adminURL}" />
+						<spring:url value="/uploadMetadata" var="uploadMetadataURL" />
+						<spring:url value="/ingest" var="ingestExternalURL" />
+						<spring:url value="/manageIngests/" var="manageIngestsURL" />
+						<spring:url value="/editMetadata" var="editMetadataURL" />
+						<spring:url value="/deleteRecords" var="deleteRecordsURL" />
+						<spring:url value="/admin" var="adminURL" />
+						<spring:url value="/" var="baseUrl" />
 
-						<li><a href="${uploadMetadataURL}"> <spring:message
+						<li><a href="${uploadMetadataURL}" ng-class="getClass('${baseUrl}', '/uploadMetadata')"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
-						<li><a href="${ingestExternalURL}" class="active"><spring:message
+						<li><a href="${ingestExternalURL}" ng-class="getClass('${baseUrl}', '/ingest')" ><spring:message
 									code="sidebar.ingestExternal" /></a></li>
-						<li><a href="${manageIngestsURL}"><spring:message
+						<li><a href="${manageIngestsURL}"  ng-class="getClass('${baseUrl}', '/manageIngests/')"><spring:message
 									code="sidebar.manageIngests" /></a></li>
-						<li><a href="${editMetadataURL}"><spring:message
+						<li><a href="${editMetadataURL}" ng-class="getClass('${baseUrl}', '/editMetadata')"><spring:message
 									code="sidebar.editMetadata" /></a></li>
-						<li><a href="${deleteRecordsURL}"><spring:message
+						<li><a href="${deleteRecordsURL}" ng-class="getClass('${baseUrl}', '/deleteRecords')" ><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
-							<li><a href="${adminURL}"><spring:message
+							<li><a href="${adminURL}" ng-class="getClass('${baseUrl}', '/admin')"><spring:message
 										code="sidebar.adminPage" /></a></li>
 						</security:authorize>
 					</ul>

@@ -9,8 +9,9 @@ angular.module(
 		'ogpHarvester.services', 'ogpHarvester.directives',
 		'ogpHarvester.controllers'
 	]).config(
-	['$routeProvider',
-		function($routeProvider) {
+	['$routeProvider', '$locationProvider', 
+		function($routeProvider, $locationProvider) {
+			// $locationProvider.html5Mode(true);
 			$routeProvider.when('/manageIngests', {
 				templateUrl: '../resources/ingestsList.html',
 				controller: 'ManageIngestsCtrl'
