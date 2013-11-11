@@ -29,6 +29,9 @@
  */
 package org.opengeoportal.harvester.mvc;
 
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,11 +39,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.AbstractMap.SimpleEntry; 
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author jlrodriguez
@@ -139,24 +146,24 @@ public class ManageIngestController {
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror5", 120));
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
 		errorsMap.put("systemErrorList", systemErrorList);
-		
-
-		
-		
-		
-
-		
-		
-		
-		
-		
-		
-		
+				
 		ingest.put("error", errorsMap);
-		
-		
-		
+				
 		return ingest;
+	}
+	
+	@RequestMapping("/rest/ingests/{id}/metadata") 
+	public void downloadMetadata(@PathVariable String id, String[] categories, 
+			Writer writer, HttpServletResponse response) {
+		response.setHeader("Content-Type", "text/plain; charset=utf-8");
+		response.setHeader("Content-Disposition", "attachment; filename=metadata_"+id + ".txt");
+		
+		
+		PrintWriter outputWriter = new PrintWriter(writer);
+		
+		for(String category : categories) {
+			outputWriter.println("Category " + category);
+		}
 	}
 
 }

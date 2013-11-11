@@ -64,15 +64,21 @@ angular.module('ogpHarvester.controllers')
 			$scope.anySelected = anySelected;
 
 			var downloadMetadata = function(listOfList) {
+				$('.downloadMetadata').remove();
 				var selected = [];
 				for (var i = 0; i < listOfList.length; i++) {
 					$.merge(selected, $(listOfList[i]).map(function() {
 						if (this.isChecked) {
-							return this.key;
+							return {
+								name: 'categories',
+								value: this.key
+							};
 						}
 					}));
 				}
 				console.log(selected);
+				var url = "../rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected)
+ 				$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>"); 
 			}
 			$scope.downloadMetadata = downloadMetadata;
 
