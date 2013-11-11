@@ -5,6 +5,7 @@
 		<pattern>/fragments*</pattern>
 		<pattern>/static/*</pattern>
 		<pattern>/webjars/*</pattern>
+		<pattern>/resources/*</pattern>
 	</excludes>
 
 	<decorator name="headerFooter" page="headerFooter.jsp">

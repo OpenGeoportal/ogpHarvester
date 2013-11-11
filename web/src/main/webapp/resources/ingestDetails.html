@@ -1,0 +1,110 @@
+<div ng-controller="IngestDetailsCtrl" class="right-column col-md-9 ingest-details">
+	<h1 translate="INGEST_DETAILS.HEADER" translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}"></h1>
+	<p>All required: {{ingestDetails.error.allRequired}}</p>
+	<p>All webservice: {{ingestDetails.error.allWebservice}}</p>
+	<p>All system: {{ingestDetails.error.allSystem}}</p>
+	<div class="custom-panel">
+		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#passedRecordsPanelBody">
+			<span class="glyphicon glyphicon-ok-sign sign passed-sign"></span> 
+			<strong class="bold" translate="INGEST_DETAILS.PASSED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalPassed}}
+			<a data-toggle="tooltip" title="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="custom-panel-body collapse" id="passedRecordsPanelBody">
+			<ul>
+				<li class="odd" translate="INGEST_DETAILS.RESTRICTED_RECORDS" translate-values="{ count: '{{ingestDetails.passed.restrictedRecords}}' }"></li>
+				<li translate="INGEST_DETAILS.PUBLIC_RECORDS" translate-values="{ count: '{{ingestDetails.passed.publicRecords}}' }"></li>
+				<li class="odd" translate="INGEST_DETAILS.VECTOR_RECORDS" translate-values="{ count: '{{ingestDetails.passed.vectorRecords}}' }"></li>
+				<li translate="INGEST_DETAILS.RASTER_RECORDS" translate-values="{ count: '{{ingestDetails.passed.rasterRecords}}' }"></li>
+			</ul>
+		</div>
+	</div>
+	<div class="custom-panel">
+		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#warningRecordsPanelBody">
+			<span class="glyphicon glyphicon-exclamation-sign sign warning-sign"></span> 
+			<strong class="bold" translate="INGEST_DETAILS.WARNING_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="custom-panel-body collapse" id="warningRecordsPanelBody">
+			<ul>
+				<li class="odd"><span translate="INGEST_DETAILS.UNREQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span> <a data-toggle="tooltip" title="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+				<li><span translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS" translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span> <a data-toggle="tooltip" title="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="custom-panel">
+		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#failedRecordsPanelBody">
+			<span class="glyphicon glyphicon-remove-sign sign failed-sign"></span> 
+			<strong class="bold" translate="INGEST_DETAILS.FAILED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		</div>
+		<div class="custom-panel-body collapse" id="failedRecordsPanelBody">
+			<form ng-submit="downloadMetadata([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])">
+				<ul>
+					<li>
+						<div class="custom-panel">
+							<div class="failed-main-check">
+								<input name="allRequired" type="checkbox" ng-checked="isSelectedAll($event, ingestDetails.error.requiredFieldsList)" ng-click="selectAll($event, ingestDetails.error.requiredFieldsList)">
+							</div >
+							<div class="custom-panel-heading odd collapsed" data-toggle="collapse" data-target="#requiredFieldErrors">
+								
+								<span translate="INGEST_DETAILS.REQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.error.requiredFields}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+							</div>
+							<div class="custom-panel-body collapse" id="requiredFieldErrors">
+								<ul>
+									<li ng-repeat="fieldError in ingestDetails.error.requiredFieldsList">
+										<input type="checkbox" 
+											ng-model="fieldError.isChecked"  
+											id="fe-{{fieldError.key}}" />
+										<label for="fe-{{fieldError.key}}" translate="{{ 'INGEST_DETAILS.ERROR_FIELD_'+fieldError.key }}" translate-values="{{fieldError}}"></label>
+									</li>
+								</ul>
+
+							</div>
+						</div>
+					</li>
+					
+					<li>
+						<div class="custom-panel">
+							<div class="failed-main-check">
+								<input name="allWebservice" type="checkbox"  ng-checked="isSelectedAll($event, ingestDetails.error.webServiceErrorList)" ng-click="selectAll($event, ingestDetails.error.webServiceErrorList)">
+							</div >
+							<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#webServiceErrors">
+									<span translate="INGEST_DETAILS.WEB_SERVICE_ERRORS" translate-values="{ count: '{{ingestDetails.error.webServiceErrors}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+							</div>
+							<div class="custom-panel-body collapse" id="webServiceErrors">
+								<ul>
+									<li ng-repeat="webServiceError in ingestDetails.error.webServiceErrorList">
+										<input type="checkbox" name="errors" 
+											ng-model="webServiceError.isChecked" 
+											id="fe-{{webServiceError.key}}"/>
+										<label for="fe-{{webServiceError.key}}" translate="{{ 'INGEST_DETAILS.ERROR_WS_'+webServiceError.key }}" translate-values="{{webServiceError}}"></label>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</li>
+
+					<li>
+						<div class="custom-panel">
+							<div class="failed-main-check">
+								<input name="allSystem" type="checkbox"  ng-checked="isSelectedAll($event, ingestDetails.error.systemErrorList)" ng-click="selectAll($event, ingestDetails.error.systemErrorList)">
+							</div >
+							<div class="custom-panel-heading odd collapsed" data-toggle="collapse" data-target="#systemErrors">
+									<span translate="INGEST_DETAILS.SYSTEM_ERRORS" translate-values="{ count: '{{ingestDetails.error.systemErrors}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+							</div>
+							<div class="custom-panel-body collapse" id="systemErrors">
+								<ul>
+									<li ng-repeat="systemError in ingestDetails.error.systemErrorList">
+										<input type="checkbox" name="errors" ng-model="systemError.isChecked" id="fe-{{systemError.key}}"/>
+										<label for="fe-{{systemError.key}}" translate="{{ 'INGEST_DETAILS.ERROR_SYSTEM_'+systemError.key }}" translate-values="{{systemError}}"></label>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</li>
+
+				</ul>
+				<button translate="INGEST_DETAILS.DOWNLOAD_METADATA" class="btn btn-primary" ng-disabled="!anySelected([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])"></button>
+			</form>
+
+		</div>
+	</div>
+</div>

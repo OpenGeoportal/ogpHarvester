@@ -288,7 +288,59 @@ input.form-control {
 	min-height: 77px;
 	border-bottom: 1px solid #eeeeee;
 	padding-bottom: 40px;
-	margin-bottom: 20px;	
+	margin-bottom: 20px;		
+}
 
-	
+.ingest-name {
+	text-decoration: underline;
+}
+.ingest-list .btn-default {
+	font-size: 14px;
+}
+
+.sign {
+ font-size:18px;
+}
+
+.passed-sign {
+	color: #79ac2b;
+}
+
+.warning-sign {
+	color: #ecaf17;
+}
+
+.failed-sign {
+	color: #df2153;
+}
+
+.ingest-details li {
+	list-style: none;
+	padding: 0.5em;
+	margin: 0.5em;
+}
+
+
+.odd {
+	background-color: #ebf6ff;
+}
+
+#failedRecordsPanelBody .custom-panel {
+	min-height: 0;
+	border: 0;
+}
+
+#failedRecordsPanelBody .custom-panel-heading {
+	padding: 0.5em;
+	margin: 0;
+}
+#failedRecordsPanelBody ul ul {
+	padding-left: 0;
+}
+
+.failed-main-check {
+	float: left;
+	margin: 0.5em;
+	position: relative;
+	left: -2em;
 }

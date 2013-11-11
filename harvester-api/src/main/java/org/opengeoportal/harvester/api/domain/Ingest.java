@@ -39,7 +39,8 @@ import java.util.*;
 @Entity
 @Inheritance (strategy=InheritanceType.SINGLE_TABLE)
 public abstract class Ingest extends AbstractPersistable<Long> {
-    @Column(unique = true, nullable = false)
+ private static final long serialVersionUID = -3390351777452085398L;  
+ @Column(unique = true, nullable = false)
     private String name;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")
