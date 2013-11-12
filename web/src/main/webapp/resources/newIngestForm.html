@@ -1,0 +1,107 @@
+<div class="col-md-9 right-column" ng-controller="NewIngestCtrl" ui-jq="tooltip">
+	<h1 translate="INGEST_FORM.HEADER"></h1>
+    {{ "INGEST_FORM.SUBHEADER" | translate}}
+    <h2 translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
+    <form>
+        <pre>{{ingest | json}}</pre>
+        <div class="form-group col-md-7">
+            <label for="typeOfInstance" translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
+            <select id="typeOfInstance" class="form-control" ng-model="ingest.typeOfInstance" ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList"></select>
+        </div>
+        <div ng-switch on="ingest.typeOfInstance" class="animate-switch-container" id="fagment">
+            <div ng-switch-when="solr">
+                <div class="form-group col-md-7">
+                    <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
+                    <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
+                            ng-options="item.id as item.name for item in catalogOfServicesList"></select>
+                </div>
+
+                <div class="form-group col-md-9">
+                    <label for="solrUrl" translate="INGEST_FORM.SOLR_URL"></label>
+                    <input type="text" id="solrUrl" ng-model="ingest.solrUrl" class="form-control"></input>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="custom-panel">
+                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
+                        data-target="#collapseSorlSearchCriteria">
+                        <h2>
+                            <span translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span> 
+                            <a tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a> <span
+                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
+                        </h2>
+                    </div>
+                    <div class="custom-panel-body collapse in" id="collapseSorlSearchCriteria">
+                        <div class="form-group">
+                            <label translate="INGEST_FORM.EXTENT"></label>
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-globe"></span>
+                            </button> 
+                            <a tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <input type="hidden" ng-model="ingest.extent" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-9">
+                   <label for="themeKeyword" translate="INGEST_FORM.THEME_KEYWORD" ></label> <a 
+                        tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
+                        class="glyphicon glyphicon-question-sign black"></span></a> 
+                    <input class="form-control" id="themeKeyword"
+                        ng-model="ingest.themeKeyword" ></input>
+                </div>
+
+                <div class="form-group col-md-9">
+                    <label for="placeKeyword" translate="INGEST_FORM.PLACE_KEYWORD"></label> <a 
+                        tooltip'{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a>
+                    <input type="text" class="form-control" id="placeKeyword"
+                        ng-model="ingest.placeKeyword" ></input>
+                </div>
+
+                <div class="form-group col-md-7">
+                    <label for=topic translate="INGEST_FORM.TOPIC"></label> <a 
+                        tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a>
+                    <select class="form-control" id="topic" ng-model="ingest.topic" 
+                        ng-options="('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList">
+                        <option value="" translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
+                    </select>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="form-group">
+                    <label translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
+                        tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT" | translate }}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a>
+                    <div class="row no-margin">
+                        <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.rangeFrom" datetimepicker>
+                            <input type="text" class="form-control" ></input>
+                            <span class="input-group-addon"><span
+                                class="glyphicon glyphicon-calendar"></span> </span>
+                        </div> <span 
+                            class="col-md-1 text-center" translate="INGEST_FORM.TO"></span> <div 
+                                class='input-group date col-md-4' id='rangeTo' ng-model="ingest.rangeTo" datetimepicker>
+                            <input type="text" class="form-control"  ></input>
+                            <span class="input-group-addon"><span
+                                class="glyphicon glyphicon-calendar"></span></span>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+            <div ng-switch-when="geonetwork">Geonetwork</div>
+            <div ng-switch-when="csw">CSW</div>
+            <div ng-switch-when="webdav">WebDAV</div>
+        </div>
+
+
+
+    </form>
+</div>
