@@ -83,11 +83,11 @@
 		<!-- //row -->
 	</div>
 	<!-- //container -->
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular.js"
 		var="angularjsUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-route.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular-route.js"
 		var="angularRouteUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-resource.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular-resource.js"
 		var="angularResourceUrl" />
 	<spring:url value="/static/js/angular-translate/angular-translate.js"
 		var="angularTranslateUrl" />
