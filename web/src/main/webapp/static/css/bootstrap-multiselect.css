@@ -5,11 +5,11 @@
 	padding: 0;
 }
 
-.multiselect.dropdown-toggle.btn {
+.multiselect .dropdown-toggle.btn {
     background-color: #F8F8F8;
     border: #808080 1px solid;
     border-radius: 3px;
-	width: 37.5%;
+	width: 100%;
 }
 
 .multiselect .btn-group {
