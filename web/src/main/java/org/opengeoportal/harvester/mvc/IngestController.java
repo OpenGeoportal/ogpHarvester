@@ -17,10 +17,10 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 @SessionAttributes(types = { IngestFormBean.class })
 public class IngestController {
-	@RequestMapping(value = "/")
-	public String mainPage(ModelMap model) {
-		return ingest(model);
-	}
+//	@RequestMapping(value = "/")
+//	public String mainPage(ModelMap model) {
+//		return ingest(model);
+//	}
 	
 	@RequestMapping(value = "/ingest")
 	public String ingest(ModelMap model) {
@@ -145,6 +145,11 @@ public class IngestController {
 					+ " is not valid or cannot be found");
 		}
 		return partialForm;
+	}
+	
+	@RequestMapping ("/")
+	public String angular() {
+		return "ngView";
 	}
 
 }

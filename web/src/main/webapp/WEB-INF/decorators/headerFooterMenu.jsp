@@ -25,6 +25,8 @@
 	var="bootstrapTheme" />
 <link rel="stylesheet" href="${bootstrapTheme}">
 
+<spring:url value="/static/css/animate-custom.css" var="animateCss" />
+<link rel="stylesheet" href="${animateCss}">
 
 
 <spring:url value="/static/css/main.css" var="mainCss" />
@@ -36,6 +38,19 @@
 <spring:url value="/webjars/bootstrap/3.0.0/js/bootstrap.min.js"
 	var="bootstrapJs" />
 <script src="${bootstrapJs}"></script>
+<spring:url value="/static/css/bootstrap-datetimepicker.min.css"
+	var="datetimepicker" />
+<link rel="stylesheet" href="${datetimepicker}">
+
+<spring:url value="/static/css/bootstrap-multiselect.css"
+	var="multiselect" />
+<link rel="stylesheet" href="${multiselect}">
+<spring:url value="/static/js/bootstrap-datetimepicker.js"
+	var="datetimepickerJS" />
+<script type="text/javascript" src="${datetimepickerJS}"></script>
+<spring:url value="/static/js/bootstrap-multiselect.js"
+	var="multiselectJS" />
+<script type="text/javascript" src="${multiselectJS}"></script>
 <decorator:head />
 </head>
 <body>
@@ -56,19 +71,25 @@
 						<spring:url value="/admin" var="adminURL" />
 						<spring:url value="/" var="baseUrl" />
 
-						<li><a href="${uploadMetadataURL}" ng-class="getClass('${baseUrl}', '/uploadMetadata')"> <spring:message
+						<li><a href="${uploadMetadataURL}"
+							ng-class="getClass('${baseUrl}', '/uploadMetadata')"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
-						<li><a href="${ingestExternalURL}" ng-class="getClass('${baseUrl}', '/ingest')" ><spring:message
+						<li><a href="#/newIngest"
+							ng-class="getClass('${baseUrl}', '/ingest')"><spring:message
 									code="sidebar.ingestExternal" /></a></li>
-						<li><a href="${manageIngestsURL}"  ng-class="getClass('${baseUrl}', '/manageIngests/')"><spring:message
+						<li><a href="#/manageIngests"
+							ng-class="getClass('${baseUrl}', '/manageIngests')"><spring:message
 									code="sidebar.manageIngests" /></a></li>
-						<li><a href="${editMetadataURL}" ng-class="getClass('${baseUrl}', '/editMetadata')"><spring:message
+						<li><a href="${editMetadataURL}"
+							ng-class="getClass('${baseUrl}', '/editMetadata')"><spring:message
 									code="sidebar.editMetadata" /></a></li>
-						<li><a href="${deleteRecordsURL}" ng-class="getClass('${baseUrl}', '/deleteRecords')" ><spring:message
+						<li><a href="${deleteRecordsURL}"
+							ng-class="getClass('${baseUrl}', '/deleteRecords')"><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
-							<li><a href="${adminURL}" ng-class="getClass('${baseUrl}', '/admin')"><spring:message
+							<li><a href="${adminURL}"
+								ng-class="getClass('${baseUrl}', '/admin')"><spring:message
 										code="sidebar.adminPage" /></a></li>
 						</security:authorize>
 					</ul>
@@ -83,17 +104,25 @@
 		<!-- //row -->
 	</div>
 	<!-- //container -->
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular.js"
 		var="angularjsUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-route.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular-animate.js"
+		var="angularjsAnimateUrl" />
+	<spring:url value="/webjars/angularjs/1.2.0/angular-route.js"
 		var="angularRouteUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0-rc.3/angular-resource.js"
+	<spring:url value="/webjars/angularjs/1.2.0/angular-resource.js"
 		var="angularResourceUrl" />
 	<spring:url value="/static/js/angular-translate/angular-translate.js"
 		var="angularTranslateUrl" />
 	<spring:url
 		value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
 		var="angularTranslateLoaderStaticFilesUrl" />
+	<spring:url
+		value="/webjars/angular-ui-bootstrap/0.6.0/ui-bootstrap-tpls.js"
+		var="angularUiBootstrapUrl" />
+	<spring:url value="/static/js/angular-ui-utils/modules/ui-utils.min.js"
+		var="uiUtilsUrl" />
+
 	<spring:url value="/static/js/angularjs/ogpHarvester.js"
 		var="ogpHarvesterUrl" />
 	<spring:url value="/static/js/angularjs/services.js" var="servicesUrl" />
@@ -103,10 +132,13 @@
 	<spring:url value="/static/js/angularjs/directives.js"
 		var="directivesUrl" />
 	<script src="${angularjsUrl}"></script>
+	<script src="${angularjsAnimateUrl}"></script>
 	<script src="${angularRouteUrl}"></script>
 	<script src="${angularResourceUrl}"></script>
 	<script src="${angularTranslateUrl}"></script>
 	<script src="${angularTranslateLoaderStaticFilesUrl}"></script>
+	<script src="${angularUiBootstrapUrl}"></script>
+	<script src="${uiUtilsUrl}"></script>
 	<script src="${ogpHarvesterUrl}"></script>
 	<script src="${servicesUrl}"></script>
 	<script src="${controllersUrl}"></script>
