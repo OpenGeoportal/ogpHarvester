@@ -132,8 +132,29 @@
 		}
 	]);
 
-	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$scope', 'ingestMultiform',
-		function ($scope, ingestMultiform) {
+	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform', '$route', '$location',
+
+		function ($rootScope, $scope, ingestMultiform, $route, $location) {
+
+			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
+				if (next.$$route.originalPath === '/newIngest' &&
+					current.$$route.originalPath !== '/newIngest/step2') {
+
+					ingestMultiform.reset();
+				}
+
+
+			});
+
+			$scope.step2 = function () {
+				// validate ingest
+
+				// go to step 2
+				$location.path('/newIngest/step2');
+
+			};
+
+
 			$scope.typeOfInstanceList = [{
 				value: 'solr',
 				label: 'TOI_SOLR'
@@ -190,7 +211,7 @@
 				name: 'Data repository 6'
 			}];
 
-		$scope.gnSourcesList = [{
+			$scope.gnSourcesList = [{
 				id: 1,
 				name: "Geonetwork Repository 1"
 			}, {

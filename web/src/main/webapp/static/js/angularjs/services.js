@@ -25,50 +25,62 @@ servicesModule.factory('Ingest',
 servicesModule.service('ingestMultiform',
 	function () {
 		// Private data
-		var ingest = {
-			typeOfInstance: 'solr',
-			catalogOfServices: null,
-			solrUrl: null,
-			extent: null,
-			themeKeyword: null,
-			placeKeyword: null,
-			topic: null,
-			rangeFrom: null,
-			rangeTo: null,
-			originator: null,
-			dataTypes: [],
-			dataRepositories: [],
-			excludeRestricted: false,
-			rangeSolrFrom: null,
-			rangeSolrTo: null,
-			requiredFields: {},
-			geonetworkUrl: null,
-			dataRepositoriesGN: [],
-			gnTitle: null,
-			gnKeyword: null,
-			gnAbstractText: null,
-			gnFreeText: null,
-			gnSources: null,
-			cswUrl: null,
-			cswDataRepositories: [],
-			cswLocation: null,
-			cswTitle: null,
-			cswSubject: null,
-			cswFreeText: null,
-			cswRangeFrom: null,
-			cswRangeTo: null,
-			cswCustomQuery: null,
-			webDavUrl: null,
-			webdavDataRepositories: [],
-			webdavFromLastModified: null,
-			webdavToLastModified: null,
-			ingestName: null,
-			beginDate: null,
-			frequency: 'once'
+
+		var initBean = function () {
+			console.log("Initiating ingest bean");
+			var bean = {
+				typeOfInstance: 'solr',
+				catalogOfServices: null,
+				solrUrl: null,
+				extent: null,
+				themeKeyword: null,
+				placeKeyword: null,
+				topic: null,
+				rangeFrom: null,
+				rangeTo: null,
+				originator: null,
+				dataTypes: [],
+				dataRepositories: [],
+				excludeRestricted: false,
+				rangeSolrFrom: null,
+				rangeSolrTo: null,
+				requiredFields: {},
+				geonetworkUrl: null,
+				dataRepositoriesGN: [],
+				gnTitle: null,
+				gnKeyword: null,
+				gnAbstractText: null,
+				gnFreeText: null,
+				gnSources: null,
+				cswUrl: null,
+				cswDataRepositories: [],
+				cswLocation: null,
+				cswTitle: null,
+				cswSubject: null,
+				cswFreeText: null,
+				cswRangeFrom: null,
+				cswRangeTo: null,
+				cswCustomQuery: null,
+				webDavUrl: null,
+				webdavDataRepositories: [],
+				webdavFromLastModified: null,
+				webdavToLastModified: null,
+				ingestName: null,
+				beginDate: null,
+				frequency: 'once'
+			};
+			return bean;
 		};
+
+		var ingest = initBean();
+
 
 		// Public interface
 		return {
+			reset: function () {
+				ingest = initBean();
+			},
+
 			getIngest: function () {
 				return ingest;
 			},
