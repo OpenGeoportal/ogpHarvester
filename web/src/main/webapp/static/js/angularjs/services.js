@@ -26,7 +26,7 @@ servicesModule.service('ingestMultiform',
 	function () {
 		// Private data
 		var ingest = {
-			typeOfInstance: 'webdav',
+			typeOfInstance: 'solr',
 			catalogOfServices: null,
 			solrUrl: null,
 			extent: null,
@@ -61,7 +61,10 @@ servicesModule.service('ingestMultiform',
 			webDavUrl: null,
 			webdavDataRepositories: [],
 			webdavFromLastModified: null,
-			webdavToLastModified: null
+			webdavToLastModified: null,
+			ingestName: null,
+			beginDate: null,
+			frequency: 'once'
 		};
 
 		// Public interface

@@ -26,6 +26,10 @@
 					templateUrl: 'resources/newIngestForm.html',
 					controller: 'NewIngestCtrl'
 				});
+				$routeProvider.when('/newIngest/step2', {
+					templateUrl: 'resources/newIngestFormStep2.html',
+					controller: 'NewIngestCtrl'
+				});
 
 				$routeProvider.otherwise({
 					redirectTo: '/manageIngests'

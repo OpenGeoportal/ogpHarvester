@@ -1,0 +1,49 @@
+<div class="col-md-9 right-column step2" ng-controller="NewIngestCtrl">
+    <h1 translate="INGEST_FORM.STEP2_HEADER"></h1>
+    <p translate="INGEST_FORM.STEP2_SUBHEADER"></p>
+
+    <form>
+        <div class="fields-container">
+            <div class="form-group col-md-9">
+                    <label for="ingestName" translate="INGEST_FORM.STEP2_INGEST_NAME">
+                    </label>
+                    <input type="text" id="ingestName" ng-model="ingest.ingestName" class="form-control" ></input>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <label for="beginDate" translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>
+                <div class="row no-margin">
+                    <div class='input-group date col-md-4' id='beginDate' ng-model="ingest.beginDate" datetimepicker>
+                        <input class="form-control" ></input>
+                        <span class="input-group-addon"><span
+                            class="glyphicon glyphicon-calendar"></span> </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label for="frequency" translate="INGEST_FORM.STEP2_FREQUENCY"></label>
+                <select ng-model="ingest.frequency" id="frequency"
+                    class="form-control">
+                        <option value="once" translate="INGEST_FORM.STEP2_FREQ_OPT_ONCE"></option>
+                        <option value="daily" translate="INGEST_FORM.STEP2_FREQ_OPT_DAILY"></option>
+                        <option value="weekly" translate="INGEST_FORM.STEP2_FREQ_OPT_WEEKLY"></option>
+                        <option value="monthly" translate="INGEST_FORM.STEP2_FREQ_OPT_MONTHLY"></option>
+                        <option value="yearly" translate="INGEST_FORM.STEP2_FREQ_OPT_YEARLY"></option>
+                </select>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="form-group">
+            <a href="#/newIngest" class="btn btn-default"><span
+                class="glyphicon glyphicon-chevron-left"></span> {{ "INGEST_FORM.STEP2_BACK_BUTTON" | translate }}</a>
+            <button class="btn btn-primary" translate="INGEST_FORM.STEP2_START_BUTTON">
+            </button>
+        </div>
+    </form>
+    <pre>{{ingest | json}}</pre>
+
+    <h2>
+
+</div>

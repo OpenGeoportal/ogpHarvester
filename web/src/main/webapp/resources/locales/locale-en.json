@@ -106,10 +106,19 @@
 		"WD_URL_HELP": "<strong>Note:</strong> Service must be registered first. Register via the <a href='#/admin'>admin</a>.",
 		"WD_SEARCH_CRITERIA": "Search Criteria",
 		"WD_DATE_LAST_MODIFIED": "Filter records by last modified date:",
-		"WD_DATE_LAST_MODIFIED_TOOLTIP": "Please add the content of the last modified date range tooltip"
-
-
-
+		"WD_DATE_LAST_MODIFIED_TOOLTIP": "Please add the content of the last modified date range tooltip",
+		"STEP2_HEADER": "Schedule Ingest",
+		"STEP2_SUBHEADER": "Use this form to schedule either single or repeating ingests",
+		"STEP2_INGEST_NAME": "Ingest Name:",
+		"STEP2_BEGIN_INGEST_ON": "Begin Ingest On:",
+		"STEP2_FREQUENCY": "Frequency:",
+		"STEP2_FREQ_OPT_ONCE": "Once",
+		"STEP2_FREQ_OPT_DAILY": "Daily",
+		"STEP2_FREQ_OPT_WEEKLY": "Weekly",
+		"STEP2_FREQ_OPT_MONTHLY": "Monthly",
+		"STEP2_FREQ_OPT_YEARLY": "Yearly",
+		"STEP2_BACK_BUTTON": "Ingest Query",
+		"STEP2_START_BUTTON": "Start Ingest"
 	},
 
 	"MANAGE_INGESTS": {
