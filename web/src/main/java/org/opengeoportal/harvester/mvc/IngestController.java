@@ -4,6 +4,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.opengeoportal.harvester.mvc.bean.IngestFormBean;
 import org.opengeoportal.harvester.mvc.exception.FormNotFoundException;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.support.SessionStatus;
 @Controller
 @SessionAttributes(types = { IngestFormBean.class })
 public class IngestController {
+	
+	
 //	@RequestMapping(value = "/")
 //	public String mainPage(ModelMap model) {
 //		return ingest(model);
@@ -28,6 +31,14 @@ public class IngestController {
 		ingestStep1(formBean, model);
 
 		return "welcome";
+	}
+	
+	@RequestMapping("/ingest/catalogOfServices")
+	public List<SimpleEntry<Long, String>> getCatalogOfServices() {
+		List<SimpleEntry<Long, String>> result = new ArrayList<SimpleEntry<Long,String>>();
+		
+		
+		return result;
 	}
 
 	@RequestMapping(value = "/ingest/step1")

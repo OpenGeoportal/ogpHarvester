@@ -29,6 +29,14 @@
  */
 package org.opengeoportal.harvester.mvc;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.AbstractMap.SimpleEntry;
+
+import org.omg.CosNaming._BindingIteratorImplBase;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
@@ -36,36 +44,59 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 
 @Controller
 @SessionAttributes(types = { CustomRepositoryFormBean.class })
 public class CustomRepositoryController {
-    @Autowired
-    private CustomRepositoryService service;
+	@Autowired
+	private CustomRepositoryService service;
 
-    @RequestMapping(value = "/admin")
-    public String admin(ModelMap model) {
-        CustomRepositoryFormBean formBean = new CustomRepositoryFormBean();
-        model.put("customRepositoryFormBean", formBean);
+	@RequestMapping("/rest/repositories")
+	@ResponseBody
+	public Map<String, List<SimpleEntry<Long, String>>> getCustomRepositories() {
 
-        // TODO: Test data, remove.
-        List<CustomRepository> customRepositoriesList = new ArrayList<CustomRepository>();
-        CustomRepository cr = new CustomRepository();
-        cr.setName("Repository 1");
-        cr.setUrl("http://repository1.com");
-        customRepositoriesList.add(cr);
+		ListMultimap<String, CustomRepository> multimap = service
+				.getAllGroupByType();
+		Map<String, List<SimpleEntry<Long, String>>> result = Maps.newHashMap();
+		String[] instanceTypes = new String[] { "solr", "geonetwork", "csw",
+				"webdav" };
+		for (String instanceType : instanceTypes) {
+			List<CustomRepository> reposOfType = multimap.get(instanceType);
+			List<SimpleEntry<Long, String>> repositories = new ArrayList<AbstractMap.SimpleEntry<Long, String>>();
+			for (CustomRepository repository : reposOfType) {
+				SimpleEntry<Long, String> entry = new SimpleEntry<Long, String>(
+						repository.getId(), repository.getName());
+				repositories.add(entry);
+			}
+			result.put(instanceType, repositories);
+		}
+		return result;
+	}
 
-        cr = new CustomRepository();
-        cr.setName("Repository 2");
-        cr.setUrl("http://repository2.com");
-        customRepositoriesList.add(cr);
+	@RequestMapping(value = "/admin")
+	public String admin(ModelMap model) {
+		CustomRepositoryFormBean formBean = new CustomRepositoryFormBean();
+		model.put("customRepositoryFormBean", formBean);
 
-        model.put("customRepositories", customRepositoriesList);
+		// TODO: Test data, remove.
+		List<CustomRepository> customRepositoriesList = new ArrayList<CustomRepository>();
+		CustomRepository cr = new CustomRepository();
+		cr.setName("Repository 1");
+		cr.setUrl("http://repository1.com");
+		customRepositoriesList.add(cr);
 
-        return "admin";
-    }
+		cr = new CustomRepository();
+		cr.setName("Repository 2");
+		cr.setUrl("http://repository2.com");
+		customRepositoriesList.add(cr);
+
+		model.put("customRepositories", customRepositoriesList);
+
+		return "admin";
+	}
 }

@@ -33,10 +33,13 @@ import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.google.common.collect.ListMultimap;
+
 public interface CustomRepositoryService {
     public CustomRepository save(CustomRepository customRepository);
     public void delete(Long id);
 
     public CustomRepository findByName(String name);
     public Page<CustomRepository> findAll(Pageable pageable);
+    public ListMultimap<String, CustomRepository> getAllGroupByType();
 }
