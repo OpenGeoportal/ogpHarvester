@@ -29,40 +29,46 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
-import javax.persistence.*;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class CustomRepository extends AbstractPersistable<Long> {
-    @Column(unique = true, nullable = false)
-    private String name;
-    @Column(nullable = false)
-    private String url;
-    @Column(nullable = false)
-    private String serviceType;
+	
+	public static final String COLUMN_SERVICE_TYPE = "serviceType";
 
-    public String getName() {
-        return name;
-    }
+	private static final long serialVersionUID = -3588708291290281469L;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	@Column(unique = true, nullable = false)
+	private String name;
+	@Column(nullable = false)
+	private String url;
+	@Column(nullable = false)
+	private String serviceType;
 
-    public String getUrl() {
-        return url;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getServiceType() {
-        return serviceType;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setServiceType(String serviceType) {
-        this.serviceType = serviceType;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getServiceType() {
+		return serviceType;
+	}
+
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
+	}
 }

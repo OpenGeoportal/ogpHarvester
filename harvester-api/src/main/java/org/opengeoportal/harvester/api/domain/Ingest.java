@@ -29,94 +29,106 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.Transient;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.Assert;
 
-import javax.persistence.*;
-import java.util.*;
-
 @Entity
-@Inheritance (strategy=InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Ingest extends AbstractPersistable<Long> {
- private static final long serialVersionUID = -3390351777452085398L;  
- @Column(unique = true, nullable = false)
-    private String name;
+	private static final long serialVersionUID = -3390351777452085398L;
+	
+	@Column(unique = true, nullable = false)
+	private String name;
 
-    @DateTimeFormat(pattern = "dd/MM/yyyy")
-    private Date beginDate;
+	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	private Date beginDate;
 
-    private String frequency;
+	private String frequency;
 
-    @Column(nullable = false)
-    private String url;
+	@Column(nullable = false)
+	private String url;
 
-    @ElementCollection
-    private Set<String> requiredFields = new HashSet<String>();
+	@ElementCollection
+	private Set<String> requiredFields = new HashSet<String>();
 
-    @Transient
-    protected Set<String> validRequiredFields = new HashSet<String>();
+	@Transient
+	protected Set<String> validRequiredFields = new HashSet<String>();
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getUrl() {
-        return url;
-    }
+	public String getUrl() {
+		return url;
+	}
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
-    public Date getBeginDate() {
-        return beginDate;
-    }
+	public Date getBeginDate() {
+		return beginDate;
+	}
 
-    public void setBeginDate(Date beginDate) {
-        this.beginDate = beginDate;
-    }
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
 
-    public String getFrequency() {
-        return frequency;
-    }
+	public String getFrequency() {
+		return frequency;
+	}
 
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
-    }
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
 
-    /**
-     * Sets the attribute with the given name to the given value.
-     *
-     * @param field must not be {@literal null} or empty.
-     */
-    public void addRequiredField(String field) {
-        Assert.hasText(field);
+	/**
+	 * Sets the attribute with the given name to the given value.
+	 * 
+	 * @param field
+	 *            must not be {@literal null} or empty.
+	 */
+	public void addRequiredField(String field) {
+		Assert.hasText(field);
 
-        if (validRequiredFields.contains(field)) requiredFields.add(field);
-    }
+		if (validRequiredFields.contains(field))
+			requiredFields.add(field);
+	}
 
-    /**
-     * Returns all the required fields of the {@link Ingest}.
-     *
-     * @return
-     */
-    public Set<String> getRequiredFields() {
-        return Collections.unmodifiableSet(requiredFields);
-    }
+	/**
+	 * Returns all the required fields of the {@link Ingest}.
+	 * 
+	 * @return
+	 */
+	public Set<String> getRequiredFields() {
+		return Collections.unmodifiableSet(requiredFields);
+	}
 
-
-    /**
-     * Returns all the valid required fields that can be added to the {@link Ingest}.
-     *
-     * @return
-     */
-    public Set<String> getValidRequiredFields() {
-        return Collections.unmodifiableSet(validRequiredFields);
-    }
+	/**
+	 * Returns all the valid required fields that can be added to the
+	 * {@link Ingest}.
+	 * 
+	 * @return
+	 */
+	public Set<String> getValidRequiredFields() {
+		return Collections.unmodifiableSet(validRequiredFields);
+	}
 
 }

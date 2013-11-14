@@ -29,95 +29,97 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 @Entity
 @DiscriminatorValue("CSW")
 public class IngestCsw extends Ingest {
-    @Column
-    private Date dateFrom;
-    @Column
-    private Date dateTo;
 
-    @Column
-    private String location;
-    @Column
-    private String title;
-    @Column
-    private String subject;
-    @Column
-    private String freeText;
+	private static final long serialVersionUID = -346374812287720289L;
 
-    @Column
-    private String customCswQuery;
+	@Column
+	private Date dateFrom;
+	@Column
+	private Date dateTo;
 
-    public IngestCsw() {
-        super();
-        validRequiredFields = new HashSet<String>(
-                Arrays.asList(
-                        new String[]{
-                                "geographicExtent", "themeKeyword", "placeKeyword",
-                                "topic", "dateOfContent", "originator",
-                                "dataType", "dataRepository"}));
-    }
+	@Column
+	private String location;
+	@Column
+	private String title;
+	@Column
+	private String subject;
+	@Column
+	private String freeText;
 
+	@Column
+	private String customCswQuery;
 
-    public Date getDateFrom() {
-        return dateFrom;
-    }
+	public IngestCsw() {
+		super();
+		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
+				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
+				"dateOfContent", "originator", "dataType", "dataRepository" }));
+	}
 
-    public void setDateFrom(Date dateFrom) {
-        this.dateFrom = dateFrom;
-    }
+	public Date getDateFrom() {
+		return dateFrom;
+	}
 
-    public Date getDateTo() {
-        return dateTo;
-    }
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
 
-    public void setDateTo(Date dateTo) {
-        this.dateTo = dateTo;
-    }
+	public Date getDateTo() {
+		return dateTo;
+	}
 
-    public String getLocation() {
-        return location;
-    }
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
+	}
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+	public String getLocation() {
+		return location;
+	}
 
-    public String getTitle() {
-        return title;
-    }
+	public void setLocation(String location) {
+		this.location = location;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getSubject() {
-        return subject;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
+	public String getSubject() {
+		return subject;
+	}
 
-    public String getFreeText() {
-        return freeText;
-    }
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
 
-    public void setFreeText(String freeText) {
-        this.freeText = freeText;
-    }
+	public String getFreeText() {
+		return freeText;
+	}
 
-    public String getCustomCswQuery() {
-        return customCswQuery;
-    }
+	public void setFreeText(String freeText) {
+		this.freeText = freeText;
+	}
 
-    public void setCustomCswQuery(String customCswQuery) {
-        this.customCswQuery = customCswQuery;
-    }
+	public String getCustomCswQuery() {
+		return customCswQuery;
+	}
+
+	public void setCustomCswQuery(String customCswQuery) {
+		this.customCswQuery = customCswQuery;
+	}
 }
