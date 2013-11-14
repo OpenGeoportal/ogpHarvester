@@ -29,189 +29,193 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 @Entity
 @DiscriminatorValue("OGP")
 public class IngestOGP extends Ingest {
-    @Column
-    private Date dateFrom;
-    @Column
-    private Date dateTo;
 
-    @Column
-    private String themeKeyword;
-    @Column
-    private String placeKeyword;
-    @Column
-    private String topicCategory;
+	private static final long serialVersionUID = 1545386542676335709L;
 
-    @Column
-    private String originator;
+	@Column
+	private Date dateFrom;
+	@Column
+	private Date dateTo;
 
-    @Column
-    private String dataType;
-    @Column
-    private String dataRepository;
+	@Column
+	private String themeKeyword;
+	@Column
+	private String placeKeyword;
+	@Column
+	private String topicCategory;
 
-    @Column
-    private boolean excludeRestrictedData;
+	@Column
+	private String originator;
 
-    @Column
-    private Date fromSolrTimestamp;
-    @Column
-    private Date toSolrTimestamp;
+	@Column
+	private String dataType;
+	@Column
+	private String dataRepository;
 
-    @Column
-    private String customSolrQuery;
+	@Column
+	private boolean excludeRestrictedData;
 
-    @Column
-    private Double bboxWest;
-    @Column
-    private Double bboxEast;
-    @Column
-    private Double bboxNorth;
-    @Column
-    private Double bboxSouth;
+	@Column
+	private Date fromSolrTimestamp;
+	@Column
+	private Date toSolrTimestamp;
 
-    public IngestOGP() {
-        super();
-        validRequiredFields = new HashSet<String>(
-                Arrays.asList(
-                        new String[]{
-                                "geographicExtent", "themeKeyword", "placeKeyword",
-                                "webServices", "topic", "dateOfContent",
-                                "originator", "dataType", "dataRepository" }));
-    }
+	@Column
+	private String customSolrQuery;
 
-    public Date getDateFrom() {
-        return dateFrom;
-    }
+	@Column
+	private Double bboxWest;
+	@Column
+	private Double bboxEast;
+	@Column
+	private Double bboxNorth;
+	@Column
+	private Double bboxSouth;
 
-    public void setDateFrom(Date dateFrom) {
-        this.dateFrom = dateFrom;
-    }
+	public IngestOGP() {
+		super();
+		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
+				"geographicExtent", "themeKeyword", "placeKeyword",
+				"webServices", "topic", "dateOfContent", "originator",
+				"dataType", "dataRepository" }));
+	}
 
-    public Date getDateTo() {
-        return dateTo;
-    }
+	public Date getDateFrom() {
+		return dateFrom;
+	}
 
-    public void setDateTo(Date dateTo) {
-        this.dateTo = dateTo;
-    }
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
 
-    public String getThemeKeyword() {
-        return themeKeyword;
-    }
+	public Date getDateTo() {
+		return dateTo;
+	}
 
-    public void setThemeKeyword(String themeKeyword) {
-        this.themeKeyword = themeKeyword;
-    }
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
+	}
 
-    public String getPlaceKeyword() {
-        return placeKeyword;
-    }
+	public String getThemeKeyword() {
+		return themeKeyword;
+	}
 
-    public void setPlaceKeyword(String placeKeyword) {
-        this.placeKeyword = placeKeyword;
-    }
+	public void setThemeKeyword(String themeKeyword) {
+		this.themeKeyword = themeKeyword;
+	}
 
-    public String getTopicCategory() {
-        return topicCategory;
-    }
+	public String getPlaceKeyword() {
+		return placeKeyword;
+	}
 
-    public void setTopicCategory(String topicCategory) {
-        this.topicCategory = topicCategory;
-    }
+	public void setPlaceKeyword(String placeKeyword) {
+		this.placeKeyword = placeKeyword;
+	}
 
-    public String getOriginator() {
-        return originator;
-    }
+	public String getTopicCategory() {
+		return topicCategory;
+	}
 
-    public void setOriginator(String originator) {
-        this.originator = originator;
-    }
+	public void setTopicCategory(String topicCategory) {
+		this.topicCategory = topicCategory;
+	}
 
-    public String getDataType() {
-        return dataType;
-    }
+	public String getOriginator() {
+		return originator;
+	}
 
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
+	public void setOriginator(String originator) {
+		this.originator = originator;
+	}
 
-    public String getDataRepository() {
-        return dataRepository;
-    }
+	public String getDataType() {
+		return dataType;
+	}
 
-    public void setDataRepository(String dataRepository) {
-        this.dataRepository = dataRepository;
-    }
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
 
-    public boolean isExcludeRestrictedData() {
-        return excludeRestrictedData;
-    }
+	public String getDataRepository() {
+		return dataRepository;
+	}
 
-    public void setExcludeRestrictedData(boolean excludeRestrictedData) {
-        this.excludeRestrictedData = excludeRestrictedData;
-    }
+	public void setDataRepository(String dataRepository) {
+		this.dataRepository = dataRepository;
+	}
 
-    public Date getFromSolrTimestamp() {
-        return fromSolrTimestamp;
-    }
+	public boolean isExcludeRestrictedData() {
+		return excludeRestrictedData;
+	}
 
-    public void setFromSolrTimestamp(Date fromSolrTimestamp) {
-        this.fromSolrTimestamp = fromSolrTimestamp;
-    }
+	public void setExcludeRestrictedData(boolean excludeRestrictedData) {
+		this.excludeRestrictedData = excludeRestrictedData;
+	}
 
-    public Date getToSolrTimestamp() {
-        return toSolrTimestamp;
-    }
+	public Date getFromSolrTimestamp() {
+		return fromSolrTimestamp;
+	}
 
-    public void setToSolrTimestamp(Date toSolrTimestamp) {
-        this.toSolrTimestamp = toSolrTimestamp;
-    }
+	public void setFromSolrTimestamp(Date fromSolrTimestamp) {
+		this.fromSolrTimestamp = fromSolrTimestamp;
+	}
 
-    public String getCustomSolrQuery() {
-        return customSolrQuery;
-    }
+	public Date getToSolrTimestamp() {
+		return toSolrTimestamp;
+	}
 
-    public void setCustomSolrQuery(String customSolrQuery) {
-        this.customSolrQuery = customSolrQuery;
-    }
+	public void setToSolrTimestamp(Date toSolrTimestamp) {
+		this.toSolrTimestamp = toSolrTimestamp;
+	}
 
-    public Double getBboxWest() {
-        return bboxWest;
-    }
+	public String getCustomSolrQuery() {
+		return customSolrQuery;
+	}
 
-    public void setBboxWest(Double bboxWest) {
-        this.bboxWest = bboxWest;
-    }
+	public void setCustomSolrQuery(String customSolrQuery) {
+		this.customSolrQuery = customSolrQuery;
+	}
 
-    public Double getBboxEast() {
-        return bboxEast;
-    }
+	public Double getBboxWest() {
+		return bboxWest;
+	}
 
-    public void setBboxEast(Double bboxEast) {
-        this.bboxEast = bboxEast;
-    }
+	public void setBboxWest(Double bboxWest) {
+		this.bboxWest = bboxWest;
+	}
 
-    public Double getBboxNorth() {
-        return bboxNorth;
-    }
+	public Double getBboxEast() {
+		return bboxEast;
+	}
 
-    public void setBboxNorth(Double bboxNorth) {
-        this.bboxNorth = bboxNorth;
-    }
+	public void setBboxEast(Double bboxEast) {
+		this.bboxEast = bboxEast;
+	}
 
-    public Double getBboxSouth() {
-        return bboxSouth;
-    }
+	public Double getBboxNorth() {
+		return bboxNorth;
+	}
 
-    public void setBboxSouth(Double bboxSouth) {
-        this.bboxSouth = bboxSouth;
-    }
+	public void setBboxNorth(Double bboxNorth) {
+		this.bboxNorth = bboxNorth;
+	}
+
+	public Double getBboxSouth() {
+		return bboxSouth;
+	}
+
+	public void setBboxSouth(Double bboxSouth) {
+		this.bboxSouth = bboxSouth;
+	}
 }

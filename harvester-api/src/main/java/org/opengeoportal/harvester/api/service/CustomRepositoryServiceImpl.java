@@ -29,14 +29,23 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 @Service
 public class CustomRepositoryServiceImpl implements CustomRepositoryService {
@@ -68,4 +77,19 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
         Page<CustomRepository> page = customRepositoryRepository.findAll(pageable);
         return page;
     }
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#getAllGroupByType()
+	 */
+	@Override
+	@Transactional
+	public ListMultimap <String, CustomRepository> getAllGroupByType() {
+		Sort typeSortAsc = new Sort(new Order(CustomRepository.COLUMN_SERVICE_TYPE));
+		List<CustomRepository> repositories = customRepositoryRepository.findAll(typeSortAsc);
+		ListMultimap<String, CustomRepository> map = ArrayListMultimap.create();
+		for(CustomRepository repository : repositories) {
+			map.put(repository.getServiceType(), repository);
+		}
+		return map;
+	}
 }

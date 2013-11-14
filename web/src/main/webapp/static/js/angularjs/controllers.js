@@ -132,9 +132,10 @@
 		}
 	]);
 
-	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform', '$route', '$location',
+	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
+		'$route', '$location', '$http',
 
-		function ($rootScope, $scope, ingestMultiform, $route, $location) {
+		function ($rootScope, $scope, ingestMultiform, $route, $location, $http) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -153,6 +154,11 @@
 				$location.path('/newIngest/step2');
 
 			};
+
+			$http.get('rest/repositories').success(function (data) {
+				$scope.customRepositories = data;
+			});
+
 
 
 			$scope.typeOfInstanceList = [{

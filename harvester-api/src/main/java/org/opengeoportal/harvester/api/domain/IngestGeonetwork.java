@@ -29,73 +29,75 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-
-import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("GN")
 public class IngestGeonetwork extends Ingest {
-    @Column
-    private String title;
-    @Column
-    private String keyword;
-    @Column
-    private String abstractText;
-    @Column
-    private String freeText;
-    @Column
-    private String geonetworkSource;
 
+	private static final long serialVersionUID = 2521267747992995326L;
 
-    public IngestGeonetwork() {
-        super();
-        validRequiredFields = new HashSet<String>(
-                Arrays.asList(
-                        new String[]{
-                                "geographicExtent", "themeKeyword", "placeKeyword",
-                                "topic", "dateOfContent", "originator",
-                                "dataType", "dataRepository", "creationDate"}));
-    }
+	@Column
+	private String title;
+	@Column
+	private String keyword;
+	@Column
+	private String abstractText;
+	@Column
+	private String freeText;
+	@Column
+	private String geonetworkSource;
 
-    public String getTitle() {
-        return title;
-    }
+	public IngestGeonetwork() {
+		super();
+		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
+				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
+				"dateOfContent", "originator", "dataType", "dataRepository",
+				"creationDate" }));
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public String getTitle() {
+		return title;
+	}
 
-    public String getKeyword() {
-        return keyword;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
+	public String getKeyword() {
+		return keyword;
+	}
 
-    public String getAbstractText() {
-        return abstractText;
-    }
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
 
-    public void setAbstractText(String abstractText) {
-        this.abstractText = abstractText;
-    }
+	public String getAbstractText() {
+		return abstractText;
+	}
 
-    public String getFreeText() {
-        return freeText;
-    }
+	public void setAbstractText(String abstractText) {
+		this.abstractText = abstractText;
+	}
 
-    public void setFreeText(String freeText) {
-        this.freeText = freeText;
-    }
+	public String getFreeText() {
+		return freeText;
+	}
 
-    public String getGeonetworkSource() {
-        return geonetworkSource;
-    }
+	public void setFreeText(String freeText) {
+		this.freeText = freeText;
+	}
 
-    public void setGeonetworkSource(String geonetworkSource) {
-        this.geonetworkSource = geonetworkSource;
-    }
+	public String getGeonetworkSource() {
+		return geonetworkSource;
+	}
+
+	public void setGeonetworkSource(String geonetworkSource) {
+		this.geonetworkSource = geonetworkSource;
+	}
 }

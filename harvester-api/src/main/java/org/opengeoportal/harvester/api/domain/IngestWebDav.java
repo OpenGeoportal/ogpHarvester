@@ -29,44 +29,46 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import javax.persistence.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 @Entity
 @DiscriminatorValue("WEBDAV")
 public class IngestWebDav extends Ingest {
-    @Column
-    private Date dateFrom;
 
-    @Column
-    private Date dateTo;
+	private static final long serialVersionUID = -5488792457603165652L;
 
+	@Column
+	private Date dateFrom;
 
-    public IngestWebDav() {
-        super();
-        validRequiredFields = new HashSet<String>(
-                Arrays.asList(
-                        new String[]{
-                                "geographicExtent", "themeKeyword", "placeKeyword",
-                                "topic", "dateOfContent", "originator",
-                                "dataType", "dataRepository"}));
-    }
+	@Column
+	private Date dateTo;
 
-    public Date getDateFrom() {
-        return dateFrom;
-    }
+	public IngestWebDav() {
+		super();
+		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
+				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
+				"dateOfContent", "originator", "dataType", "dataRepository" }));
+	}
 
-    public void setDateFrom(Date dateFrom) {
-        this.dateFrom = dateFrom;
-    }
+	public Date getDateFrom() {
+		return dateFrom;
+	}
 
-    public Date getDateTo() {
-        return dateTo;
-    }
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
 
-    public void setDateTo(Date dateTo) {
-        this.dateTo = dateTo;
-    }
+	public Date getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
+	}
 }

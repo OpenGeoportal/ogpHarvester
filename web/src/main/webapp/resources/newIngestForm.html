@@ -14,7 +14,7 @@
                 <div class="form-group col-md-7">
                     <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
                     <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
-                            ng-options="item.id as item.name for item in catalogOfServicesList"></select>
+                            ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"></select>
                 </div>
 
                 <div class="form-group col-md-9">
@@ -162,7 +162,7 @@
                 <div class="form-group multiselect col-md-7">
                     <label for="dataRepositoryGN" translate="INGEST_FORM.DATA_REPOSITORY_NAME"></label> 
                     <select class="form-control" id="dataRepositoryGN" ng-model="ingest.dataRepositoriesGN"
-                        multiple="multiple" ng-options="item.id as item.name for item in dataRepositoryList" 
+                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
                         data-placeholder="'INGEST_FORM.DATA_REPOSITORY_NAME_PLACEHOLDER' | translate" multiselect-dropdown>
                     </select>
                 </div>
@@ -234,7 +234,7 @@
                         tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
                         class="glyphicon glyphicon-question-sign black"></span></a>
                     <select class="form-control" id="cswDataRepository" ng-model="ingest.cswDataRepositories"
-                        multiple="multiple" ng-options="item.id as item.name for item in dataRepositoryList" 
+                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
                         data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
                     </select>
                 </div>
@@ -326,7 +326,7 @@
                         tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
                         class="glyphicon glyphicon-question-sign black"></span></a>
                     <select class="form-control" id="webdavDataRepository" ng-model="ingest.webdavDataRepositories"
-                        multiple="multiple" ng-options="item.id as item.name for item in dataRepositoryList" 
+                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
                         data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
                     </select>
                 </div>
