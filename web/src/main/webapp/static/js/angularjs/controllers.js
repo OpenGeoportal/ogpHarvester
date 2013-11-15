@@ -155,6 +155,27 @@
 
 			};
 
+			/**
+			 * Clean url if no source is selected
+			 */
+			$scope.cleanServiceUrl = function () {
+				if ($scope.ingest.catalogOfServices !== null) {
+					$scope.ingest.solrUrl = null;
+				}
+				if ($scope.ingest.dataRepositoriesGN.length != 0) {
+					$scope.ingest.geonetworkUrl = null;
+				}
+				if ($scope.ingest.cswDataRepositories.length != 0) {
+					$scope.ingest.cswUrl = null;
+				}
+				if ($scope.ingest.webdavDataRepositories.length != 0) {
+					$scope.ingest.webdavUrl = null;
+				}
+
+			};
+
+
+
 			$http.get('rest/repositories').success(function (data) {
 				$scope.customRepositories = data;
 			});
@@ -253,12 +274,6 @@
 
 			$scope.ingest = ingestMultiform.getIngest();
 
-			if ($scope.catalogOfServicesList != null &&
-				$scope.catalogOfServicesList.length >= 1 &&
-				$scope.ingest.catalogOfServices == null) {
-
-				$scope.ingest.catalogOfServices = $scope.catalogOfServicesList[0].id;
-			}
 
 		}
 	]);
