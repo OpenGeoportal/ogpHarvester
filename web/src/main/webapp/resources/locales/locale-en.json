@@ -9,6 +9,7 @@
 		"TOI_CSW": "CSW",
 		"TOI_WEBDAV": "WebDAV /WAF",
 		"CATALOG_OF_SERVICES": "Catalog of Services:",
+		"OPT_SERVICE_NAME": "Service Name",
 		"SOLR_URL": "Custom OGP Instance Url:",
 		"SOLR_SEARCH_CRITERIA": "Search criteria (optional)",
 		"SOLR_SEARCH_CRITERIA_TOOLTIP": "Please add the content of the tooltip for Sorl Search Criteria",

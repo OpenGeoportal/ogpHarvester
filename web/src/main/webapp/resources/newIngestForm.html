@@ -14,12 +14,16 @@
                 <div class="form-group col-md-7">
                     <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
                     <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
-                            ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"></select>
+                            ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
+                            ng-change="cleanServiceUrl()" >
+                            <option value="" translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
+                        </select>
                 </div>
 
                 <div class="form-group col-md-9">
                     <label for="solrUrl" translate="INGEST_FORM.SOLR_URL"></label>
-                    <input type="text" id="solrUrl" ng-model="ingest.solrUrl" class="form-control"></input>
+                    <input type="text" id="solrUrl" ng-model="ingest.solrUrl" class="form-control" 
+                        ng-disabled="ingest.catalogOfServices !== null"></input>
                 </div>
                 <div class="clearfix"></div>
 
@@ -152,10 +156,11 @@
                     </div>
                 </div>
             </div> <!-- //swich solr-->
+
             <div ng-switch-when="geonetwork" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="form-group col-md-9">
                     <label for="geonetworkUrl" translate="INGEST_FORM.GEONETWORK_URL"></label>
-                    <input type="text" id="geonetworkUrl" ng-model="ingest.geonetworkUrl" class="form-control"></input>
+                    <input type="text" id="geonetworkUrl" ng-model="ingest.geonetworkUrl" class="form-control" ng-disabled="ingest.dataRepositoriesGN.length != 0"></input>
                 </div>
 
                 <div class="clearfix"></div>
@@ -163,7 +168,8 @@
                     <label for="dataRepositoryGN" translate="INGEST_FORM.DATA_REPOSITORY_NAME"></label> 
                     <select class="form-control" id="dataRepositoryGN" ng-model="ingest.dataRepositoriesGN"
                         multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_NAME_PLACEHOLDER' | translate" multiselect-dropdown>
+                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_NAME_PLACEHOLDER' | translate" multiselect-dropdown
+                        ng-change="cleanServiceUrl()" >
                     </select>
                 </div>
                 <div class="clearfix"></div>
@@ -226,7 +232,7 @@
             <div  ng-switch-when="csw" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="form-group col-md-9">
                         <label for="cswUrl" translate="INGEST_FORM.CSW_URL"></label>
-                        <input type="text" id="cswUrl" ng-model="ingest.cswUrl" class="form-control" ></input>
+                        <input type="text" id="cswUrl" ng-model="ingest.cswUrl" class="form-control" ng-disabled="ingest.cswDataRepositories.length != 0" ></input>
                 </div>
 
                 <div class="form-group multiselect col-md-7">
@@ -235,7 +241,8 @@
                         class="glyphicon glyphicon-question-sign black"></span></a>
                     <select class="form-control" id="cswDataRepository" ng-model="ingest.cswDataRepositories"
                         multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
+                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown 
+                        ng-change="cleanServiceUrl()">
                     </select>
                 </div>
                 <div class="clearfix"></div>
@@ -314,9 +321,9 @@
             <div ng-switch-when="webdav" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="form-group col-md-9">
                     <div class="col-md-10">
-                        <label for="webDavUrl" translate="INGEST_FORM.WD_URL"></label>
-                        <input id="webDavUrl" ng-model="ingest.webDavUrl" 
-                            class="form-control col-md-6" ></input>
+                        <label for="webdavUrl" translate="INGEST_FORM.WD_URL"></label>
+                        <input id="webdavUrl" ng-model="ingest.webdavUrl" 
+                            class="form-control col-md-6" ng-disabled="ingest.webdavDataRepositories.length != 0"></input>
                         <p class="help-block" translate="INGEST_FORM.WD_URL_HELP"></p>
                     </div>
                 </div>
@@ -327,7 +334,9 @@
                         class="glyphicon glyphicon-question-sign black"></span></a>
                     <select class="form-control" id="webdavDataRepository" ng-model="ingest.webdavDataRepositories"
                         multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
+                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown
+                        ng-change="cleanServiceUrl()"
+                        >
                     </select>
                 </div>
                 <div class="clearfix"></div>
