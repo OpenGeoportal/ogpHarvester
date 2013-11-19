@@ -29,21 +29,27 @@
  */
 package org.opengeoportal.harvester.mvc;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.AbstractMap.SimpleEntry;
 
-import org.omg.CosNaming._BindingIteratorImplBase;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
+import org.opengeoportal.harvester.mvc.bean.RemoteRepositoryFormBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -63,8 +69,9 @@ public class CustomRepositoryController {
 		ListMultimap<String, CustomRepository> multimap = service
 				.getAllGroupByType();
 		Map<String, List<SimpleEntry<Long, String>>> result = Maps.newHashMap();
-		String[] instanceTypes = new String[] { "solr", "geonetwork", "csw",
-				"webdav" };
+		String[] instanceTypes = new String[] { InstanceType.SOLR.toString(),
+				InstanceType.GEONETWORK.toString(),
+				InstanceType.CSW.toString(), InstanceType.WEBDAV.toString() };
 		for (String instanceType : instanceTypes) {
 			List<CustomRepository> reposOfType = multimap.get(instanceType);
 			List<SimpleEntry<Long, String>> repositories = new ArrayList<AbstractMap.SimpleEntry<Long, String>>();
@@ -76,6 +83,34 @@ public class CustomRepositoryController {
 			result.put(instanceType, repositories);
 		}
 		return result;
+	}
+	
+	@RequestMapping("/rest/repositories/{repoId}/remoteSources")
+	@ResponseBody
+	public List<SimpleEntry<String, String>> getRemoteRepositoriesById(@PathVariable Long repoId) {
+		return service.getRemoteRepositoriesByRepoId(repoId);
+		
+	}
+
+	@RequestMapping(value = "/rest/repositoriesbyurl/remoteSources", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public List<SimpleEntry<String, String>> getRemoteRepositoriesByUrl(
+			@RequestBody RemoteRepositoryFormBean repository)
+			throws MalformedURLException {
+		URL urlObj = new URL(repository.getRepoUrl());
+
+		List<SimpleEntry<String, String>> repositories = service
+				.getRemoteRepositories(repository.getRepoType(), urlObj);
+
+		return repositories;
+	}
+
+	@RequestMapping(value = "/rest/localSolr/institutions")
+	@ResponseBody
+	public List<SimpleEntry<String, String>> getLocalSolrInstitutions() {
+		List<SimpleEntry<String, String>> institutions = service
+				.getLocalSolrInstitutions();
+		return institutions;
 	}
 
 	@RequestMapping(value = "/admin")

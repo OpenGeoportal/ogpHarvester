@@ -22,7 +22,7 @@
 				$scope.$on('$viewContentLoaded', function () {
 					$(".right-column").tooltip({
 						selector: "[data-toggle=tooltip]"
-					})
+					});
 				});
 
 				var isSelectedAll = function ($event, elementList) {
@@ -33,7 +33,7 @@
 						}
 					}
 					return allSelected;
-				}
+				};
 
 				$scope.isSelectedAll = isSelectedAll;
 
@@ -44,7 +44,8 @@
 							elementList[i].isChecked = checkbox.checked;
 						}
 					}
-				}
+				};
+
 				$scope.selectAll = selectAll;
 
 				var anySelected = function (listOfList) {
@@ -56,14 +57,15 @@
 								$.merge(mergedList, listOfList[i]);
 							}
 						}
-						for (var i = 0; i < mergedList.length && !oneSelected; i++) {
-							if (mergedList[i].isChecked) {
+						for (var j = 0; j < mergedList.length && !oneSelected; j++) {
+							if (mergedList[j].isChecked) {
 								oneSelected = true;
 							}
 						}
 					}
 					return oneSelected;
-				}
+				};
+
 				$scope.anySelected = anySelected;
 
 				var downloadMetadata = function (listOfList) {
@@ -80,9 +82,10 @@
 						}));
 					}
 					console.log(selected);
-					var url = "../rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected)
+					var url = "../rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
-				}
+				};
+
 				$scope.downloadMetadata = downloadMetadata;
 
 
@@ -111,7 +114,7 @@
 						});
 					});
 					angular.forEach($scope.ingestDetails.requiredFieldsList, function (requiredField, key) {
-						$scope.$watch()
+						$scope.$watch();
 
 					});
 				});
@@ -128,14 +131,14 @@
 				} else {
 					return "";
 				}
-			}
+			};
 		}
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'$route', '$location', '$http',
+		'remoteRepositories', '$route', '$location', '$http',
 
-		function ($rootScope, $scope, ingestMultiform, $route, $location, $http) {
+		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -155,23 +158,73 @@
 
 			};
 
+			$scope.resetForm = function () {
+				$scope.ingest.url = null;
+				$scope.ingest.catalogOfServices = null;
+				$scope.gnSourcesList = [];
+				$scope.solrDataRepositoryList = [];
+			};
+
 			/**
 			 * Clean url if no source is selected
 			 */
 			$scope.cleanServiceUrl = function () {
 				if ($scope.ingest.catalogOfServices !== null) {
-					$scope.ingest.solrUrl = null;
+					$scope.ingest.url = null;
 				}
-				if ($scope.ingest.dataRepositoriesGN.length != 0) {
-					$scope.ingest.geonetworkUrl = null;
-				}
-				if ($scope.ingest.cswDataRepositories.length != 0) {
-					$scope.ingest.cswUrl = null;
-				}
-				if ($scope.ingest.webdavDataRepositories.length != 0) {
-					$scope.ingest.webdavUrl = null;
+			};
+
+			$scope.getRemoteSourcesByUrl = function () {
+				var repoType = $scope.ingest.typeOfInstance;
+				var url = $scope.ingest.url;
+				var valid = $scope.newIngest.url.$valid;
+				var targetField, targetModel;
+				if (repoType === 'SOLR') {
+					targetField = 'solrDataRepositoryList';
+					targetModel = 'dataRepositories';
+				} else if (repoType === 'GEONETWORK') {
+					targetField = 'gnSourcesList';
+					targetModel = 'gnSources';
+				} else {
+					return;
 				}
 
+				if (valid && url !== null && url !== '') {
+					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function (data) {
+						console.log("Updated remote repository list with data " + JSON.stringify(data));
+						$scope.ingest[targetModel] = [];
+						$scope[targetField] = data;
+					}).error(function () {
+						$scope.ingest[targetModel] = [];
+						$scope[targetField] = [];
+					});
+				} else if (!valid || url === null || url === '') {
+					$scope.ingest[targetModel] = [];
+					$scope[targetField] = [];
+				}
+			};
+
+			$scope.getRemoteSourcesByRepoId = function () {
+				var repoType = $scope.ingest.typeOfInstance;
+				var repoId = $scope.ingest.catalogOfServices;
+				if (repoId !== null) {
+					remoteRepositories.getRemoteSourcesByRepoId(repoId).
+					success(function (data) {
+						console.log("Remote sources by Id " + JSON.stringify(data));
+						if (repoType === "SOLR") {
+							$scope.ingest.dataRepositories = [];
+							$scope.solrDataRepositoryList = data;
+						} else if (repoType === "GEONETWORK") {
+							$scope.ingest.gnSources = [];
+							$scope.gnSourcesList = data;
+						}
+					});
+				} else {
+					$scope.ingest.dataRepositories = [];
+					$scope.solrDataRepositoryList = [];
+					$scope.ingest.gnSources = [];
+					$scope.gnSourcesList = [];
+				}
 			};
 
 
@@ -180,37 +233,27 @@
 				$scope.customRepositories = data;
 			});
 
+			$http.get('rest/localSolr/institutions').success(
+				function (data) {
+					$scope.nameOgpRepositoryList = data;
+				});
+
 
 
 			$scope.typeOfInstanceList = [{
-				value: 'solr',
+				value: 'SOLR',
 				label: 'TOI_SOLR'
 			}, {
-				value: 'geonetwork',
+				value: 'GEONETWORK',
 				label: 'TOI_GN'
 			}, {
-				value: 'csw',
+				value: 'CSW',
 				label: 'TOI_CSW'
 			}, {
-				value: 'webdav',
+				value: 'WEBDAV',
 				label: "TOI_WEBDAV"
 			}];
-			$scope.catalogOfServicesList = [{
-				id: 1,
-				name: 'Example catalog 1'
-			}, {
-				id: 2,
-				name: 'Example catalog 2'
-			}, {
-				id: 3,
-				name: 'Example catalog 3'
-			}, {
-				id: 4,
-				name: 'Example catalog 4'
-			}, {
-				id: 5,
-				name: 'Example catalog 5'
-			}, ];
+
 			$scope.topicList = [
 				"agriculture", "biology", "administrative", "boundaries", "atmospheric", "business",
 				"elevation", "environment", "geological", "health", "imagery", "military", "water",
@@ -218,42 +261,6 @@
 			];
 
 			$scope.dataTypeList = ["point", "line", "polygon", "raster", "scannedMap"];
-			$scope.dataRepositoryList = [{
-				id: 1,
-				name: 'Data repository 1'
-			}, {
-				id: 2,
-				name: 'Data repository 2'
-			}, {
-				id: 3,
-				name: 'Data repository 3'
-			}, {
-				id: 4,
-				name: 'Data repository 4'
-			}, {
-				id: 5,
-				name: 'Data repository 5'
-			}, {
-				id: 6,
-				name: 'Data repository 6'
-			}];
-
-			$scope.gnSourcesList = [{
-				id: 1,
-				name: "Geonetwork Repository 1"
-			}, {
-				id: 2,
-				name: "Geonetwork Repository 2"
-			}, {
-				id: 3,
-				name: "Geonetwork Repository 3"
-			}, {
-				id: 4,
-				name: "Geonetwork Repository 4"
-			}, {
-				id: 5,
-				name: "Geonetwork Repository 5"
-			}];
 
 
 

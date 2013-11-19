@@ -3,29 +3,39 @@
     <p translate="INGEST_FORM.SUBHEADER"></p>
     
     <h2 translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
-    <form ng-submit="step2()">
+    <form name="newIngest" ng-submit="step2()">
        
         <div class="form-group col-md-7">
             <label for="typeOfInstance" translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
-            <select id="typeOfInstance" class="form-control" ng-model="ingest.typeOfInstance" ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList"></select>
+            <select id="typeOfInstance" class="form-control" ng-model="ingest.typeOfInstance" ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" ng-change="resetForm()"></select>
         </div>
-        <div ng-switch on="ingest.typeOfInstance"  id="fagment">
-            <div ng-switch-when="solr" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="form-group col-md-7">
-                    <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
-                    <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
-                            ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
-                            ng-change="cleanServiceUrl()" >
-                            <option value="" translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
-                        </select>
-                </div>
+        <div class="form-group col-md-7">
+            <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
+            <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
+                    ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
+                    ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId()" >
+                    <option value="" translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
+            </select>
+        </div>
+        <div class="form-group col-md-9" ng-class="{'has-error': newIngest.url.$invalid}">
+            <label class="control-label" for="url" translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
+            <input type="url" id="url" name="url" ng-model="ingest.url" class="form-control" 
+                ng-disabled="ingest.catalogOfServices !== null" ng-blur="getRemoteSourcesByUrl()"></input>
+        </div>
 
-                <div class="form-group col-md-9">
-                    <label for="solrUrl" translate="INGEST_FORM.SOLR_URL"></label>
-                    <input type="text" id="solrUrl" ng-model="ingest.solrUrl" class="form-control" 
-                        ng-disabled="ingest.catalogOfServices !== null"></input>
-                </div>
-                <div class="clearfix"></div>
+        <div class="form-group multiselect col-md-7" ng-hide="ingest.typeOfInstance === 'SOLR'">
+            <label for="nameOgpRepository" translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
+                tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
+                class="glyphicon glyphicon-question-sign black"></span></a>
+            <select class="form-control" id="nameOgpRepository" 
+                ng-model="ingest.nameOgpRepository"
+                ng-options="item.key as item.value for item in nameOgpRepositoryList"
+                data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate">
+            </select>
+        </div>
+        <div class="clearfix"></div>
+        <div ng-switch on="ingest.typeOfInstance"  id="fagment">
+            <div ng-switch-when="SOLR" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
 
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
@@ -116,7 +126,7 @@
                                 tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="dataRepository" ng-model="ingest.dataRepositories"
-                                multiple="multiple" ng-options="item.id as item.name for item in dataRepositoryList" 
+                                multiple="multiple" ng-options="item.key as item.value for item in solrDataRepositoryList" 
                                 data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
                             </select>
                         </div>
@@ -157,23 +167,7 @@
                 </div>
             </div> <!-- //swich solr-->
 
-            <div ng-switch-when="geonetwork" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="form-group col-md-9">
-                    <label for="geonetworkUrl" translate="INGEST_FORM.GEONETWORK_URL"></label>
-                    <input type="text" id="geonetworkUrl" ng-model="ingest.geonetworkUrl" class="form-control" ng-disabled="ingest.dataRepositoriesGN.length != 0"></input>
-                </div>
-
-                <div class="clearfix"></div>
-                <div class="form-group multiselect col-md-7">
-                    <label for="dataRepositoryGN" translate="INGEST_FORM.DATA_REPOSITORY_NAME"></label> 
-                    <select class="form-control" id="dataRepositoryGN" ng-model="ingest.dataRepositoriesGN"
-                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_NAME_PLACEHOLDER' | translate" multiselect-dropdown
-                        ng-change="cleanServiceUrl()" >
-                    </select>
-                </div>
-                <div class="clearfix"></div>
-
+            <div ng-switch-when="GEONETWORK" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaGN">
@@ -223,30 +217,13 @@
                                 tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                                 <select multiple="multiple" ng-model="ingest.gnSources"
-                                    id="gnSources" class="form-control" ng-options="item.id as item.name for item in gnSourcesList" 
+                                    id="gnSources" class="form-control" ng-options="item.key as item.value for item in gnSourcesList" 
                                     data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" multiselect-dropdown>
                                 </select>
                         </div>
                 </div>
             </div>
-            <div  ng-switch-when="csw" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="form-group col-md-9">
-                        <label for="cswUrl" translate="INGEST_FORM.CSW_URL"></label>
-                        <input type="text" id="cswUrl" ng-model="ingest.cswUrl" class="form-control" ng-disabled="ingest.cswDataRepositories.length != 0" ></input>
-                </div>
-
-                <div class="form-group multiselect col-md-7">
-                    <label for="cswDataRepository" translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
-                        tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
-                        class="glyphicon glyphicon-question-sign black"></span></a>
-                    <select class="form-control" id="cswDataRepository" ng-model="ingest.cswDataRepositories"
-                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown 
-                        ng-change="cleanServiceUrl()">
-                    </select>
-                </div>
-                <div class="clearfix"></div>
-
+            <div  ng-switch-when="CSW" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaCsw">
@@ -318,28 +295,7 @@
                 </div>
             </div>
             
-            <div ng-switch-when="webdav" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="form-group col-md-9">
-                    <div class="col-md-10">
-                        <label for="webdavUrl" translate="INGEST_FORM.WD_URL"></label>
-                        <input id="webdavUrl" ng-model="ingest.webdavUrl" 
-                            class="form-control col-md-6" ng-disabled="ingest.webdavDataRepositories.length != 0"></input>
-                        <p class="help-block" translate="INGEST_FORM.WD_URL_HELP"></p>
-                    </div>
-                </div>
-
-                <div class="form-group multiselect col-md-7">
-                    <label for="webdavDataRepository" translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
-                        tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
-                        class="glyphicon glyphicon-question-sign black"></span></a>
-                    <select class="form-control" id="webdavDataRepository" ng-model="ingest.webdavDataRepositories"
-                        multiple="multiple" ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]" 
-                        data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown
-                        ng-change="cleanServiceUrl()"
-                        >
-                    </select>
-                </div>
-                <div class="clearfix"></div>
+            <div ng-switch-when="WEBDAV" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaWebdav">

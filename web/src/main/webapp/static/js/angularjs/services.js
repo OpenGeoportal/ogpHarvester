@@ -29,9 +29,10 @@ servicesModule.service('ingestMultiform',
 		var initBean = function () {
 			console.log("Initiating ingest bean");
 			var bean = {
-				typeOfInstance: 'solr',
+				typeOfInstance: 'SOLR',
 				catalogOfServices: null,
-				solrUrl: null,
+				nameOgpRepository: null,
+				url: null,
 				extent: null,
 				themeKeyword: null,
 				placeKeyword: null,
@@ -52,7 +53,6 @@ servicesModule.service('ingestMultiform',
 				gnAbstractText: null,
 				gnFreeText: null,
 				gnSources: null,
-				cswUrl: null,
 				cswDataRepositories: [],
 				cswLocation: null,
 				cswTitle: null,
@@ -61,7 +61,6 @@ servicesModule.service('ingestMultiform',
 				cswRangeFrom: null,
 				cswRangeTo: null,
 				cswCustomQuery: null,
-				webdavUrl: null,
 				webdavDataRepositories: [],
 				webdavFromLastModified: null,
 				webdavToLastModified: null,
@@ -88,6 +87,24 @@ servicesModule.service('ingestMultiform',
 
 			}
 		};
-
-
 	});
+
+servicesModule.service('remoteRepositories', ['$http',
+	function ($http) {
+		// Private data
+
+
+		// Public interface
+		return {
+			getRemoteSourcesByRepoId: function (repoId) {
+				return $http.get('rest/repositories/' + repoId + '/remoteSources');
+			},
+			getRemoteSourcesByUrl: function (repoType, repoUrl) {
+				return $http.post('rest/repositoriesbyurl/remoteSources', {
+					repoType: repoType,
+					repoUrl: repoUrl
+				});
+			}
+		};
+	}
+]);
