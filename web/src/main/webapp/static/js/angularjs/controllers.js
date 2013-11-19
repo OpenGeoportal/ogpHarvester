@@ -265,16 +265,16 @@
 
 
 			$scope.requiredFieldList = {
-				solr: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+				SOLR: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
 					"placeKeyword", "originator", "webServices"
 				],
-				geonetwork: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
-					"placeKeyword", "originator", "editDate"
-				],
-				csw: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+				GEONETWORK: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
 					"placeKeyword", "originator"
 				],
-				webdav: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+				CSW: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+					"placeKeyword", "originator"
+				],
+				WEBDAV: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
 					"placeKeyword", "originator"
 				]
 			};
