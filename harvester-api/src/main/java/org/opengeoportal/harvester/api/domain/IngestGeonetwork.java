@@ -35,6 +35,8 @@ import java.util.HashSet;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @DiscriminatorValue("GN")
@@ -52,13 +54,16 @@ public class IngestGeonetwork extends Ingest {
 	private String freeText;
 	@Column
 	private String geonetworkSource;
+	
+	@ManyToOne
+	@JoinColumn(name="repository_id")
+	private CustomRepository repository;
 
 	public IngestGeonetwork() {
 		super();
 		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
 				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
-				"dateOfContent", "originator", "dataType", "dataRepository",
-				"creationDate" }));
+				"dateOfContent", "originator", "dataType", "dataRepository" }));
 	}
 
 	public String getTitle() {

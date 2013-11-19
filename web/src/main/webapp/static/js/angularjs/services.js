@@ -37,8 +37,6 @@ servicesModule.service('ingestMultiform',
 				themeKeyword: null,
 				placeKeyword: null,
 				topic: null,
-				rangeFrom: null,
-				rangeTo: null,
 				originator: null,
 				dataTypes: [],
 				dataRepositories: [],
@@ -46,22 +44,18 @@ servicesModule.service('ingestMultiform',
 				rangeSolrFrom: null,
 				rangeSolrTo: null,
 				requiredFields: {},
-				geonetworkUrl: null,
-				dataRepositoriesGN: [],
 				gnTitle: null,
 				gnKeyword: null,
 				gnAbstractText: null,
 				gnFreeText: null,
-				gnSources: null,
-				cswDataRepositories: [],
-				cswExtent: null,
+				gnSources: [],
 				cswTitle: null,
 				cswSubject: null,
 				cswFreeText: null,
 				cswRangeFrom: null,
 				cswRangeTo: null,
 				cswCustomQuery: null,
-				webdavDataRepositories: [],
+				solrCustomQuery: null,
 				webdavFromLastModified: null,
 				webdavToLastModified: null,
 				ingestName: null,
@@ -104,6 +98,12 @@ servicesModule.service('remoteRepositories', ['$http',
 					repoType: repoType,
 					repoUrl: repoUrl
 				});
+			},
+			getRepositoryList: function () {
+				return $http.get('rest/repositories');
+			},
+			getLocalSolrInstitutions: function () {
+				return $http.get('rest/localSolr/institutions');
 			}
 		};
 	}

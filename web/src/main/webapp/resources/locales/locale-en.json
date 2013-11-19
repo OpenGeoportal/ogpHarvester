@@ -68,6 +68,9 @@
 		"EXCLUDE_RESTRICTED_TOOLTIP": "Please add the content of Exclude Restricted tooltip",
 		"DATE_RANGE_SOLR": "Filter records by Solr timestamp:",
 		"DATE_RANGE_SOLR_TOOLTIP": "Please add the content of Date Range Solr tooltip",
+		"SOLR_CUSTOM_QUERY": "Custom Sorl Query:",
+		"SOLR_CUSTOM_QUERY_TOOLTIP": "Please add the content of the Custom SOLR Query Tooltip",
+
 		"REQUIRED_FIELDS": "OGP Required Fields (optional)",
 		"REQUIRED_FIELDS_TOOLTIP": "Please add the content of Required Fields tooltip",
 		"REQUIRED_FIELD_OPT_extent": "Geographic Extent",

@@ -55,7 +55,6 @@
                             </button> 
                             <a tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input type="hidden" ng-model="ingest.extent" />
                         </div>
 
                         <div class="form-group col-md-9">
@@ -163,6 +162,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group col-md-9">
+                            <label for="solrCustomQuery" translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a 
+                                tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <textarea class="form-control" rows="3" ng-model="ingest.solrCustomQuery"
+                                id="solrCustomQuery"></textarea>
+                        </div>
+
                     </div>
                 </div>
             </div> <!-- //swich solr-->
@@ -242,7 +249,7 @@
                             </button> 
                             <a tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input type="hidden" ng-model="ingest.cswExtent" />
+                            
                         </div>
 
                         <div class="form-group col-md-9">

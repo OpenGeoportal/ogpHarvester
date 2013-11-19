@@ -227,13 +227,24 @@
 				}
 			};
 
+			$scope.scheduleIngest = function () {
+				console.info("Schedule Ingest");
+				$http.post("rest/ingests/new", $scope).success(function (data) {
+					console.log("Schedule ingest success: " + data);
+				}).
+				error(function (data, status, headers, config) {
+					console.log("Schedule ingest error");
+				});
+			}
 
 
-			$http.get('rest/repositories').success(function (data) {
-				$scope.customRepositories = data;
-			});
 
-			$http.get('rest/localSolr/institutions').success(
+			remoteRepositories.getRepositoryList().success(
+				function (data) {
+					$scope.customRepositories = data;
+				});
+
+			remoteRepositories.getLocalSolrInstitutions().success(
 				function (data) {
 					$scope.nameOgpRepositoryList = data;
 				});

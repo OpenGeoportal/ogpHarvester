@@ -37,6 +37,8 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Transient;
@@ -49,14 +51,16 @@ import org.springframework.util.Assert;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Ingest extends AbstractPersistable<Long> {
 	private static final long serialVersionUID = -3390351777452085398L;
-	
+
 	@Column(unique = true, nullable = false)
 	private String name;
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date beginDate;
 
-	private String frequency;
+	@Column
+	@Enumerated(EnumType.STRING)
+	private Frequency frequency;
 
 	@Column(nullable = false)
 	private String url;
@@ -91,11 +95,11 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 		this.beginDate = beginDate;
 	}
 
-	public String getFrequency() {
+	public Frequency getFrequency() {
 		return frequency;
 	}
 
-	public void setFrequency(String frequency) {
+	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
 	}
 
