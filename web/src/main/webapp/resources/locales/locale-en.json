@@ -98,8 +98,8 @@
 		"GN_SOURCES_PLACEHOLDER": "Select Repositories",
 
 		"CSW_SEARCH_CRITERIA": "Search Criteria",
-		"CSW_LOCATION": "Location:",
-		"CSW_LOCATION_TOOLTIP": "Please add the content of the CSW Location tooltip",
+		"CSW_EXTENT": "Geographic Extent:",
+		"CSW_EXTENT_TOOLTIP": "Please add the content of the CSW Geographic extent tooltip",
 		"CSW_TITLE": "Title:",
 		"CSW_TITLE_TOOLTIP": "Please add the content of the CSW Title tooltip",
 		"CSW_SUBJECT": "Subject:",

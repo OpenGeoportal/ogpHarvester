@@ -235,13 +235,16 @@
                         </h2>
                     </div>
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
-                        <div class="form-group col-md-9">
-                            <label for="cswLocation" translate="INGEST_FORM.CSW_LOCATION"></label> <a 
-                                tooltip='{{ "INGEST_FORM.CSW_LOCATION_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span>
-                            </a>
-                            <input type="text" class="form-control" id="cswLocation" ng-model="ingest.cswLocation"></input>
+                        <div class="form-group">
+                            <label translate="INGEST_FORM.CSW_EXTENT"></label>
+                            <button type="button" class="btn btn-default">
+                                <span class="glyphicon glyphicon-globe"></span>
+                            </button> 
+                            <a tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <input type="hidden" ng-model="ingest.cswExtent" />
                         </div>
+
                         <div class="form-group col-md-9">
                             <label for="cswTitle" translate="INGEST_FORM.CSW_TITLE"></label> <a 
                                 tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
