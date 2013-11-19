@@ -186,41 +186,42 @@
                                 <input
                                 class="form-control" id="gnTitle" ng-model="ingest.gnTitle" ></input>
                         </div>
-                    </div>
+                    
 
-                    <div class="form-group col-md-9">
-                        <label for="gnKeyword" translate="INGEST_FORM.GN_KEYWORD"></label> <a 
-                            tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
-                            class="glyphicon glyphicon-question-sign black"></span></a> 
-                            <input class="form-control" id="gnKeyword" ng-model="ingest.gnKeyword" ></input>
-                    </div>
-
-                    <div class="form-group col-md-9">
-                        <label for="gnAbstractText" translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
-                            tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
-                            class="glyphicon glyphicon-question-sign black"></span></a>
-                        <textarea class="form-control" rows="3" ng-model="ingest.gnAbstractText"
-                            id="gnAbstractText"></textarea>
-                    </div>
-
-                    <div class="form-group col-md-9">
-                        <label for="gnFreeText" translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
-                            tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
-                            class="glyphicon glyphicon-question-sign black"></span></a>
-                        <textarea class="form-control" rows="3" ng-model="ingest.gnFreeText"
-                            id="gnFreeText"></textarea>
-                    </div>
-
-                    <div class="clearfix"></div>
-                        <div class="form-group multiselect col-md-7">
-                            <label for="gnSources" translate="INGEST_FORM.GN_SOURCES"></label> <a 
-                                tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
+                        <div class="form-group col-md-9">
+                            <label for="gnKeyword" translate="INGEST_FORM.GN_KEYWORD"></label> <a 
+                                tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
-                                <select multiple="multiple" ng-model="ingest.gnSources"
-                                    id="gnSources" class="form-control" ng-options="item.key as item.value for item in gnSourcesList" 
-                                    data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" multiselect-dropdown>
-                                </select>
+                                <input class="form-control" id="gnKeyword" ng-model="ingest.gnKeyword" ></input>
                         </div>
+
+                        <div class="form-group col-md-9">
+                            <label for="gnAbstractText" translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
+                                tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <textarea class="form-control" rows="3" ng-model="ingest.gnAbstractText"
+                                id="gnAbstractText"></textarea>
+                        </div>
+
+                        <div class="form-group col-md-9">
+                            <label for="gnFreeText" translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
+                                tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <textarea class="form-control" rows="3" ng-model="ingest.gnFreeText"
+                                id="gnFreeText"></textarea>
+                        </div>
+
+                        <div class="clearfix"></div>
+                            <div class="form-group multiselect col-md-7">
+                                <label for="gnSources" translate="INGEST_FORM.GN_SOURCES"></label> <a 
+                                    tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
+                                    class="glyphicon glyphicon-question-sign black"></span></a> 
+                                    <select multiple="multiple" ng-model="ingest.gnSources"
+                                        id="gnSources" class="form-control" ng-options="item.key as item.value for item in gnSourcesList" 
+                                        data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" multiselect-dropdown>
+                                    </select>
+                            </div>
+                    </div>
                 </div>
             </div>
             <div  ng-switch-when="CSW" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
@@ -233,7 +234,7 @@
                                 class="glyphicon glyphicon-chevron-up pull-right black"></span>
                         </h2>
                     </div>
-                    <div class="custom-panel-body collapse in" id="collapseSearchCriteriaCsw">
+                    <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
                         <div class="form-group col-md-9">
                             <label for="cswLocation" translate="INGEST_FORM.CSW_LOCATION"></label> <a 
                                 tooltip='{{ "INGEST_FORM.CSW_LOCATION_TOOLTIP" | translate}}'><span
