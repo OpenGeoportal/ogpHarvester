@@ -29,17 +29,53 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.net.URL;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.List;
+
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.google.common.collect.ListMultimap;
 
 public interface CustomRepositoryService {
-    public CustomRepository save(CustomRepository customRepository);
-    public void delete(Long id);
+	public CustomRepository save(CustomRepository customRepository);
 
-    public CustomRepository findByName(String name);
-    public Page<CustomRepository> findAll(Pageable pageable);
-    public ListMultimap<String, CustomRepository> getAllGroupByType();
+	public void delete(Long id);
+
+	public CustomRepository findByName(String name);
+
+	public Page<CustomRepository> findAll(Pageable pageable);
+
+	public ListMultimap<String, CustomRepository> getAllGroupByType();
+
+	/**
+	 * Fetch the URL and search remote instances in the catalog.
+	 * 
+	 * @param repoType
+	 * @param urlObj
+	 * @return
+	 */
+	public List<SimpleEntry<String, String>> getRemoteRepositories(
+			InstanceType repoType, URL urlObj);
+
+	/**
+	 * Contact the local Solr index and returns the content of all fields
+	 * <code>institution</code> found in the instance.
+	 * 
+	 * @return
+	 */
+	public List<SimpleEntry<String, String>> getLocalSolrInstitutions();
+
+	/**
+	 * Fetch the remote repository with <code>repoID</code> and connect to its
+	 * URL looking for remote sources.
+	 * 
+	 * @param repoId
+	 * @return
+	 */
+	public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
+			Long repoId);
 }
