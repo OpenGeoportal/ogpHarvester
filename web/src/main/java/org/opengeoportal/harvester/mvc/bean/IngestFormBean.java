@@ -32,6 +32,7 @@ package org.opengeoportal.harvester.mvc.bean;
 import java.util.Date;
 import java.util.Map;
 
+import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.mvc.utils.CustomJsonDateDeserializer;
@@ -45,20 +46,26 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  */
 public class IngestFormBean {
 	private InstanceType typeOfInstance;
-	private String catalogOfServices;
+	private Long catalogOfServices;
 	private String nameOgpRepository;
 	private String url;
 	private String themeKeyword;
 	private String placeKeyword;
 	private String topic;
 	private String originator;
-	private String[] dataTypes;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date contentRangeFrom;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date contentRangeTo;
+	private DataType[] dataTypes;
 	private String[] dataRepositories;
 	private boolean excludeRestricted;
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrFrom;
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrTo;
 	private Map<String, Boolean> requiredFields;
@@ -70,26 +77,35 @@ public class IngestFormBean {
 	private String cswTitle;
 	private String cswSubject;
 	private String cswFreeText;
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date cswRangeFrom;
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date cswRangeTo;
 	private String cswCustomQuery;
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date webdavFromLastModified;
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date webdavToLastModified;
 	private String solrCustomQuery;
 	private String ingestName;
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
-	@JsonDeserialize(using=CustomJsonDateDeserializer.class)
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date beginDate;
 	private Frequency frequency;
 	private BoundingBox extent;
+
+	/**
+	 * 
+	 */
+	public IngestFormBean() {
+		this.dataTypes = new DataType[0];
+		this.dataRepositories = new String[0];
+		this.gnSources = new String[0];
+	}
 
 	/**
 	 * @return the typeOfInstance
@@ -109,7 +125,7 @@ public class IngestFormBean {
 	/**
 	 * @return the catalogOfServices
 	 */
-	public String getCatalogOfServices() {
+	public Long getCatalogOfServices() {
 		return catalogOfServices;
 	}
 
@@ -117,7 +133,7 @@ public class IngestFormBean {
 	 * @param catalogOfServices
 	 *            the catalogOfServices to set
 	 */
-	public void setCatalogOfServices(String catalogOfServices) {
+	public void setCatalogOfServices(Long catalogOfServices) {
 		this.catalogOfServices = catalogOfServices;
 	}
 
@@ -196,7 +212,6 @@ public class IngestFormBean {
 		this.topic = topic;
 	}
 
-
 	/**
 	 * @return the originator
 	 */
@@ -215,7 +230,7 @@ public class IngestFormBean {
 	/**
 	 * @return the dataType
 	 */
-	public String[] getDataTypes() {
+	public DataType[] getDataTypes() {
 		return dataTypes;
 	}
 
@@ -223,7 +238,7 @@ public class IngestFormBean {
 	 * @param dataTypes
 	 *            the dataType to set
 	 */
-	public void setDataTypes(String[] dataTypes) {
+	public void setDataTypes(DataType[] dataTypes) {
 		this.dataTypes = dataTypes;
 	}
 
@@ -376,7 +391,6 @@ public class IngestFormBean {
 	public void setGnSources(String[] gnSources) {
 		this.gnSources = gnSources;
 	}
-
 
 	/**
 	 * @return the cswTitle
@@ -566,14 +580,41 @@ public class IngestFormBean {
 	}
 
 	/**
-	 * @param extent the extent to set
+	 * @param extent
+	 *            the extent to set
 	 */
 	public void setExtent(BoundingBox extent) {
 		this.extent = extent;
 	}
 
+	/**
+	 * @return the contentRangeFrom
+	 */
+	public Date getContentRangeFrom() {
+		return contentRangeFrom;
+	}
 
-	
-	
+	/**
+	 * @param contentRangeFrom
+	 *            the contentRangeFrom to set
+	 */
+	public void setContentRangeFrom(Date contentRangeFrom) {
+		this.contentRangeFrom = contentRangeFrom;
+	}
+
+	/**
+	 * @return the contentRangeTo
+	 */
+	public Date getContentRangeTo() {
+		return contentRangeTo;
+	}
+
+	/**
+	 * @param contentRangeTo
+	 *            the contentRangeTo to set
+	 */
+	public void setContentRangeTo(Date contentRangeTo) {
+		this.contentRangeTo = contentRangeTo;
+	}
 
 }

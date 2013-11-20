@@ -49,7 +49,7 @@ public interface CustomRepositoryService {
 
 	public Page<CustomRepository> findAll(Pageable pageable);
 
-	public ListMultimap<String, CustomRepository> getAllGroupByType();
+	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType();
 
 	/**
 	 * Fetch the URL and search remote instances in the catalog.
@@ -78,4 +78,11 @@ public interface CustomRepositoryService {
 	 */
 	public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
 			Long repoId);
+
+	/**
+	 * Retrieve the {@link CustomRepository} with the identifier passed.
+	 * @param id the {@link CustomRepository} identifier.
+	 * @return the {@link CustomRepository} or null if can not be found.
+	 */
+	public CustomRepository findById(Long id);
 }

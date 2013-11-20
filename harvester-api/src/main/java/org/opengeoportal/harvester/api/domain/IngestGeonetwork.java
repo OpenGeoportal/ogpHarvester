@@ -31,12 +31,15 @@ package org.opengeoportal.harvester.api.domain;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OrderColumn;
 
 @Entity
 @DiscriminatorValue("GN")
@@ -52,12 +55,11 @@ public class IngestGeonetwork extends Ingest {
 	private String abstractText;
 	@Column
 	private String freeText;
+	@ElementCollection
+	@CollectionTable(name = "ingestgn_gn_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
+	@OrderColumn
 	@Column
-	private String geonetworkSource;
-	
-	@ManyToOne
-	@JoinColumn(name="repository_id")
-	private CustomRepository repository;
+	private List<String> geonetworkSources;
 
 	public IngestGeonetwork() {
 		super();
@@ -98,11 +100,11 @@ public class IngestGeonetwork extends Ingest {
 		this.freeText = freeText;
 	}
 
-	public String getGeonetworkSource() {
-		return geonetworkSource;
+	public List<String> getGeonetworkSources() {
+		return geonetworkSources;
 	}
 
-	public void setGeonetworkSource(String geonetworkSource) {
-		this.geonetworkSource = geonetworkSource;
+	public void setGeonetworkSource(List<String> geonetworkSource) {
+		this.geonetworkSources = geonetworkSource;
 	}
 }

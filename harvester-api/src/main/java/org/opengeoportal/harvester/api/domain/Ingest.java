@@ -41,14 +41,18 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Check;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.Assert;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Check(constraints = "(url IS NULL AND repository_id IS NOT NULL) OR (url IS NOT NULL AND repository_id IS NULL)")
 public abstract class Ingest extends AbstractPersistable<Long> {
 	private static final long serialVersionUID = -3390351777452085398L;
 
@@ -62,7 +66,7 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	@Enumerated(EnumType.STRING)
 	private Frequency frequency;
 
-	@Column(nullable = false)
+	@Column
 	private String url;
 
 	@ElementCollection
@@ -70,6 +74,10 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 
 	@Transient
 	protected Set<String> validRequiredFields = new HashSet<String>();
+
+	@ManyToOne
+	@JoinColumn(name = "repository_id")
+	private CustomRepository repository;
 
 	public String getName() {
 		return name;
@@ -135,4 +143,18 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 		return Collections.unmodifiableSet(validRequiredFields);
 	}
 
+	/**
+	 * @return the repository
+	 */
+	public CustomRepository getRepository() {
+		return repository;
+	}
+
+	/**
+	 * @param repository
+	 *            the repository to set
+	 */
+	public void setRepository(CustomRepository repository) {
+		this.repository = repository;
+	}
 }

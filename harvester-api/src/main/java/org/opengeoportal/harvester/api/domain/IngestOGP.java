@@ -39,11 +39,13 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
 @Entity
-@DiscriminatorValue("OGP")
+@DiscriminatorValue("SOLR")
 public class IngestOGP extends Ingest {
 
 	private static final long serialVersionUID = 1545386542676335709L;
@@ -63,13 +65,17 @@ public class IngestOGP extends Ingest {
 	@Column
 	private String originator;
 
+	@ElementCollection
+	@CollectionTable(name = "ingestogp_data_type", joinColumns = @JoinColumn(name = "ingest_id"))
+	@OrderColumn
 	@Column
-	private String dataType;
+	@Enumerated(EnumType.STRING)
+	private List<DataType> dataTypes;
 
 	@ElementCollection
 	@CollectionTable(name = "ingestogp_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
 	@Column(name = "repository_name")
-	@OrderColumn 
+	@OrderColumn
 	private List<String> dataRepositories;
 
 	@Column
@@ -148,12 +154,12 @@ public class IngestOGP extends Ingest {
 		this.originator = originator;
 	}
 
-	public String getDataType() {
-		return dataType;
+	public List<DataType> getDataTypes() {
+		return dataTypes;
 	}
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
+	public void setDataTypes(List<DataType> dataType) {
+		this.dataTypes = dataType;
 	}
 
 	public boolean isExcludeRestrictedData() {

@@ -229,7 +229,7 @@
 
 			$scope.scheduleIngest = function () {
 				console.info("Schedule Ingest");
-				$http.post("rest/ingests/new", $scope).success(function (data) {
+				$http.post("/rest/ingests/new", $scope.ingest).success(function (data) {
 					console.log("Schedule ingest success: " + data);
 				}).
 				error(function (data, status, headers, config) {
@@ -271,7 +271,7 @@
 				"locations", "oceans", "cadastral", "cultural", "facilities", "transportation", "utilities"
 			];
 
-			$scope.dataTypeList = ["point", "line", "polygon", "raster", "scannedMap"];
+			$scope.dataTypeList = ["POINT", "LINE", "POLYGON", "RASTER", "SCANNED"];
 
 
 

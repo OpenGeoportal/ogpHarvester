@@ -89,12 +89,13 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	 */
 	@Override
 	@Transactional
-	public ListMultimap<String, CustomRepository> getAllGroupByType() {
+	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
 		Sort typeSortAsc = new Sort(new Order(
 				CustomRepository.COLUMN_SERVICE_TYPE));
 		List<CustomRepository> repositories = customRepositoryRepository
 				.findAll(typeSortAsc);
-		ListMultimap<String, CustomRepository> map = ArrayListMultimap.create();
+		ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
+				.create();
 		for (CustomRepository repository : repositories) {
 			map.put(repository.getServiceType(), repository);
 		}
@@ -163,16 +164,28 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
 		if (repository != null) {
 			String url = repository.getUrl();
-			String serviceType = repository.getServiceType();
+			InstanceType serviceType = repository.getServiceType();
 
 			// TODO with the repository URL and its type, fecth the URL and look
 			// for remote sources
 			for (int i = 0; i < 6; i++) {
 				result.add(new SimpleEntry<String, String>("guid" + i,
-						"Remote source " + serviceType + " " + i));
+						"Remote source " + serviceType.name() + " " + i));
 			}
 
 		}
 		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.CustomRepositoryService#findById
+	 * (java.lang.Long)
+	 */
+	@Override
+	public CustomRepository findById(Long id) {
+		return customRepositoryRepository.findOne(id);
 	}
 }

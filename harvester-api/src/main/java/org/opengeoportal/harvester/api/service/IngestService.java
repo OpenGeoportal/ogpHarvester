@@ -29,14 +29,37 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IngestService {
-    public Ingest save(Ingest ingest);
-    public void delete(Long id);
+	public Ingest save(Ingest ingest);
 
-    public Ingest findByName(String name);
-    public Page<Ingest> findAll(Pageable pageable);
+	/**
+	 * Save an {@link Ingest} into the database. Associate it with the
+	 * {@link CustomRepository} having the passed id and {@link InstanceType}.
+	 * 
+	 * @param ingest
+	 *            the <code>Ingest</code> to save.
+	 * @param customRepositoryId
+	 *            the custom repository identifier to be associated with.
+	 * @return the saved Ingest.
+	 * @throws InstanceNotFoundException
+	 *             if a {@link CustomRepository} with
+	 *             <code>customRepositoryId</code> as identifier and type
+	 *             <code>customRepositoryId</code> is not found.
+	 */
+	public Ingest save(Ingest ingest, Long customRepositoryId,
+			InstanceType customRepoInstanceType)
+			throws InstanceNotFoundException;
+
+	public void delete(Long id);
+
+	public Ingest findByName(String name);
+
+	public Page<Ingest> findAll(Pageable pageable);
 }

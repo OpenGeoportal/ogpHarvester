@@ -49,13 +49,20 @@ public class IngestCsw extends Ingest {
 	private Date dateTo;
 
 	@Column
-	private String location;
-	@Column
 	private String title;
 	@Column
 	private String subject;
 	@Column
 	private String freeText;
+
+	@Column
+	private Double bboxWest;
+	@Column
+	private Double bboxEast;
+	@Column
+	private Double bboxNorth;
+	@Column
+	private Double bboxSouth;
 
 	@Column
 	private String customCswQuery;
@@ -81,14 +88,6 @@ public class IngestCsw extends Ingest {
 
 	public void setDateTo(Date dateTo) {
 		this.dateTo = dateTo;
-	}
-
-	public String getLocation() {
-		return location;
-	}
-
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	public String getTitle() {
@@ -121,5 +120,61 @@ public class IngestCsw extends Ingest {
 
 	public void setCustomCswQuery(String customCswQuery) {
 		this.customCswQuery = customCswQuery;
+	}
+
+	/**
+	 * @return the bboxWest
+	 */
+	public Double getBboxWest() {
+		return bboxWest;
+	}
+
+	/**
+	 * @param bboxWest the bboxWest to set
+	 */
+	public void setBboxWest(Double bboxWest) {
+		this.bboxWest = bboxWest;
+	}
+
+	/**
+	 * @return the bboxEast
+	 */
+	public Double getBboxEast() {
+		return bboxEast;
+	}
+
+	/**
+	 * @param bboxEast the bboxEast to set
+	 */
+	public void setBboxEast(Double bboxEast) {
+		this.bboxEast = bboxEast;
+	}
+
+	/**
+	 * @return the bboxNorth
+	 */
+	public Double getBboxNorth() {
+		return bboxNorth;
+	}
+
+	/**
+	 * @param bboxNorth the bboxNorth to set
+	 */
+	public void setBboxNorth(Double bboxNorth) {
+		this.bboxNorth = bboxNorth;
+	}
+
+	/**
+	 * @return the bboxSouth
+	 */
+	public Double getBboxSouth() {
+		return bboxSouth;
+	}
+
+	/**
+	 * @param bboxSouth the bboxSouth to set
+	 */
+	public void setBboxSouth(Double bboxSouth) {
+		this.bboxSouth = bboxSouth;
 	}
 }
