@@ -114,6 +114,8 @@
 		var="angularResourceUrl" />
 	<spring:url value="/static/js/angular-translate/angular-translate.js"
 		var="angularTranslateUrl" />
+	<spring:url value="/static/js/angular-rcsubmit/rc-form.js"
+		var="rcFormUrl" />
 	<spring:url
 		value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
 		var="angularTranslateLoaderStaticFilesUrl" />
@@ -137,6 +139,7 @@
 	<script src="${angularResourceUrl}"></script>
 	<script src="${angularTranslateUrl}"></script>
 	<script src="${angularTranslateLoaderStaticFilesUrl}"></script>
+	<script src="${rcFormUrl}"></script>
 	<script src="${angularUiBootstrapUrl}"></script>
 	<script src="${uiUtilsUrl}"></script>
 	<script src="${ogpHarvesterUrl}"></script>
