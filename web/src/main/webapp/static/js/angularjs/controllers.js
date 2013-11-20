@@ -82,7 +82,9 @@
 						}));
 					}
 					console.log(selected);
-					var url = "../rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+					
+					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
 				};
 
@@ -91,18 +93,18 @@
 
 
 				$scope.params = $routeParams;
-				var ingestDetails = Ingest.get({
+				Ingest.get({
 					id: $scope.params.id
-				}, function () {
-					$scope.ingestDetails = ingestDetails;
+				}, function (data) {
+					$scope.ingestDetails = data;
 					$scope.totalPassed = {
-						count: ingestDetails.passed.restrictedRecords + ingestDetails.passed.publicRecords + ingestDetails.passed.vectorRecords + ingestDetails.passed.rasterRecords
+						count: data.passed.restrictedRecords + data.passed.publicRecords + data.passed.vectorRecords + data.passed.rasterRecords
 					};
 					$scope.totalWarnig = {
-						count: ingestDetails.warning.unrequiredFields + ingestDetails.warning.webserviceWarnings
+						count: data.warning.unrequiredFields + data.warning.webserviceWarnings
 					};
 					$scope.totalFailed = {
-						count: ingestDetails.error.requiredFields + ingestDetails.error.webServiceErrors + ingestDetails.error.systemErrors
+						count: data.error.requiredFields + data.error.webServiceErrors + data.error.systemErrors
 					};
 					$scope.ingestDetails.error.allRequired = false;
 					$scope.ingestDetails.error.allWebservice = false;
@@ -229,13 +231,13 @@
 
 			$scope.scheduleIngest = function () {
 				console.info("Schedule Ingest");
-				$http.post("/rest/ingests/new", $scope.ingest).success(function (data) {
-					console.log("Schedule ingest success: " + data);
+				$http.post("rest/ingests/new", $scope.ingest).success(function (data) {
+					console.log("Schedule ingest success: " + JSON.stringify(data));
 				}).
 				error(function (data, status, headers, config) {
 					console.log("Schedule ingest error");
 				});
-			}
+			};
 
 
 

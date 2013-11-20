@@ -38,12 +38,8 @@
         <div class="form-group">
             <a href="#/newIngest" class="btn btn-default"><span
                 class="glyphicon glyphicon-chevron-left"></span> {{ "INGEST_FORM.STEP2_BACK_BUTTON" | translate }}</a>
-            <button class="btn btn-primary" translate="INGEST_FORM.STEP2_START_BUTTON">
+            <button class="btn btn-primary" translate="INGEST_FORM.STEP2_START_BUTTON" ng-disabled="form.$invalid">
             </button>
         </div>
     </form>
-    <pre>{{ingest | json}}</pre>
-
-    <h2>
-
 </div>

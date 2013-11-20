@@ -62,7 +62,7 @@ servicesModule.service('ingestMultiform',
 				webdavToLastModified: null,
 				ingestName: null,
 				beginDate: null,
-				frequency: 'once'
+				frequency: 'ONCE'
 			};
 			return bean;
 		};
