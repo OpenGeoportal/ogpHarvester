@@ -32,10 +32,15 @@ package org.opengeoportal.harvester.api.domain;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 
 @Entity
 @DiscriminatorValue("OGP")
@@ -60,8 +65,12 @@ public class IngestOGP extends Ingest {
 
 	@Column
 	private String dataType;
-	@Column
-	private String dataRepository;
+
+	@ElementCollection
+	@CollectionTable(name = "ingestogp_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
+	@Column(name = "repository_name")
+	@OrderColumn 
+	private List<String> dataRepositories;
 
 	@Column
 	private boolean excludeRestrictedData;
@@ -147,14 +156,6 @@ public class IngestOGP extends Ingest {
 		this.dataType = dataType;
 	}
 
-	public String getDataRepository() {
-		return dataRepository;
-	}
-
-	public void setDataRepository(String dataRepository) {
-		this.dataRepository = dataRepository;
-	}
-
 	public boolean isExcludeRestrictedData() {
 		return excludeRestrictedData;
 	}
@@ -217,5 +218,20 @@ public class IngestOGP extends Ingest {
 
 	public void setBboxSouth(Double bboxSouth) {
 		this.bboxSouth = bboxSouth;
+	}
+
+	/**
+	 * @return the dataRepositories
+	 */
+	public List<String> getDataRepositories() {
+		return dataRepositories;
+	}
+
+	/**
+	 * @param dataRepositories
+	 *            the dataRepositories to set
+	 */
+	public void setDataRepositories(List<String> dataRepositories) {
+		this.dataRepositories = dataRepositories;
 	}
 }
