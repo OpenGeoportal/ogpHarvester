@@ -1,6 +1,6 @@
-'use strict';
-
 (function () {
+	'use strict';
+
 	/* Controllers */
 
 	angular.module('ogpHarvester.controllers', []);
@@ -12,13 +12,14 @@
 				$scope.data = {};
 				IngestPage.query($routeParams.page, $routeParams.pageSize, function (response) {
 					$scope.ingestPage = response;
+					$scope.pageSize = response.pageDetails.size;
 				});
 				if ($routeParams.name) {
 					console.log('Ingest "' + $routeParams.name + " has been successfully created");
 				}
 
 				$scope.selectPage = function (page) {
-					$location.url('/manageIngests?page=' + page);
+					$location.url('/manageIngests?page=' + page + "&pageSize=" + $scope.pageSize);
 				};
 
 			}
@@ -26,12 +27,6 @@
 	angular.module('ogpHarvester.controllers')
 		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest',
 			function ($scope, $routeParams, Ingest) {
-				// Activate tooltips
-				$scope.$on('$viewContentLoaded', function () {
-					$(".right-column").tooltip({
-						selector: "[data-toggle=tooltip]"
-					});
-				});
 
 				var isSelectedAll = function ($event, elementList) {
 					var allSelected = elementList !== undefined;
@@ -258,6 +253,9 @@
 			remoteRepositories.getLocalSolrInstitutions().success(
 				function (data) {
 					$scope.nameOgpRepositoryList = data;
+					if (nameOgpRepositoryList && nameOgpRepositoryList.length > 0) {
+						$scope.ingest.nameOgpRepository = nameOgpRepositoryList[0];
+					}
 				});
 
 

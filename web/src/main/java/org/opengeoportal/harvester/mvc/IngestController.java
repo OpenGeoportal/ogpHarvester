@@ -116,6 +116,7 @@ public class IngestController {
 		// common fields
 		ingest.setBeginDate(ingestFormBean.getBeginDate());
 		ingest.setName(ingestFormBean.getIngestName());
+		ingest.setNameOgpRepository(ingestFormBean.getNameOgpRepository());
 		if (!usesCustomRepo) {
 			ingest.setUrl(ingestFormBean.getUrl());
 		}

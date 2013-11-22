@@ -83,7 +83,7 @@ public class IngestServiceImpl implements IngestService {
 	 * org.opengeoportal.harvester.api.domain.InstanceType)
 	 */
 	@Override
-	@Transactional(readOnly=false)
+	@Transactional(readOnly = false)
 	public Ingest save(Ingest ingest, Long customRepositoryId,
 			InstanceType customRepoInstanceType)
 			throws InstanceNotFoundException {
@@ -96,10 +96,22 @@ public class IngestServiceImpl implements IngestService {
 							+ customRepositoryId + " and serviceType = "
 							+ customRepoInstanceType.name());
 		}
-		
+
 		ingest.setRepository(cRepository);
 		Ingest result = ingestRepository.save(ingest);
 
 		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#findById(java.lang
+	 * .Long)
+	 */
+	@Override
+	public Ingest findById(Long id) {
+		return ingestRepository.findOne(id);
 	}
 }

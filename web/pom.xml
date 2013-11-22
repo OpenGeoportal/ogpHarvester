@@ -29,7 +29,7 @@
 		<webjars-bootstrap.version>3.0.0</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
-		<webjars-angularjs.version>1.2.0</webjars-angularjs.version>
+		<webjars-angularjs.version>1.2.1</webjars-angularjs.version>
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
 	</properties>
 	<dependencies>

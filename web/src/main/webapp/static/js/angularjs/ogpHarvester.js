@@ -1,9 +1,9 @@
 /**
  *
  */
-'use strict';
-
 (function () {
+	'use strict';
+
 	angular.module(
 		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'rcForm', 'ui.jq', /*'template/tooltip/tooltip-popup.html',*/ 'ui.bootstrap',
 			'ogpHarvester.filters', 'ogpHarvester.services',
@@ -31,9 +31,9 @@
 					controller: 'NewIngestCtrl'
 				});
 
-//				$routeProvider.otherwise({
-//					redirectTo: '/manageIngests'
-//				});
+				$routeProvider.otherwise({
+					redirectTo: '/manageIngests'
+				});
 			}
 		]).config(['$translateProvider',
 		function ($translateProvider) {

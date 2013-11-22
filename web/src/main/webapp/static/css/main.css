@@ -452,3 +452,8 @@ input.form-control {
 	position: relative;
 	left: -2em;
 }
+
+.loading {
+	background: url('../img/ajax-loader.gif') no-repeat center;
+	height: 200px;
+}

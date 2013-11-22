@@ -45,6 +45,7 @@ import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.IngestListItem;
 import org.opengeoportal.harvester.mvc.bean.PageWrapper;
+import org.opengeoportal.harvester.mvc.exception.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -108,23 +109,29 @@ public class ManageIngestController {
 	
 	@RequestMapping("/rest/ingests/{id}")
 	@ResponseBody
-	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable String id) {
-		Map<String, Object> ingest = new HashMap<String, Object>();
-		ingest.put("id", id);
-		ingest.put("name", "Name " + id);
-		ingest.put("lastRun", new Date());
+	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable Long id) {
+		
+		Ingest ingest = ingestService.findById(id);
+		if (ingest == null) {
+			throw new ItemNotFoundException("Ingest with id=" + id + "does not exist");
+		}
+		
+		Map<String, Object> ingestMap = Maps.newHashMap();
+		ingestMap.put("id", id);
+		ingestMap.put("name", ingest.getName());
+		ingestMap.put("lastRun", ingest.getLastRun());
 		
 		Map<String, Object> passed = new HashMap<String, Object>();
 		passed.put("restrictedRecords", 745);
 		passed.put("publicRecords", 120);
 		passed.put("vectorRecords", 850);
 		passed.put("rasterRecords", 845);
-		ingest.put("passed", passed);
+		ingestMap.put("passed", passed);
 		
 		Map<String, Object> warning = new HashMap<String, Object>();
 		warning.put("unrequiredFields", 345);
 		warning.put("webserviceWarnings", 200);
-		ingest.put("warning", warning);
+		ingestMap.put("warning", warning);
 		
 		Map<String, Object> errorsMap = new HashMap<String, Object>();
 		errorsMap.put("requiredFields", 745);
@@ -161,9 +168,9 @@ public class ManageIngestController {
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
 		errorsMap.put("systemErrorList", systemErrorList);
 				
-		ingest.put("error", errorsMap);
+		ingestMap.put("error", errorsMap);
 				
-		return ingest;
+		return ingestMap;
 	}
 	
 	@RequestMapping("/rest/ingests/{id}/metadata") 

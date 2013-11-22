@@ -62,4 +62,13 @@ public interface IngestService {
 	public Ingest findByName(String name);
 
 	public Page<Ingest> findAll(Pageable pageable);
+
+	/**
+	 * Returns the {@link Ingest} with the passed id.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 * @return the {@link Ingest} with the passed id.
+	 */
+	public Ingest findById(Long id);
 }

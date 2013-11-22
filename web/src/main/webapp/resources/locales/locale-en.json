@@ -139,6 +139,7 @@
 	},
 	"INGEST_DETAILS": {
 		"HEADER": "Ingest Report, {{name}} - {{lastRun}}",
+		"STILL_NOT_RUN": "Not run yet",
 		"PASSED_HEADER": "Passed:",
 		"WARNING_HEADER": "Warning:",
 		"FAILED_HEADER": "Failed:",
@@ -153,8 +154,6 @@
 		"UNREQUIRED_FIELDS": "Unrequired Fields Warnings: {{count}}",
 		"WEB_SERVICE_WARNINGS": "Web Service Warnings: {{count}}",
 		"REQUIRED_FIELDS": "Required Fields Errors: {{count}}",
-		"WEB_SERVICE_ERRORS": "Web Service Errors: {{count}}",
-		"SYSTEM_ERRORS": "System Errors: {{count}}",
 		"UNREQUIRED_FIELD_TOOLTIP": "Unrequired Field Warnings tooltip",
 		"WEB_SERVICES_WARNINGS_TOOLTIP": "Web Services Warnings tooltip",
 		"ERROR_FIELD_extent": "Extent: {{value}}",
