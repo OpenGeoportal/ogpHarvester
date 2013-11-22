@@ -137,6 +137,7 @@ public class IngestController {
 		result.put("success", true);
 		Map<String, Object> data = Maps.newHashMap();
 		data.put("id", ingest.getId());
+		data.put("name", ingest.getName());
 		result.put("data", data);
 
 		return result;

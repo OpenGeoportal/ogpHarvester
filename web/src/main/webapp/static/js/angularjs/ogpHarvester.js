@@ -31,9 +31,9 @@
 					controller: 'NewIngestCtrl'
 				});
 
-				$routeProvider.otherwise({
-					redirectTo: '/manageIngests'
-				});
+//				$routeProvider.otherwise({
+//					redirectTo: '/manageIngests'
+//				});
 			}
 		]).config(['$translateProvider',
 		function ($translateProvider) {

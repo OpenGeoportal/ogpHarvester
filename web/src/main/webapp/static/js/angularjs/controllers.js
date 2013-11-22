@@ -7,12 +7,15 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', 'Ingest',
-			function ($scope, Ingest) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'Ingest',
+			function ($scope, $routeParams, Ingest) {
 				$scope.data = {};
 				Ingest.query(function (response) {
 					$scope.data.ingests = response;
 				});
+				if ($routeParams.name) {
+					console.log('Ingest "' +  $routeParams.name + " has been successfully created");
+				}
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
@@ -233,6 +236,7 @@
 				console.info("Schedule Ingest");
 				$http.post("rest/ingests/new", $scope.ingest).success(function (data) {
 					console.log("Schedule ingest success: " + JSON.stringify(data));
+					$location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
 				}).
 				error(function (data, status, headers, config) {
 					console.log("Schedule ingest error");
