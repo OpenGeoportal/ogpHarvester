@@ -43,6 +43,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import org.hibernate.annotations.Check;
@@ -68,6 +70,13 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 
 	@Column
 	private String url;
+
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastRun;
+	
+	@Column
+	private String nameOgpRepository;
 
 	@ElementCollection
 	private Set<String> requiredFields = new HashSet<String>();
@@ -156,5 +165,34 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	 */
 	public void setRepository(CustomRepository repository) {
 		this.repository = repository;
+	}
+
+	/**
+	 * @return the lastRun
+	 */
+	public Date getLastRun() {
+		return lastRun;
+	}
+
+	/**
+	 * @param lastRun
+	 *            the lastRun to set
+	 */
+	public void setLastRun(Date lastRun) {
+		this.lastRun = lastRun;
+	}
+
+	/**
+	 * @return the nameOgpRepository
+	 */
+	public String getNameOgpRepository() {
+		return nameOgpRepository;
+	}
+
+	/**
+	 * @param nameOgpRepository the nameOgpRepository to set
+	 */
+	public void setNameOgpRepository(String nameOgpRepository) {
+		this.nameOgpRepository = nameOgpRepository;
 	}
 }

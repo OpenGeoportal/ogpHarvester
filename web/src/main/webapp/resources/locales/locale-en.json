@@ -134,7 +134,8 @@
 		"LIST_HEADER_LAST": "Last Ingest",
 		"LIST_HEADER_NEXT": "Next Ingest",
 		"LIST_HEADER_REPOS": "Repositories",
-		"VIEW_REPORT_BUTTON": "View Report"
+		"VIEW_REPORT_BUTTON": "View Report",
+		"NONE": "none"
 	},
 	"INGEST_DETAILS": {
 		"HEADER": "Ingest Report, {{name}} - {{lastRun}}",

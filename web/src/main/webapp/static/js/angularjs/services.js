@@ -1,112 +1,145 @@
-'use strict';
+(function () {
 
-/* Services */
+	'use strict';
+
+	/* Services */
 
 
-// Demonstrate how to register services
-// In this case it is a simple value service.
-var servicesModule = angular.module('ogpHarvester.services', ['ngResource']);
+	// Demonstrate how to register services
+	// In this case it is a simple value service.
+	var servicesModule = angular.module('ogpHarvester.services', ['ngResource']);
 
-servicesModule.factory('Ingest',
-	function ($resource) {
-		return $resource('rest/ingests/:id', {}, {
-			'query': {
-				method: 'GET',
-				url: 'rest/ingests',
-				isArray: true
-			}
+	servicesModule.factory('Ingest',
+		function ($resource) {
+			return $resource('rest/ingests/:id', {}, {
+				'query': {
+					method: 'GET',
+					url: 'rest/ingests',
+					isArray: true
+				}
+
+			});
+		})
+		.value('version', '0.1');
+
+	servicesModule.factory('IngestPage',
+		function ($http) {
+			var IngestPage = {};
+			var query = function (page, pageSize, callback) {
+				if (!page) {
+					page = 1;
+				}
+				if (!pageSize) {
+					pageSize = 10;
+				}
+				$http.get('rest/ingests', {
+					params: {
+						page: page,
+						pageSize: pageSize
+					}
+				}).success(function (data) {
+					IngestPage.pageDetails = data.pageDetails;
+					IngestPage.elements = data.elements;
+					callback(IngestPage);
+					return IngestPage;
+				});
+			};
+
+			return {
+				query: query
+			};
+
 
 		});
-	})
-	.value('version', '0.1');
 
 
 
-servicesModule.service('ingestMultiform',
-	function () {
-		// Private data
+	servicesModule.service('ingestMultiform',
+		function () {
+			// Private data
 
-		var initBean = function () {
-			console.log("Initiating ingest bean");
-			var bean = {
-				typeOfInstance: 'SOLR',
-				catalogOfServices: null,
-				nameOgpRepository: null,
-				url: null,
-				extent: null,
-				themeKeyword: null,
-				placeKeyword: null,
-				topic: null,
-				originator: null,
-				dataTypes: [],
-				dataRepositories: [],
-				excludeRestricted: false,
-				contentRangeFrom: null,
-				contentRangeTo: null,
-				rangeSolrFrom: null,
-				rangeSolrTo: null,
-				requiredFields: {},
-				gnTitle: null,
-				gnKeyword: null,
-				gnAbstractText: null,
-				gnFreeText: null,
-				gnSources: [],
-				cswTitle: null,
-				cswSubject: null,
-				cswFreeText: null,
-				cswRangeFrom: null,
-				cswRangeTo: null,
-				cswCustomQuery: null,
-				solrCustomQuery: null,
-				webdavFromLastModified: null,
-				webdavToLastModified: null,
-				ingestName: null,
-				beginDate: null,
-				frequency: 'ONCE'
+			var initBean = function () {
+				console.log("Initiating ingest bean");
+				var bean = {
+					typeOfInstance: 'SOLR',
+					catalogOfServices: null,
+					nameOgpRepository: null,
+					url: null,
+					extent: null,
+					themeKeyword: null,
+					placeKeyword: null,
+					topic: null,
+					originator: null,
+					dataTypes: [],
+					dataRepositories: [],
+					excludeRestricted: false,
+					contentRangeFrom: null,
+					contentRangeTo: null,
+					rangeSolrFrom: null,
+					rangeSolrTo: null,
+					requiredFields: {},
+					gnTitle: null,
+					gnKeyword: null,
+					gnAbstractText: null,
+					gnFreeText: null,
+					gnSources: [],
+					cswTitle: null,
+					cswSubject: null,
+					cswFreeText: null,
+					cswRangeFrom: null,
+					cswRangeTo: null,
+					cswCustomQuery: null,
+					solrCustomQuery: null,
+					webdavFromLastModified: null,
+					webdavToLastModified: null,
+					ingestName: null,
+					beginDate: null,
+					frequency: 'ONCE'
+				};
+				return bean;
 			};
-			return bean;
-		};
 
-		var ingest = initBean();
+			var ingest = initBean();
 
 
-		// Public interface
-		return {
-			reset: function () {
-				ingest = initBean();
-			},
+			// Public interface
+			return {
+				reset: function () {
+					ingest = initBean();
+				},
 
-			getIngest: function () {
-				return ingest;
-			},
-			validate: function () {
+				getIngest: function () {
+					return ingest;
+				},
+				validate: function () {
 
-			}
-		};
-	});
+				}
+			};
+		});
 
-servicesModule.service('remoteRepositories', ['$http',
-	function ($http) {
-		// Private data
+	servicesModule.service('remoteRepositories', ['$http',
+		function ($http) {
+			// Private data
 
 
-		// Public interface
-		return {
-			getRemoteSourcesByRepoId: function (repoId) {
-				return $http.get('rest/repositories/' + repoId + '/remoteSources');
-			},
-			getRemoteSourcesByUrl: function (repoType, repoUrl) {
-				return $http.post('rest/repositoriesbyurl/remoteSources', {
-					repoType: repoType,
-					repoUrl: repoUrl
-				});
-			},
-			getRepositoryList: function () {
-				return $http.get('rest/repositories');
-			},
-			getLocalSolrInstitutions: function () {
-				return $http.get('rest/localSolr/institutions');
-			}
-		};
-	}
-]);
+			// Public interface
+			return {
+				getRemoteSourcesByRepoId: function (repoId) {
+					return $http.get('rest/repositories/' + repoId + '/remoteSources');
+				},
+				getRemoteSourcesByUrl: function (repoType, repoUrl) {
+					return $http.post('rest/repositoriesbyurl/remoteSources', {
+						repoType: repoType,
+						repoUrl: repoUrl
+					});
+				},
+				getRepositoryList: function () {
+					return $http.get('rest/repositories');
+				},
+				getLocalSolrInstitutions: function () {
+					return $http.get('rest/localSolr/institutions');
+				}
+			};
+		}
+	]);
+})();

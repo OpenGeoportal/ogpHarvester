@@ -10,6 +10,114 @@ body {
 	color: #000000;
 }
 
+/* Angular UI Bootstrap (With Angular href attribute is not used)*/
+.nav, .pagination a , .carousel a { cursor: pointer; }
+
+/* In Bootstrap 3 pagination is set on a ul, but in 2.3.2 it is in a div.
+ Angular UI puts it in a div so we need to tweak Bootstrap pagination selectors
+*/
+.pagination > ul {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+.pagination > ul >  li {
+  display: inline;
+}
+
+.pagination > ul > li > a,
+.pagination > ul > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.428571429;
+  text-decoration: none;
+  background-color: #ffffff;
+  border: 1px solid #dddddd;
+}
+
+.pagination > ul > li:first-child > a,
+.pagination > ul > li:first-child > span {
+  margin-left: 0;
+  border-bottom-left-radius: 4px;
+  border-top-left-radius: 4px;
+}
+
+.pagination > ul > li:last-child > a,
+.pagination > ul > li:last-child > span {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.pagination > ul > li > a:hover,
+.pagination > ul > li > span:hover,
+.pagination > ul > li > a:focus,
+.pagination > ul > li > span:focus {
+  background-color: #eeeeee;
+}
+
+.pagination > ul > .active > a,
+.pagination > ul > .active > span,
+.pagination > ul > .active > a:hover,
+.pagination > ul > .active > span:hover,
+.pagination > ul > .active > a:focus,
+.pagination > ul > .active > span:focus {
+  z-index: 2;
+  color: #ffffff;
+  cursor: default;
+  background-color: #428bca;
+  border-color: #428bca;
+}
+
+.pagination > ul > .disabled > span,
+.pagination > ul > .disabled > a,
+.pagination > ul > .disabled > a:hover,
+.pagination > ul > .disabled > a:focus {
+  color: #999999;
+  cursor: not-allowed;
+  background-color: #ffffff;
+  border-color: #dddddd;
+}
+
+.pagination-lg > ul > li > a,
+.pagination-lg > ul > li > span {
+  padding: 10px 16px;
+  font-size: 18px;
+}
+
+.pagination-lg > ul > li:first-child > a,
+.pagination-lg > ul > li:first-child > span {
+  border-bottom-left-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.pagination-lg > ul > li:last-child > a,
+.pagination-lg > ul > li:last-child > span {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.pagination-sm > ul > li > a,
+.pagination-sm > ul > li > span {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.pagination-sm > ul > li:first-child > a,
+.pagination-sm > ul > li:first-child > span {
+  border-bottom-left-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.pagination-sm > ul > li:last-child > a,
+.pagination-sm > ul > li:last-child > span {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+} 
+
 /* Header */
 .navbar {
 	min-height: 87px;

@@ -7,15 +7,20 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'Ingest',
-			function ($scope, $routeParams, Ingest) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location',
+			function ($scope, $routeParams, IngestPage, $location) {
 				$scope.data = {};
-				Ingest.query(function (response) {
-					$scope.data.ingests = response;
+				IngestPage.query($routeParams.page, $routeParams.pageSize, function (response) {
+					$scope.ingestPage = response;
 				});
 				if ($routeParams.name) {
-					console.log('Ingest "' +  $routeParams.name + " has been successfully created");
+					console.log('Ingest "' + $routeParams.name + " has been successfully created");
 				}
+
+				$scope.selectPage = function (page) {
+					$location.url('/manageIngests?page=' + page);
+				};
+
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
@@ -86,7 +91,7 @@
 					}
 					console.log(selected);
 					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
-					
+
 					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
 				};
