@@ -1,11 +1,11 @@
 /**
  *
  */
-'use strict';
-
 (function () {
+	'use strict';
+
 	angular.module(
-		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'ui.jq', 'template/tooltip/tooltip-popup.html', 'ui.bootstrap.tooltip',
+		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'rcForm', 'ui.jq', /*'template/tooltip/tooltip-popup.html',*/ 'ui.bootstrap',
 			'ogpHarvester.filters', 'ogpHarvester.services',
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers'

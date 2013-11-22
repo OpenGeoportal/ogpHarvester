@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <CustomRepository id="1" name="repo1" url="http://rep1" serviceType="OGP" />
-    <CustomRepository id="2" name="repo2" url="http://rep2" serviceType="OGP" />
-    <CustomRepository id="3" name="repo3" url="http://rep3" serviceType="OGP" />
-    <CustomRepository id="4" name="repo4" url="http://rep4" serviceType="OGP" />
-    <CustomRepository id="5" name="repo5" url="http://rep5" serviceType="OGP" />
+    <CustomRepository id="1" name="repo1" url="http://rep1" serviceType="SOLR" />
+    <CustomRepository id="2" name="repo2" url="http://rep2" serviceType="SOLR" />
+    <CustomRepository id="3" name="repo3" url="http://rep3" serviceType="SOLR" />
+    <CustomRepository id="4" name="repo4" url="http://rep4" serviceType="SOLR" />
+    <CustomRepository id="5" name="repo5" url="http://rep5" serviceType="SOLR" />
 </dataset>

@@ -1,5 +1,6 @@
 <div ng-controller="ManageIngestsCtrl" class="col-md-9 right-column ingest-list">
 <h1 translate="MANAGE_INGESTS.HEADER"></h1>
+<div class="loading col-md-1 col-md-offset-5" ng-hide="ingestPage"></div>
 <table class="table">
 	<thead>
 		<tr>
@@ -11,14 +12,21 @@
 		</tr>
 	</thead>
 	<tbody>
-		<tr ng-repeat="ingest in data.ingests">
+		<tr ng-repeat="ingest in ingestPage.elements">
 			<td class="ingest-name">{{ingest.name}}</td>
-			<td>{{ingest.lastRun}}</td>
+			<td><span ng-hide="ingest.lastRun" translate="MANAGE_INGESTS.NONE"></span> {{ingest.lastRun}}</td>
 			<td>{{ingest.nextRun}}</td>
-			<td>{{ingest.repositories}}</td>
-			<td><a href="#/manageIngests/view/{{ingest.id}}" translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" class="btn btn-default btn-md" ></button></td>
-
+			<td>{{ingest.nameOgpRepository}}</td>
+			<td><a href="#/manageIngests/view/{{ingest.id}}" translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" class="btn btn-default btn-md" ></a></td>
 		</tr>
 	</tbody>
 </table>
+	<div pagination total-items="ingestPage.pageDetails.totalElements" 
+		page="ingestPage.pageDetails.number" 
+		items-per-page="ingestPage.pageDetails.size" 
+		boundary-links="true"
+		previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
+		on-select-page="selectPage(page)"
+		
+		max-size="8" ></div>
 </div> 

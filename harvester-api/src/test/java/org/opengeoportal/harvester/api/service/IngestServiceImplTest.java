@@ -29,60 +29,84 @@
  */
 package org.opengeoportal.harvester.api.service;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
+@ContextConfiguration(locations = { "classpath:spring/test-data-config.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class})
+		DbUnitTestExecutionListener.class,
+		DirtiesContextTestExecutionListener.class,
+		TransactionalTestExecutionListener.class })
 public class IngestServiceImplTest {
 
-    @Autowired
-    private IngestService ingestService;
+	@Autowired
+	private IngestService ingestService;
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testFindIngest() {
 
-        Ingest ingest = ingestService.findByName("ingest1");
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
-    }
+		Ingest ingest = ingestService.findByName("ingest1");
+		Assert.assertNotNull(ingest);
+		Assert.assertEquals("ingest1", ingest.getName());
+	}
 
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testFindAll() {
+		PageRequest pageable = new PageRequest(0, 2);
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindAll() {
-        PageRequest pageable = new PageRequest(0, 2);
+		Page<Ingest> page = ingestService.findAll(pageable);
+		Assert.assertNotNull(page);
 
-        Page<Ingest> page = ingestService.findAll(pageable);
-        Assert.assertNotNull(page);
+		Assert.assertEquals(2, page.getTotalPages());
+		Assert.assertEquals(2, page.getNumberOfElements());
+		Assert.assertEquals(3, page.getTotalElements());
 
-        Assert.assertEquals(2, page.getTotalPages());
-        Assert.assertEquals(2, page.getNumberOfElements());
-        Assert.assertEquals(3, page.getTotalElements());
+		List<Ingest> ingests = page.getContent();
+		Assert.assertEquals(2, ingests.size());
+	}
 
-        List<Ingest> ingests = page.getContent();
-        Assert.assertEquals(2, ingests.size());
-    }
+	@Test(expected = InstanceNotFoundException.class)
+	@DatabaseSetup("ingestServiceTestSaveWithRepoIdData.xml")
+	public void testSaveWithRepoId() {
+		Ingest ingest = new IngestOGP();
+		ingest.setName("testSaveWithRepoId");
+		ingest.setFrequency(Frequency.DAILY);
+		ingest.setBeginDate(new Date());
+		Ingest savedIngest = ingestService.save(ingest, 1L, InstanceType.SOLR);
+		Assert.assertNotNull("Id is null. Ingest has not been saved",
+				savedIngest.getId());
+
+		Ingest ingest2 = new IngestOGP();
+		ingest2.setName("testSaveWithRepoId");
+		ingest2.setFrequency(Frequency.DAILY);
+		ingest2.setBeginDate(new Date());
+		// This must throw an Exception because there is no CustomRepository
+		// with id = 1 and serviceType = GEONETWORK
+		ingestService.save(ingest2, 1L, InstanceType.GEONETWORK);
+
+	}
 }

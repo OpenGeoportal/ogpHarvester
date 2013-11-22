@@ -30,76 +30,87 @@
 package org.opengeoportal.harvester.mvc.bean;
 
 import java.util.Date;
+import java.util.Map;
 
+import org.opengeoportal.harvester.api.domain.DataType;
+import org.opengeoportal.harvester.api.domain.Frequency;
+import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.mvc.utils.CustomJsonDateDeserializer;
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author jlrodriguez
  * 
  */
 public class IngestFormBean {
-	private String typeOfInstance;
-	private String[] requiredFields;
-	private String catalogOfServices;
-	private String cswUrl;
-	private String extent;
+	private InstanceType typeOfInstance;
+	private Long catalogOfServices;
+	private String nameOgpRepository;
+	private String url;
 	private String themeKeyword;
 	private String placeKeyword;
 	private String topic;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date rangeFrom;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date rangeTo;
 	private String originator;
-	private String[] dataType;
-	private int[] dataRepository;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date contentRangeFrom;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date contentRangeTo;
+	private DataType[] dataTypes;
+	private String[] dataRepositories;
 	private boolean excludeRestricted;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrFrom;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrTo;
-	private String customSolrQuery;
-	private String geonetworkUrl;
-	private String ogpRepository;
-	private String title;
-	private String keyword;
-	private String abstractText;
-	private String freeText;
-	private String[] geonetworkSources;
-	private String url;
-	private String location;
-	private String subject;
-	private String customCswQuery;
-	private String webDavUrl;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date lastModifiedFrom;
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date lastMofifiedTo;
-	
+	private Map<String, Boolean> requiredFields;
+	private String gnTitle;
+	private String gnKeyword;
+	private String gnAbstractText;
+	private String gnFreeText;
+	private String[] gnSources;
+	private String cswTitle;
+	private String cswSubject;
+	private String cswFreeText;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date cswRangeFrom;
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	private Date cswRangeTo;
+	private String cswCustomQuery;
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	private Date webdavFromLastModified;
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	private Date webdavToLastModified;
+	private String solrCustomQuery;
 	private String ingestName;
-	@DateTimeFormat(pattern = "MM/dd/yyyy")	
+	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date beginDate;
-	private String frequency; 
+	private Frequency frequency;
+	private BoundingBox extent;
 
 	/**
-	 * @return the dataRepository
+	 * 
 	 */
-	public int[] getDataRepository() {
-		return dataRepository;
-	}
-
-	/**
-	 * @param dataRepository
-	 *            the dataRepository to set
-	 */
-	public void setDataRepository(int[] dataRepository) {
-		this.dataRepository = dataRepository;
+	public IngestFormBean() {
+		this.dataTypes = new DataType[0];
+		this.dataRepositories = new String[0];
+		this.gnSources = new String[0];
 	}
 
 	/**
 	 * @return the typeOfInstance
 	 */
-	public String getTypeOfInstance() {
+	public InstanceType getTypeOfInstance() {
 		return typeOfInstance;
 	}
 
@@ -107,29 +118,14 @@ public class IngestFormBean {
 	 * @param typeOfInstance
 	 *            the typeOfInstance to set
 	 */
-	public void setTypeOfInstance(String typeOfInstance) {
+	public void setTypeOfInstance(InstanceType typeOfInstance) {
 		this.typeOfInstance = typeOfInstance;
-	}
-
-	/**
-	 * @return the requiredFields
-	 */
-	public String[] getRequiredFields() {
-		return requiredFields;
-	}
-
-	/**
-	 * @param requiredFields
-	 *            the requiredFields to set
-	 */
-	public void setRequiredFields(String[] requiredFields) {
-		this.requiredFields = requiredFields;
 	}
 
 	/**
 	 * @return the catalogOfServices
 	 */
-	public String getCatalogOfServices() {
+	public Long getCatalogOfServices() {
 		return catalogOfServices;
 	}
 
@@ -137,38 +133,38 @@ public class IngestFormBean {
 	 * @param catalogOfServices
 	 *            the catalogOfServices to set
 	 */
-	public void setCatalogOfServices(String catalogOfServices) {
+	public void setCatalogOfServices(Long catalogOfServices) {
 		this.catalogOfServices = catalogOfServices;
 	}
 
 	/**
-	 * @return the cswUrl
+	 * @return the nameOgpRepository
 	 */
-	public String getCswUrl() {
-		return cswUrl;
+	public String getNameOgpRepository() {
+		return nameOgpRepository;
 	}
 
 	/**
-	 * @param cswUrl
-	 *            the cswUrl to set
+	 * @param nameOgpRepository
+	 *            the nameOgpRepository to set
 	 */
-	public void setCswUrl(String cswUrl) {
-		this.cswUrl = cswUrl;
+	public void setNameOgpRepository(String nameOgpRepository) {
+		this.nameOgpRepository = nameOgpRepository;
 	}
 
 	/**
-	 * @return the extent
+	 * @return the url
 	 */
-	public String getExtent() {
-		return extent;
+	public String getUrl() {
+		return url;
 	}
 
 	/**
-	 * @param extent
-	 *            the extent to set
+	 * @param url
+	 *            the url to set
 	 */
-	public void setExtent(String extent) {
-		this.extent = extent;
+	public void setUrl(String url) {
+		this.url = url;
 	}
 
 	/**
@@ -217,36 +213,6 @@ public class IngestFormBean {
 	}
 
 	/**
-	 * @return the rangeFrom
-	 */
-	public Date getRangeFrom() {
-		return rangeFrom;
-	}
-
-	/**
-	 * @param rangeFrom
-	 *            the rangeFrom to set
-	 */
-	public void setRangeFrom(Date rangeFrom) {
-		this.rangeFrom = rangeFrom;
-	}
-
-	/**
-	 * @return the rangeTo
-	 */
-	public Date getRangeTo() {
-		return rangeTo;
-	}
-
-	/**
-	 * @param rangeTo
-	 *            the rangeTo to set
-	 */
-	public void setRangeTo(Date rangeTo) {
-		this.rangeTo = rangeTo;
-	}
-
-	/**
 	 * @return the originator
 	 */
 	public String getOriginator() {
@@ -264,16 +230,31 @@ public class IngestFormBean {
 	/**
 	 * @return the dataType
 	 */
-	public String[] getDataType() {
-		return dataType;
+	public DataType[] getDataTypes() {
+		return dataTypes;
 	}
 
 	/**
-	 * @param dataType
+	 * @param dataTypes
 	 *            the dataType to set
 	 */
-	public void setDataType(String[] dataType) {
-		this.dataType = dataType;
+	public void setDataTypes(DataType[] dataTypes) {
+		this.dataTypes = dataTypes;
+	}
+
+	/**
+	 * @return the dataRepositories
+	 */
+	public String[] getDataRepositories() {
+		return dataRepositories;
+	}
+
+	/**
+	 * @param dataRepositories
+	 *            the dataRepositories to set
+	 */
+	public void setDataRepositories(String[] dataRepositories) {
+		this.dataRepositories = dataRepositories;
 	}
 
 	/**
@@ -322,225 +303,228 @@ public class IngestFormBean {
 	}
 
 	/**
-	 * @return the customSolrQuery
+	 * @return the requiredFields
 	 */
-	public String getCustomSolrQuery() {
-		return customSolrQuery;
+	public Map<String, Boolean> getRequiredFields() {
+		return requiredFields;
 	}
 
 	/**
-	 * @param customSolrQuery
-	 *            the customSolrQuery to set
+	 * @param requiredFields
+	 *            the requiredFields to set
 	 */
-	public void setCustomSolrQuery(String customSolrQuery) {
-		this.customSolrQuery = customSolrQuery;
+	public void setRequiredFields(Map<String, Boolean> requiredFields) {
+		this.requiredFields = requiredFields;
 	}
 
 	/**
-	 * @return the geonetworkUrl
+	 * @return the gnTitle
 	 */
-	public String getGeonetworkUrl() {
-		return geonetworkUrl;
+	public String getGnTitle() {
+		return gnTitle;
 	}
 
 	/**
-	 * @param geonetworkUrl
-	 *            the geonetworkUrl to set
+	 * @param gnTitle
+	 *            the gnTitle to set
 	 */
-	public void setGeonetworkUrl(String geonetworkUrl) {
-		this.geonetworkUrl = geonetworkUrl;
+	public void setGnTitle(String gnTitle) {
+		this.gnTitle = gnTitle;
 	}
 
 	/**
-	 * @return the ogpRepository
+	 * @return the gnKeyword
 	 */
-	public String getOgpRepository() {
-		return ogpRepository;
+	public String getGnKeyword() {
+		return gnKeyword;
 	}
 
 	/**
-	 * @param ogpRepository
-	 *            the ogpRepository to set
+	 * @param gnKeyword
+	 *            the gnKeyword to set
 	 */
-	public void setOgpRepository(String ogpRepository) {
-		this.ogpRepository = ogpRepository;
+	public void setGnKeyword(String gnKeyword) {
+		this.gnKeyword = gnKeyword;
 	}
 
 	/**
-	 * @return the title
+	 * @return the gnAbstractText
 	 */
-	public String getTitle() {
-		return title;
+	public String getGnAbstractText() {
+		return gnAbstractText;
 	}
 
 	/**
-	 * @param title
-	 *            the title to set
+	 * @param gnAbstractText
+	 *            the gnAbstractText to set
 	 */
-	public void setTitle(String title) {
-		this.title = title;
+	public void setGnAbstractText(String gnAbstractText) {
+		this.gnAbstractText = gnAbstractText;
 	}
 
 	/**
-	 * @return the keyword
+	 * @return the gnFreeText
 	 */
-	public String getKeyword() {
-		return keyword;
+	public String getGnFreeText() {
+		return gnFreeText;
 	}
 
 	/**
-	 * @param keyword
-	 *            the keyword to set
+	 * @param gnFreeText
+	 *            the gnFreeText to set
 	 */
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
+	public void setGnFreeText(String gnFreeText) {
+		this.gnFreeText = gnFreeText;
 	}
 
 	/**
-	 * @return the abstractText
+	 * @return the gnSources
 	 */
-	public String getAbstractText() {
-		return abstractText;
+	public String[] getGnSources() {
+		return gnSources;
 	}
 
 	/**
-	 * @param abstractText
-	 *            the abstractText to set
+	 * @param gnSources
+	 *            the gnSources to set
 	 */
-	public void setAbstractText(String abstractText) {
-		this.abstractText = abstractText;
+	public void setGnSources(String[] gnSources) {
+		this.gnSources = gnSources;
 	}
 
 	/**
-	 * @return the freeText
+	 * @return the cswTitle
 	 */
-	public String getFreeText() {
-		return freeText;
+	public String getCswTitle() {
+		return cswTitle;
 	}
 
 	/**
-	 * @param freeText
-	 *            the freeText to set
+	 * @param cswTitle
+	 *            the cswTitle to set
 	 */
-	public void setFreeText(String freeText) {
-		this.freeText = freeText;
+	public void setCswTitle(String cswTitle) {
+		this.cswTitle = cswTitle;
 	}
 
 	/**
-	 * @return the geonetworkSources
+	 * @return the cswSubject
 	 */
-	public String[] getGeonetworkSources() {
-		return geonetworkSources;
+	public String getCswSubject() {
+		return cswSubject;
 	}
 
 	/**
-	 * @param geonetworkSources
-	 *            the geonetworkSources to set
+	 * @param cswSubject
+	 *            the cswSubject to set
 	 */
-	public void setGeonetworkSources(String[] geonetworkSources) {
-		this.geonetworkSources = geonetworkSources;
+	public void setCswSubject(String cswSubject) {
+		this.cswSubject = cswSubject;
 	}
 
 	/**
-	 * @return the url
+	 * @return the cswFreeText
 	 */
-	public String getUrl() {
-		return url;
+	public String getCswFreeText() {
+		return cswFreeText;
 	}
 
 	/**
-	 * @param url
-	 *            the url to set
+	 * @param cswFreeText
+	 *            the cswFreeText to set
 	 */
-	public void setUrl(String url) {
-		this.url = url;
+	public void setCswFreeText(String cswFreeText) {
+		this.cswFreeText = cswFreeText;
 	}
 
 	/**
-	 * @return the location
+	 * @return the cswRangeFrom
 	 */
-	public String getLocation() {
-		return location;
+	public Date getCswRangeFrom() {
+		return cswRangeFrom;
 	}
 
 	/**
-	 * @param location
-	 *            the location to set
+	 * @param cswRangeFrom
+	 *            the cswRangeFrom to set
 	 */
-	public void setLocation(String location) {
-		this.location = location;
+	public void setCswRangeFrom(Date cswRangeFrom) {
+		this.cswRangeFrom = cswRangeFrom;
 	}
 
 	/**
-	 * @return the subject
+	 * @return the cswRangeTo
 	 */
-	public String getSubject() {
-		return subject;
+	public Date getCswRangeTo() {
+		return cswRangeTo;
 	}
 
 	/**
-	 * @param subject
-	 *            the subject to set
+	 * @param cswRangeTo
+	 *            the cswRangeTo to set
 	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
+	public void setCswRangeTo(Date cswRangeTo) {
+		this.cswRangeTo = cswRangeTo;
 	}
 
 	/**
-	 * @return the customCswQuery
+	 * @return the cswCustomQuery
 	 */
-	public String getCustomCswQuery() {
-		return customCswQuery;
+	public String getCswCustomQuery() {
+		return cswCustomQuery;
 	}
 
 	/**
-	 * @param customCswQuery
-	 *            the customCswQuery to set
+	 * @param cswCustomQuery
+	 *            the cswCustomQuery to set
 	 */
-	public void setCustomCswQuery(String customCswQuery) {
-		this.customCswQuery = customCswQuery;
+	public void setCswCustomQuery(String cswCustomQuery) {
+		this.cswCustomQuery = cswCustomQuery;
 	}
 
 	/**
-	 * @return the webDavUrl
+	 * @return the webdavFromLastModified
 	 */
-	public String getWebDavUrl() {
-		return webDavUrl;
+	public Date getWebdavFromLastModified() {
+		return webdavFromLastModified;
 	}
 
 	/**
-	 * @param webDavUrl the webDavUrl to set
+	 * @param webdavFromLastModified
+	 *            the webdavFromLastModified to set
 	 */
-	public void setWebDavUrl(String webDavUrl) {
-		this.webDavUrl = webDavUrl;
+	public void setWebdavFromLastModified(Date webdavFromLastModified) {
+		this.webdavFromLastModified = webdavFromLastModified;
 	}
 
 	/**
-	 * @return the lastModifiedFrom
+	 * @return the webdavToLastModified
 	 */
-	public Date getLastModifiedFrom() {
-		return lastModifiedFrom;
+	public Date getWebdavToLastModified() {
+		return webdavToLastModified;
 	}
 
 	/**
-	 * @param lastModifiedFrom the lastModifiedFrom to set
+	 * @param webdavToLastModified
+	 *            the webdavToLastModified to set
 	 */
-	public void setLastModifiedFrom(Date lastModifiedFrom) {
-		this.lastModifiedFrom = lastModifiedFrom;
+	public void setWebdavToLastModified(Date webdavToLastModified) {
+		this.webdavToLastModified = webdavToLastModified;
 	}
 
 	/**
-	 * @return the lastMofifiedTo
+	 * @return the solrCustomQuery
 	 */
-	public Date getLastMofifiedTo() {
-		return lastMofifiedTo;
+	public String getSolrCustomQuery() {
+		return solrCustomQuery;
 	}
 
 	/**
-	 * @param lastMofifiedTo the lastMofifiedTo to set
+	 * @param solrCustomQuery
+	 *            the solrCustomQuery to set
 	 */
-	public void setLastMofifiedTo(Date lastMofifiedTo) {
-		this.lastMofifiedTo = lastMofifiedTo;
+	public void setSolrCustomQuery(String solrCustomQuery) {
+		this.solrCustomQuery = solrCustomQuery;
 	}
 
 	/**
@@ -551,7 +535,8 @@ public class IngestFormBean {
 	}
 
 	/**
-	 * @param ingestName the ingestName to set
+	 * @param ingestName
+	 *            the ingestName to set
 	 */
 	public void setIngestName(String ingestName) {
 		this.ingestName = ingestName;
@@ -565,7 +550,8 @@ public class IngestFormBean {
 	}
 
 	/**
-	 * @param beginDate the beginDate to set
+	 * @param beginDate
+	 *            the beginDate to set
 	 */
 	public void setBeginDate(Date beginDate) {
 		this.beginDate = beginDate;
@@ -574,15 +560,61 @@ public class IngestFormBean {
 	/**
 	 * @return the frequency
 	 */
-	public String getFrequency() {
+	public Frequency getFrequency() {
 		return frequency;
 	}
 
 	/**
-	 * @param frequency the frequency to set
+	 * @param frequency
+	 *            the frequency to set
 	 */
-	public void setFrequency(String frequency) {
+	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
+	}
+
+	/**
+	 * @return the extent
+	 */
+	public BoundingBox getExtent() {
+		return extent;
+	}
+
+	/**
+	 * @param extent
+	 *            the extent to set
+	 */
+	public void setExtent(BoundingBox extent) {
+		this.extent = extent;
+	}
+
+	/**
+	 * @return the contentRangeFrom
+	 */
+	public Date getContentRangeFrom() {
+		return contentRangeFrom;
+	}
+
+	/**
+	 * @param contentRangeFrom
+	 *            the contentRangeFrom to set
+	 */
+	public void setContentRangeFrom(Date contentRangeFrom) {
+		this.contentRangeFrom = contentRangeFrom;
+	}
+
+	/**
+	 * @return the contentRangeTo
+	 */
+	public Date getContentRangeTo() {
+		return contentRangeTo;
+	}
+
+	/**
+	 * @param contentRangeTo
+	 *            the contentRangeTo to set
+	 */
+	public void setContentRangeTo(Date contentRangeTo) {
+		this.contentRangeTo = contentRangeTo;
 	}
 
 }

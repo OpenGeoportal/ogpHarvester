@@ -37,35 +37,56 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Check;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.Assert;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Check(constraints = "(url IS NULL AND repository_id IS NOT NULL) OR (url IS NOT NULL AND repository_id IS NULL)")
 public abstract class Ingest extends AbstractPersistable<Long> {
 	private static final long serialVersionUID = -3390351777452085398L;
-	
+
 	@Column(unique = true, nullable = false)
 	private String name;
 
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date beginDate;
 
-	private String frequency;
+	@Column
+	@Enumerated(EnumType.STRING)
+	private Frequency frequency;
 
-	@Column(nullable = false)
+	@Column
 	private String url;
+
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastRun;
+	
+	@Column
+	private String nameOgpRepository;
 
 	@ElementCollection
 	private Set<String> requiredFields = new HashSet<String>();
 
 	@Transient
 	protected Set<String> validRequiredFields = new HashSet<String>();
+
+	@ManyToOne
+	@JoinColumn(name = "repository_id")
+	private CustomRepository repository;
 
 	public String getName() {
 		return name;
@@ -91,11 +112,11 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 		this.beginDate = beginDate;
 	}
 
-	public String getFrequency() {
+	public Frequency getFrequency() {
 		return frequency;
 	}
 
-	public void setFrequency(String frequency) {
+	public void setFrequency(Frequency frequency) {
 		this.frequency = frequency;
 	}
 
@@ -131,4 +152,47 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 		return Collections.unmodifiableSet(validRequiredFields);
 	}
 
+	/**
+	 * @return the repository
+	 */
+	public CustomRepository getRepository() {
+		return repository;
+	}
+
+	/**
+	 * @param repository
+	 *            the repository to set
+	 */
+	public void setRepository(CustomRepository repository) {
+		this.repository = repository;
+	}
+
+	/**
+	 * @return the lastRun
+	 */
+	public Date getLastRun() {
+		return lastRun;
+	}
+
+	/**
+	 * @param lastRun
+	 *            the lastRun to set
+	 */
+	public void setLastRun(Date lastRun) {
+		this.lastRun = lastRun;
+	}
+
+	/**
+	 * @return the nameOgpRepository
+	 */
+	public String getNameOgpRepository() {
+		return nameOgpRepository;
+	}
+
+	/**
+	 * @param nameOgpRepository the nameOgpRepository to set
+	 */
+	public void setNameOgpRepository(String nameOgpRepository) {
+		this.nameOgpRepository = nameOgpRepository;
+	}
 }

@@ -31,9 +31,11 @@ package org.opengeoportal.harvester.api.dao;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +96,7 @@ public class IngestRepositoryTest {
         ingest.setName("ingest3");
         ingest.setUrl("http://ingest3");
         ingest.setBeginDate(new Date());
-        ingest.setFrequency("dayly");
+        ingest.setFrequency(Frequency.DAILY);
         ingest.addRequiredField("themeKeyword");
 
         Ingest ingestCreated = ingestRepository.save(ingest);

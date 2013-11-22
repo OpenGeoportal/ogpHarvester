@@ -20,12 +20,13 @@
         <div class="form-group col-md-9" ng-class="{'has-error': newIngest.url.$invalid}">
             <label class="control-label" for="url" translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
             <input type="url" id="url" name="url" ng-model="ingest.url" class="form-control" 
-                ng-disabled="ingest.catalogOfServices !== null" ng-blur="getRemoteSourcesByUrl()"></input>
+                ng-disabled="ingest.catalogOfServices !== null" ng-blur="getRemoteSourcesByUrl()"
+                ng-required="!ingest.catalogOfServices"></input>
         </div>
 
         <div class="form-group multiselect col-md-7" ng-hide="ingest.typeOfInstance === 'SOLR'">
             <label for="nameOgpRepository" translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
-                tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
+                data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
                 class="glyphicon glyphicon-question-sign black"></span></a>
             <select class="form-control" id="nameOgpRepository" 
                 ng-model="ingest.nameOgpRepository"
@@ -42,7 +43,7 @@
                         data-target="#collapseSorlSearchCriteria">
                         <h2>
                             <span translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span> 
-                            <a tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
+                            <a data-tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> <span
                                 class="glyphicon glyphicon-chevron-up pull-right black"></span>
                         </h2>
@@ -53,14 +54,13 @@
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
-                            <a tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
+                            <a data-tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input type="hidden" ng-model="ingest.extent" />
                         </div>
 
                         <div class="form-group col-md-9">
                            <label for="themeKeyword" translate="INGEST_FORM.THEME_KEYWORD" ></label> <a 
-                                tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
+                                data-tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                             <input class="form-control" id="themeKeyword"
                                 ng-model="ingest.themeKeyword" ></input>
@@ -76,7 +76,7 @@
 
                         <div class="form-group col-md-7">
                             <label for=topic translate="INGEST_FORM.TOPIC"></label> <a 
-                                tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="topic" ng-model="ingest.topic" 
                                 ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList">
@@ -87,16 +87,16 @@
 
                         <div class="form-group">
                             <label translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
-                                tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.rangeFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='contentRangeFrom' ng-model="ingest.contentRangeFrom" datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
                                     class="col-md-1 text-center" translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' ng-model="ingest.rangeTo" datetimepicker>
+                                        class='input-group date col-md-4' id='contentRangeTo' ng-model="ingest.contentRangeTo" datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -106,14 +106,14 @@
 
                         <div class="form-group col-md-9">
                             <label for="originator" translate="INGEST_FORM.ORIGINATOR"></label> <a 
-                                tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <input class="form-control" id="originator" ng-model="ingest.originator" ></input>
                         </div>
 
                         <div class="form-group multiselect col-md-7">
                             <label for="dataType" translate="INGEST_FORM.DATA_TYPE"></label> <a
-                                tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
                                 class="form-control btn-block" ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" multiselect-dropdown >
@@ -123,7 +123,7 @@
 
                         <div class="form-group multiselect col-md-7">
                             <label for="dataRepository" translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
-                                tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="dataRepository" ng-model="ingest.dataRepositories"
                                 multiple="multiple" ng-options="item.key as item.value for item in solrDataRepositoryList" 
@@ -139,7 +139,7 @@
                                          <input type="checkbox" ng-model="ingest.excludeRestricted" id="excludeRestricted"></input>
 
                                         {{"INGEST_FORM.EXCLUDE_RESTRICTED" | translate }}
-                                    </label> <a tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
+                                    </label> <a data-tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
                                         class="glyphicon glyphicon-question-sign black"></span></a>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@
 
                         <div class="form-group">
                             <label translate="INGEST_FORM.DATE_RANGE_SOLR"></label> <a
-                                tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
+                                data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
                                 <div class='input-group date col-md-4' id='rangeSolrFrom'  ng-model="ingest.rangeSolrFrom" datetimepicker>
@@ -163,6 +163,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group col-md-9">
+                            <label for="solrCustomQuery" translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a 
+                                data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
+                                class="glyphicon glyphicon-question-sign black"></span></a>
+                            <textarea class="form-control" rows="3" ng-model="ingest.solrCustomQuery"
+                                id="solrCustomQuery"></textarea>
+                        </div>
+
                     </div>
                 </div>
             </div> <!-- //swich solr-->
@@ -173,7 +181,7 @@
                         data-target="#collapseSearchCriteriaGN">
                         <h2>
                             {{ "INGEST_FORM.GN_SEARCH_CRITERIA" | translate}}
-                            <a tooltip='{{ "INGEST_FORM.GN_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
+                            <a data-tooltip='{{ "INGEST_FORM.GN_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> <span
                                 class="glyphicon glyphicon-chevron-up pull-right black"></span>
                         </h2>
@@ -181,7 +189,7 @@
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaGN">
                         <div class="form-group col-md-9">
                             <label for="gnTitle" translate="INGEST_FORM.GN_TITLE"></label> <a
-                                tooltip='{{ "INGEST_FORM.GN_TITLE_TOOLTIP" | translate}}'><span
+                                data-tooltip='{{ "INGEST_FORM.GN_TITLE_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                                 <input
                                 class="form-control" id="gnTitle" ng-model="ingest.gnTitle" ></input>
@@ -190,14 +198,14 @@
 
                         <div class="form-group col-md-9">
                             <label for="gnKeyword" translate="INGEST_FORM.GN_KEYWORD"></label> <a 
-                                tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
+                                data-tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                                 <input class="form-control" id="gnKeyword" ng-model="ingest.gnKeyword" ></input>
                         </div>
 
                         <div class="form-group col-md-9">
                             <label for="gnAbstractText" translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
-                                tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" ng-model="ingest.gnAbstractText"
                                 id="gnAbstractText"></textarea>
@@ -205,7 +213,7 @@
 
                         <div class="form-group col-md-9">
                             <label for="gnFreeText" translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
-                                tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" ng-model="ingest.gnFreeText"
                                 id="gnFreeText"></textarea>
@@ -214,7 +222,7 @@
                         <div class="clearfix"></div>
                             <div class="form-group multiselect col-md-7">
                                 <label for="gnSources" translate="INGEST_FORM.GN_SOURCES"></label> <a 
-                                    tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
+                                    data-tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
                                     class="glyphicon glyphicon-question-sign black"></span></a> 
                                     <select multiple="multiple" ng-model="ingest.gnSources"
                                         id="gnSources" class="form-control" ng-options="item.key as item.value for item in gnSourcesList" 
@@ -240,14 +248,14 @@
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
-                            <a tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
+                            <a data-tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input type="hidden" ng-model="ingest.cswExtent" />
+                            
                         </div>
 
                         <div class="form-group col-md-9">
                             <label for="cswTitle" translate="INGEST_FORM.CSW_TITLE"></label> <a 
-                                tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
+                                data-tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span>
                             </a>
                             <input type="text" class="form-control" id="cswTitle" ng-model="ingest.cswTitle"></input>
@@ -255,14 +263,14 @@
 
                         <div class="form-group col-md-9">
                             <label for="cswSubject" translate="INGEST_FORM.CSW_SUBJECT"></label> <a 
-                                tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" ng-model="ingest.cswSubject"
                                 id="cswSubject"></textarea>
                         </div>
                          <div class="form-group col-md-9">
                             <label for="cswFreeText" translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a 
-                                tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" ng-model="ingest.cswFreeText"
                                 id="cswFreeText"></textarea>
@@ -271,7 +279,7 @@
 
                         <div class="form-group">
                             <label translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
-                                tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
                                 <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.cswRangeFrom" datetimepicker>
@@ -290,7 +298,7 @@
 
                         <div class="form-group col-md-9">
                             <label for="cswCustomQuery" translate="INGEST_FORM.CSW_CUSTOM_QUERY"></label> <a 
-                                tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" ng-model="ingest.cswCustomQuery"
                                 id="cswCustomQuery"></textarea>
@@ -312,7 +320,7 @@
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaWebdav">
                          <div class="form-group">
                             <label translate="INGEST_FORM.WD_DATE_LAST_MODIFIED"></label> <a
-                                tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
+                                data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
                                 <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.webdavFromLastModified" datetimepicker>
@@ -338,7 +346,7 @@
                         data-target="#requiredFieldsSolr">
                         <h2>
                             {{ "INGEST_FORM.REQUIRED_FIELDS" | translate }}
-                            <a tooltip='{{ "INGEST_FORM.REQUIRED_FIELDS_TOOLTIP" | translate}}'><span
+                            <a data-tooltip='{{ "INGEST_FORM.REQUIRED_FIELDS_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> <span
                                 class="glyphicon glyphicon-chevron-up pull-right black"></span>
                         </h2>

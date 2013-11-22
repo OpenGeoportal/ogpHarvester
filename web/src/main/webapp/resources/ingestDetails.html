@@ -1,13 +1,10 @@
 <div ng-controller="IngestDetailsCtrl" class="right-column col-md-9 ingest-details">
-	<h1 translate="INGEST_DETAILS.HEADER" translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}"></h1>
-	<p>All required: {{ingestDetails.error.allRequired}}</p>
-	<p>All webservice: {{ingestDetails.error.allWebservice}}</p>
-	<p>All system: {{ingestDetails.error.allSystem}}</p>
+	<h1 translate="INGEST_DETAILS.HEADER" translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}"> <span ng-hide="ingestDetails.lastRun" translate="INGEST_DETAILS.STILL_NOT_RUN"></span></h1>
 	<div class="custom-panel">
 		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#passedRecordsPanelBody">
 			<span class="glyphicon glyphicon-ok-sign sign passed-sign"></span> 
 			<strong class="bold" translate="INGEST_DETAILS.PASSED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalPassed}}
-			<a data-toggle="tooltip" title="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+			<a data-tooltip="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="passedRecordsPanelBody">
 			<ul>
@@ -21,19 +18,19 @@
 	<div class="custom-panel">
 		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#warningRecordsPanelBody">
 			<span class="glyphicon glyphicon-exclamation-sign sign warning-sign"></span> 
-			<strong class="bold" translate="INGEST_DETAILS.WARNING_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+			<strong class="bold" translate="INGEST_DETAILS.WARNING_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a data-tooltip="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="warningRecordsPanelBody">
 			<ul>
-				<li class="odd"><span translate="INGEST_DETAILS.UNREQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span> <a data-toggle="tooltip" title="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
-				<li><span translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS" translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span> <a data-toggle="tooltip" title="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+				<li class="odd"><span translate="INGEST_DETAILS.UNREQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span> <a data-tooltip="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+				<li><span translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS" translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span> <a data-tooltip="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
 			</ul>
 		</div>
 	</div>
 	<div class="custom-panel">
 		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#failedRecordsPanelBody">
 			<span class="glyphicon glyphicon-remove-sign sign failed-sign"></span> 
-			<strong class="bold" translate="INGEST_DETAILS.FAILED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a data-toggle="tooltip" title="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+			<strong class="bold" translate="INGEST_DETAILS.FAILED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a data-tooltip="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="failedRecordsPanelBody">
 			<form ng-submit="downloadMetadata([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])">

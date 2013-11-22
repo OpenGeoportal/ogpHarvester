@@ -31,10 +31,12 @@ package org.opengeoportal.harvester.api.dao;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -93,7 +95,7 @@ public class CustomRepositoryTest {
         CustomRepository customRepository = new CustomRepository();
         customRepository.setName("repo3");
         customRepository.setUrl("http://repo3");
-        customRepository.setServiceType("OGP");
+        customRepository.setServiceType(InstanceType.SOLR);
 
         CustomRepository customRepositoryCreated = customRepositoryRepository.save(customRepository);
 

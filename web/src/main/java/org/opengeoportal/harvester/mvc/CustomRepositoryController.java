@@ -31,7 +31,6 @@ package org.opengeoportal.harvester.mvc;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +53,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @Controller
@@ -64,17 +64,17 @@ public class CustomRepositoryController {
 
 	@RequestMapping("/rest/repositories")
 	@ResponseBody
-	public Map<String, List<SimpleEntry<Long, String>>> getCustomRepositories() {
+	public Map<InstanceType, List<SimpleEntry<Long, String>>> getCustomRepositories() {
 
-		ListMultimap<String, CustomRepository> multimap = service
+		ListMultimap<InstanceType, CustomRepository> multimap = service
 				.getAllGroupByType();
-		Map<String, List<SimpleEntry<Long, String>>> result = Maps.newHashMap();
-		String[] instanceTypes = new String[] { InstanceType.SOLR.toString(),
-				InstanceType.GEONETWORK.toString(),
-				InstanceType.CSW.toString(), InstanceType.WEBDAV.toString() };
-		for (String instanceType : instanceTypes) {
+		Map<InstanceType, List<SimpleEntry<Long, String>>> result = Maps
+				.newHashMap();
+
+		for (InstanceType instanceType : InstanceType.values()) {
 			List<CustomRepository> reposOfType = multimap.get(instanceType);
-			List<SimpleEntry<Long, String>> repositories = new ArrayList<AbstractMap.SimpleEntry<Long, String>>();
+			List<SimpleEntry<Long, String>> repositories = Lists.newArrayList();
+
 			for (CustomRepository repository : reposOfType) {
 				SimpleEntry<Long, String> entry = new SimpleEntry<Long, String>(
 						repository.getId(), repository.getName());
@@ -84,12 +84,13 @@ public class CustomRepositoryController {
 		}
 		return result;
 	}
-	
+
 	@RequestMapping("/rest/repositories/{repoId}/remoteSources")
 	@ResponseBody
-	public List<SimpleEntry<String, String>> getRemoteRepositoriesById(@PathVariable Long repoId) {
+	public List<SimpleEntry<String, String>> getRemoteRepositoriesById(
+			@PathVariable Long repoId) {
 		return service.getRemoteRepositoriesByRepoId(repoId);
-		
+
 	}
 
 	@RequestMapping(value = "/rest/repositoriesbyurl/remoteSources", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

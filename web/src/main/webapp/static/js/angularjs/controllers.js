@@ -1,29 +1,32 @@
-'use strict';
-
 (function () {
+	'use strict';
+
 	/* Controllers */
 
 	angular.module('ogpHarvester.controllers', []);
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', 'Ingest',
-			function ($scope, Ingest) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location',
+			function ($scope, $routeParams, IngestPage, $location) {
 				$scope.data = {};
-				Ingest.query(function (response) {
-					$scope.data.ingests = response;
+				IngestPage.query($routeParams.page, $routeParams.pageSize, function (response) {
+					$scope.ingestPage = response;
+					$scope.pageSize = response.pageDetails.size;
 				});
+				if ($routeParams.name) {
+					console.log('Ingest "' + $routeParams.name + " has been successfully created");
+				}
+
+				$scope.selectPage = function (page) {
+					$location.url('/manageIngests?page=' + page + "&pageSize=" + $scope.pageSize);
+				};
+
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
 		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest',
 			function ($scope, $routeParams, Ingest) {
-				// Activate tooltips
-				$scope.$on('$viewContentLoaded', function () {
-					$(".right-column").tooltip({
-						selector: "[data-toggle=tooltip]"
-					});
-				});
 
 				var isSelectedAll = function ($event, elementList) {
 					var allSelected = elementList !== undefined;
@@ -82,7 +85,9 @@
 						}));
 					}
 					console.log(selected);
-					var url = "../rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+
+					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
 				};
 
@@ -91,18 +96,18 @@
 
 
 				$scope.params = $routeParams;
-				var ingestDetails = Ingest.get({
+				Ingest.get({
 					id: $scope.params.id
-				}, function () {
-					$scope.ingestDetails = ingestDetails;
+				}, function (data) {
+					$scope.ingestDetails = data;
 					$scope.totalPassed = {
-						count: ingestDetails.passed.restrictedRecords + ingestDetails.passed.publicRecords + ingestDetails.passed.vectorRecords + ingestDetails.passed.rasterRecords
+						count: data.passed.restrictedRecords + data.passed.publicRecords + data.passed.vectorRecords + data.passed.rasterRecords
 					};
 					$scope.totalWarnig = {
-						count: ingestDetails.warning.unrequiredFields + ingestDetails.warning.webserviceWarnings
+						count: data.warning.unrequiredFields + data.warning.webserviceWarnings
 					};
 					$scope.totalFailed = {
-						count: ingestDetails.error.requiredFields + ingestDetails.error.webServiceErrors + ingestDetails.error.systemErrors
+						count: data.error.requiredFields + data.error.webServiceErrors + data.error.systemErrors
 					};
 					$scope.ingestDetails.error.allRequired = false;
 					$scope.ingestDetails.error.allWebservice = false;
@@ -227,15 +232,30 @@
 				}
 			};
 
+			$scope.scheduleIngest = function () {
+				console.info("Schedule Ingest");
+				$http.post("rest/ingests/new", $scope.ingest).success(function (data) {
+					console.log("Schedule ingest success: " + JSON.stringify(data));
+					$location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
+				}).
+				error(function (data, status, headers, config) {
+					console.log("Schedule ingest error");
+				});
+			};
 
 
-			$http.get('rest/repositories').success(function (data) {
-				$scope.customRepositories = data;
-			});
 
-			$http.get('rest/localSolr/institutions').success(
+			remoteRepositories.getRepositoryList().success(
+				function (data) {
+					$scope.customRepositories = data;
+				});
+
+			remoteRepositories.getLocalSolrInstitutions().success(
 				function (data) {
 					$scope.nameOgpRepositoryList = data;
+					if (nameOgpRepositoryList && nameOgpRepositoryList.length > 0) {
+						$scope.ingest.nameOgpRepository = nameOgpRepositoryList[0];
+					}
 				});
 
 
@@ -260,7 +280,7 @@
 				"locations", "oceans", "cadastral", "cultural", "facilities", "transportation", "utilities"
 			];
 
-			$scope.dataTypeList = ["point", "line", "polygon", "raster", "scannedMap"];
+			$scope.dataTypeList = ["POINT", "LINE", "POLYGON", "RASTER", "SCANNED"];
 
 
 

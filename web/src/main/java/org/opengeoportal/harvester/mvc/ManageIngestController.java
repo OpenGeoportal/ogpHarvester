@@ -38,13 +38,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.service.IngestService;
+import org.opengeoportal.harvester.mvc.bean.IngestListItem;
+import org.opengeoportal.harvester.mvc.bean.PageWrapper;
+import org.opengeoportal.harvester.mvc.exception.ItemNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author jlrodriguez
@@ -52,6 +66,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class ManageIngestController {
+	@Resource
+	private IngestService ingestService;
+	
 	@RequestMapping("/manageIngests")
 	public String test(ModelMap model) {
 		return "ngView";
@@ -59,55 +76,62 @@ public class ManageIngestController {
 
 	@RequestMapping("/rest/ingests")
 	@ResponseBody
-	public List<Map<String, Object>> getAllIngests(ModelMap model) {
-		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		Map<String, Object> ingest = new HashMap<String, Object>();
-		ingest.put("id", 1);
-		ingest.put("name", "New York Subway");
-		ingest.put("lastRun", new Date());
-		ingest.put("nextRun", null);
-		ingest.put("repositories", "Tufts, Harvard, MIT, Berkley");
-		resultList.add(ingest);
-		ingest = new HashMap<String, Object>();
-		ingest.put("id", 2);
-		ingest.put("name", "Urban Development");
-		ingest.put("lastRun", new Date());
-		ingest.put("nextRun", new Date());
-		ingest.put("repositories", "Tufts, Harvard, MIT, Berkley");
-		resultList.add(ingest);
-		
-		for(int i=3; i <=20; i++) {
-			ingest = new HashMap<String, Object>();
-			ingest.put("id", i);
-			ingest.put("name", "Name " +i );
-			ingest.put("lastRun", new Date());
-			ingest.put("nextRun", new Date());
-			ingest.put("repositories", "Tufts, Harvard, MIT, Berkley");
-			resultList.add(ingest);
+	public Map<String, Object> getAllIngests(@RequestParam(defaultValue="1") int page, @RequestParam(defaultValue="10") int pageSize, ModelMap model) {
+		if (page < 1) {
+			page = 1;
 		}
+		
+		// Pages are zero base. We need to substract 1 to the received page
+		page = page - 1;
+		Pageable pageable = new PageRequest(page, pageSize);
+		Page<Ingest> resultPage = ingestService.findAll(pageable);
+		PageWrapper pageDetails = new PageWrapper(resultPage);
+		
+		Map<String, Object> resultMap = Maps.newHashMap();
+		resultMap.put("pageDetails", pageDetails);
+		
+		List<IngestListItem> resultList = Lists.newArrayListWithCapacity(resultPage.getNumberOfElements());
+		for(Ingest ingest : resultPage) {
+			IngestListItem ingestListItem = new IngestListItem(ingest);
+			resultList.add(ingestListItem);
+		}
+		resultMap.put("elements", resultList);
+		
+		
+		
+		
+		
+		
 
-		return resultList;
+
+		return resultMap;
 	}
 	
 	@RequestMapping("/rest/ingests/{id}")
 	@ResponseBody
-	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable String id) {
-		Map<String, Object> ingest = new HashMap<String, Object>();
-		ingest.put("id", id);
-		ingest.put("name", "Name " + id);
-		ingest.put("lastRun", new Date());
+	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable Long id) {
+		
+		Ingest ingest = ingestService.findById(id);
+		if (ingest == null) {
+			throw new ItemNotFoundException("Ingest with id=" + id + "does not exist");
+		}
+		
+		Map<String, Object> ingestMap = Maps.newHashMap();
+		ingestMap.put("id", id);
+		ingestMap.put("name", ingest.getName());
+		ingestMap.put("lastRun", ingest.getLastRun());
 		
 		Map<String, Object> passed = new HashMap<String, Object>();
 		passed.put("restrictedRecords", 745);
 		passed.put("publicRecords", 120);
 		passed.put("vectorRecords", 850);
 		passed.put("rasterRecords", 845);
-		ingest.put("passed", passed);
+		ingestMap.put("passed", passed);
 		
 		Map<String, Object> warning = new HashMap<String, Object>();
 		warning.put("unrequiredFields", 345);
 		warning.put("webserviceWarnings", 200);
-		ingest.put("warning", warning);
+		ingestMap.put("warning", warning);
 		
 		Map<String, Object> errorsMap = new HashMap<String, Object>();
 		errorsMap.put("requiredFields", 745);
@@ -144,9 +168,9 @@ public class ManageIngestController {
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
 		errorsMap.put("systemErrorList", systemErrorList);
 				
-		ingest.put("error", errorsMap);
+		ingestMap.put("error", errorsMap);
 				
-		return ingest;
+		return ingestMap;
 	}
 	
 	@RequestMapping("/rest/ingests/{id}/metadata") 

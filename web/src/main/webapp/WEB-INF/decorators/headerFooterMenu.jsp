@@ -71,20 +71,20 @@
 						<spring:url value="/admin" var="adminURL" />
 						<spring:url value="/" var="baseUrl" />
 
-						<li><a href="${uploadMetadataURL}"
+						<li><a 
 							ng-class="getClass('${baseUrl}', '/uploadMetadata')"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
-						<li><a href="#/newIngest"
+						<li><a href="${baseUrl}#/newIngest"
 							ng-class="getClass('${baseUrl}', '/ingest')"><spring:message
 									code="sidebar.ingestExternal" /></a></li>
-						<li><a href="#/manageIngests"
+						<li><a href="${baseUrl}#/manageIngests"
 							ng-class="getClass('${baseUrl}', '/manageIngests')"><spring:message
 									code="sidebar.manageIngests" /></a></li>
-						<li><a href="${editMetadataURL}"
+						<li><a 
 							ng-class="getClass('${baseUrl}', '/editMetadata')"><spring:message
 									code="sidebar.editMetadata" /></a></li>
-						<li><a href="${deleteRecordsURL}"
+						<li><a 
 							ng-class="getClass('${baseUrl}', '/deleteRecords')"><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
@@ -104,16 +104,18 @@
 		<!-- //row -->
 	</div>
 	<!-- //container -->
-	<spring:url value="/webjars/angularjs/1.2.0/angular.js"
+	<spring:url value="/webjars/angularjs/1.2.1/angular.js"
 		var="angularjsUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0/angular-animate.js"
+	<spring:url value="/webjars/angularjs/1.2.1/angular-animate.js"
 		var="angularjsAnimateUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0/angular-route.js"
+	<spring:url value="/webjars/angularjs/1.2.1/angular-route.js"
 		var="angularRouteUrl" />
-	<spring:url value="/webjars/angularjs/1.2.0/angular-resource.js"
+	<spring:url value="/webjars/angularjs/1.2.1/angular-resource.js"
 		var="angularResourceUrl" />
 	<spring:url value="/static/js/angular-translate/angular-translate.js"
 		var="angularTranslateUrl" />
+	<spring:url value="/static/js/angular-rcsubmit/rc-form.js"
+		var="rcFormUrl" />
 	<spring:url
 		value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
 		var="angularTranslateLoaderStaticFilesUrl" />
@@ -137,6 +139,7 @@
 	<script src="${angularResourceUrl}"></script>
 	<script src="${angularTranslateUrl}"></script>
 	<script src="${angularTranslateLoaderStaticFilesUrl}"></script>
+	<script src="${rcFormUrl}"></script>
 	<script src="${angularUiBootstrapUrl}"></script>
 	<script src="${uiUtilsUrl}"></script>
 	<script src="${ogpHarvesterUrl}"></script>

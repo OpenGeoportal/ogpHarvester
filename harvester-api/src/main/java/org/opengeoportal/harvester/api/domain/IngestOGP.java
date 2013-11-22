@@ -32,13 +32,20 @@ package org.opengeoportal.harvester.api.domain;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OrderColumn;
 
 @Entity
-@DiscriminatorValue("OGP")
+@DiscriminatorValue("SOLR")
 public class IngestOGP extends Ingest {
 
 	private static final long serialVersionUID = 1545386542676335709L;
@@ -58,10 +65,18 @@ public class IngestOGP extends Ingest {
 	@Column
 	private String originator;
 
+	@ElementCollection
+	@CollectionTable(name = "ingestogp_data_type", joinColumns = @JoinColumn(name = "ingest_id"))
+	@OrderColumn
 	@Column
-	private String dataType;
-	@Column
-	private String dataRepository;
+	@Enumerated(EnumType.STRING)
+	private List<DataType> dataTypes;
+
+	@ElementCollection
+	@CollectionTable(name = "ingestogp_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
+	@Column(name = "repository_name")
+	@OrderColumn
+	private List<String> dataRepositories;
 
 	@Column
 	private boolean excludeRestrictedData;
@@ -139,20 +154,12 @@ public class IngestOGP extends Ingest {
 		this.originator = originator;
 	}
 
-	public String getDataType() {
-		return dataType;
+	public List<DataType> getDataTypes() {
+		return dataTypes;
 	}
 
-	public void setDataType(String dataType) {
-		this.dataType = dataType;
-	}
-
-	public String getDataRepository() {
-		return dataRepository;
-	}
-
-	public void setDataRepository(String dataRepository) {
-		this.dataRepository = dataRepository;
+	public void setDataTypes(List<DataType> dataType) {
+		this.dataTypes = dataType;
 	}
 
 	public boolean isExcludeRestrictedData() {
@@ -217,5 +224,20 @@ public class IngestOGP extends Ingest {
 
 	public void setBboxSouth(Double bboxSouth) {
 		this.bboxSouth = bboxSouth;
+	}
+
+	/**
+	 * @return the dataRepositories
+	 */
+	public List<String> getDataRepositories() {
+		return dataRepositories;
+	}
+
+	/**
+	 * @param dataRepositories
+	 *            the dataRepositories to set
+	 */
+	public void setDataRepositories(List<String> dataRepositories) {
+		this.dataRepositories = dataRepositories;
 	}
 }
