@@ -5,7 +5,8 @@
 	'use strict';
 
 	angular.module(
-		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'rcForm', 'ui.jq', /*'template/tooltip/tooltip-popup.html',*/ 'ui.bootstrap',
+		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'rcForm',  
+		                 'ui.bootstrap',
 			'ogpHarvester.filters', 'ogpHarvester.services',
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers'
