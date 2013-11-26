@@ -60,7 +60,7 @@
 	<!-- Container -->
 	<div class="container">
 		<div class="row">
-			<div class="col-md-3" ng-controller="MenuCtrl">
+			<div class="col-md-3" data-ng-controller="MenuCtrl">
 				<div class="well sidebar-nav">
 					<ul class="nav nav-list">
 						<spring:url value="/uploadMetadata" var="uploadMetadataURL" />
@@ -72,24 +72,24 @@
 						<spring:url value="/" var="baseUrl" />
 
 						<li><a 
-							ng-class="getClass('${baseUrl}', '/uploadMetadata')"> <spring:message
+							data-ng-class="getClass('/uploadMetadata')"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
 						<li><a href="${baseUrl}#/newIngest"
-							ng-class="getClass('${baseUrl}', '/ingest')"><spring:message
+							data-ng-class="getClass('/newIngest')"><spring:message
 									code="sidebar.ingestExternal" /></a></li>
 						<li><a href="${baseUrl}#/manageIngests"
-							ng-class="getClass('${baseUrl}', '/manageIngests')"><spring:message
+							data-ng-class="getClass('/manageIngests')"><spring:message
 									code="sidebar.manageIngests" /></a></li>
 						<li><a 
-							ng-class="getClass('${baseUrl}', '/editMetadata')"><spring:message
+							data-ng-class="getClass('/editMetadata')"><spring:message
 									code="sidebar.editMetadata" /></a></li>
 						<li><a 
-							ng-class="getClass('${baseUrl}', '/deleteRecords')"><spring:message
+							data-ng-class="getClass('/deleteRecords')"><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
 							<li><a href="${adminURL}"
-								ng-class="getClass('${baseUrl}', '/admin')"><spring:message
+								data-ng-class="getClass('/admin')"><spring:message
 										code="sidebar.adminPage" /></a></li>
 						</security:authorize>
 					</ul>
