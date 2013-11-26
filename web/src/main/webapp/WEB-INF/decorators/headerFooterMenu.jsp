@@ -8,7 +8,7 @@
 <%@ taglib uri="http://www.springframework.org/security/tags"
 	prefix="security"%>
 <!DOCTYPE html>
-<html ng-app="ogpHarvester">
+<html data-ng-app="ogpHarvester">
 <head>
 <title>Open GeoPortal Harvester</title>
 

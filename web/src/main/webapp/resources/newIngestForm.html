@@ -1,48 +1,48 @@
-<div class="col-md-9 right-column" ng-controller="NewIngestCtrl" >
-	<h1 translate="INGEST_FORM.HEADER"></h1>
-    <p translate="INGEST_FORM.SUBHEADER"></p>
+<div class="col-md-9 right-column" data-ng-controller="NewIngestCtrl" >
+	<h1 data-translate="INGEST_FORM.HEADER"></h1>
+    <p data-translate="INGEST_FORM.SUBHEADER"></p>
     
-    <h2 translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
-    <form name="newIngest" ng-submit="step2()">
+    <h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
+    <form name="newIngest" data-ng-submit="step2()">
        
         <div class="form-group col-md-7">
-            <label for="typeOfInstance" translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
-            <select id="typeOfInstance" class="form-control" ng-model="ingest.typeOfInstance" ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" ng-change="resetForm()"></select>
+            <label for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
+            <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance" data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" data-ng-change="resetForm()"></select>
         </div>
         <div class="form-group col-md-7">
-            <label for="catalogOfServices" translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
-            <select id="catalogOfServices" ng-model="ingest.catalogOfServices" class="form-control col-md-6"
-                    ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
-                    ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId()" >
-                    <option value="" translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
+            <label for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
+            <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6"
+                    data-ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
+                    data-ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId()" >
+                    <option value="" data-translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
             </select>
         </div>
-        <div class="form-group col-md-9" ng-class="{'has-error': newIngest.url.$invalid}">
-            <label class="control-label" for="url" translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
-            <input type="url" id="url" name="url" ng-model="ingest.url" class="form-control" 
-                ng-disabled="ingest.catalogOfServices !== null" ng-blur="getRemoteSourcesByUrl()"
-                ng-required="!ingest.catalogOfServices"></input>
+        <div class="form-group col-md-9" data-ng-class="{'has-error': newIngest.url.$invalid}">
+            <label class="control-label" for="url" data-translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
+            <input type="url" id="url" name="url" data-ng-model="ingest.url" class="form-control" 
+                data-ng-disabled="ingest.catalogOfServices !== null" data-ng-blur="getRemoteSourcesByUrl()"
+                data-ng-required="!ingest.catalogOfServices"></input>
         </div>
 
-        <div class="form-group multiselect col-md-7" ng-hide="ingest.typeOfInstance === 'SOLR'">
-            <label for="nameOgpRepository" translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
+        <div class="form-group multiselect col-md-7" data-ng-hide="ingest.typeOfInstance === 'SOLR'">
+            <label for="nameOgpRepository" data-translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
                 data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
                 class="glyphicon glyphicon-question-sign black"></span></a>
             <select class="form-control" id="nameOgpRepository" 
-                ng-model="ingest.nameOgpRepository"
-                ng-options="item.key as item.value for item in nameOgpRepositoryList"
+                data-ng-model="ingest.nameOgpRepository"
+                data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
                 data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate">
             </select>
         </div>
         <div class="clearfix"></div>
-        <div ng-switch on="ingest.typeOfInstance"  id="fagment">
-            <div ng-switch-when="SOLR" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+        <div data-ng-switch on="ingest.typeOfInstance"  id="fagment">
+            <div data-ng-switch-when="SOLR" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
 
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSorlSearchCriteria">
                         <h2>
-                            <span translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span> 
+                            <span data-translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span> 
                             <a data-tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> <span
                                 class="glyphicon glyphicon-chevron-up pull-right black"></span>
@@ -50,7 +50,7 @@
                     </div>
                     <div class="custom-panel-body collapse" id="collapseSorlSearchCriteria">
                         <div class="form-group">
-                            <label translate="INGEST_FORM.EXTENT"></label>
+                            <label data-translate="INGEST_FORM.EXTENT"></label>
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
@@ -59,44 +59,44 @@
                         </div>
 
                         <div class="form-group col-md-9">
-                           <label for="themeKeyword" translate="INGEST_FORM.THEME_KEYWORD" ></label> <a 
+                           <label for="themeKeyword" data-translate="INGEST_FORM.THEME_KEYWORD" ></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                             <input class="form-control" id="themeKeyword"
-                                ng-model="ingest.themeKeyword" ></input>
+                                data-ng-model="ingest.themeKeyword" ></input>
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="placeKeyword" translate="INGEST_FORM.PLACE_KEYWORD"></label> <a 
+                            <label for="placeKeyword" data-translate="INGEST_FORM.PLACE_KEYWORD"></label> <a 
                                 tooltip'{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <input type="text" class="form-control" id="placeKeyword"
-                                ng-model="ingest.placeKeyword" ></input>
+                                data-ng-model="ingest.placeKeyword" ></input>
                         </div>
 
                         <div class="form-group col-md-7">
-                            <label for=topic translate="INGEST_FORM.TOPIC"></label> <a 
+                            <label for=topic data-translate="INGEST_FORM.TOPIC"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select class="form-control" id="topic" ng-model="ingest.topic" 
-                                ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList">
-                                <option value="" translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
+                            <select class="form-control" id="topic" data-ng-model="ingest.topic" 
+                                data-ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList">
+                                <option value="" data-translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
                             </select>
                         </div>
                         <div class="clearfix"></div>
 
                         <div class="form-group">
-                            <label translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
+                            <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='contentRangeFrom' ng-model="ingest.contentRangeFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='contentRangeFrom' data-ng-model="ingest.contentRangeFrom" datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
-                                    class="col-md-1 text-center" translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='contentRangeTo' ng-model="ingest.contentRangeTo" datetimepicker>
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
+                                        class='input-group date col-md-4' id='contentRangeTo' data-ng-model="ingest.contentRangeTo" datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -105,28 +105,28 @@
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="originator" translate="INGEST_FORM.ORIGINATOR"></label> <a 
+                            <label for="originator" data-translate="INGEST_FORM.ORIGINATOR"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input class="form-control" id="originator" ng-model="ingest.originator" ></input>
+                            <input class="form-control" id="originator" data-ng-model="ingest.originator" ></input>
                         </div>
 
                         <div class="form-group multiselect col-md-7">
-                            <label for="dataType" translate="INGEST_FORM.DATA_TYPE"></label> <a
+                            <label for="dataType" data-translate="INGEST_FORM.DATA_TYPE"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
-                                class="form-control btn-block" ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" multiselect-dropdown >
+                            <select data-ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
+                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" multiselect-dropdown >
                         
                             </select>
                         </div>
 
                         <div class="form-group multiselect col-md-7">
-                            <label for="dataRepository" translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
+                            <label for="dataRepository" data-translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select class="form-control" id="dataRepository" ng-model="ingest.dataRepositories"
-                                multiple="multiple" ng-options="item.key as item.value for item in solrDataRepositoryList" 
+                            <select class="form-control" id="dataRepository" data-ng-model="ingest.dataRepositories"
+                                multiple="multiple" data-ng-options="item.key as item.value for item in solrDataRepositoryList" 
                                 data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
                             </select>
                         </div>
@@ -136,7 +136,7 @@
                             <div class="col-md-12 no-left-padding">
                                 <div class="checkbox">
                                     <label for="excludeRestricted">
-                                         <input type="checkbox" ng-model="ingest.excludeRestricted" id="excludeRestricted"></input>
+                                         <input type="checkbox" data-ng-model="ingest.excludeRestricted" id="excludeRestricted"></input>
 
                                         {{"INGEST_FORM.EXCLUDE_RESTRICTED" | translate }}
                                     </label> <a data-tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
@@ -146,17 +146,17 @@
                         </div>
 
                         <div class="form-group">
-                            <label translate="INGEST_FORM.DATE_RANGE_SOLR"></label> <a
+                            <label data-translate="INGEST_FORM.DATE_RANGE_SOLR"></label> <a
                                 data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeSolrFrom'  ng-model="ingest.rangeSolrFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeSolrFrom'  data-ng-model="ingest.rangeSolrFrom" datetimepicker>
                                     <input  type="text" class="form-control"></input> <span
                                         class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div>
-                                <span class="col-md-1 text-center" translate="INGEST_FORM.TO"></span>
-                                <div class='input-group date col-md-4' id='rangeSolrTo' ng-model="ingest.rangeSolrTo" datetimepicker>
+                                <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
+                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" datetimepicker>
                                     <input type="text" class="form-control"></input><span
                                         class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
@@ -164,10 +164,10 @@
                             </div>
                         </div>
                         <div class="form-group col-md-9">
-                            <label for="solrCustomQuery" translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a 
+                            <label for="solrCustomQuery" data-translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.solrCustomQuery"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.solrCustomQuery"
                                 id="solrCustomQuery"></textarea>
                         </div>
 
@@ -175,7 +175,7 @@
                 </div>
             </div> <!-- //swich solr-->
 
-            <div ng-switch-when="GEONETWORK" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+            <div data-ng-switch-when="GEONETWORK" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaGN">
@@ -188,51 +188,51 @@
                     </div>
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaGN">
                         <div class="form-group col-md-9">
-                            <label for="gnTitle" translate="INGEST_FORM.GN_TITLE"></label> <a
+                            <label for="gnTitle" data-translate="INGEST_FORM.GN_TITLE"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.GN_TITLE_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                                 <input
-                                class="form-control" id="gnTitle" ng-model="ingest.gnTitle" ></input>
+                                class="form-control" id="gnTitle" data-ng-model="ingest.gnTitle" ></input>
                         </div>
                     
 
                         <div class="form-group col-md-9">
-                            <label for="gnKeyword" translate="INGEST_FORM.GN_KEYWORD"></label> <a 
+                            <label for="gnKeyword" data-translate="INGEST_FORM.GN_KEYWORD"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
-                                <input class="form-control" id="gnKeyword" ng-model="ingest.gnKeyword" ></input>
+                                <input class="form-control" id="gnKeyword" data-ng-model="ingest.gnKeyword" ></input>
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="gnAbstractText" translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
+                            <label for="gnAbstractText" data-translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.gnAbstractText"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.gnAbstractText"
                                 id="gnAbstractText"></textarea>
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="gnFreeText" translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
+                            <label for="gnFreeText" data-translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.gnFreeText"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.gnFreeText"
                                 id="gnFreeText"></textarea>
                         </div>
 
                         <div class="clearfix"></div>
                             <div class="form-group multiselect col-md-7">
-                                <label for="gnSources" translate="INGEST_FORM.GN_SOURCES"></label> <a 
+                                <label for="gnSources" data-translate="INGEST_FORM.GN_SOURCES"></label> <a 
                                     data-tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
                                     class="glyphicon glyphicon-question-sign black"></span></a> 
-                                    <select multiple="multiple" ng-model="ingest.gnSources"
-                                        id="gnSources" class="form-control" ng-options="item.key as item.value for item in gnSourcesList" 
+                                    <select multiple="multiple" data-ng-model="ingest.gnSources"
+                                        id="gnSources" class="form-control" data-ng-options="item.key as item.value for item in gnSourcesList" 
                                         data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" multiselect-dropdown>
                                     </select>
                             </div>
                     </div>
                 </div>
             </div>
-            <div  ng-switch-when="CSW" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+            <div  data-ng-switch-when="CSW" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaCsw">
@@ -244,7 +244,7 @@
                     </div>
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
                         <div class="form-group">
-                            <label translate="INGEST_FORM.CSW_EXTENT"></label>
+                            <label data-translate="INGEST_FORM.CSW_EXTENT"></label>
                             <button type="button" class="btn btn-default">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
@@ -254,41 +254,41 @@
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="cswTitle" translate="INGEST_FORM.CSW_TITLE"></label> <a 
+                            <label for="cswTitle" data-translate="INGEST_FORM.CSW_TITLE"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span>
                             </a>
-                            <input type="text" class="form-control" id="cswTitle" ng-model="ingest.cswTitle"></input>
+                            <input type="text" class="form-control" id="cswTitle" data-ng-model="ingest.cswTitle"></input>
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="cswSubject" translate="INGEST_FORM.CSW_SUBJECT"></label> <a 
+                            <label for="cswSubject" data-translate="INGEST_FORM.CSW_SUBJECT"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.cswSubject"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswSubject"
                                 id="cswSubject"></textarea>
                         </div>
                          <div class="form-group col-md-9">
-                            <label for="cswFreeText" translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a 
+                            <label for="cswFreeText" data-translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.cswFreeText"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswFreeText"
                                 id="cswFreeText"></textarea>
                         </div>
                         <div class="clearfix"></div>
 
                         <div class="form-group">
-                            <label translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
+                            <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.cswRangeFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.cswRangeFrom" datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
-                                    class="col-md-1 text-center" translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' ng-model="ingest.cswRangeTo" datetimepicker>
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -297,17 +297,17 @@
                         </div>
 
                         <div class="form-group col-md-9">
-                            <label for="cswCustomQuery" translate="INGEST_FORM.CSW_CUSTOM_QUERY"></label> <a 
+                            <label for="cswCustomQuery" data-translate="INGEST_FORM.CSW_CUSTOM_QUERY"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" ng-model="ingest.cswCustomQuery"
+                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswCustomQuery"
                                 id="cswCustomQuery"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div ng-switch-when="WEBDAV" ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+            <div data-ng-switch-when="WEBDAV" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSearchCriteriaWebdav">
@@ -319,17 +319,17 @@
                     </div>
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaWebdav">
                          <div class="form-group">
-                            <label translate="INGEST_FORM.WD_DATE_LAST_MODIFIED"></label> <a
+                            <label data-translate="INGEST_FORM.WD_DATE_LAST_MODIFIED"></label> <a
                                 data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' ng-model="ingest.webdavFromLastModified" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.webdavFromLastModified" datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
-                                    class="col-md-1 text-center" translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' ng-model="ingest.webdavToLastModified" datetimepicker>
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified" datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -353,10 +353,10 @@
                     </div>
                     <div class="custom-panel-body collapse" id="requiredFieldsSolr">
                         <div class="form-group container no-left-padding">
-                            <div class="col-md-4" ng-repeat="field in requiredFieldList[ingest.typeOfInstance]">
+                            <div class="col-md-4" data-ng-repeat="field in requiredFieldList[ingest.typeOfInstance]">
                                 <div class="checkbox">
                                     <label> 
-                                        <input type="checkbox" name="requiredFields" ng-model="ingest.requiredFields[field]"  ></input>
+                                        <input type="checkbox" name="requiredFields" data-ng-model="ingest.requiredFields[field]"  ></input>
                                         {{ "INGEST_FORM.REQUIRED_FIELD_OPT_" + field | translate}}
                                     </label>
                                 </div>
