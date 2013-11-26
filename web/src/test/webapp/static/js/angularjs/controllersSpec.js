@@ -24,8 +24,11 @@ describe("Test controllers", function() {
 		}); 
 		it("should return active when location starts with linkPath", function () {
 			$location.path('/myPath/otherSegment/anotherOne');
+			$scope.$eval();
 			var active = $scope.getClass('/myPath');
-			expect(active).toBe('active'); 
+			expect(active).toBe('active');
+			active = $scope.getClass('/myPath/otherSegment');
+			expect(active).toBe('active');
 			active = $scope.getClass('/otherSegment');
 			expect(active).toBe('');
 		});
