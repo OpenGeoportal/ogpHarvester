@@ -144,9 +144,9 @@
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'remoteRepositories', '$route', '$location', '$http',
+		'remoteRepositories', '$route', '$location', '$http', '$timeout',
 
-		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http) {
+		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -157,6 +157,10 @@
 
 
 			});
+			
+			$scope.testOpen = function() {
+				$scope.testOpened = true;
+			};
 
 			$scope.step2 = function () {
 				// validate ingest
@@ -165,6 +169,16 @@
 				$location.path('/newIngest/step2');
 
 			};
+			
+			$scope.$watch('opened', function(value) {
+				console.log("Opened value changed to " + value);
+			});
+
+			$scope.open = function() {
+			    $timeout(function() {
+			      $scope.opened = true;
+			    });
+			  };
 
 			$scope.resetForm = function () {
 				$scope.ingest.url = null;
@@ -256,8 +270,8 @@
 			remoteRepositories.getLocalSolrInstitutions().success(
 				function (data) {
 					$scope.nameOgpRepositoryList = data;
-					if (nameOgpRepositoryList && nameOgpRepositoryList.length > 0) {
-						$scope.ingest.nameOgpRepository = nameOgpRepositoryList[0];
+					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0) {
+						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0];
 					}
 				});
 

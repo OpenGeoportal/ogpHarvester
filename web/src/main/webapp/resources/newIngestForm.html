@@ -35,7 +35,7 @@
             </select>
         </div>
         <div class="clearfix"></div>
-        <div data-ng-switch on="ingest.typeOfInstance"  id="fagment">
+        <div data-ng-switch data-on="ingest.typeOfInstance"  id="fagment">
             <div data-ng-switch-when="SOLR" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
 
                 <div class="custom-panel">
@@ -68,7 +68,7 @@
 
                         <div class="form-group col-md-9">
                             <label for="placeKeyword" data-translate="INGEST_FORM.PLACE_KEYWORD"></label> <a 
-                                tooltip'{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
+                                data-tooltip='{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <input type="text" class="form-control" id="placeKeyword"
                                 data-ng-model="ingest.placeKeyword" ></input>
@@ -90,10 +90,11 @@
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='contentRangeFrom' data-ng-model="ingest.contentRangeFrom" datetimepicker>
+                                <div class='input-group date col-md-4 calendar' id='contentRangeFrom' data-ng-model="ingest.contentRangeFrom" datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span> </span>
+                                        class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div> <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
                                         class='input-group date col-md-4' id='contentRangeTo' data-ng-model="ingest.contentRangeTo" datetimepicker>
@@ -116,7 +117,7 @@
                                 data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select data-ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
-                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" multiselect-dropdown >
+                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" data-multiselect-dropdown >
                         
                             </select>
                         </div>
@@ -127,7 +128,7 @@
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="dataRepository" data-ng-model="ingest.dataRepositories"
                                 multiple="multiple" data-ng-options="item.key as item.value for item in solrDataRepositoryList" 
-                                data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" multiselect-dropdown>
+                                data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" data-multiselect-dropdown>
                             </select>
                         </div>
                         <div class="clearfix"></div>
@@ -150,13 +151,13 @@
                                 data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeSolrFrom'  data-ng-model="ingest.rangeSolrFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeSolrFrom'  data-ng-model="ingest.rangeSolrFrom" data-datetimepicker>
                                     <input  type="text" class="form-control"></input> <span
                                         class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div>
                                 <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
-                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" data-datetimepicker>
                                     <input type="text" class="form-control"></input><span
                                         class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
@@ -226,7 +227,7 @@
                                     class="glyphicon glyphicon-question-sign black"></span></a> 
                                     <select multiple="multiple" data-ng-model="ingest.gnSources"
                                         id="gnSources" class="form-control" data-ng-options="item.key as item.value for item in gnSourcesList" 
-                                        data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" multiselect-dropdown>
+                                        data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" data-multiselect-dropdown>
                                     </select>
                             </div>
                     </div>
@@ -282,13 +283,13 @@
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.cswRangeFrom" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.cswRangeFrom" data-datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" datetimepicker>
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" data-datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -323,13 +324,13 @@
                                 data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.webdavFromLastModified" datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.webdavFromLastModified" data-datetimepicker>
                                     <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified" datetimepicker>
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified" data-datetimepicker>
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
