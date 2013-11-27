@@ -26,7 +26,7 @@
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>2.5</servlet.version>
 		<sitemesh.version>2.4.2</sitemesh.version>
-		<webjars-bootstrap.version>3.0.0</webjars-bootstrap.version>
+		<webjars-bootstrap.version>3.0.2</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
 		<webjars-angularjs.version>1.2.1</webjars-angularjs.version>
@@ -212,6 +212,7 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>7.5.0.v20110901</version>
 				<configuration>
+					<scanIntervalSeconds>0</scanIntervalSeconds>
 					<stopKey>JETTY_STOP</stopKey>
 					<stopPort>8090</stopPort>
 					<connectors>

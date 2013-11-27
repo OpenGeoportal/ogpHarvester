@@ -13,12 +13,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Latest compiled and minified CSS -->
-<spring:url value="/webjars/bootstrap/3.0.0/css/bootstrap.css"
+<spring:url value="/webjars/bootstrap/3.0.2/css/bootstrap.css"
 	var="bootstrapCss" />
 <link rel="stylesheet" href="${bootstrapCss}">
 
 <!-- Optional theme -->
-<spring:url value="/webjars/bootstrap/3.0.0/css/bootstrap-theme.css"
+<spring:url value="/webjars/bootstrap/3.0.2/css/bootstrap-theme.css"
 	var="bootstrapTheme" />
 <link rel="stylesheet" href="${bootstrapTheme}">
 
@@ -30,7 +30,7 @@
 <spring:url value="/webjars/jquery/1.10.2/jquery.js" var="jQuery" />
 <script src="${jQuery}"></script>
 <!-- Latest compiled and minified JavaScript -->
-<spring:url value="/webjars/bootstrap/3.0.0/js/bootstrap.min.js"
+<spring:url value="/webjars/bootstrap/3.0.2/js/bootstrap.min.js"
 	var="bootstrapJs" />
 <script src="${bootstrapJs}"></script>
 <decorator:head />

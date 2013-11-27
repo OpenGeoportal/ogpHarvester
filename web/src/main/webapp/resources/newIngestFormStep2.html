@@ -1,20 +1,20 @@
-<div class="col-md-9 right-column step2" ng-controller="NewIngestCtrl">
-    <h1 translate="INGEST_FORM.STEP2_HEADER"></h1>
-    <p translate="INGEST_FORM.STEP2_SUBHEADER"></p>
+<div class="col-md-9 right-column step2" data-ng-controller="NewIngestCtrl">
+    <h1 data-translate="INGEST_FORM.STEP2_HEADER"></h1>
+    <p data-translate="INGEST_FORM.STEP2_SUBHEADER"></p>
 
     <form name="form" rc-submit="scheduleIngest()" novalidate>
         <div class="fields-container">
-            <div class="form-group col-md-9" ng-class="{'has-error': rc.form.needsAttention(form.ingestName)}">
-                    <label class="control-label" for="ingestName" translate="INGEST_FORM.STEP2_INGEST_NAME">
+            <div class="form-group col-md-9" data-ng-class="{'has-error': rc.form.needsAttention(form.ingestName)}">
+                    <label class="control-label" for="ingestName" data-translate="INGEST_FORM.STEP2_INGEST_NAME">
                     </label>
-                    <input type="text" id="ingestName" name="ingestName" ng-model="ingest.ingestName" class="form-control" required ></input>
+                    <input type="text" id="ingestName" name="ingestName" data-ng-model="ingest.ingestName" class="form-control" required ></input>
             </div>
 
             <div class="clearfix"></div>
-            <div class="form-group" ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
-                <label class="control-label" for="beginDate" translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>
+            <div class="form-group" data-ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
+                <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>
                 <div class="row no-margin">
-                    <div class='input-group date col-md-4' name="beginDate" id='beginDate' ng-model="ingest.beginDate" datetimepicker required>
+                    <div class='input-group date col-md-4' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate" datetimepicker required>
                         <input class="form-control" ></input>
                         <span class="input-group-addon"><span
                             class="glyphicon glyphicon-calendar"></span> </span>
@@ -22,15 +22,15 @@
                 </div>
             </div>
 
-            <div class="form-group col-md-4" ng-class="{'has-error': rc.form.needsAttention(form.frequency)}"">
-                <label class="control-label" for="frequency" translate="INGEST_FORM.STEP2_FREQUENCY"></label>
-                <select ng-model="ingest.frequency" id="frequency" name="frequency"
+            <div class="form-group col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.frequency)}"">
+                <label class="control-label" for="frequency" data-translate="INGEST_FORM.STEP2_FREQUENCY"></label>
+                <select data-ng-model="ingest.frequency" id="frequency" name="frequency"
                     class="form-control" required>
-                        <option value="ONCE" translate="INGEST_FORM.STEP2_FREQ_OPT_ONCE"></option>
-                        <option value="DAILY" translate="INGEST_FORM.STEP2_FREQ_OPT_DAILY"></option>
-                        <option value="WEEKLY" translate="INGEST_FORM.STEP2_FREQ_OPT_WEEKLY"></option>
-                        <option value="MONTHLY" translate="INGEST_FORM.STEP2_FREQ_OPT_MONTHLY"></option>
-                        <option value="YEARLY" translate="INGEST_FORM.STEP2_FREQ_OPT_YEARLY"></option>
+                        <option value="ONCE" data-translate="INGEST_FORM.STEP2_FREQ_OPT_ONCE"></option>
+                        <option value="DAILY" data-translate="INGEST_FORM.STEP2_FREQ_OPT_DAILY"></option>
+                        <option value="WEEKLY" data-translate="INGEST_FORM.STEP2_FREQ_OPT_WEEKLY"></option>
+                        <option value="MONTHLY" data-translate="INGEST_FORM.STEP2_FREQ_OPT_MONTHLY"></option>
+                        <option value="YEARLY" data-translate="INGEST_FORM.STEP2_FREQ_OPT_YEARLY"></option>
                 </select>
             </div>
             <div class="clearfix"></div>
@@ -38,7 +38,7 @@
         <div class="form-group">
             <a href="#/newIngest" class="btn btn-default"><span
                 class="glyphicon glyphicon-chevron-left"></span> {{ "INGEST_FORM.STEP2_BACK_BUTTON" | translate }}</a>
-            <button class="btn btn-primary" translate="INGEST_FORM.STEP2_START_BUTTON" >
+            <button class="btn btn-primary" data-translate="INGEST_FORM.STEP2_START_BUTTON" >
             </button>
         </div>
     </form>
