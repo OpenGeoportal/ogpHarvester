@@ -38,6 +38,7 @@ import org.opengeoportal.harvester.api.domain.InstanceType;
 public class RemoteRepositoryFormBean {
 	private InstanceType repoType;
 	private String repoUrl;
+	private String name;
 	/**
 	 * @return the repoType
 	 */
@@ -61,6 +62,12 @@ public class RemoteRepositoryFormBean {
 	 */
 	public void setRepoUrl(String repoUrl) {
 		this.repoUrl = repoUrl;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 

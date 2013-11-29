@@ -7,26 +7,33 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location',
-			function ($scope, $routeParams, IngestPage, $location) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location', '$log',
+			function ($scope, $routeParams, IngestPage, $location, $log) {
 				$scope.data = {};
 				IngestPage.query($routeParams.page, $routeParams.pageSize, function (response) {
 					$scope.ingestPage = response;
 					$scope.pageSize = response.pageDetails.size;
 				});
 				if ($routeParams.name) {
-					console.log('Ingest "' + $routeParams.name + " has been successfully created");
+					$log.info('Ingest "' + $routeParams.name + " has been successfully created");
 				}
 
 				$scope.selectPage = function (page) {
 					$location.url('/manageIngests?page=' + page + "&pageSize=" + $scope.pageSize);
 				};
+				$scope.checkLastDate = function(event, index) {
+					var ingestReport = $scope.ingestPage.elements[index];
+					if (!ingestReport.lastRun){
+						event.preventDefault();
+						return false;
+					}
+				}
 
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
-		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest',
-			function ($scope, $routeParams, Ingest) {
+		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest', '$log',
+			function ($scope, $routeParams, Ingest, $log) {
 
 				var isSelectedAll = function ($event, elementList) {
 					var allSelected = elementList !== undefined;
@@ -84,7 +91,7 @@
 							}
 						}));
 					}
-					console.log(selected);
+					$log.info(selected);
 					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
 
 					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
@@ -144,9 +151,9 @@
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'remoteRepositories', '$route', '$location', '$http', '$timeout',
+		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$log',
 
-		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout) {
+		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $log) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -171,7 +178,7 @@
 			};
 			
 			$scope.$watch('opened', function(value) {
-				console.log("Opened value changed to " + value);
+				$log.info("Opened value changed to " + value);
 			});
 
 			$scope.open = function() {
@@ -213,7 +220,7 @@
 
 				if (valid && url !== null && url !== '') {
 					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function (data) {
-						console.log("Updated remote repository list with data " + JSON.stringify(data));
+						$log.info("Updated remote repository list with data " + JSON.stringify(data));
 						$scope.ingest[targetModel] = [];
 						$scope[targetField] = data;
 					}).error(function () {
@@ -232,7 +239,7 @@
 				if (repoId !== null) {
 					remoteRepositories.getRemoteSourcesByRepoId(repoId).
 					success(function (data) {
-						console.log("Remote sources by Id " + JSON.stringify(data));
+						$log.info("Remote sources by Id " + JSON.stringify(data));
 						if (repoType === "SOLR") {
 							$scope.ingest.dataRepositories = [];
 							$scope.solrDataRepositoryList = data;
@@ -250,19 +257,19 @@
 			};
 
 			$scope.scheduleIngest = function () {
-				console.info("Schedule Ingest");
+				$log.info("Schedule Ingest");
 				$http.post("rest/ingests/new", $scope.ingest).success(function (data) {
-					console.log("Schedule ingest success: " + JSON.stringify(data));
+					$log.info("Schedule ingest success: " + JSON.stringify(data));
 					$location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
 				}).
 				error(function (data, status, headers, config) {
-					console.log("Schedule ingest error");
+					$log.info("Schedule ingest error");
 				});
 			};
 
 
 
-			remoteRepositories.getRepositoryList().success(
+			remoteRepositories.getRepositoryList().then(
 				function (data) {
 					$scope.customRepositories = data;
 				});
@@ -273,6 +280,9 @@
 					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0) {
 						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0];
 					}
+				}).error(
+				function(errorMessage){
+					$scope.error = errorMessage;
 				});
 
 

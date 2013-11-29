@@ -1,0 +1,27 @@
+<div class="col-md-9 right-column" data-ng-controller="AdminCtrl">
+	<h1 data-translate="ADMIN.HEADER"></h1>
+	<p data-translate="ADMIN.SUBHEADER"></p>
+	<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
+	<div>
+		<h2 data-translate="ADMIN.MY_REPOS_HEADER"></h2>
+		<div class="btn-toolbar">
+			<button class="btn btn-primary" data-ng-click="openNewCustomRepoModal()">Add Custom Repository</button>
+		</div>
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th data-translate="ADMIN.TABLE_TYPE"></th>
+					<th data-translate="ADMIN.TABLE_NAME"></th>
+					<th class="text-right" data-translate="ADMIN.TABLE_REMOVE"></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr data-ng-repeat="repo in repositoryList">
+					<td data-translate="{{'ADMIN.TOI_' + repo.repoType}}"></td>
+					<td>{{repo.value}}</td>
+					<td><button class="close" data-ng-click="deleteRepo($index)">&times;</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -1,0 +1,32 @@
+<div class="modal-header">
+    <h2>{{ "ADMIN.NEW_CUSTOM_REPO_HEADER" | translate}} <a
+                data-tooltip='{{ "ADMIN.NEW_CUSTOM_REPO_HEADER_TOOLTIP" | translate }}'><span
+                class="glyphicon glyphicon-question-sign black"></span></a></h2>
+</div>
+<form name="form" data-rc-submit="createRepo()" novalidate>
+	<div class="modal-body">
+		<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
+		<div class="form-group" data-ng-class="{'has-error': rc.form.needsAttention(form.repoType)}" > 
+			<label for="repoType" data-translate="ADMIN.NEW_CUSTOM_REPO_TYPE"></label>
+			<select class="form-control" data-ng-model="customRepo.repoType" name="repoType" id="repoType" required>
+				<option value="SOLR" data-translate="ADMIN.TOI_SOLR"></option>
+				<option value="GEONETWORK" data-translate="ADMIN.TOI_GEONETWORK"></option>
+				<option value="CSW" data-translate="ADMIN.TOI_CSW"></option>
+				<option value="WEBDAV" data-translate="ADMIN.TOI_WEBDAV"></option>
+			</select>
+		</div>
+		<div class="form-group"  data-ng-class="{'has-error': rc.form.needsAttention(form.repoUrl)}">
+			<label for="repoUrl" class="control-label"  data-translate="ADMIN.NEW_CUSTOM_REPO_URL"></label>
+			<input type="url" class="form-control" data-ng-model="customRepo.repoUrl" id="repoUrl" name="repoUrl" required></input>
+		</div> 
+		<div class="form-group" data-ng-class="{'has-error': rc.form.needsAttention(form.name)}">
+			<label for="customRepoName" class="control-label"  data-translate="ADMIN.NEW_CUSTOM_REPO_NAME"></label>
+			<input type="text" class="form-control" data-ng-model="customRepo.name" id="customRepoName" name="name" required></input>
+		</div>
+
+	</div>
+	<div class="modal-footer">
+	    <button class="btn btn-primary" data-translate="ADMIN.NEW_CUSTOM_REPO_CREATE"></button>
+	    <button class="btn btn-default" data-translate="ADMIN.NEW_CUSTOM_REPO_CANCEL" data-ng-click="cancel()"></button>
+	</div>
+</form>

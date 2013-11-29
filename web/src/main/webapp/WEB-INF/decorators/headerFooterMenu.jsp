@@ -88,7 +88,7 @@
 							data-ng-class="getClass('/deleteRecords')"><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
-							<li><a href="${adminURL}"
+							<li><a href="${baseUrl}#/admin"
 								data-ng-class="getClass('/admin')"><spring:message
 										code="sidebar.adminPage" /></a></li>
 						</security:authorize>
@@ -130,11 +130,13 @@
 	<spring:url value="/static/js/angularjs/services.js" var="servicesUrl" />
 	<spring:url value="/static/js/angularjs/controllers.js"
 		var="controllersUrl" />
+		<spring:url value="/static/js/angularjs/adminController.js"
+		var="adminControllerUrl" />
 	<spring:url value="/static/js/angularjs/filters.js" var="filtersUrl" />
 	<spring:url value="/static/js/angularjs/directives.js"
 		var="directivesUrl" />
 	<script src="${angularjsUrl}"></script>
-	<script src="${angularjsAnimateUrl}"></script>
+	<!--<script src="${angularjsAnimateUrl}"></script>-->
 	<script src="${angularRouteUrl}"></script>
 	<script src="${angularResourceUrl}"></script>
 	<script src="${angularTranslateUrl}"></script>
@@ -145,6 +147,7 @@
 	<script src="${ogpHarvesterUrl}"></script>
 	<script src="${servicesUrl}"></script>
 	<script src="${controllersUrl}"></script>
+	<script src="${adminControllerUrl}"></script>
 	<script src="${filtersUrl}"></script>
 	<script src="${directivesUrl}"></script>
 </body>

@@ -2,7 +2,7 @@
     <h1 data-translate="INGEST_FORM.STEP2_HEADER"></h1>
     <p data-translate="INGEST_FORM.STEP2_SUBHEADER"></p>
 
-    <form name="form" rc-submit="scheduleIngest()" novalidate>
+    <form name="form" data-rc-submit="scheduleIngest()" novalidate>
         <div class="fields-container">
             <div class="form-group col-md-9" data-ng-class="{'has-error': rc.form.needsAttention(form.ingestName)}">
                     <label class="control-label" for="ingestName" data-translate="INGEST_FORM.STEP2_INGEST_NAME">
@@ -12,17 +12,16 @@
 
             <div class="clearfix"></div>
             <div class="form-group" data-ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
-                <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>
-                <div class="row no-margin">
-                    <div class='input-group date col-md-4' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate" datetimepicker required>
-                        <input class="form-control" ></input>
-                        <span class="input-group-addon"><span
-                            class="glyphicon glyphicon-calendar"></span> </span>
-                    </div>
+                <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>           
+                <div class='input-group date col-md-4' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate"data-datetimepicker required>
+                    <input class="form-control" ></input>
+                    <span class="input-group-addon"><span
+                        class="glyphicon glyphicon-calendar"></span> </span>
                 </div>
+                
             </div>
 
-            <div class="form-group col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.frequency)}"">
+            <div class="form-group col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.frequency)}">
                 <label class="control-label" for="frequency" data-translate="INGEST_FORM.STEP2_FREQUENCY"></label>
                 <select data-ng-model="ingest.frequency" id="frequency" name="frequency"
                     class="form-control" required>

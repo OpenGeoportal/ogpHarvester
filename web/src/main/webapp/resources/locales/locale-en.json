@@ -188,9 +188,29 @@
 		"ERROR_SYSTEM_serror7": "System Error 7: {{value}}",
 		"ERROR_SYSTEM_serror8": "System Error 8: {{value}}",
 		"ERROR_SYSTEM_serror9": "System Error 9: {{value}}"
-
-
-
+	},
+	"ADMIN": {
+		"HEADER": "Admin Page",
+		"SUBHEADER": "Use this form to register either existing or new repositories.",
+		"MY_REPOS_HEADER": "My Repositories",
+		"NEW_CUSTOM_REPO_HEADER": "Register Custom Repository",
+		"NEW_CUSTOM_REPO_HEADER_TOOLTIP": "Add the Register Custom Repository tooltip",
+		"NEW_CUSTOM_REPO_URL": "Repository URL:",
+		"NEW_CUSTOM_REPO_NAME": "Repository Name:",
+		"NEW_CUSTOM_REPO_TYPE": "Choose Service Type:",
+		"TOI_SOLR": "Remote OGP Instance",
+		"TOI_GEONETWORK": "Geonetwork",
+		"TOI_CSW": "CSW",
+		"TOI_WEBDAV": "WebDAV /WAF",
+		"NEW_CUSTOM_REPO_CREATE": "Create",
+		"NEW_CUSTOM_REPO_CANCEL": "Cancel",
+		"TABLE_TYPE": "Type",
+		"TABLE_NAME": "Name",
+		"TABLE_REMOVE": "Remove",
+		"REMOVE_REPO_HEADER": "Remove Repository",
+		"REMOVE_REPO_HEADER_TOOLTIP": "Please add the Remove Repository tooltip",
+		"REMOVE_REPO_CONFIRM_TEXT": "You are about  to remove the repository \"{{value}}\". Are you sure you want to continue?",
+		"NEW_CUSTOM_REPO_REMOVE": "Remove"
 	}
 
 }
