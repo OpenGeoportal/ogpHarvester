@@ -17,16 +17,17 @@
 			<td><span data-ng-hide="ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></span> {{ingest.lastRun}}</td>
 			<td>{{ingest.nextRun}}</td>
 			<td>{{ingest.nameOgpRepository}}</td>
-			<td><a href="#/manageIngests/view/{{ingest.id}}" data-translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" class="btn btn-default btn-md" ></a></td>
+			<td><a href="#/manageIngests/view/{{ingest.id}}" data-translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" data-ng-click="checkLastDate($event, $index)" 
+			class="btn btn-default btn-md" data-ng-class="{'disabled': ingest.lastRun!=null}" ></a></td>
 		</tr>
 	</tbody>
 </table>
-	<div pagination total-items="ingestPage.pageDetails.totalElements" 
-		page="ingestPage.pageDetails.number" 
-		items-per-page="ingestPage.pageDetails.size" 
-		boundary-links="true"
-		previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"
-		on-select-page="selectPage(page)"
+	<div data-pagination data-total-items="ingestPage.pageDetails.totalElements" 
+		data-page="ingestPage.pageDetails.number" 
+		data-items-per-page="ingestPage.pageDetails.size" 
+		data-boundary-links="true"
+		data-previous-text="&lsaquo;" data-next-text="&rsaquo;" data-first-text="&laquo;" data-last-text="&raquo;"
+		data-on-select-page="selectPage(page)"
 		
-		max-size="8" ></div>
+		data-max-size="8" ></div>
 </div> 

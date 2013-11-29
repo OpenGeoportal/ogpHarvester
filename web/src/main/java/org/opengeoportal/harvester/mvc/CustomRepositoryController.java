@@ -42,7 +42,9 @@ import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
 import org.opengeoportal.harvester.mvc.bean.RemoteRepositoryFormBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +52,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.ListMultimap;
@@ -62,7 +65,7 @@ public class CustomRepositoryController {
 	@Autowired
 	private CustomRepositoryService service;
 
-	@RequestMapping("/rest/repositories")
+	@RequestMapping(value = "/rest/repositories", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<InstanceType, List<SimpleEntry<Long, String>>> getCustomRepositories() {
 
@@ -83,6 +86,37 @@ public class CustomRepositoryController {
 			result.put(instanceType, repositories);
 		}
 		return result;
+	}
+
+	/**
+	 * Create a new {@link CustomRepository} in the database. The caller user
+	 * must be ADMIN.
+	 * 
+	 * @param repository
+	 *            form bean with name, url and instance type.
+	 * @return the saved {@link CustomRepository}.
+	 */
+	@RequestMapping(value = "/rest/repositories", method = RequestMethod.POST)
+	@Secured({ "ROLE_ADMIN" })
+	@ResponseBody
+	public CustomRepository saveRepository(
+			@RequestBody RemoteRepositoryFormBean repository) {
+		CustomRepository entity = new CustomRepository();
+		entity.setName(repository.getName());
+		entity.setUrl(repository.getRepoUrl());
+		entity.setServiceType(repository.getRepoType());
+
+		entity = service.save(entity);
+
+		return entity;
+	}
+	
+	@RequestMapping(value="/rest/repositories/{repoId}", method = RequestMethod.DELETE)
+	@Secured({"ROLE_ADMIN"})
+	@ResponseStatus(value=HttpStatus.NO_CONTENT)
+	public void deleteRepo(@PathVariable Long repoId) {
+		service.delete(repoId);
+		
 	}
 
 	@RequestMapping("/rest/repositories/{repoId}/remoteSources")

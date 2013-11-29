@@ -23,7 +23,6 @@ angular.module('ogpHarvester.directives', []).directive('appVersion', ['version'
                     });
 
                     scope.$on("$destroy", function () {
-                        console.log("Destroying datetimepicker");
                         element.data('datetimepicker').destroy();
                     });
                 });
@@ -84,7 +83,6 @@ angular.module('ogpHarvester.directives', []).directive('appVersion', ['version'
                     });
 
                     $scope.$on('$destroy', function () {
-                        console.log("destroying multilselect");
                         element.multiselect('destroy');
                     });
 

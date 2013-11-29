@@ -5,11 +5,11 @@
 	'use strict';
 
 	angular.module(
-		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'ngAnimate', 'rcForm',  
+		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'rcForm',  
 		                 'ui.bootstrap',
 			'ogpHarvester.filters', 'ogpHarvester.services',
 			'ogpHarvester.services', 'ogpHarvester.directives',
-			'ogpHarvester.controllers'
+			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl'
 		]).config(
 		['$routeProvider', '$locationProvider',
 			function ($routeProvider, $locationProvider) {
@@ -30,6 +30,10 @@
 				$routeProvider.when('/newIngest/step2', {
 					templateUrl: 'resources/newIngestFormStep2.html',
 					controller: 'NewIngestCtrl'
+				});
+				$routeProvider.when('/admin', {
+					templateUrl: 'resources/admin.html',
+					controller: 'AdminCtrl'
 				});
 
 				$routeProvider.otherwise({

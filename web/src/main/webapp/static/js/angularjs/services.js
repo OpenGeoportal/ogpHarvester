@@ -1,4 +1,4 @@
-(function () {
+(function() {
 
 	'use strict';
 
@@ -10,7 +10,7 @@
 	var servicesModule = angular.module('ogpHarvester.services', ['ngResource']);
 
 	servicesModule.factory('Ingest',
-		function ($resource) {
+		function($resource) {
 			return $resource('rest/ingests/:id', {}, {
 				'query': {
 					method: 'GET',
@@ -22,10 +22,11 @@
 		})
 		.value('version', '0.1');
 
+
 	servicesModule.factory('IngestPage',
-		function ($http) {
+		function($http) {
 			var IngestPage = {};
-			var query = function (page, pageSize, callback) {
+			var query = function(page, pageSize, callback) {
 				if (!page) {
 					page = 1;
 				}
@@ -37,7 +38,7 @@
 						page: page,
 						pageSize: pageSize
 					}
-				}).success(function (data) {
+				}).success(function(data) {
 					IngestPage.pageDetails = data.pageDetails;
 					IngestPage.elements = data.elements;
 					callback(IngestPage);
@@ -54,12 +55,12 @@
 
 
 
-	servicesModule.service('ingestMultiform',
-		function () {
+	servicesModule.service('ingestMultiform', ['$log',
+		function($log) {
 			// Private data
 
-			var initBean = function () {
-				console.log("Initiating ingest bean");
+			var initBean = function() {
+				$log.info("Initiating ingest bean");
 				var bean = {
 					typeOfInstance: 'SOLR',
 					catalogOfServices: null,
@@ -104,40 +105,77 @@
 
 			// Public interface
 			return {
-				reset: function () {
+				reset: function() {
 					ingest = initBean();
 				},
 
-				getIngest: function () {
+				getIngest: function() {
 					return ingest;
 				},
-				validate: function () {
+				validate: function() {
 
 				}
 			};
-		});
+		}]);
 
-	servicesModule.service('remoteRepositories', ['$http',
-		function ($http) {
+	servicesModule.service('remoteRepositories', ['$http', '$q',
+		function($http, $q) {
 			// Private data
 
 
 			// Public interface
 			return {
-				getRemoteSourcesByRepoId: function (repoId) {
+				getRemoteSourcesByRepoId: function(repoId) {
 					return $http.get('rest/repositories/' + repoId + '/remoteSources');
 				},
-				getRemoteSourcesByUrl: function (repoType, repoUrl) {
+				getRemoteSourcesByUrl: function(repoType, repoUrl) {
 					return $http.post('rest/repositoriesbyurl/remoteSources', {
 						repoType: repoType,
 						repoUrl: repoUrl
 					});
 				},
-				getRepositoryList: function () {
-					return $http.get('rest/repositories');
+				getRepositoryList: function() {
+					var deferred = $q.defer();
+
+					// Calling Repositories services to fetch repository list
+					$http.get('rest/repositories').success(function(data){
+						// Passing data to deferred's resolve function on successful completion
+						deferred.resolve(data);
+					}).error(function() {
+						// Sending a friendly error message in case of failure
+						deferred.reject("An error occured while fetching repositories");
+					});
+
+					return deferred.promise;
 				},
-				getLocalSolrInstitutions: function () {
+				getLocalSolrInstitutions: function() {
 					return $http.get('rest/localSolr/institutions');
+				},
+				save: function(repository) {
+					var deferred = $q.defer();
+
+					$http.post('rest/repositories', repository).success(function(data) {
+						deferred.resolve(data);
+					}).error(function() {
+						deferred.reject("An error occured while creating repository");
+					});
+
+					return deferred.promise;
+				},
+				remove: function(id) {
+					var deferred = $q.defer();
+					
+					$http.delete('rest/repositories/' + id).success(function(data) {
+						deferred.resolve(data);
+					}).error(function(data, status, headers, config) {
+						if (status == 404) {
+							deferred.reject("The repository you are trying to remove does not exist anymore. You can dismiss this window.");
+						} else {
+							deferred.reject("An error occured while removing the repository");
+						}						
+					});
+					return deferred.promise;
+					
 				}
 			};
 		}

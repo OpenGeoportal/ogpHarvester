@@ -17,10 +17,12 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'vendor/angular-*/angular.js',
+      'vendor/angular-*/angular-route.js',
       'vendor/angular-*/angular-*.js',
       'vendor/angular-*/angular-mocks.js',
       '../../../../main/webapp/static/js/angular-translate/angular-translate.js', 
-      '../../../../main/webapp/static/js/angular-rcsubmit/rc-form.js', 
+      '../../../../main/webapp/static/js/angular-rcsubmit/rc-form.js',
+      '../../../../main/webapp/static/js/angular-ui-bootstrap/ui-bootstrap-tpls-0.7.0.js',
 
       '../../../../main/webapp/static/js/angularjs/**/*.js',
       '**/*Spec.js'
