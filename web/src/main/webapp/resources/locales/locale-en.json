@@ -202,7 +202,7 @@
 		"TOI_GEONETWORK": "Geonetwork",
 		"TOI_CSW": "CSW",
 		"TOI_WEBDAV": "WebDAV /WAF",
-		"NEW_CUSTOM_REPO_CREATE": "Create",
+		"NEW_CUSTOM_REPO_CREATE": "Add Institution",
 		"NEW_CUSTOM_REPO_CANCEL": "Cancel",
 		"TABLE_TYPE": "Type",
 		"TABLE_NAME": "Name",
@@ -210,7 +210,14 @@
 		"REMOVE_REPO_HEADER": "Remove Repository",
 		"REMOVE_REPO_HEADER_TOOLTIP": "Please add the Remove Repository tooltip",
 		"REMOVE_REPO_CONFIRM_TEXT": "You are about  to remove the repository \"{{value}}\". Are you sure you want to continue?",
-		"NEW_CUSTOM_REPO_REMOVE": "Remove"
+		"NEW_CUSTOM_REPO_REMOVE": "Remove", 
+		"ADD_CUSTOM_REPO_BUTTON": "Add Custom Repository",
+		"ADD_EXISTING_REPOSITORY": "Add Existing Repository",
+		"REGISTER_EXISTING_REPO_HEADER": "Register Existing Repository",
+		"REGISTER_EXISTING_REPO_HEADER_TOOLTIP": "Please addd the Register Existing Repository tooltip",
+		"EXISTING_REPO_NAME": "Repository Name:",
+		"EXISTING_REPO_CREATE": "Add Institution",
+		"EXISTING_REPO_CANCEL": "Cancel"
 	}
 
 }

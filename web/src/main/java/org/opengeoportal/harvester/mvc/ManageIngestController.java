@@ -59,14 +59,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * @author jlrodriguez
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
  * 
  */
 @Controller
 public class ManageIngestController {
 	@Resource
 	private IngestService ingestService;
-	
+
 	@RequestMapping("/manageIngests")
 	public String test(ModelMap model) {
 		return "ngView";
@@ -74,90 +74,102 @@ public class ManageIngestController {
 
 	@RequestMapping("/rest/ingests")
 	@ResponseBody
-	public Map<String, Object> getAllIngests(@RequestParam(defaultValue="1") int page, @RequestParam(defaultValue="10") int pageSize, ModelMap model) {
+	public Map<String, Object> getAllIngests(
+			@RequestParam(defaultValue = "1") int page,
+			@RequestParam(defaultValue = "10") int pageSize, ModelMap model) {
 		if (page < 1) {
 			page = 1;
 		}
-		
+
 		// Pages are zero base. We need to substract 1 to the received page
 		page = page - 1;
 		Pageable pageable = new PageRequest(page, pageSize);
 		Page<Ingest> resultPage = ingestService.findAll(pageable);
 		PageWrapper pageDetails = new PageWrapper(resultPage);
-		
+
 		Map<String, Object> resultMap = Maps.newHashMap();
 		resultMap.put("pageDetails", pageDetails);
-		
-		List<IngestListItem> resultList = Lists.newArrayListWithCapacity(resultPage.getNumberOfElements());
-		for(Ingest ingest : resultPage) {
+
+		List<IngestListItem> resultList = Lists
+				.newArrayListWithCapacity(resultPage.getNumberOfElements());
+		for (Ingest ingest : resultPage) {
 			IngestListItem ingestListItem = new IngestListItem(ingest);
 			resultList.add(ingestListItem);
 		}
 		resultMap.put("elements", resultList);
-		
-		
-		
-		
-		
-		
-
 
 		return resultMap;
 	}
-	
+
 	@RequestMapping("/rest/ingests/{id}")
 	@ResponseBody
-	public Map<String, Object> ingestDetails(ModelMap model, @PathVariable Long id) {
-		
+	public Map<String, Object> ingestDetails(ModelMap model,
+			@PathVariable Long id) {
+
 		Ingest ingest = ingestService.findById(id);
 		if (ingest == null) {
-			throw new ItemNotFoundException("Ingest with id=" + id + "does not exist");
+			throw new ItemNotFoundException("Ingest with id=" + id
+					+ "does not exist");
 		}
-		
+
 		Map<String, Object> ingestMap = Maps.newHashMap();
 		ingestMap.put("id", id);
 		ingestMap.put("name", ingest.getName());
 		ingestMap.put("lastRun", ingest.getLastRun());
-		
+
 		Map<String, Object> passed = new HashMap<String, Object>();
 		passed.put("restrictedRecords", 745);
 		passed.put("publicRecords", 120);
 		passed.put("vectorRecords", 850);
 		passed.put("rasterRecords", 845);
 		ingestMap.put("passed", passed);
-		
+
 		Map<String, Object> warning = new HashMap<String, Object>();
 		warning.put("unrequiredFields", 345);
 		warning.put("webserviceWarnings", 200);
 		ingestMap.put("warning", warning);
-		
+
 		Map<String, Object> errorsMap = new HashMap<String, Object>();
 		errorsMap.put("requiredFields", 745);
 		errorsMap.put("webServiceErrors", 120);
 		errorsMap.put("systemErrors", 58);
-		List<SimpleEntry<String, Integer>> requiredFieldSubcat = new ArrayList<SimpleEntry<String,Integer>>();
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("extent", 245));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("themeKeyword", 105));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("placeKeyword", 200));
+		List<SimpleEntry<String, Integer>> requiredFieldSubcat = new ArrayList<SimpleEntry<String, Integer>>();
+		requiredFieldSubcat
+				.add(new SimpleEntry<String, Integer>("extent", 245));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
+				"themeKeyword", 105));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
+				"placeKeyword", 200));
 		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("topic", 125));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dateOfContent", 400));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("originator", 32));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataType", 400));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataRepository", 320));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("editDate", 126));
-		
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
+				"dateOfContent", 400));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("originator",
+				32));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataType",
+				400));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
+				"dataRepository", 320));
+		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("editDate",
+				126));
+
 		errorsMap.put("requiredFieldsList", requiredFieldSubcat);
-		
-		List<SimpleEntry<String, Integer>> webServiceErrorList = new ArrayList<SimpleEntry<String,Integer>>();
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error1", 120));
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error2", 120));
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error3", 120));
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error4", 120));
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error5", 120));
-		webServiceErrorList.add(new SimpleEntry<String, Integer>("error6", 120));
+
+		List<SimpleEntry<String, Integer>> webServiceErrorList = new ArrayList<SimpleEntry<String, Integer>>();
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error1", 120));
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error2", 120));
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error3", 120));
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error4", 120));
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error5", 120));
+		webServiceErrorList
+				.add(new SimpleEntry<String, Integer>("error6", 120));
 		errorsMap.put("webServiceErrorList", webServiceErrorList);
-		
-		List<SimpleEntry<String, Integer>> systemErrorList = new ArrayList<SimpleEntry<String,Integer>>();
+
+		List<SimpleEntry<String, Integer>> systemErrorList = new ArrayList<SimpleEntry<String, Integer>>();
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror1", 120));
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror2", 120));
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror3", 120));
@@ -165,22 +177,22 @@ public class ManageIngestController {
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror5", 120));
 		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
 		errorsMap.put("systemErrorList", systemErrorList);
-				
+
 		ingestMap.put("error", errorsMap);
-				
+
 		return ingestMap;
 	}
-	
-	@RequestMapping("/rest/ingests/{id}/metadata") 
-	public void downloadMetadata(@PathVariable String id, String[] categories, 
+
+	@RequestMapping("/rest/ingests/{id}/metadata")
+	public void downloadMetadata(@PathVariable String id, String[] categories,
 			Writer writer, HttpServletResponse response) {
 		response.setHeader("Content-Type", "text/plain; charset=utf-8");
-		response.setHeader("Content-Disposition", "attachment; filename=metadata_"+id + ".txt");
-		
-		
+		response.setHeader("Content-Disposition",
+				"attachment; filename=metadata_" + id + ".txt");
+
 		PrintWriter outputWriter = new PrintWriter(writer);
-		
-		for(String category : categories) {
+
+		for (String category : categories) {
 			outputWriter.println("Category " + category);
 		}
 	}

@@ -40,4 +40,12 @@ public class PredefinedRepositoryServiceImpl implements
 		return predefinedRepoRepository.findAll(sort);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.PredefinedRepositoryService#findAllNotInCustomRepositories()
+	 */
+	@Override
+	public List<PredefinedRepository> findAllNotInCustomRepositories() {
+		return predefinedRepoRepository.findAllNotInCustomRepositories();
+	}
+
 }

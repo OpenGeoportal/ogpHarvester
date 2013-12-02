@@ -11,9 +11,10 @@
 			});
 		}
 	])
-		.controller('AdminCtrl', ['$scope', 'remoteRepositories', '$modal', '$log',
+		.controller('AdminCtrl', ['$scope', 'remoteRepositories', 'predefinedRepositories',
+		                          '$modal', '$log',
 
-			function AdminCtrl($scope, remoteRepositories, $modal, $log) {
+			function AdminCtrl($scope, remoteRepositories, predefinedRepositories, $modal, $log) {
 			
 				$scope.alerts = [];
 				$scope.closeAlert = function(index) {
@@ -85,7 +86,7 @@
 						$scope.repositoryList = repositoryList;
 					},
 					function(errorMessage) {
-						$scope.alerts.push({type: 'error', msg: errorMessage});
+						$scope.alerts.push({type: 'danger', msg: errorMessage});
 						$scope.error;
 					});
 				};
@@ -108,11 +109,44 @@
 						$scope.savedRepo = remoteRepositories.save($scope.customRepo).then(function(data){
 							$modalInstance.close(data);
 						}, function(cause){
-							$scope.alerts.push({type:"error", msg:cause});
+							$scope.alerts.push({type:"danger", msg:cause});
 							$scope.disableCreateButton = false;
 						});
 
 					};
+				};
+				
+				var ExistingRepoController = function($scope, $modalInstance) {
+					$log.info("Opening existing repository dialog");
+					$scope.alerts = [];
+					
+					$scope.cancel = function() {
+						$modalInstance.dismiss('cancel');
+					};
+					
+					$scope.existingRepo = {};
+					
+					predefinedRepositories.getPredefinedNotInCustom().then(function(data) {
+						$scope.predefinedRepoList = data;
+					}, function(reason) {
+						alerts.push({type: "danger", key: reason});
+					});
+					
+					$scope.createRepo = function () {
+						var selectedRepo = $scope.existingRepo.existingRepo;
+						var customRepo = { repoType: selectedRepo.serviceType, name: selectedRepo.name, repoUrl: selectedRepo.url };
+								
+				
+						$scope.savedRepo = remoteRepositories.save(customRepo).then(function(data){
+							$modalInstance.close(data);
+						}, function(cause){
+							$scope.alerts.push({type:"danger", msg:cause});
+							$scope.disableCreateButton = false;
+						});
+					};
+					
+					
+					
 				};
 
 				$scope.openNewCustomRepoModal = function() {
@@ -126,9 +160,23 @@
 							repoType: createdRepo.serviceType, 
 							key: createdRepo.id, 
 							value:createdRepo.name});
-						$log.info(arguments);
-					});
+						});
 
+				};
+				
+				$scope.openExistingRepoModal = function() {
+					var modalInstance = $modal.open({
+						templateUrl: 'resources/openExistingRepoModalForm.html',
+						controller: ExistingRepoController
+					});
+					
+					modalInstance.result.then(function(createdRepo){
+						$scope.alerts.push({type: 'success', msg: 'The repository has been successfully added to My Repositories'});
+						$scope.repositoryList.push({
+							repoType: createdRepo.serviceType, 
+							key: createdRepo.id, 
+							value:createdRepo.name});
+					});
 				};
 
 				$scope.getRepositoryList();

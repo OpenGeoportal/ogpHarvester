@@ -24,7 +24,6 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import org.dbunit.ext.h2.H2DataTypeFactory;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
@@ -52,6 +51,20 @@ public class PredefinedRepositoryImplTest {
 		assertThat("Returned list must be ordered by name asc", nameList,
 				is(equalTo(Arrays.asList("repo A", "repo B", "repo C",
 						"repo D", "repo E"))));
+
+	}
+
+	@Test
+	@DatabaseSetup("predefinedRepositoryData.xml")
+	public void findAllNotInCustomRepositoriesTest() {
+		List<PredefinedRepository> repositories = serviceImpl
+				.findAllNotInCustomRepositories();
+		List<Long> idList = new ArrayList<Long>();
+		for (PredefinedRepository repository : repositories) {
+			idList.add(repository.getId());
+		}
+
+		assertThat(idList, is(equalTo(Arrays.asList(2l, 5l, 4l))));
 
 	}
 
