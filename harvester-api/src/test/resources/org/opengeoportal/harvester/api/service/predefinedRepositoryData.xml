@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <PredefinedRepository id="1" name="repo B" url="http://rep1" serviceType="SOLR" />
+    <PredefinedRepository id="2" name="repo A" url="http://rep2" serviceType="SOLR" />
+    <PredefinedRepository id="3" name="repo E" url="http://rep3" serviceType="SOLR" />
+    <PredefinedRepository id="4" name="repo D" url="http://rep4" serviceType="SOLR" />
+    <PredefinedRepository id="5" name="repo C" url="http://rep5" serviceType="SOLR" />
+</dataset>

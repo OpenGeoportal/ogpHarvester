@@ -18,7 +18,7 @@
 			<td>{{ingest.nextRun}}</td>
 			<td>{{ingest.nameOgpRepository}}</td>
 			<td><a href="#/manageIngests/view/{{ingest.id}}" data-translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" data-ng-click="checkLastDate($event, $index)" 
-			class="btn btn-default btn-md" data-ng-class="{'disabled': ingest.lastRun!=null}" ></a></td>
+			class="btn btn-default btn-md" data-ng-class="{'disabled': ingest.lastRun==null}" ></a></td>
 		</tr>
 	</tbody>
 </table>

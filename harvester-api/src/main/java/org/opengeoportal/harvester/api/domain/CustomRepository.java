@@ -50,6 +50,21 @@ public class CustomRepository extends AbstractPersistable<Long> {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private InstanceType serviceType;
+	@Column
+	private boolean deleted =false;
+	
+	
+	public CustomRepository() {
+		this.deleted = false;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
 
 	public String getName() {
 		return name;
