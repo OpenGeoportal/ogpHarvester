@@ -93,7 +93,7 @@ public class CustomRepositoryController {
 	 * must be ADMIN.
 	 * 
 	 * @param repository
-	 *            form bean with name, url and instance type.
+	 *            form bean with name, URL and instance type.
 	 * @return the saved {@link CustomRepository}.
 	 */
 	@RequestMapping(value = "/rest/repositories", method = RequestMethod.POST)
@@ -148,25 +148,4 @@ public class CustomRepositoryController {
 		return institutions;
 	}
 
-	@RequestMapping(value = "/admin")
-	public String admin(ModelMap model) {
-		CustomRepositoryFormBean formBean = new CustomRepositoryFormBean();
-		model.put("customRepositoryFormBean", formBean);
-
-		// TODO: Test data, remove.
-		List<CustomRepository> customRepositoriesList = new ArrayList<CustomRepository>();
-		CustomRepository cr = new CustomRepository();
-		cr.setName("Repository 1");
-		cr.setUrl("http://repository1.com");
-		customRepositoriesList.add(cr);
-
-		cr = new CustomRepository();
-		cr.setName("Repository 2");
-		cr.setUrl("http://repository2.com");
-		customRepositoriesList.add(cr);
-
-		model.put("customRepositories", customRepositoriesList);
-
-		return "admin";
-	}
 }

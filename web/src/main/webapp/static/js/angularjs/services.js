@@ -180,4 +180,23 @@
 			};
 		}
 	]);
+	
+	servicesModule.service('predefinedRepositories', ['$http', '$q',
+	                                      		function($http, $q) {
+		return {
+			getPredefinedNotInCustom : function() {
+				var deferred = $q.defer();
+				
+				$http.get('rest/predefinedRepositories/notInCustomRepos').success(function(data){
+					deferred.resolve(data);
+				}).error(function(data, status, headers, config) {
+					deferred.reject("Cannot retrieve existing repository list");
+				});
+				return deferred.promise;
+				
+			}
+			
+		};
+		
+	}]);
 })();

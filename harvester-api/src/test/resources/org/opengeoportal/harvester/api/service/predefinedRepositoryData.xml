@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	
+    <PredefinedRepository id="1" name="repo B" url="http://rep1" serviceType="SOLR" />
+    <PredefinedRepository id="2" name="repo A" url="http://rep2" serviceType="CSW" />
+    <PredefinedRepository id="3" name="repo E" url="http://rep3" serviceType="GEONETWORK" />
+    <PredefinedRepository id="4" name="repo D" url="http://rep4" serviceType="WEBDAV" />
+    <PredefinedRepository id="5" name="repo C" url="http://rep5" serviceType="SOLR" />
+    <CustomRepository id="100" name="custom A" url="http://rep1" serviceType="SOLR" />
+    <CustomRepository id="101" name="custom B" url="http://rep3" serviceType="GEONETWORK" />
+    <CustomRepository id="102" name="repo D" url="http://rep4" serviceType="SOLR" />
+    <Ingest id="1" name="ingest1" beginDate="2010-10-01"
+		frequency="DAILY" dtype="SOLR" excludeRestrictedData="false"
+		url="http://wxample.com" />
+</dataset>

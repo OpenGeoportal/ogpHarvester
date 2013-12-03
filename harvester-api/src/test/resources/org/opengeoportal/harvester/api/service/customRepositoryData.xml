@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
-    <CustomRepository id="1" name="repo1" url="http://rep1" serviceType="SOLR" />
-    <CustomRepository id="2" name="repo2" url="http://rep2" serviceType="SOLR" />
-    <CustomRepository id="3" name="repo3" url="http://rep3" serviceType="SOLR" />
-    <CustomRepository id="4" name="repo4" url="http://rep4" serviceType="SOLR" />
-    <CustomRepository id="5" name="repo5" url="http://rep5" serviceType="SOLR" />
+	
+    <CustomRepository id="1" name="repo1" url="http://rep1" serviceType="SOLR" deleted="false"/>
+    <CustomRepository id="2" name="repo2" url="http://rep2" serviceType="SOLR" deleted="false"/>
+    <CustomRepository id="3" name="repo3" url="http://rep3" serviceType="SOLR" deleted="false"/>
+    <CustomRepository id="4" name="repo4" url="http://rep4" serviceType="SOLR" deleted="false"/>
+    <CustomRepository id="5" name="repo5" url="http://rep5" serviceType="SOLR" deleted="false"/>
+    <Ingest id="1" name="ingest1" beginDate="2010-10-01"
+		frequency="DAILY" dtype="SOLR" excludeRestrictedData="false" url="http://www.repo.com"
+		 />
 </dataset>
