@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -46,6 +48,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.OneToMany;
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
 
 import org.hibernate.annotations.Check;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -87,6 +92,10 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	@ManyToOne
 	@JoinColumn(name = "repository_id")
 	private CustomRepository repository;
+
+    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name="ingest_id")
+    private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
 
 	public String getName() {
 		return name;
@@ -195,4 +204,23 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	public void setNameOgpRepository(String nameOgpRepository) {
 		this.nameOgpRepository = nameOgpRepository;
 	}
+
+
+    /**
+     * @return the ingestJobStatuses
+     */
+    public List<IngestJobStatus> getIngestJobStatuses() {
+        return Collections.unmodifiableList(ingestJobStatuses);
+    }
+
+    /**
+     * @param ingestJobStatuses the IngestJobStatus list to set
+     */
+    public void setIngestJobStatuses(List<IngestJobStatus> ingestJobStatuses) {
+        this.ingestJobStatuses = ingestJobStatuses;
+    }
+
+    public void addJobStatus(IngestJobStatus job) {
+        ingestJobStatuses.add(job);
+    }
 }

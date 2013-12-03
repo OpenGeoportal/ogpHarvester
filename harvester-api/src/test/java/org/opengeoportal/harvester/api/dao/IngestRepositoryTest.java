@@ -35,9 +35,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opengeoportal.harvester.api.domain.Frequency;
-import org.opengeoportal.harvester.api.domain.Ingest;
-import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -107,5 +105,51 @@ public class IngestRepositoryTest {
 
         Assert.assertEquals(ingestCreated, ingestRetrieved);
     }
+
+    @Test
+    @DatabaseSetup("ingestData.xml")
+    public void testUpdateIngestWithJob() {
+        Ingest ingest = ingestRepository.findByName("ingest2");
+
+        IngestJobStatus job = new IngestJobStatus();
+        job.setStatus(IngestJobStatusValue.Succeeded);
+        job.setStartTime(new Date());
+        job.setEndTime(new Date());
+
+        IngestReport report = new IngestReport();
+        report.setPublicRecords(100);
+        report.setRestrictedRecords(20);
+        report.setRasterRecords(70);
+        report.setVectorRecords(50);
+
+        report.setWebServiceWarnings(20);
+        report.setUnrequiredFieldWarnings(60);
+
+        IngestReportError reportError = new IngestReportError();
+        reportError.setField("title");
+        reportError.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
+        report.addError(reportError);
+
+        job.setIngestReport(report);
+
+        ingest.addJobStatus(job);
+
+        Ingest ingestUpdated = ingestRepository.save(ingest);
+
+        Assert.assertNotNull(ingestUpdated);
+
+        Ingest ingestRetrieved = ingestRepository.findByName("ingest2");
+        Assert.assertEquals(ingestUpdated, ingestRetrieved);
+
+        Assert.assertEquals(1, ingestRetrieved.getIngestJobStatuses().size());
+
+        IngestReport reportRetrieved = ingestRetrieved.getIngestJobStatuses().get(0).getIngestReport();
+        Assert.assertEquals(ingestUpdated.getIngestJobStatuses().get(0).getIngestReport(), reportRetrieved);
+
+        Assert.assertEquals(IngestJobStatusValue.Succeeded, ingestRetrieved.getIngestJobStatuses().get(0).getStatus());
+        Assert.assertEquals(100, reportRetrieved.getPublicRecords());
+        Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
+    }
+
 
 }
