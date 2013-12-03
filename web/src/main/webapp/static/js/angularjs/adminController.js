@@ -1,7 +1,7 @@
 (function() {
 	'use strict';
 
-	angular.module('ogpHavester.controllers.adminCtrl', ['ogpHarvester.services', 'ngRoute', 'ui.bootstrap'])
+	angular.module('ogpHavester.controllers.adminCtrl', ['ogpHarvester.services', 'ngRoute', 'ui.bootstrap', 'pascalprecht.translate'])
 
 	.config(['$routeProvider',
 		function config($routeProvider) {
@@ -12,9 +12,9 @@
 		}
 	])
 		.controller('AdminCtrl', ['$scope', 'remoteRepositories', 'predefinedRepositories',
-		                          '$modal', '$log',
+		                          '$modal', '$log', '$translate',
 
-			function AdminCtrl($scope, remoteRepositories, predefinedRepositories, $modal, $log) {
+			function AdminCtrl($scope, remoteRepositories, predefinedRepositories, $modal, $log, $translate) {
 			
 				$scope.alerts = [];
 				$scope.closeAlert = function(index) {
@@ -23,8 +23,9 @@
 				
 
 				//  Remove modal dialog controller
-				var DeleteRepositoryCtrl  = function($scope, $modalInstance, repoToDelete) {
+				$scope.DeleteRepositoryCtrl  = function($scope, $modalInstance, repoToDelete) {
 					$scope.repoToDelete = repoToDelete;
+					$scope.deleteButtonDisabled = false;
 					$scope.alerts = [];
 					$scope.closeAlert = function(index) {
 					    $scope.alerts.splice(index, 1);
@@ -35,11 +36,13 @@
 					};
 					
 					$scope.deleteRepo = function() {
+						$scope.deleteButtonDisabled = true;
 						var id = $scope.repoToDelete.key;
 						remoteRepositories.remove(id).then(function() {
 							$modalInstance.close();
 						},
 						function(reason) {
+							$scope.deleteButtonDisabled = false;
 							$scope.alerts = [];
 							$scope.alerts.push({type:'danger', msg:reason});
 						});
@@ -52,7 +55,9 @@
 					var repoToDelete = $scope.repositoryList[index];
 					var modalInstance = $modal.open({
 						templateUrl: 'resources/removeRepository.html',
-						controller: DeleteRepositoryCtrl,
+						controller: $scope.DeleteRepositoryCtrl,
+						backdrop: 'static',
+						keyboard: false,
 						resolve: {
 							repoToDelete: function() {
 								return repoToDelete;
@@ -61,7 +66,10 @@
 					});
 					
 					modalInstance.result.then(function(result) {
-						$scope.alerts.push({type: 'success', msg: repoToDelete.value + " has been successfully removed"});
+						$scope.alerts.push({
+							type: 'success', 
+							msg: $translate("ADMIN.REPO_SUCCESFULLY_DELETED", {name: repoToDelete.value})
+						});
 						$scope.repositoryList.splice(indexToRemove, 1);
 					});
 				};
@@ -133,6 +141,7 @@
 					});
 					
 					$scope.createRepo = function () {
+						$scope.disableCreateButton = false;
 						var selectedRepo = $scope.existingRepo.existingRepo;
 						var customRepo = { repoType: selectedRepo.serviceType, name: selectedRepo.name, repoUrl: selectedRepo.url };
 								
@@ -152,10 +161,15 @@
 				$scope.openNewCustomRepoModal = function() {
 					var modalInstance = $modal.open({
 						templateUrl: 'resources/newCustomRepositoryForm.html',
-						controller: NewCustomRepositoryForm
+						controller: NewCustomRepositoryForm,
+						backdrop: 'static',
+						keyboard: false
 					});
 					modalInstance.result.then(function(createdRepo) {
-						$scope.alerts.push({type:'success', msg: 'The repository has been successfully created'});
+						$scope.alerts.push({
+							type:'success', 
+							msg: $translate("ADMIN.CUSTOM_REPO_CREATED", {name: createdRepo.name})
+						});
 						$scope.repositoryList.push({
 							repoType: createdRepo.serviceType, 
 							key: createdRepo.id, 
@@ -167,11 +181,15 @@
 				$scope.openExistingRepoModal = function() {
 					var modalInstance = $modal.open({
 						templateUrl: 'resources/openExistingRepoModalForm.html',
-						controller: ExistingRepoController
+						controller: ExistingRepoController,
+						backdrop: 'static',
+						keyboard: false
 					});
 					
 					modalInstance.result.then(function(createdRepo){
-						$scope.alerts.push({type: 'success', msg: 'The repository has been successfully added to My Repositories'});
+						$scope.alerts.push({
+							type: 'success', 
+							msg: $translate("ADMIN.EXISTING_REPO_ADDED", createdRepo)});
 						$scope.repositoryList.push({
 							repoType: createdRepo.serviceType, 
 							key: createdRepo.id, 

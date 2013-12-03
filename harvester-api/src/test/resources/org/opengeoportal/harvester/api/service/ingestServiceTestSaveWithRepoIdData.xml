@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset>
 	<CustomRepository id="1" name="repo1" url="http://rep1"
-		serviceType="SOLR" />
+		serviceType="SOLR" deleted="false"/>
 	<ingest id="1" name="ingest1" beginDate="2010-10-01"
 		frequency="DAILY" dtype="SOLR" excludeRestrictedData="false"
 		repository_id="1" />

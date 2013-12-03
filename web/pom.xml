@@ -241,6 +241,7 @@
 					</execution>
 				</executions>
 				<configuration>
+					<configFile>${basedir}/src/test/webapp/static/js/ogpharvester.conf.js</configFile>
 					<browsers>PhantomJS</browsers>
 					<reporters>dots</reporters>
 					<colors>false</colors>

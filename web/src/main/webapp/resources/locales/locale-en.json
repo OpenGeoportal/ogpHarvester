@@ -217,7 +217,10 @@
 		"REGISTER_EXISTING_REPO_HEADER_TOOLTIP": "Please addd the Register Existing Repository tooltip",
 		"EXISTING_REPO_NAME": "Repository Name:",
 		"EXISTING_REPO_CREATE": "Add Institution",
-		"EXISTING_REPO_CANCEL": "Cancel"
+		"EXISTING_REPO_CANCEL": "Cancel",
+		"REPO_SUCCESFULLY_DELETED": "{{name}} has been successfully removed.",
+		"CUSTOM_REPO_CREATED": "The repository {{name}} has been successfully created.",
+		"EXISTING_REPO_ADDED": "The repository {{name}} has been successfully added to My Repositories."
 	}
 
 }

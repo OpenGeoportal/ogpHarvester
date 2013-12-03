@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.PredefinedRepository;
@@ -21,8 +22,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
@@ -35,12 +38,14 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 		DbUnitTestExecutionListener.class,
 		DirtiesContextTestExecutionListener.class,
 		TransactionalTestExecutionListener.class })
+@Transactional
 public class PredefinedRepositoryImplTest {
 	@Autowired
 	private PredefinedRepositoryServiceImpl serviceImpl;
+	
 
 	@Test
-	@DatabaseSetup("predefinedRepositoryData.xml")
+	@DatabaseSetup(value="predefinedRepositoryData.xml")
 	public void findAllTest() {
 		List<PredefinedRepository> repositories = serviceImpl.findAll();
 		List<String> nameList = new ArrayList<String>();
@@ -55,7 +60,7 @@ public class PredefinedRepositoryImplTest {
 	}
 
 	@Test
-	@DatabaseSetup("predefinedRepositoryData.xml")
+	@DatabaseSetup(value="predefinedRepositoryData.xml")
 	public void findAllNotInCustomRepositoriesTest() {
 		List<PredefinedRepository> repositories = serviceImpl
 				.findAllNotInCustomRepositories();
