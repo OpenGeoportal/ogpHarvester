@@ -277,8 +277,8 @@
 			remoteRepositories.getLocalSolrInstitutions().success(
 				function (data) {
 					$scope.nameOgpRepositoryList = data;
-					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0) {
-						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0];
+					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 &&  $scope.nameOgpRepositoryList[0] !== undefined) {
+						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key; 
 					}
 				}).error(
 				function(errorMessage){

@@ -11,16 +11,16 @@
             </div>
 
             <div class="clearfix"></div>
-            <div class="form-group" data-ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
+            <div class="form-group  col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
                 <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>           
-                <div class='input-group date col-md-4' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate"data-datetimepicker required>
+                <div class='input-group date' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate" data-datetimepicker required>
                     <input class="form-control" ></input>
                     <span class="input-group-addon"><span
                         class="glyphicon glyphicon-calendar"></span> </span>
                 </div>
                 
             </div>
-
+			<div class="clearfix"></div>
             <div class="form-group col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.frequency)}">
                 <label class="control-label" for="frequency" data-translate="INGEST_FORM.STEP2_FREQUENCY"></label>
                 <select data-ng-model="ingest.frequency" id="frequency" name="frequency"
