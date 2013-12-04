@@ -28,8 +28,8 @@
 				<label for="j_username" class="col-lg-2 control-label"><spring:message
 						code="login.form.userFieldLabel" /></label>
 				<div class="col-lg-10">
-					<input type='text' name='j_username' class="form-control"
-						<c:if test="${not empty error}">value='${sessionScope["SPRING_SECURITY_LAST_USERNAME_KEY"]}'</c:if> />
+					<input type='text' name='j_username' class="form-control" autofocus="autofocus"
+                           <c:if test="${not empty error}">value='${sessionScope["SPRING_SECURITY_LAST_USERNAME_KEY"]}'</c:if> />
 				</div>
 			</div>
 			<div class="form-group">
