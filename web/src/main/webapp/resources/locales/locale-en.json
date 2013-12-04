@@ -125,7 +125,13 @@
 		"STEP2_FREQ_OPT_MONTHLY": "Monthly",
 		"STEP2_FREQ_OPT_YEARLY": "Yearly",
 		"STEP2_BACK_BUTTON": "Ingest Query",
-		"STEP2_START_BUTTON": "Start Ingest"
+		"STEP2_START_BUTTON": "Start Ingest",
+
+        "BBOX_NORTH_LABEL": "N: ",
+        "BBOX_WEST_LABEL": "W: ",
+        "BBOX_SOUTH_LABEL": "S: ",
+        "BBOX_EAST_LABEL": "E: "
+
 	},
 
 	"MANAGE_INGESTS": {
@@ -221,6 +227,12 @@
 		"REPO_SUCCESFULLY_DELETED": "{{name}} has been successfully removed.",
 		"CUSTOM_REPO_CREATED": "The repository {{name}} has been successfully created.",
 		"EXISTING_REPO_ADDED": "The repository {{name}} has been successfully added to My Repositories."
-	}
+	},
+    "MAP": {
+        "HEADER": "Geographic Extent",
+        "HEADER_TOOLTIP": "Select the geographic extent for the serch filter",
+        "SELECT_EXTENT": "Select Current Geographic Extent",
+        "SELECT_CANCEL": "Cancel"
+    }
 
 }

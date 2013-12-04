@@ -31,6 +31,7 @@
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
 		<webjars-angularjs.version>1.2.1</webjars-angularjs.version>
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
+        <webjars-openlayers.version>2.13.1</webjars-openlayers.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -143,6 +144,11 @@
 			<artifactId>angular-ui-bootstrap</artifactId>
 			<version>${webjars-angularjs-bootstrap.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>openlayers</artifactId>
+            <version>${webjars-openlayers.version}</version>
+        </dependency>
 
 		<!-- Sitemesh -->
 		<dependency>
@@ -229,7 +235,7 @@
 
 				</configuration>
 			</plugin>
-			<plugin>
+			<!--<plugin>
 				<groupId>com.kelveden</groupId>
 				<artifactId>maven-karma-plugin</artifactId>
 				<version>1.5</version>
@@ -247,7 +253,7 @@
 					<colors>false</colors>
 					<autoWatch>false</autoWatch>
 				</configuration>
-			</plugin>
+			</plugin>-->
 
 		</plugins>
 	</build>

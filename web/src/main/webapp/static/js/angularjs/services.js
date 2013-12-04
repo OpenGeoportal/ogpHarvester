@@ -66,7 +66,7 @@
 					catalogOfServices: null,
 					nameOgpRepository: null,
 					url: null,
-					extent: null,
+					extent: {},
 					themeKeyword: null,
 					placeKeyword: null,
 					topic: null,

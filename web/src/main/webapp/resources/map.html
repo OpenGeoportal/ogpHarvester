@@ -1,0 +1,35 @@
+<div class="modal-header">
+    <h2>{{ "MAP.HEADER" | translate}} <a
+            data-tooltip='{{ "MAP.HEADER_TOOLTIP" | translate }}'><span
+            class="glyphicon glyphicon-question-sign black"></span></a></h2>
+</div>
+<form name="form" data-rc-submit="setBBOX()" novalidate>
+    <div class="modal-body">
+
+        <div id="bbox-map" style="width: 530px; height: 470px"></div>
+
+        <input type="hidden" class="form-control" id="bboxNorth" data-ng-model="bboxNorth"></input>
+        <input type="hidden" class="form-control" id="bboxSouth" data-ng-model="bboxSouth"></input>
+        <input type="hidden" class="form-control" id="bboxEast" data-ng-model="bboxEast"></input>
+        <input type="hidden" class="form-control" id="bboxWest" data-ng-model="bboxWest"></input>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-translate="MAP.SELECT_EXTENT"></button>
+        <button class="btn btn-default" data-translate="MAP.SELECT_CANCEL" data-ng-click="cancel()"></button>
+    </div>
+</form>
+
+
+<script>
+    // TODO: Move to controller
+    var map = new OpenLayers.Map({
+        div: "bbox-map",
+        layers: [
+            new OpenLayers.Layer.OSM("OpenStreetMap", null, {
+                transitionEffect: "resize",
+                attribution: "&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            })
+        ],
+        center: new OpenLayers.LonLat(0, 0), zoom: 1
+    });
+</script>

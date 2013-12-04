@@ -51,11 +51,26 @@
                     <div class="custom-panel-body collapse" id="collapseSorlSearchCriteria">
                         <div class="form-group">
                             <label data-translate="INGEST_FORM.EXTENT"></label>
-                            <button type="button" class="btn btn-default">
+                            <button type="button" class="btn btn-default" data-ng-click="openMap()">
                                 <span class="glyphicon glyphicon-globe"></span>
-                            </button> 
+                            </button>
+
+                            <button ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
+                                <span class="glyphicon glyphicon-remove-sign "></span>
+                            </button>
+
                             <a data-tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
+
+                            <input type="hidden" class="form-control" id="extent.maxy" data-ng-model="ingest.extent.maxy"></input>
+                            <input type="hidden" class="form-control" id="extent.miny" data-ng-model="ingest.extent.miny"></input>
+                            <input type="hidden" class="form-control" id="extent.maxx" data-ng-model="ingest.extent.maxx"></input>
+                            <input type="hidden" class="form-control" id="extent.minx" data-ng-model="ingest.extent.minx"></input>
+
+                            <span ng-show="ingest.extent.maxy" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                                {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
+                                {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
+                                {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
                         </div>
 
                         <div class="form-group col-md-9">
@@ -246,12 +261,26 @@
                     <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
                         <div class="form-group">
                             <label data-translate="INGEST_FORM.CSW_EXTENT"></label>
-                            <button type="button" class="btn btn-default">
+                            <button type="button" class="btn btn-default" data-ng-click="openMap()">
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
+
+                            <button ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
+                                <span class="glyphicon glyphicon-remove-sign "></span>
+                            </button>
+
                             <a data-tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            
+                                    class="glyphicon glyphicon-question-sign black"></span></a>
+
+                            <input type="hidden" class="form-control" id="extent.maxy" data-ng-model="ingest.extent.maxy"></input>
+                            <input type="hidden" class="form-control" id="extent.miny" data-ng-model="ingest.extent.miny"></input>
+                            <input type="hidden" class="form-control" id="extent.maxx" data-ng-model="ingest.extent.maxx"></input>
+                            <input type="hidden" class="form-control" id="extent.minx" data-ng-model="ingest.extent.minx"></input>
+
+                            <span ng-show="ingest.extent.maxy" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                                {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
+                                {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
+                                {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
                         </div>
 
                         <div class="form-group col-md-9">

@@ -151,9 +151,9 @@
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$log',
+		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$modal', '$log',
 
-		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $log) {
+		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $modal, $log) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -164,7 +164,7 @@
 
 
 			});
-			
+
 			$scope.testOpen = function() {
 				$scope.testOpened = true;
 			};
@@ -193,6 +193,31 @@
 				$scope.gnSourcesList = [];
 				$scope.solrDataRepositoryList = [];
 			};
+
+            $scope.openMap = function() {
+                var modalInstance = $modal.open({
+                    templateUrl: 'resources/map.html',
+                    controller: MapForm,
+                    backdrop: 'static',
+                    keyboard: false
+                });
+
+                modalInstance.result.then(function(bbox) {
+                    $scope.ingest.extent.maxy = bbox.north.toFixed(2);
+                    $scope.ingest.extent.miny = bbox.south.toFixed(2);
+                    $scope.ingest.extent.minx = bbox.west.toFixed(2);
+                    $scope.ingest.extent.maxx = bbox.east.toFixed(2);
+                });
+
+            };
+
+            $scope.resetBbox = function() {
+                $scope.ingest.extent.maxy = "";
+                $scope.ingest.extent.miny = "";
+                $scope.ingest.extent.minx = "";
+                $scope.ingest.extent.maxx = "";
+            };
+
 
 			/**
 			 * Clean url if no source is selected
@@ -328,7 +353,45 @@
 
 			$scope.ingest = ingestMultiform.getIngest();
 
+            var MapForm = function($scope, $modalInstance) {
+                $scope.bbox = {
+                    north: "",
+                    south: "",
+                    west: "",
+                    east: ""
+                };
 
-		}
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+
+                $scope.setBBOX = function() {
+                    $log.info("Setting BBOX");
+
+                    var fromProjection = new OpenLayers.Projection("EPSG:900913");   // Transform from WGS 1984
+                    var toProjection   = new OpenLayers.Projection("EPSG:4326"); // to Spherical Mercator Projection
+
+                    var bounds = map.getExtent().transform(fromProjection, toProjection);
+                    $scope.bbox.north = bounds.top;
+                    $scope.bbox.south = bounds.bottom;
+                    $scope.bbox.west = bounds.left;
+                    $scope.bbox.east = bounds.right;
+
+                    $modalInstance.close($scope.bbox);
+                };
+
+
+
+                // Public interface
+                return {
+                    initMap: function() {
+                        $scope.initMap;
+                    }
+                };
+            };
+
+        }
 	]);
+
+
 })();
