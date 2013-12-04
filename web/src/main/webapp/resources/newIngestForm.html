@@ -3,21 +3,23 @@
     <p data-translate="INGEST_FORM.SUBHEADER"></p>
     
     <h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
-    <form name="newIngest" data-ng-submit="step2()">
+    <form name="newIngest" data-rc-submit="step2()" novalidate>
        
-        <div class="form-group col-md-7">
+        <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.typeOfInstance)}">
             <label for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
-            <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance" data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" data-ng-change="resetForm()"></select>
+            <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance"  name="typeOfInstance"
+            data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" 
+            data-ng-change="resetForm()"></select>
         </div>
-        <div class="form-group col-md-7">
+        <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.catalogOfServices)}">
             <label for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
-            <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6"
+            <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6" name="catalogOfServices"
                     data-ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
                     data-ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId()" >
                     <option value="" data-translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
             </select>
         </div>
-        <div class="form-group col-md-9" data-ng-class="{'has-error': newIngest.url.$invalid}">
+        <div class="form-group col-md-9" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.url)}">
             <label class="control-label" for="url" data-translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
             <input type="url" id="url" name="url" data-ng-model="ingest.url" class="form-control" 
                 data-ng-disabled="ingest.catalogOfServices !== null" data-ng-blur="getRemoteSourcesByUrl()"
@@ -111,9 +113,12 @@
                                         class="glyphicon glyphicon-calendar"></span>
                                     </span>
                                 </div> <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='contentRangeTo' data-ng-model="ingest.contentRangeTo" data-datetimepicker>
-                                    <input type="text" class="form-control"  ></input>
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
+                                    <div 
+                                        class='input-group date col-md-4' data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.contentRangeTo)}"  
+                                        id='contentRangeTo' data-ng-model="ingest.contentRangeTo" 
+                                        data-datetimepicker data-ogp-check-after="ingest.contentRangeFrom" data-name="contentRangeTo">
+                                    <input type="text" class="form-control" ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
                                 </div>
@@ -172,7 +177,9 @@
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div>
                                 <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
-                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" data-datetimepicker>
+                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" 
+                                data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.rangeSolrTo)}"
+                                data-datetimepicker data-ogp-check-after="ingest.rangeSolrFrom" data-name="rangeSolrTo">
                                     <input type="text" class="form-control"></input><span
                                         class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span> </span>
@@ -318,7 +325,9 @@
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" data-datetimepicker>
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" 
+                                        data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.cswRangeTo)}"
+                                        data-datetimepicker data-ogp-check-after="ingest.cswRangeFrom" data-name="cswRangeTo">
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>
@@ -359,7 +368,10 @@
                                         class="glyphicon glyphicon-calendar"></span> </span>
                                 </div> <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified" data-datetimepicker>
+                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified"
+                                        data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.webdavToLastModified)}" 
+                                        data-datetimepicker data-ogp-check-after="ingest.webdavFromlastModified" 
+                                        data-name="webdavToLastModified">
                                     <input type="text" class="form-control"  ></input>
                                     <span class="input-group-addon"><span
                                         class="glyphicon glyphicon-calendar"></span></span>

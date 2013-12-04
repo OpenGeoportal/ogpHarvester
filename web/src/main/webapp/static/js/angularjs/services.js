@@ -106,7 +106,40 @@
 			// Public interface
 			return {
 				reset: function() {
-					ingest = initBean();
+					//ingest.typeOfInstance = 'SOLR';
+					ingest.catalogOfServices = null;
+					ingest.nameOgpRepository = null;
+					ingest.url = null;
+					ingest.extent = null;
+					ingest.themeKeyword = null;
+					ingest.placeKeyword = null;
+					ingest.topic = null;
+					ingest.originator = null;
+					ingest.dataTypes = [];
+					ingest.dataRepositories = [];
+					ingest.excludeRestricted = false;
+					ingest.contentRangeFrom = null;
+					ingest.contentRangeTo = null;
+					ingest.rangeSolrFrom = null;
+					ingest.rangeSolrTo = null;
+					ingest.requiredFields = {};
+					ingest.gnTitle = null;
+					ingest.gnKeyword = null;
+					ingest.gnAbstractText = null;
+					ingest.gnFreeText = null;
+					ingest.gnSources = [];
+					ingest.cswTitle = null;
+					ingest.cswSubject = null;
+					ingest.cswFreeText = null;
+					ingest.cswRangeFrom = null;
+					ingest.cswRangeTo = null;
+					ingest.cswCustomQuery = null;
+					ingest.solrCustomQuery = null;
+					ingest.webdavFromLastModified = null;
+					ingest.webdavToLastModified = null;
+					ingest.ingestName = null;
+					ingest.beginDate = null;
+					ingest.frequency = 'ONCE';
 				},
 
 				getIngest: function() {
