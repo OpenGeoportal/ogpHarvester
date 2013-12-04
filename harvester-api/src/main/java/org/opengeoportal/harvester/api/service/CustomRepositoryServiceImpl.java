@@ -36,6 +36,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
 import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
@@ -112,21 +113,27 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	@Override
 	public List<SimpleEntry<String, String>> getRemoteRepositories(
 			InstanceType repoType, URL url) {
-		// TODO connect to url, parse response, and search remote origins. Build
-		// the response list
-		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
-		result.add(new SimpleEntry<String, String>("guid1",
-				"Remote repository 1"));
-		result.add(new SimpleEntry<String, String>("guid2",
-				"Remote repository 2"));
-		result.add(new SimpleEntry<String, String>("guid3",
-				"Remote repository 3"));
-		result.add(new SimpleEntry<String, String>("guid4",
-				"Remote repository 4"));
-		result.add(new SimpleEntry<String, String>("guid5",
-				"Remote repository 5"));
-		result.add(new SimpleEntry<String, String>("guid10",
-				"Remote repository 10"));
+
+        List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
+
+        if (repoType == InstanceType.GEONETWORK) {
+            result = retrieveGeoNetworkSources(url);
+        } else {
+            // TODO connect to url, parse response, and search remote origins. Build
+            // the response list
+            result.add(new SimpleEntry<String, String>("guid1",
+                    "Remote repository 1"));
+            result.add(new SimpleEntry<String, String>("guid2",
+                    "Remote repository 2"));
+            result.add(new SimpleEntry<String, String>("guid3",
+                    "Remote repository 3"));
+            result.add(new SimpleEntry<String, String>("guid4",
+                    "Remote repository 4"));
+            result.add(new SimpleEntry<String, String>("guid5",
+                    "Remote repository 5"));
+            result.add(new SimpleEntry<String, String>("guid10",
+                    "Remote repository 10"));
+        }
 
 		return result;
 	}
@@ -188,4 +195,20 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	public CustomRepository findById(Long id) {
 		return customRepositoryRepository.findOne(id);
 	}
+
+
+    private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(URL url) {
+        List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
+
+        try {
+           GeoNetworkClient gnClient = new GeoNetworkClient(url);
+
+           sources = gnClient.getSources();
+        } catch (Exception e) {
+            // TODO handle exception and return error message
+            e.printStackTrace();
+        }
+
+        return sources;
+    }
 }
