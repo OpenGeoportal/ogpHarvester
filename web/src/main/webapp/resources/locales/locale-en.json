@@ -59,7 +59,7 @@
 		"DATA_TYPE_OPT_LINE": "Line",
 		"DATA_TYPE_OPT_POLYGON": "Polygon",
 		"DATA_TYPE_OPT_RASTER": "Raster",
-		"DATA_TYPE_OPT_scannedMap": "Scanned Map",
+		"DATA_TYPE_OPT_SCANNED": "Scanned Map",
 		"DATA_TYPE_PLACEHOLDER": "Select Data Types",
 		"DATA_REPOSITORY": "Data Repository:",
 		"DATA_REPOSITORY_TOOLTIP": "Please add the content of Data Repository tooltip",
