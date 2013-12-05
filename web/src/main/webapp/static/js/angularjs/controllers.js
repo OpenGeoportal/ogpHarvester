@@ -151,9 +151,8 @@
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$modal', '$log',
-
-		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $modal, $log) {
+		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$log', '$modal', '$filter',
+		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $log, $modal, $filter) {
 
 			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
 				if (next.$$route.originalPath === '/newIngest' &&
@@ -192,6 +191,12 @@
 				$scope.ingest.catalogOfServices = null;
 				$scope.gnSourcesList = [];
 				$scope.solrDataRepositoryList = [];
+				$log.log("Starting ingest reset");
+				ingestMultiform.reset();
+				$log.log("Ended ingest reset");
+				
+				
+								
 			};
 
             $scope.openMap = function() {
@@ -283,7 +288,18 @@
 
 			$scope.scheduleIngest = function () {
 				$log.info("Schedule Ingest");
-				$http.post("rest/ingests/new", $scope.ingest).success(function (data) {
+				var format = "MM/dd/yyyy";
+				var ingest = angular.copy($scope.ingest);
+				ingest.contentRangeFrom = $filter('date')(ingest.contentRangeFrom, format);
+				ingest.contentRangeTo = $filter('date')(ingest.contentRangeTo, format);
+				ingest.rangeSolrFrom = $filter('date')(ingest.rangeSolrFrom, format);
+				ingest.rangeSolrTo = $filter('date')(ingest.rangeSolrTo, format);
+				ingest.cswRangeFrom = $filter('date')(ingest.cswRangeFrom, format);
+				ingest.cswRangeTo = $filter('date')(ingest.cswRangeTo, format);
+				ingest.webdavFromLastModified = $filter('date')(ingest.webdavFromLastModified, format);
+				ingest.webdavToLastModified = $filter('date')(ingest.webdavToLastModified, format);
+				ingest.beginDate = $filter('date')(ingest.beginDate, format);
+				$http.post("rest/ingests/new", ingest).success(function (data) {
 					$log.info("Schedule ingest success: " + JSON.stringify(data));
 					$location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
 				}).
