@@ -110,7 +110,7 @@
 					ingest.catalogOfServices = null;
 					ingest.nameOgpRepository = null;
 					ingest.url = null;
-					ingest.extent = null;
+					ingest.extent = {};
 					ingest.themeKeyword = null;
 					ingest.placeKeyword = null;
 					ingest.topic = null;
@@ -227,8 +227,7 @@
 				});
 				return deferred.promise;
 				
-			}
-			
+			}			
 		};
 		
 	}]);
