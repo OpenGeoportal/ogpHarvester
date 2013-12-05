@@ -66,7 +66,7 @@
 
 
 							<div class="clearfix"></div>
-                            <span ng-show="ingest.extent.maxy" class="label label-default" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                            <span data-ng-show="ingest.extent.maxy" class="label label-default" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
                                 {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
                                 {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
                                 {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
@@ -269,7 +269,7 @@
                                 <span class="glyphicon glyphicon-globe"></span>
                             </button> 
 
-                            <button ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
+                            <button data-ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
                                 <span class="glyphicon glyphicon-remove-sign "></span>
                             </button>
 
@@ -281,7 +281,7 @@
                             <input type="hidden" class="form-control" id="extent.maxx" data-ng-model="ingest.extent.maxx"></input>
                             <input type="hidden" class="form-control" id="extent.minx" data-ng-model="ingest.extent.minx"></input>
 
-                            <span ng-show="ingest.extent.maxy" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                            <span data-ng-show="ingest.extent.maxy" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
                                 {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
                                 {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
                                 {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
