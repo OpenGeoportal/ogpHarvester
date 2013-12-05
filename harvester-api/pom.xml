@@ -89,6 +89,20 @@
 			<version>${hibernate.version}</version>
 		</dependency>
 
+        <!-- Sorl -->
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+
+        <!-- Sardine (WebDav) -->
+        <dependency>
+            <groupId>com.github.lookfirst</groupId>
+            <artifactId>sardine</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
 		<!-- Logging with SLF4J & LogBack -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -30,6 +30,7 @@
 package org.opengeoportal.harvester.api.client.geonetwork;
 
 import org.jdom.Element;
+import org.jdom.Namespace;
 
 import java.net.URL;
 import java.util.AbstractMap;
@@ -41,18 +42,21 @@ import java.util.List;
  *
  */
 public class GeoNetworkClient {
+    private static final Namespace GEONET_NS = Namespace.getNamespace("geonet", "http://www.fao.org/geonetwork");
 
     /** GeoNetwork server url **/
     private String serverUrl;
 
+    private XmlRequest request;
+
     public GeoNetworkClient(String serverUrl) {
         this.serverUrl = serverUrl;
+        this.request = new XmlRequest(serverUrl);
     }
 
     public GeoNetworkClient(URL serverUrl) {
-        this.serverUrl = serverUrl.toString();
+        this(serverUrl.toString());
     }
-
 
     /**
      * Retrieves the sources from a GeoNetwork server.
@@ -63,7 +67,6 @@ public class GeoNetworkClient {
     public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
         List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
 
-        XmlRequest request = new XmlRequest(serverUrl);
         request.setAddress(serverUrl + "/srv/eng/xml.info?type=sources");
 
         Element xmlResponse = request.execute();
@@ -87,5 +90,54 @@ public class GeoNetworkClient {
         }
 
         return sources;
+    }
+
+    public Element retrieveMetadata(int metadataId) throws Exception {
+        request.setAddress(serverUrl + "/srv/eng/xml.metadata.get");
+        request.clearParams();
+        request.addParam("id", metadataId);
+
+        try {
+            Element md   = request.execute();
+            Element info = md.getChild("info", GEONET_NS);
+
+            if (info != null) info.detach();
+
+            return md;
+        } catch(Exception e) {
+            // TODO: Log error in ingest report
+
+            return null;
+        }
+    }
+
+    public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
+        GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
+
+        request.setAddress(serverUrl + "/srv/eng/xml.search");
+
+        Element xmlResponse = request.execute(searchParams.toXml());
+
+        response.setTotal(Integer.parseInt(xmlResponse.getChild("summary").getAttribute("count").getValue()));
+
+        List<Element> records = xmlResponse.getChildren("metadata");
+        for(Element record : records) {
+            Element info = record.getChild("info", GEONET_NS);
+
+            if (info == null) {
+                //logger.warning("Missing 'geonet:info' element in 'metadata' element");
+
+            } else {
+                GeoNetworkSearchResult metadataResult = new GeoNetworkSearchResult();
+                metadataResult.setId(Integer.parseInt(info.getChildText("id")));
+                metadataResult.setUuid(info.getChildText("uuid"));
+                metadataResult.setSchema(info.getChildText("schema"));
+                metadataResult.setChangeDate(info.getChildText("changeDate"));
+
+                response.addMetadataSearchResult(metadataResult);
+            }
+        }
+
+        return response;
     }
 }
