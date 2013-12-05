@@ -32,6 +32,7 @@
 		<webjars-angularjs.version>1.2.1</webjars-angularjs.version>
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
         <webjars-openlayers.version>2.13.1</webjars-openlayers.version>
+        <hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -155,6 +156,13 @@
 			<groupId>opensymphony</groupId>
 			<artifactId>sitemesh</artifactId>
 			<version>${sitemesh.version}</version>
+		</dependency>
+		
+		<!-- Hibernate Validator -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate-validator.version}</version>
 		</dependency>
 
 
