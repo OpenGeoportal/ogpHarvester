@@ -114,26 +114,27 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	public List<SimpleEntry<String, String>> getRemoteRepositories(
 			InstanceType repoType, URL url) {
 
-        List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
+		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
 
-        if (repoType == InstanceType.GEONETWORK) {
-            result = retrieveGeoNetworkSources(url);
-        } else {
-            // TODO connect to url, parse response, and search remote origins. Build
-            // the response list
-            result.add(new SimpleEntry<String, String>("guid1",
-                    "Remote repository 1"));
-            result.add(new SimpleEntry<String, String>("guid2",
-                    "Remote repository 2"));
-            result.add(new SimpleEntry<String, String>("guid3",
-                    "Remote repository 3"));
-            result.add(new SimpleEntry<String, String>("guid4",
-                    "Remote repository 4"));
-            result.add(new SimpleEntry<String, String>("guid5",
-                    "Remote repository 5"));
-            result.add(new SimpleEntry<String, String>("guid10",
-                    "Remote repository 10"));
-        }
+		if (repoType == InstanceType.GEONETWORK) {
+			result = retrieveGeoNetworkSources(url);
+		} else {
+			// TODO connect to url, parse response, and search remote origins.
+			// Build
+			// the response list
+			result.add(new SimpleEntry<String, String>("guid1",
+					"Remote repository 1"));
+			result.add(new SimpleEntry<String, String>("guid2",
+					"Remote repository 2"));
+			result.add(new SimpleEntry<String, String>("guid3",
+					"Remote repository 3"));
+			result.add(new SimpleEntry<String, String>("guid4",
+					"Remote repository 4"));
+			result.add(new SimpleEntry<String, String>("guid5",
+					"Remote repository 5"));
+			result.add(new SimpleEntry<String, String>("guid10",
+					"Remote repository 10"));
+		}
 
 		return result;
 	}
@@ -196,19 +197,37 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 		return customRepositoryRepository.findOne(id);
 	}
 
+	private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(URL url) {
+		List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
 
-    private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(URL url) {
-        List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
+		try {
+			GeoNetworkClient gnClient = new GeoNetworkClient(url);
 
-        try {
-           GeoNetworkClient gnClient = new GeoNetworkClient(url);
+			sources = gnClient.getSources();
+		} catch (Exception e) {
+			// TODO handle exception and return error message
+			e.printStackTrace();
+		}
 
-           sources = gnClient.getSources();
-        } catch (Exception e) {
-            // TODO handle exception and return error message
-            e.printStackTrace();
-        }
+		return sources;
+	}
 
-        return sources;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
+	 * checkExistActiveRepositoryNameAndType(java.lang.String,
+	 * org.opengeoportal.harvester.api.domain.InstanceType)
+	 */
+	@Override
+	public boolean checkExistActiveRepositoryNameAndType(String name,
+			InstanceType type) {
+		boolean result = false;
+		List<CustomRepository> repositories = customRepositoryRepository
+				.findByNameAndServiceTypeAndDeleted(name, type, false);
+		if (repositories.size() != 0) {
+			result = true;
+		}
+		return result;
+	}
 }

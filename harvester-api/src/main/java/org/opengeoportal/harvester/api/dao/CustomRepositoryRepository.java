@@ -29,10 +29,28 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import java.util.List;
+
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomRepositoryRepository extends JpaRepository<CustomRepository, Long> {
+public interface CustomRepositoryRepository extends
+		JpaRepository<CustomRepository, Long> {
 
-    CustomRepository findByName(String name);
+	CustomRepository findByName(String name);
+
+	/**
+	 * Find all not deleted repository with the name and service type passed.
+	 * 
+	 * @param name
+	 *            the name.
+	 * @param serviceType
+	 *            the service type {@link InstanceType}.
+	 * @param deleted 
+	 * @return the list of all {@link CustomRepository} with deleted=false, name
+	 *         and serviceType.
+	 */
+	List<CustomRepository> findByNameAndServiceTypeAndDeleted(String name,
+			InstanceType serviceType, boolean deleted);
 }

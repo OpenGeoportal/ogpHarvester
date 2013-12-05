@@ -81,8 +81,25 @@ public interface CustomRepositoryService {
 
 	/**
 	 * Retrieve the {@link CustomRepository} with the identifier passed.
-	 * @param id the {@link CustomRepository} identifier.
+	 * 
+	 * @param id
+	 *            the {@link CustomRepository} identifier.
 	 * @return the {@link CustomRepository} or null if can not be found.
 	 */
 	public CustomRepository findById(Long id);
+
+	/**
+	 * Check if exists a non deleted {@link CustomRepository} with the same name
+	 * and service type.
+	 * 
+	 * @param name
+	 *            the name.
+	 * @param type
+	 *            the service type.
+	 * @return <code>true</code> if does not exist any CustomRepository with
+	 *         deleted=false, and the name and type passed, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean checkExistActiveRepositoryNameAndType(String name,
+			InstanceType type);
 }

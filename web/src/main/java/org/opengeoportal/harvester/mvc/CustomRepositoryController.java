@@ -1,5 +1,5 @@
 /*
- * IngestFormBean.java
+ * CustomRepositoryController.java
  *
  * Copyright (C) 2013
  *
@@ -26,6 +26,7 @@
  * by the GNU General Public License.
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
 package org.opengeoportal.harvester.mvc;
 
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -108,13 +110,13 @@ public class CustomRepositoryController {
 
 		return entity;
 	}
-	
-	@RequestMapping(value="/rest/repositories/{repoId}", method = RequestMethod.DELETE)
-	@Secured({"ROLE_ADMIN"})
-	@ResponseStatus(value=HttpStatus.NO_CONTENT)
+
+	@RequestMapping(value = "/rest/repositories/{repoId}", method = RequestMethod.DELETE)
+	@Secured({ "ROLE_ADMIN" })
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteRepo(@PathVariable Long repoId) {
 		service.delete(repoId);
-		
+
 	}
 
 	@RequestMapping("/rest/repositories/{repoId}/remoteSources")
@@ -144,6 +146,19 @@ public class CustomRepositoryController {
 		List<SimpleEntry<String, String>> institutions = service
 				.getLocalSolrInstitutions();
 		return institutions;
+	}
+
+	@RequestMapping(value = "/rest/checkIfOtherRepoExist")
+	@ResponseBody
+	public Map<String, Object> checkExistingActiveRepositoryName(@RequestParam String name,
+			@RequestParam InstanceType type) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		boolean exists = service.checkExistActiveRepositoryNameAndType(name,
+				type);
+			resultMap.put("anotherExist", exists);
+
+		return resultMap;
+
 	}
 
 }
