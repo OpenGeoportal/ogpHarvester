@@ -30,7 +30,8 @@
 						<b class="caret"></b>
 					</button>
 					<ul class="dropdown-menu">
-						<li><a href="${myIngestsUrl}"><spring:message
+						<spring:url value="/" var="baseUrl" />
+						<li><a href="${baseUrl}#/manageIngests"><spring:message
 									code="header.myIngests" /></a></li>
 						<li><a href="${logoutUrl}"><spring:message
 									code="header.logout" /></a></li>
