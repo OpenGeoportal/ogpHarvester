@@ -104,6 +104,10 @@ public class IngestReport extends AbstractPersistable<Long> {
         this.unrequiredFieldWarnings = unrequiredFieldWarnings;
     }
 
+    public void increaseUnrequiredFieldWarnings() {
+        this.unrequiredFieldWarnings++;
+    }
+
     public long getWebServiceWarnings() {
         return webServiceWarnings;
     }

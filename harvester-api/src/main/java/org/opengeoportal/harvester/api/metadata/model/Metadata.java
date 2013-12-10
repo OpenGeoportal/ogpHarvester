@@ -1,5 +1,8 @@
 package org.opengeoportal.harvester.api.metadata.model;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,11 +25,16 @@ public class Metadata {
     private String publisher;
     private Boolean georeferenced;
     private String contentDate;
+    private String topic;
 
     public Metadata(String layerId){
         setId(layerId);
+        themeKeywords = new ArrayList<ThemeKeywords>();
+        placeKeywords = new ArrayList<PlaceKeywords>();
+
     }
     public Metadata(){
+        this(null);
     }
 
     public GeometryType getGeometryType() {
@@ -160,6 +168,15 @@ public class Metadata {
         this.contentDate = contentDate;
     }
 
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
+
     public String getThemeKeywordsAsString(){
         Set<String> allKeywords = new HashSet<String>();
         for (ThemeKeywords themeKeyword: this.themeKeywords){
@@ -177,7 +194,33 @@ public class Metadata {
     }
 
 
-    private static String combine(String[] s, String glue)
+    public boolean hasValueForProperty(String property) {
+        String value = "";
+
+        if (property.equals("dateOfContent")) {
+            value = this.getContentDate();
+        } else if (property.equals("originator")) {
+            value = this.getOriginator();
+        } else if (property.equals("themeKeyword")) {
+            value = this.getThemeKeywordsAsString();
+        } else if (property.equals("placeKeyword")) {
+            value = this.getPlaceKeywordsAsString();
+        } else if (property.equals("topic")) {
+            value = this.getTopic();
+        }  else if (property.equals("geographicExtent")) {
+            if (this.getBounds() == null) {
+                return false;
+            } else {
+                return this.getBounds().isValid();
+            }
+        }
+
+        // TODO: dataType, dataRepository, webServices
+
+        return StringUtils.isNotEmpty(value);
+    }
+
+    private String combine(String[] s, String glue)
     {
         int k=s.length;
         if (k==0)
@@ -188,5 +231,4 @@ public class Metadata {
             out.append(glue).append(s[x]);
         return out.toString();
     }
-
 }

@@ -297,10 +297,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
         try {
             String topicCategoryVal = getDocumentValue(tag);
             if (!StringUtils.isEmpty(topicCategoryVal)) {
-                ThemeKeywords themeKeyword = new ThemeKeywords();
-                themeKeyword.addKeyword(topicCategoryVal);
-
-                themeKeywordsList.add(themeKeyword);
+                this.metadataParserResponse.getMetadata().setTopic(topicCategoryVal);
             }
         } catch (Exception e) {
             logger.error("handleKeywords: " + e.getMessage());

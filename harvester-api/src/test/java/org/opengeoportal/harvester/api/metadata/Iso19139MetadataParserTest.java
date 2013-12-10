@@ -58,9 +58,9 @@ public class Iso19139MetadataParserTest {
             Assert.assertEquals(new Double(4.839), metadata.getBounds().getMaxX());
             Assert.assertEquals(new Double(4.816), metadata.getBounds().getMinX());
 
-            Assert.assertEquals(2, metadata.getThemeKeywords().size());
+            Assert.assertEquals(1, metadata.getThemeKeywords().size());
             Assert.assertTrue(metadata.getThemeKeywords().get(0).getKeywords().contains("elevation"));
-
+            Assert.assertEquals("farming", metadata.getTopic());
             Assert.assertEquals("2008", metadata.getContentDate());
 
 
