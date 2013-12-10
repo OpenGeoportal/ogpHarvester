@@ -63,6 +63,9 @@
 		<property name="warnLogCategory" value="warn" />
 		<!-- needed otherwise exceptions won't be logged anywhere -->
 	</bean>
+	
+	<!-- Bean validator -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
 
 </beans>

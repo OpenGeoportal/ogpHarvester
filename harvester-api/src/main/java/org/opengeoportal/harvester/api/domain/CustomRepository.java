@@ -43,7 +43,7 @@ public class CustomRepository extends AbstractPersistable<Long> {
 
 	private static final long serialVersionUID = -3588708291290281469L;
 
-	@Column(unique = true, nullable = false)
+	@Column(nullable = false)
 	private String name;
 	@Column(nullable = false)
 	private String url;

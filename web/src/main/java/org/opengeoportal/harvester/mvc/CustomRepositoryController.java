@@ -1,5 +1,5 @@
 /*
- * IngestFormBean.java
+ * CustomRepositoryController.java
  *
  * Copyright (C) 2013
  *
@@ -26,6 +26,7 @@
  * by the GNU General Public License.
  *
  * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
 package org.opengeoportal.harvester.mvc;
 
@@ -39,16 +40,21 @@ import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse.STATUS;
 import org.opengeoportal.harvester.mvc.bean.RemoteRepositoryFormBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.SessionAttributes;
@@ -62,6 +68,9 @@ import com.google.common.collect.Maps;
 public class CustomRepositoryController {
 	@Autowired
 	private CustomRepositoryService service;
+
+	@Autowired
+	private Validator validator;
 
 	@RequestMapping(value = "/rest/repositories", method = RequestMethod.GET)
 	@ResponseBody
@@ -97,8 +106,27 @@ public class CustomRepositoryController {
 	@RequestMapping(value = "/rest/repositories", method = RequestMethod.POST)
 	@Secured({ "ROLE_ADMIN" })
 	@ResponseBody
-	public CustomRepository saveRepository(
-			@RequestBody RemoteRepositoryFormBean repository) {
+	public JsonResponse saveRepository(
+			@RequestBody RemoteRepositoryFormBean repository, Errors errors) {
+		JsonResponse res = new JsonResponse();
+
+		validator.validate(repository, errors);
+		if (errors.hasErrors()) {
+			res.setStatus(STATUS.FAIL);
+			res.setResult(errors.getAllErrors());
+			return res;
+
+		}
+
+		boolean existOther = service.checkExistActiveRepositoryNameAndType(
+				repository.getName(), repository.getRepoType());
+		if (existOther) {
+			res.setStatus(STATUS.FAIL);
+			errors.rejectValue("name", "ERROR_REPO_ALREADY_ADDED");
+			res.setResult(errors.getAllErrors());
+			return res;
+		}
+
 		CustomRepository entity = new CustomRepository();
 		entity.setName(repository.getName());
 		entity.setUrl(repository.getRepoUrl());
@@ -106,15 +134,18 @@ public class CustomRepositoryController {
 
 		entity = service.save(entity);
 
-		return entity;
+		res.setResult(entity);
+		res.setStatus(STATUS.SUCCESS);
+
+		return res;
 	}
-	
-	@RequestMapping(value="/rest/repositories/{repoId}", method = RequestMethod.DELETE)
-	@Secured({"ROLE_ADMIN"})
-	@ResponseStatus(value=HttpStatus.NO_CONTENT)
+
+	@RequestMapping(value = "/rest/repositories/{repoId}", method = RequestMethod.DELETE)
+	@Secured({ "ROLE_ADMIN" })
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteRepo(@PathVariable Long repoId) {
 		service.delete(repoId);
-		
+
 	}
 
 	@RequestMapping("/rest/repositories/{repoId}/remoteSources")
@@ -144,6 +175,19 @@ public class CustomRepositoryController {
 		List<SimpleEntry<String, String>> institutions = service
 				.getLocalSolrInstitutions();
 		return institutions;
+	}
+
+	@RequestMapping(value = "/rest/checkIfOtherRepoExist")
+	@ResponseBody
+	public Map<String, Object> checkExistingActiveRepositoryName(
+			@RequestParam String name, @RequestParam InstanceType type) {
+		Map<String, Object> resultMap = Maps.newHashMap();
+		boolean exists = service.checkExistActiveRepositoryNameAndType(name,
+				type);
+		resultMap.put("anotherExist", exists);
+
+		return resultMap;
+
 	}
 
 }

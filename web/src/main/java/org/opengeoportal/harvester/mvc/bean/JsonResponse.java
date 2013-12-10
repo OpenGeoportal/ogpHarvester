@@ -1,5 +1,5 @@
-/*
- * IngestFormBean.java
+/**
+ * JsonResponse.java
  *
  * Copyright (C) 2013
  *
@@ -25,32 +25,36 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.dao;
+package org.opengeoportal.harvester.mvc.bean;
 
-import java.util.List;
+/**
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
+public class JsonResponse {
+	public enum STATUS {
+		SUCCESS, FAIL
+	};
 
-import org.opengeoportal.harvester.api.domain.CustomRepository;
-import org.opengeoportal.harvester.api.domain.InstanceType;
-import org.springframework.data.jpa.repository.JpaRepository;
+	private STATUS status = null;
+	private Object result = null;
 
-public interface CustomRepositoryRepository extends
-		JpaRepository<CustomRepository, Long> {
+	public STATUS getStatus() {
+		return status;
+	}
 
-	CustomRepository findByName(String name);
+	public void setStatus(STATUS status) {
+		this.status = status;
+	}
 
-	/**
-	 * Find all not deleted repository with the name and service type passed.
-	 * 
-	 * @param name
-	 *            the name.
-	 * @param serviceType
-	 *            the service type {@link InstanceType}.
-	 * @param deleted 
-	 * @return the list of all {@link CustomRepository} with deleted=false, name
-	 *         and serviceType.
-	 */
-	List<CustomRepository> findByNameAndServiceTypeAndDeleted(String name,
-			InstanceType serviceType, boolean deleted);
+	public Object getResult() {
+		return result;
+	}
+
+	public void setResult(Object result) {
+		this.result = result;
+	}
+
 }

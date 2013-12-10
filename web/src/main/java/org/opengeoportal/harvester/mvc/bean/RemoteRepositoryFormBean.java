@@ -29,46 +29,61 @@
  */
 package org.opengeoportal.harvester.mvc.bean;
 
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.URL;
 import org.opengeoportal.harvester.api.domain.InstanceType;
+
+import javax.validation.constraints.*;
 
 /**
  * @author jlrodriguez
- *
+ * 
  */
 public class RemoteRepositoryFormBean {
+	@NotNull
 	private InstanceType repoType;
+	@NotBlank
+	@URL
 	private String repoUrl;
+	@NotBlank
 	private String name;
+
 	/**
 	 * @return the repoType
 	 */
 	public InstanceType getRepoType() {
 		return repoType;
 	}
+
 	/**
-	 * @param repoType the repoType to set
+	 * @param repoType
+	 *            the repoType to set
 	 */
 	public void setRepoType(InstanceType repoType) {
 		this.repoType = repoType;
 	}
+
 	/**
 	 * @return the repoUrl
 	 */
 	public String getRepoUrl() {
 		return repoUrl;
 	}
+
 	/**
-	 * @param repoUrl the repoUrl to set
+	 * @param repoUrl
+	 *            the repoUrl to set
 	 */
 	public void setRepoUrl(String repoUrl) {
 		this.repoUrl = repoUrl;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
-	
 
 }
