@@ -226,7 +226,8 @@
 		"EXISTING_REPO_CANCEL": "Cancel",
 		"REPO_SUCCESFULLY_DELETED": "{{name}} has been successfully removed.",
 		"CUSTOM_REPO_CREATED": "The repository {{name}} has been successfully created.",
-		"EXISTING_REPO_ADDED": "The repository {{name}} has been successfully added to My Repositories."
+		"EXISTING_REPO_ADDED": "The repository {{name}} has been successfully added to My Repositories.",
+		"ERROR_REPO_ALREADY_ADDED": "A repository with {{rejectedValue}} and selected type already exist. Please select another name."
 	},
     "MAP": {
         "HEADER": "Geographic Extent",

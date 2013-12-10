@@ -114,8 +114,17 @@
 					$scope.createRepo = function() {
 						$log.info("Creating custom repository");
 						$scope.disableCreateButton = true;
+						$scope.alerts = [];
 						$scope.savedRepo = remoteRepositories.save($scope.customRepo).then(function(data){
-							$modalInstance.close(data);
+							if (data.status ==='SUCCESS') {
+								$modalInstance.close(data.result);								
+							} else {
+								$scope.alerts = [];
+								for (var i = 0; i < data.result.length; i++) {
+									$scope.alerts.push({type:"danger", msg:$translate("ADMIN." + data.result[i].code, data.result[i])});									
+								}
+								$scope.disableCreateButton = false;
+							}
 						}, function(cause){
 							$scope.alerts.push({type:"danger", msg:cause});
 							$scope.disableCreateButton = false;
@@ -146,8 +155,16 @@
 						var customRepo = { repoType: selectedRepo.serviceType, name: selectedRepo.name, repoUrl: selectedRepo.url };
 								
 				
-						$scope.savedRepo = remoteRepositories.save(customRepo).then(function(data){
-							$modalInstance.close(data);
+						$scope.savedRepo = remoteRepositories.save(customRepo).then(function(data) {
+							if (data.status ==='SUCCESS') {
+								$modalInstance.close(data.result);								
+							} else {
+								$scope.alerts = [];
+								for (var i = 0; i < data.result.length; i++) {
+									$scope.alerts.push({type:"danger", msg:$translate("ADMIN." + data.result[i].code, data.result[i])});									
+								}
+								$scope.disableCreateButton = false;
+							}
 						}, function(cause){
 							$scope.alerts.push({type:"danger", msg:cause});
 							$scope.disableCreateButton = false;

@@ -121,7 +121,10 @@ public class CustomRepositoryController {
 		boolean existOther = service.checkExistActiveRepositoryNameAndType(
 				repository.getName(), repository.getRepoType());
 		if (existOther) {
-
+			res.setStatus(STATUS.FAIL);
+			errors.rejectValue("name", "ERROR_REPO_ALREADY_ADDED");
+			res.setResult(errors.getAllErrors());
+			return res;
 		}
 
 		CustomRepository entity = new CustomRepository();
