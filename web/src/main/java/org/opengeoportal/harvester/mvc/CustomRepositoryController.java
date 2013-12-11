@@ -38,7 +38,9 @@ import java.util.Map;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
+import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
 import org.opengeoportal.harvester.mvc.bean.JsonResponse;
 import org.opengeoportal.harvester.mvc.bean.JsonResponse.STATUS;
@@ -67,7 +69,9 @@ import com.google.common.collect.Maps;
 @SessionAttributes(types = { CustomRepositoryFormBean.class })
 public class CustomRepositoryController {
 	@Autowired
-	private CustomRepositoryService service;
+	private CustomRepositoryService repositoryService;
+	@Autowired
+	private IngestService ingestService;
 
 	@Autowired
 	private Validator validator;
@@ -76,7 +80,7 @@ public class CustomRepositoryController {
 	@ResponseBody
 	public Map<InstanceType, List<SimpleEntry<Long, String>>> getCustomRepositories() {
 
-		ListMultimap<InstanceType, CustomRepository> multimap = service
+		ListMultimap<InstanceType, CustomRepository> multimap = repositoryService
 				.getAllGroupByType();
 		Map<InstanceType, List<SimpleEntry<Long, String>>> result = Maps
 				.newHashMap();
@@ -118,8 +122,9 @@ public class CustomRepositoryController {
 
 		}
 
-		boolean existOther = service.checkExistActiveRepositoryNameAndType(
-				repository.getName(), repository.getRepoType());
+		boolean existOther = repositoryService
+				.checkExistActiveRepositoryNameAndType(repository.getName(),
+						repository.getRepoType());
 		if (existOther) {
 			res.setStatus(STATUS.FAIL);
 			errors.rejectValue("name", "ERROR_REPO_ALREADY_ADDED");
@@ -132,7 +137,7 @@ public class CustomRepositoryController {
 		entity.setUrl(repository.getRepoUrl());
 		entity.setServiceType(repository.getRepoType());
 
-		entity = service.save(entity);
+		entity = repositoryService.save(entity);
 
 		res.setResult(entity);
 		res.setStatus(STATUS.SUCCESS);
@@ -144,7 +149,7 @@ public class CustomRepositoryController {
 	@Secured({ "ROLE_ADMIN" })
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void deleteRepo(@PathVariable Long repoId) {
-		service.delete(repoId);
+		repositoryService.logicalDelete(repoId);
 
 	}
 
@@ -152,7 +157,29 @@ public class CustomRepositoryController {
 	@ResponseBody
 	public List<SimpleEntry<String, String>> getRemoteRepositoriesById(
 			@PathVariable Long repoId) {
-		return service.getRemoteRepositoriesByRepoId(repoId);
+		return repositoryService.getRemoteRepositoriesByRepoId(repoId);
+
+	}
+
+	@RequestMapping("/rest/repositories/{repoId}/hasScheduledIngests")
+	@ResponseBody
+	public JsonResponse checkRepositoryScheduledIngests(
+			@PathVariable Long repoId) {
+		JsonResponse response = new JsonResponse();
+
+		CustomRepository repository = repositoryService.findById(repoId);
+		if (repository == null) {
+			throw new InstanceNotFoundException(
+					"Cannot find a CustomRepository with id " + repoId);
+		}
+
+		response.setStatus(STATUS.SUCCESS);
+		Map<String, Long> result = Maps.newHashMap();
+		Long count = ingestService.countScheduledIngestsByRepo(repoId);
+		result.put("ingestCount", count);
+		response.setResult(result);
+
+		return response;
 
 	}
 
@@ -163,7 +190,7 @@ public class CustomRepositoryController {
 			throws MalformedURLException {
 		URL urlObj = new URL(repository.getRepoUrl());
 
-		List<SimpleEntry<String, String>> repositories = service
+		List<SimpleEntry<String, String>> repositories = repositoryService
 				.getRemoteRepositories(repository.getRepoType(), urlObj);
 
 		return repositories;
@@ -172,7 +199,7 @@ public class CustomRepositoryController {
 	@RequestMapping(value = "/rest/localSolr/institutions")
 	@ResponseBody
 	public List<SimpleEntry<String, String>> getLocalSolrInstitutions() {
-		List<SimpleEntry<String, String>> institutions = service
+		List<SimpleEntry<String, String>> institutions = repositoryService
 				.getLocalSolrInstitutions();
 		return institutions;
 	}
@@ -182,8 +209,8 @@ public class CustomRepositoryController {
 	public Map<String, Object> checkExistingActiveRepositoryName(
 			@RequestParam String name, @RequestParam InstanceType type) {
 		Map<String, Object> resultMap = Maps.newHashMap();
-		boolean exists = service.checkExistActiveRepositoryNameAndType(name,
-				type);
+		boolean exists = repositoryService
+				.checkExistActiveRepositoryNameAndType(name, type);
 		resultMap.put("anotherExist", exists);
 
 		return resultMap;

@@ -71,4 +71,15 @@ public interface IngestService {
 	 * @return the {@link Ingest} with the passed id.
 	 */
 	public Ingest findById(Long id);
+
+	/**
+	 * Unscheduled all ingests that use repositoy parameter.
+	 * 
+	 * @param repoId
+	 *            the repository ID.
+	 * @return how many ingests has been unscheduled.
+	 */
+	public int unscheduleByRepository(Long repoId);
+	
+	public Long countScheduledIngestsByRepo(Long repoId); 
 }

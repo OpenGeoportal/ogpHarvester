@@ -34,6 +34,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +44,13 @@ import com.google.common.collect.ListMultimap;
 public interface CustomRepositoryService {
 	public CustomRepository save(CustomRepository customRepository);
 
-	public void delete(Long id);
+	/**
+	 * Mark {@link CustomRepository} with id <code>id</code> passed and
+	 * unschedule all {@link Ingest} that use that custom repo.
+	 * 
+	 * @param id custom repository identifier.
+	 */
+	public void logicalDelete(Long id);
 
 	public CustomRepository findByName(String name);
 

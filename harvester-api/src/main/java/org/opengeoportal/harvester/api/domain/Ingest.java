@@ -29,28 +29,28 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.OneToMany;
-import javax.persistence.CascadeType;
-import javax.persistence.FetchType;
 
 import org.hibernate.annotations.Check;
 import org.springframework.data.jpa.domain.AbstractPersistable;
@@ -77,9 +77,12 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	private String url;
 
 	@Column
+	private Boolean scheduled;
+
+	@Column
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastRun;
-	
+
 	@Column
 	private String nameOgpRepository;
 
@@ -93,9 +96,9 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	@JoinColumn(name = "repository_id")
 	private CustomRepository repository;
 
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="ingest_id")
-    private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "ingest_id")
+	private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
 
 	public String getName() {
 		return name;
@@ -199,28 +202,37 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	}
 
 	/**
-	 * @param nameOgpRepository the nameOgpRepository to set
+	 * @param nameOgpRepository
+	 *            the nameOgpRepository to set
 	 */
 	public void setNameOgpRepository(String nameOgpRepository) {
 		this.nameOgpRepository = nameOgpRepository;
 	}
 
+	/**
+	 * @return the ingestJobStatuses
+	 */
+	public List<IngestJobStatus> getIngestJobStatuses() {
+		return Collections.unmodifiableList(ingestJobStatuses);
+	}
 
-    /**
-     * @return the ingestJobStatuses
-     */
-    public List<IngestJobStatus> getIngestJobStatuses() {
-        return Collections.unmodifiableList(ingestJobStatuses);
-    }
+	/**
+	 * @param ingestJobStatuses
+	 *            the IngestJobStatus list to set
+	 */
+	public void setIngestJobStatuses(List<IngestJobStatus> ingestJobStatuses) {
+		this.ingestJobStatuses = ingestJobStatuses;
+	}
 
-    /**
-     * @param ingestJobStatuses the IngestJobStatus list to set
-     */
-    public void setIngestJobStatuses(List<IngestJobStatus> ingestJobStatuses) {
-        this.ingestJobStatuses = ingestJobStatuses;
-    }
+	public void addJobStatus(IngestJobStatus job) {
+		ingestJobStatuses.add(job);
+	}
 
-    public void addJobStatus(IngestJobStatus job) {
-        ingestJobStatuses.add(job);
-    }
+	public Boolean getScheduled() {
+		return scheduled;
+	}
+
+	public void setScheduled(Boolean scheduled) {
+		this.scheduled = scheduled;
+	}
 }
