@@ -71,7 +71,7 @@
 						<spring:url value="/admin" var="adminURL" />
 						<spring:url value="/" var="baseUrl" />
 
-						<li><a 
+						<li class="disabled"><a 
 							data-ng-class="getClass('/uploadMetadata')"> <spring:message
 									code="sidebar.uploadMetadata" />
 						</a></li>
@@ -81,10 +81,10 @@
 						<li><a href="${baseUrl}#/manageIngests"
 							data-ng-class="getClass('/manageIngests')"><spring:message
 									code="sidebar.manageIngests" /></a></li>
-						<li><a 
+						<li class="disabled"><a  
 							data-ng-class="getClass('/editMetadata')"><spring:message
 									code="sidebar.editMetadata" /></a></li>
-						<li><a 
+						<li class="disabled"><a 
 							data-ng-class="getClass('/deleteRecords')"><spring:message
 									code="sidebar.deleteRecords" /></a></li>
 						<security:authorize ifAllGranted="ROLE_ADMIN">
