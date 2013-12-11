@@ -209,6 +209,25 @@
 					});
 					return deferred.promise;
 					
+				}, 
+				checkScheduledIngests: function(id) {
+					var deferred = $q.defer();
+					
+					$http.get('rest/repositories/' + id + '/hasScheduledIngests', 
+							{
+								repoId: id
+							}).success(
+							function (data) {
+								if (data.status === 'SUCCESS') {
+									deferred.resolve(data.result);
+								} else {
+									deferred.reject(data.result);
+								}
+							}).error(
+							function () {
+								deferred.reject("An error occured while checking if repository has scheduled ingests");
+							});
+					return deferred.promise;
 				}
 			};
 		}

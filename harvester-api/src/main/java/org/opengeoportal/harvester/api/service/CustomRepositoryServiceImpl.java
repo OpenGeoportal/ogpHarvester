@@ -55,6 +55,8 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 
 	@Resource
 	private CustomRepositoryRepository customRepositoryRepository;
+	@Resource
+	private IngestService ingestService;
 
 	@Override
 	@Transactional
@@ -63,9 +65,14 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	}
 
 	@Override
-	@Transactional
-	public void delete(Long id) {
-		customRepositoryRepository.delete(id);
+	@Transactional(readOnly=false)
+	public void logicalDelete(Long id) {
+		CustomRepository cRepository = customRepositoryRepository.findOne(id);
+		if (cRepository != null) {
+			cRepository.setDeleted(true);
+			cRepository = customRepositoryRepository.save(cRepository);
+			ingestService.unscheduleByRepository(cRepository.getId());
+		}
 	}
 
 	@Override
@@ -78,7 +85,7 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	@Transactional(readOnly = true)
 	public Page<CustomRepository> findAll(Pageable pageable) {
 		Page<CustomRepository> page = customRepositoryRepository
-				.findAll(pageable);
+				.findByDeletedFalse(pageable);
 		return page;
 	}
 
@@ -89,12 +96,12 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	 * getAllGroupByType()
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
 		Sort typeSortAsc = new Sort(new Order(
-				CustomRepository.COLUMN_SERVICE_TYPE));
-		List<CustomRepository> repositories = customRepositoryRepository
-				.findAll(typeSortAsc);
+				CustomRepository.COLUMN_SERVICE_TYPE), new Order(CustomRepository.COLUMN_NAME));
+		List<CustomRepository> repositories = customRepositoryRepository.findByDeletedFalse(typeSortAsc);
+			
 		ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
 				.create();
 		for (CustomRepository repository : repositories) {

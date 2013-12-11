@@ -5,6 +5,10 @@
 </div>
 <div class="modal-body">
 	<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
+	<div data-ng-show="scheduledIngestCount" class="panel panel-warning animate-show">
+		<div class="panel-heading"><span class="glyphicon glyphicon-warning-sign"></span> <span data-translate="ADMIN.DELETE_REPO_WITH_INGESTS_TITLE"></span></div>
+		<div class="panel-body" data-translate="ADMIN.DELETE_REPO_WITH_INGESTS"></div>
+	</div>
 	<p data-translate="ADMIN.REMOVE_REPO_CONFIRM_TEXT" data-translate-values="{{repoToDelete}}">
 	</p>
 </div>

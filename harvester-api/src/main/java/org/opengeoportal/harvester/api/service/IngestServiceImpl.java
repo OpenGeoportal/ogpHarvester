@@ -114,4 +114,22 @@ public class IngestServiceImpl implements IngestService {
 	public Ingest findById(Long id) {
 		return ingestRepository.findOne(id);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.IngestService#unscheduleByRepository(Long repositoryId)
+	 */
+	@Override
+	@Transactional
+	public int unscheduleByRepository(Long repositoryId) {
+		return ingestRepository.setScheduledForRepositoryId(repositoryId);
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.IngestService#countScheduledIngestsByRepo(java.lang.Long)
+	 */
+	@Override
+	public Long countScheduledIngestsByRepo(Long repoId) {
+		return ingestRepository.countByRepositoryIdAndScheduledTrue(repoId);
+	}
 }

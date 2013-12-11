@@ -27,6 +27,12 @@
 					$scope.repoToDelete = repoToDelete;
 					$scope.deleteButtonDisabled = false;
 					$scope.alerts = [];
+					
+					// checi if the repository has sheduled ingests
+					remoteRepositories.checkScheduledIngests($scope.repoToDelete.key).then(function(data) {
+						$scope.scheduledIngestCount = data.ingestCount;
+					});
+					
 					$scope.closeAlert = function(index) {
 					    $scope.alerts.splice(index, 1);
 					};

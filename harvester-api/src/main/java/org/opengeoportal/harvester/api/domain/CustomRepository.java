@@ -40,8 +40,10 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 public class CustomRepository extends AbstractPersistable<Long> {
 
 	public static final String COLUMN_SERVICE_TYPE = "serviceType";
+	public static final String COLUMN_NAME = "name";
 
 	private static final long serialVersionUID = -3588708291290281469L;
+
 
 	@Column(nullable = false)
 	private String name;
@@ -51,9 +53,8 @@ public class CustomRepository extends AbstractPersistable<Long> {
 	@Enumerated(EnumType.STRING)
 	private InstanceType serviceType;
 	@Column
-	private boolean deleted =false;
-	
-	
+	private boolean deleted = false;
+
 	public CustomRepository() {
 		this.deleted = false;
 	}

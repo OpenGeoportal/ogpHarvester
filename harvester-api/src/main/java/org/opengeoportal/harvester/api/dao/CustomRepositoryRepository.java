@@ -33,6 +33,9 @@ import java.util.List;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CustomRepositoryRepository extends
@@ -53,4 +56,12 @@ public interface CustomRepositoryRepository extends
 	 */
 	List<CustomRepository> findByNameAndServiceTypeAndDeleted(String name,
 			InstanceType serviceType, boolean deleted);
+	
+	List<CustomRepository> findByDeletedFalse(Sort sort);
+
+	/**
+	 * @param pageable
+	 * @return
+	 */
+	Page<CustomRepository> findByDeletedFalse(Pageable pageable);
 }

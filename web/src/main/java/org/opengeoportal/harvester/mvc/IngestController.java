@@ -117,6 +117,7 @@ public class IngestController {
 		ingest.setBeginDate(ingestFormBean.getBeginDate());
 		ingest.setName(ingestFormBean.getIngestName());
 		ingest.setNameOgpRepository(ingestFormBean.getNameOgpRepository());
+		ingest.setScheduled(true);
 		if (!usesCustomRepo) {
 			ingest.setUrl(ingestFormBean.getUrl());
 		}
