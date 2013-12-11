@@ -1,0 +1,13 @@
+language: java
+jdk:
+  - oraclejdk7
+  - openjdk7
+  - openjdk6
+node_js:
+  - "0.10"
+install:
+  - npm install karma
+  - npm install karma-jasmine
+  - npm install karma-phantomjs-launcher
+  - npm install phantomjs
+  
