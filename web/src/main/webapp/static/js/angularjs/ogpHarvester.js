@@ -31,6 +31,15 @@
 					templateUrl: 'resources/newIngestFormStep2.html',
 					controller: 'NewIngestCtrl'
 				});
+				$routeProvider.when('/editIngest/:id', {
+					templateUrl: 'resources/editIngestForm.html',
+					controller: 'EditIngestCtrl'
+				});
+				$routeProvider.when('/editIngest/:id/step2', {
+					templateUrl: 'resources/editIngestFormStep2.html',
+					controller: 'EditIngestCtrl'
+				});
+				
 				$routeProvider.when('/admin', {
 					templateUrl: 'resources/admin.html',
 					controller: 'AdminCtrl'

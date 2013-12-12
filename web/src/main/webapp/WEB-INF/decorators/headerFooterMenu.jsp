@@ -104,13 +104,13 @@
 		<!-- //row -->
 	</div>
 	<!-- //container -->
-	<spring:url value="/webjars/angularjs/1.2.1/angular.js"
+	<spring:url value="/webjars/angularjs/1.2.3/angular.js"
 		var="angularjsUrl" />
-	<spring:url value="/webjars/angularjs/1.2.1/angular-animate.js"
+	<spring:url value="/webjars/angularjs/1.2.3/angular-animate.js"
 		var="angularjsAnimateUrl" />
-	<spring:url value="/webjars/angularjs/1.2.1/angular-route.js"
+	<spring:url value="/webjars/angularjs/1.2.3/angular-route.js"
 		var="angularRouteUrl" />
-	<spring:url value="/webjars/angularjs/1.2.1/angular-resource.js"
+	<spring:url value="/webjars/angularjs/1.2.3/angular-resource.js"
 		var="angularResourceUrl" />
 	<spring:url value="/static/js/angular-translate/angular-translate.js"
 		var="angularTranslateUrl" />
@@ -130,25 +130,28 @@
 	<spring:url value="/static/js/angularjs/services.js" var="servicesUrl" />
 	<spring:url value="/static/js/angularjs/controllers.js"
 		var="controllersUrl" />
-		<spring:url value="/static/js/angularjs/adminController.js"
+	<spring:url value="/static/js/angularjs/adminController.js"
 		var="adminControllerUrl" />
+	<spring:url value="/static/js/angularjs/editIngestController.js"
+		var="editIngestControllerUrl" />
 	<spring:url value="/static/js/angularjs/filters.js" var="filtersUrl" />
 	<spring:url value="/static/js/angularjs/directives.js"
 		var="directivesUrl" />
-	<script src="${angularjsUrl}"></script>
+	<script type="text/javascript" src="${angularjsUrl}"></script>
 	<!--<script src="${angularjsAnimateUrl}"></script>-->
-	<script src="${angularRouteUrl}"></script>
-	<script src="${angularResourceUrl}"></script>
-	<script src="${angularTranslateUrl}"></script>
-	<script src="${angularTranslateLoaderStaticFilesUrl}"></script>
-	<script src="${rcFormUrl}"></script>
-	<script src="${angularUiBootstrapUrl}"></script>
-	<script src="${uiUtilsUrl}"></script>
-	<script src="${ogpHarvesterUrl}"></script>
-	<script src="${servicesUrl}"></script>
-	<script src="${controllersUrl}"></script>
-	<script src="${adminControllerUrl}"></script>
-	<script src="${filtersUrl}"></script>
-	<script src="${directivesUrl}"></script>
+	<script type="text/javascript" src="${angularRouteUrl}"></script>
+	<script type="text/javascript" src="${angularResourceUrl}"></script>
+	<script type="text/javascript" src="${angularTranslateUrl}"></script>
+	<script type="text/javascript" src="${angularTranslateLoaderStaticFilesUrl}"></script>
+	<script type="text/javascript" src="${rcFormUrl}"></script>
+	<script type="text/javascript" src="${angularUiBootstrapUrl}"></script>
+	<script type="text/javascript" src="${uiUtilsUrl}"></script>
+	<script type="text/javascript" src="${ogpHarvesterUrl}"></script>
+	<script type="text/javascript" src="${servicesUrl}"></script>
+	<script type="text/javascript" src="${controllersUrl}"></script>
+	<script type="text/javascript" src="${adminControllerUrl}"></script>
+	<script type="text/javascript" src="${editIngestControllerUrl}"></script>
+	<script type="text/javascript" src="${filtersUrl}"></script>
+	<script type="text/javascript" src="${directivesUrl}"></script>
 </body>
 </html>
