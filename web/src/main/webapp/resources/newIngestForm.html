@@ -9,7 +9,7 @@
             <label for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
             <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance"  name="typeOfInstance"
             data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" 
-            data-ng-change="resetForm()"></select>
+            data-ng-change="resetForm()" data-ng-disabled="isTypeOfInstanceDisabled()"></select>
         </div>
         <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.catalogOfServices)}">
             <label for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
@@ -104,20 +104,25 @@
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4 calendar' id='contentRangeFrom' data-ng-model="ingest.contentRangeFrom" data-datetimepicker>
-                                    <input type="text" class="form-control" ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span>
+                                <div class="input-group col-md-4 date">
+                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" data-ng-model="ingest.contentRangeFrom" data-datepicker-options="dateOptions" data-is-open="dtOpened['contentRangeFrom']"  
+                                    id='contentRangeFrom' 
+                                    name="contentRangeFrom" />
+                                    <span class="input-group-addon" ng-click="open('contentRangeFrom')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div> <span 
+                                </div>
+
+                                 <span 
                                     class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
-                                    <div 
-                                        class='input-group date col-md-4' data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.contentRangeTo)}"  
-                                        id='contentRangeTo' data-ng-model="ingest.contentRangeTo" 
-                                        data-datetimepicker data-ogp-check-after="ingest.contentRangeFrom" data-name="contentRangeTo">
-                                    <input type="text" class="form-control" ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span></span>
+                                <div class="input-group col-md-4" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.contentRangeTo)}">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.contentRangeTo" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['contentRangeTo']" data-ogp-check-after2="ingest.contentRangeFrom"
+                                        name="contentRangeTo" id="contentRangeTo"></input>
+                                    <span class="input-group-addon" ng-click="open('contentRangeTo')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -168,18 +173,26 @@
                                 data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeSolrFrom'  data-ng-model="ingest.rangeSolrFrom" data-datetimepicker>
-                                    <input  type="text" class="form-control"></input> <span
-                                        class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span> </span>
+                                <div class="input-group col-md-4">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.rangeSolrFrom" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['rangeSolrFrom']"
+                                        name="rangeSolrFrom" id="rangeSolrFrom"></input>
+                                    <span class="input-group-addon" ng-click="open('rangeSolrFrom')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
+
                                 <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
-                                <div class='input-group date col-md-4' id='rangeSolrTo' data-ng-model="ingest.rangeSolrTo" 
-                                data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.rangeSolrTo)}"
-                                data-datetimepicker data-ogp-check-after="ingest.rangeSolrFrom" data-name="rangeSolrTo">
-                                    <input type="text" class="form-control"></input><span
-                                        class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span> </span>
+                                
+                                <div class="input-group col-md-4" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.rangeSolrTo)}">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.rangeSolrTo" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['rangeSolrTo']" data-ogp-check-after2="ingest.rangeSolrFrom"
+                                        name="rangeSolrTo" id="rangeSolrTo"></input>
+                                    <span class="input-group-addon" ng-click="open('rangeSolrTo')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -316,18 +329,26 @@
                                 data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.cswRangeFrom" data-datetimepicker>
-                                    <input type="text" class="form-control" ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span> </span>
-                                </div> <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.cswRangeTo" 
-                                        data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.cswRangeTo)}"
-                                        data-datetimepicker data-ogp-check-after="ingest.cswRangeFrom" data-name="cswRangeTo">
-                                    <input type="text" class="form-control"  ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span></span>
+
+                                <div class="input-group col-md-4">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.cswRangeFrom" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['cswRangeFrom']"
+                                        name="cswRangeFrom" id="cswRangeFrom"></input>
+                                    <span class="input-group-addon" ng-click="open('cswRangeFrom')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div> 
+                                <span 
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
+                                <div class="input-group col-md-4" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.cswRangeTo)}">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.cswRangeTo" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['cswRangeTo']" data-ogp-check-after2="ingest.cswRangeFrom"
+                                        name="cswRangeTo" id="cswRangeTo"></input>
+                                    <span class="input-group-addon" ng-click="open('cswRangeTo')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -359,19 +380,25 @@
                                 data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
-                                <div class='input-group date col-md-4' id='rangeFrom' data-ng-model="ingest.webdavFromLastModified" data-datetimepicker>
-                                    <input type="text" class="form-control" ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span> </span>
-                                </div> <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> <div 
-                                        class='input-group date col-md-4' id='rangeTo' data-ng-model="ingest.webdavToLastModified"
-                                        data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.webdavToLastModified)}" 
-                                        data-datetimepicker data-ogp-check-after="ingest.webdavFromlastModified" 
-                                        data-name="webdavToLastModified">
-                                    <input type="text" class="form-control"  ></input>
-                                    <span class="input-group-addon"><span
-                                        class="glyphicon glyphicon-calendar"></span></span>
+                                <div class="input-group col-md-4">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.webdavFromLastModified" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['webdavFromLastModified']"
+                                        name="webdavFromLastModified" id="webdavFromLastModified"></input>
+                                    <span class="input-group-addon" ng-click="open('webdavFromLastModified')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                                </div>  
+                                <span 
+                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
+                                <div class="input-group col-md-4" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.webdavToLastModified)}">
+                                    <input class="form-control" type="text" datepicker-popup="MM/dd/yyyy" 
+                                        data-ng-model="ingest.webdavToLastModified" datepicker-options="dateOptions" 
+                                        data-is-open="dtOpened['webdavToLastModified']" data-ogp-check-after2="ingest.webdavFromLastModified"
+                                        name="webdavToLastModified" id="webdavToLastModified"></input>
+                                    <span class="input-group-addon" ng-click="open('webdavToLastModified')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
                                 </div>
                             </div>
                         </div>

@@ -411,6 +411,7 @@ input.form-control {
 
 .ingest-name {
 	text-decoration: underline;
+	color: black;
 }
 .ingest-list .btn-default {
 	font-size: 14px;

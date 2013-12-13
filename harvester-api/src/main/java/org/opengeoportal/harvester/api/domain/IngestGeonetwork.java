@@ -38,8 +38,11 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
+
+import com.google.common.collect.Lists;
 
 @Entity
 @DiscriminatorValue("GN")
@@ -55,11 +58,12 @@ public class IngestGeonetwork extends Ingest {
 	private String abstractText;
 	@Column
 	private String freeText;
-	@ElementCollection
+
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "ingestgn_gn_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
 	@OrderColumn
 	@Column
-	private List<String> geonetworkSources;
+	private List<String> geonetworkSources = Lists.newArrayList();
 
 	public IngestGeonetwork() {
 		super();

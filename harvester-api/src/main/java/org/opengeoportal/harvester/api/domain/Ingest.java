@@ -86,13 +86,13 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	@Column
 	private String nameOgpRepository;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> requiredFields = new HashSet<String>();
 
 	@Transient
 	protected Set<String> validRequiredFields = new HashSet<String>();
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "repository_id")
 	private CustomRepository repository;
 
@@ -228,7 +228,7 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 		ingestJobStatuses.add(job);
 	}
 
-	public Boolean getScheduled() {
+	public Boolean isScheduled() {
 		return scheduled;
 	}
 

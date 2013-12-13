@@ -1,4 +1,4 @@
-(function () {
+(function() {
 	'use strict';
 
 	/* Controllers */
@@ -8,9 +8,9 @@
 
 	angular.module("ogpHarvester.controllers")
 		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location', '$log',
-			function ($scope, $routeParams, IngestPage, $location, $log) {
+			function($scope, $routeParams, IngestPage, $location, $log) {
 				$scope.data = {};
-				IngestPage.query($routeParams.page, $routeParams.pageSize, function (response) {
+				IngestPage.query($routeParams.page, $routeParams.pageSize, function(response) {
 					$scope.ingestPage = response;
 					$scope.pageSize = response.pageDetails.size;
 				});
@@ -18,12 +18,12 @@
 					$log.info('Ingest "' + $routeParams.name + " has been successfully created");
 				}
 
-				$scope.selectPage = function (page) {
+				$scope.selectPage = function(page) {
 					$location.url('/manageIngests?page=' + page + "&pageSize=" + $scope.pageSize);
 				};
 				$scope.checkLastDate = function(event, index) {
 					var ingestReport = $scope.ingestPage.elements[index];
-					if (!ingestReport.lastRun){
+					if (!ingestReport.lastRun) {
 						event.preventDefault();
 						return false;
 					}
@@ -33,9 +33,9 @@
 		]);
 	angular.module('ogpHarvester.controllers')
 		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest', '$log',
-			function ($scope, $routeParams, Ingest, $log) {
+			function($scope, $routeParams, Ingest, $log) {
 
-				var isSelectedAll = function ($event, elementList) {
+				var isSelectedAll = function($event, elementList) {
 					var allSelected = elementList !== undefined;
 					for (var i = 0; allSelected && (i < elementList.length); i++) {
 						if (!elementList[i].isChecked) {
@@ -47,7 +47,7 @@
 
 				$scope.isSelectedAll = isSelectedAll;
 
-				var selectAll = function ($event, elementList) {
+				var selectAll = function($event, elementList) {
 					var checkbox = $event.target;
 					if (elementList !== undefined) {
 						for (var i = 0; i < elementList.length; i++) {
@@ -58,7 +58,7 @@
 
 				$scope.selectAll = selectAll;
 
-				var anySelected = function (listOfList) {
+				var anySelected = function(listOfList) {
 					var mergedList = [];
 					var oneSelected = false;
 					if (listOfList !== undefined) {
@@ -78,11 +78,11 @@
 
 				$scope.anySelected = anySelected;
 
-				var downloadMetadata = function (listOfList) {
+				var downloadMetadata = function(listOfList) {
 					$('.downloadMetadata').remove();
 					var selected = [];
 					for (var i = 0; i < listOfList.length; i++) {
-						$.merge(selected, $(listOfList[i]).map(function () {
+						$.merge(selected, $(listOfList[i]).map(function() {
 							if (this.isChecked) {
 								return {
 									name: 'categories',
@@ -105,7 +105,7 @@
 				$scope.params = $routeParams;
 				Ingest.get({
 					id: $scope.params.id
-				}, function (data) {
+				}, function(data) {
 					$scope.ingestDetails = data;
 					$scope.totalPassed = {
 						count: data.passed.restrictedRecords + data.passed.publicRecords + data.passed.vectorRecords + data.passed.rasterRecords
@@ -120,12 +120,12 @@
 					$scope.ingestDetails.error.allWebservice = false;
 					$scope.ingestDetails.error.allSystem = false;
 
-					$scope.$watch('ingestDetails.error.allRequired', function (value) {
-						angular.forEach($scope.ingestDetails.error.requiredFieldsList, function (requiredField, key) {
+					$scope.$watch('ingestDetails.error.allRequired', function(value) {
+						angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
 							requiredField.isChecked = value;
 						});
 					});
-					angular.forEach($scope.ingestDetails.requiredFieldsList, function (requiredField, key) {
+					angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
 						$scope.$watch();
 
 					});
@@ -135,11 +135,11 @@
 
 	/** Menu controller */
 	angular.module('ogpHarvester.controllers').controller('MenuCtrl', ['$scope', '$location',
-		function ($scope, $location) {
+		function($scope, $location) {
 			/**
 			 * @return "active" if baseUrl contains path, otherwise return blank string "".
 			 */
-			$scope.getClass = function (linkPath) {
+			$scope.getClass = function(linkPath) {
 				var loc = $location.path();
 				if (loc.substr(0, linkPath.length) == linkPath) {
 					return "active";
@@ -151,42 +151,111 @@
 	]);
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
-		'remoteRepositories', '$route', '$location', '$http', '$timeout', '$log', '$modal', '$filter',
-		function ($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $location, $http, $timeout, $log, $modal, $filter) {
+		'remoteRepositories', '$route', '$routeParams', '$location', '$http', '$timeout', '$log', '$modal', '$filter',
+		'Ingest',
+		function($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $routeParams,
+			$location, $http, $timeout, $log, $modal, $filter, Ingest) {
 
-			$rootScope.$on('$routeChangeStart', function (angularEvent, next, current) {
-				if (next.$$route.originalPath === '/newIngest' &&
-					current.$$route.originalPath !== '/newIngest/step2') {
+			if (angular.isUndefined($rootScope.checkBackStep))
+			 {
+				$rootScope.checkBackStep = function(angularEvent, next, current) {
+					if (next.$$route && next.$$route.originalPath === '/newIngest' &&
+						current.$$route.originalPath !== '/newIngest/step2') {
+						ingestMultiform.reset();
+					}
+				};
+				$rootScope.$on('$routeChangeStart', $rootScope.checkBackStep);
 
+			}
+
+			$scope.isTypeOfInstanceDisabled = function() {
+				return angular.isDefined($routeParams.id);
+			};
+
+
+
+			if (angular.isDefined($routeParams.id) && angular.isUndefined($routeParams.back) &&
+				$location.$$path.indexOf('/step2') == -1) {
+
+				Ingest.getDetails({
+					id: $routeParams.id
+				}, function(data) {
 					ingestMultiform.reset();
+					ingestMultiform.copy(data);
+					$scope.ingest = ingestMultiform.getIngest();
+					if ($scope.ingest.url !== null) {
+						$scope.getRemoteReposByUrl(data.typeOfInstance, data.url);
+					}
+					if ($scope.ingest.catalogOfServices !== null) {
+						$scope.getRemoteReposByRepoId(data.typeOfInstance, data.catalogOfServices);
+					}
+
+				});
+			}
+
+			$scope.getRemoteReposByUrl = function(repoType, url) {
+				var targetField, targetModel;
+				if (repoType === 'SOLR') {
+					targetField = 'solrDataRepositoryList';
+					targetModel = 'dataRepositories';
+				} else if (repoType === 'GEONETWORK') {
+					targetField = 'gnSourcesList';
+					targetModel = 'gnSources';
+				} else {
+					return;
 				}
 
-
-			});
-
-			$scope.testOpen = function() {
-				$scope.testOpened = true;
+				if (url !== null && url !== '') {
+					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function(data) {
+						$scope[targetField] = data;
+					}).error(function() {
+						$scope[targetField] = [];
+					});
+				}
 			};
 
-			$scope.step2 = function () {
-				// validate ingest
+			$scope.getRemoteReposByRepoId = function(repoType, repoId) {
+				if (repoId !== null) {
+					remoteRepositories.getRemoteSourcesByRepoId(repoId).
+					success(function(data) {
+						if (repoType === "SOLR") {
+							$scope.solrDataRepositoryList = data;
+						} else if (repoType === "GEONETWORK") {
+							$scope.gnSourcesList = data;
+						}
+					});
+				}
+			};
 
-				// go to step 2
-				$location.path('/newIngest/step2');
+
+			$scope.dtOpened = {};
+			$scope.open = function(identifier) {
+				$timeout(function() {
+					$scope.dtOpened[identifier] = true;
+				});
+			};
+
+			$scope.step2 = function() {
+				if (angular.isNumber($scope.ingest.id)) {
+					$location.path('/editIngest/' + $scope.ingest.id + "/step2");
+				} else {
+					// go to step 2
+					$location.path('/newIngest/step2');
+				}
 
 			};
-			
-			$scope.$watch('opened', function(value) {
-				$log.info("Opened value changed to " + value);
-			});
 
-			$scope.open = function() {
-			    $timeout(function() {
-			      $scope.opened = true;
-			    });
-			  };
+			$scope.goBack = function() {
+				if (angular.isNumber($scope.ingest.id)) {
+					$location.path('/editIngest/' + $scope.ingest.id + '/back');
+				} else {
+					// go to step 2
+					$location.path('/newIngest');
+				}
+			}
 
-			$scope.resetForm = function () {
+
+			$scope.resetForm = function() {
 				$scope.ingest.url = null;
 				$scope.ingest.catalogOfServices = null;
 				$scope.gnSourcesList = [];
@@ -194,46 +263,46 @@
 				$log.log("Starting ingest reset");
 				ingestMultiform.reset();
 				$log.log("Ended ingest reset");
-				
-				
-								
+
+
+
 			};
 
-            $scope.openMap = function() {
-                var modalInstance = $modal.open({
-                    templateUrl: 'resources/map.html',
-                    controller: MapForm,
-                    backdrop: 'static',
-                    keyboard: false
-                });
+			$scope.openMap = function() {
+				var modalInstance = $modal.open({
+					templateUrl: 'resources/map.html',
+					controller: MapForm,
+					backdrop: 'static',
+					keyboard: false
+				});
 
-                modalInstance.result.then(function(bbox) {
-                    $scope.ingest.extent.maxy = bbox.north.toFixed(2);
-                    $scope.ingest.extent.miny = bbox.south.toFixed(2);
-                    $scope.ingest.extent.minx = bbox.west.toFixed(2);
-                    $scope.ingest.extent.maxx = bbox.east.toFixed(2);
-                });
+				modalInstance.result.then(function(bbox) {
+					$scope.ingest.extent.maxy = bbox.north.toFixed(2);
+					$scope.ingest.extent.miny = bbox.south.toFixed(2);
+					$scope.ingest.extent.minx = bbox.west.toFixed(2);
+					$scope.ingest.extent.maxx = bbox.east.toFixed(2);
+				});
 
-            };
+			};
 
-            $scope.resetBbox = function() {
-                $scope.ingest.extent.maxy = "";
-                $scope.ingest.extent.miny = "";
-                $scope.ingest.extent.minx = "";
-                $scope.ingest.extent.maxx = "";
-            };
+			$scope.resetBbox = function() {
+				$scope.ingest.extent.maxy = "";
+				$scope.ingest.extent.miny = "";
+				$scope.ingest.extent.minx = "";
+				$scope.ingest.extent.maxx = "";
+			};
 
 
 			/**
 			 * Clean url if no source is selected
 			 */
-			$scope.cleanServiceUrl = function () {
+			$scope.cleanServiceUrl = function() {
 				if ($scope.ingest.catalogOfServices !== null) {
 					$scope.ingest.url = null;
 				}
 			};
 
-			$scope.getRemoteSourcesByUrl = function () {
+			$scope.getRemoteSourcesByUrl = function() {
 				var repoType = $scope.ingest.typeOfInstance;
 				var url = $scope.ingest.url;
 				var valid = $scope.newIngest.url.$valid;
@@ -249,11 +318,11 @@
 				}
 
 				if (valid && url !== null && url !== '') {
-					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function (data) {
+					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function(data) {
 						$log.info("Updated remote repository list with data " + JSON.stringify(data));
 						$scope.ingest[targetModel] = [];
 						$scope[targetField] = data;
-					}).error(function () {
+					}).error(function() {
 						$scope.ingest[targetModel] = [];
 						$scope[targetField] = [];
 					});
@@ -263,12 +332,12 @@
 				}
 			};
 
-			$scope.getRemoteSourcesByRepoId = function () {
+			$scope.getRemoteSourcesByRepoId = function() {
 				var repoType = $scope.ingest.typeOfInstance;
 				var repoId = $scope.ingest.catalogOfServices;
 				if (repoId !== null) {
 					remoteRepositories.getRemoteSourcesByRepoId(repoId).
-					success(function (data) {
+					success(function(data) {
 						$log.info("Remote sources by Id " + JSON.stringify(data));
 						if (repoType === "SOLR") {
 							$scope.ingest.dataRepositories = [];
@@ -286,7 +355,7 @@
 				}
 			};
 
-			$scope.scheduleIngest = function () {
+			$scope.scheduleIngest = function() {
 				$log.info("Schedule Ingest");
 				var format = "MM/dd/yyyy";
 				var ingest = angular.copy($scope.ingest);
@@ -299,11 +368,11 @@
 				ingest.webdavFromLastModified = $filter('date')(ingest.webdavFromLastModified, format);
 				ingest.webdavToLastModified = $filter('date')(ingest.webdavToLastModified, format);
 				ingest.beginDate = $filter('date')(ingest.beginDate, format);
-				$http.post("rest/ingests/new", ingest).success(function (data) {
+				$http.post("rest/ingests/new", ingest).success(function(data) {
 					$log.info("Schedule ingest success: " + JSON.stringify(data));
 					$location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
 				}).
-				error(function (data, status, headers, config) {
+				error(function(data, status, headers, config) {
 					$log.info("Schedule ingest error");
 				});
 			};
@@ -311,18 +380,18 @@
 
 
 			remoteRepositories.getRepositoryList().then(
-				function (data) {
+				function(data) {
 					$scope.customRepositories = data;
 				});
 
 			remoteRepositories.getLocalSolrInstitutions().success(
-				function (data) {
+				function(data) {
 					$scope.nameOgpRepositoryList = data;
-					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 &&  $scope.nameOgpRepositoryList[0] !== undefined) {
-						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key; 
+					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined) {
+						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
 					}
 				}).error(
-				function(errorMessage){
+				function(errorMessage) {
 					$scope.error = errorMessage;
 				});
 
@@ -369,44 +438,44 @@
 
 			$scope.ingest = ingestMultiform.getIngest();
 
-            var MapForm = function($scope, $modalInstance) {
-                $scope.bbox = {
-                    north: "",
-                    south: "",
-                    west: "",
-                    east: ""
-                };
+			var MapForm = function($scope, $modalInstance) {
+				$scope.bbox = {
+					north: "",
+					south: "",
+					west: "",
+					east: ""
+				};
 
-                $scope.cancel = function() {
-                    $modalInstance.dismiss('cancel');
-                };
+				$scope.cancel = function() {
+					$modalInstance.dismiss('cancel');
+				};
 
-                $scope.setBBOX = function() {
-                    $log.info("Setting BBOX");
+				$scope.setBBOX = function() {
+					$log.info("Setting BBOX");
 
-                    var fromProjection = new OpenLayers.Projection("EPSG:900913");   // Transform from WGS 1984
-                    var toProjection   = new OpenLayers.Projection("EPSG:4326"); // to Spherical Mercator Projection
+					var fromProjection = new OpenLayers.Projection("EPSG:900913"); // Transform from WGS 1984
+					var toProjection = new OpenLayers.Projection("EPSG:4326"); // to Spherical Mercator Projection
 
-                    var bounds = map.getExtent().transform(fromProjection, toProjection);
-                    $scope.bbox.north = bounds.top;
-                    $scope.bbox.south = bounds.bottom;
-                    $scope.bbox.west = bounds.left;
-                    $scope.bbox.east = bounds.right;
+					var bounds = map.getExtent().transform(fromProjection, toProjection);
+					$scope.bbox.north = bounds.top;
+					$scope.bbox.south = bounds.bottom;
+					$scope.bbox.west = bounds.left;
+					$scope.bbox.east = bounds.right;
 
-                    $modalInstance.close($scope.bbox);
-                };
+					$modalInstance.close($scope.bbox);
+				};
 
 
 
-                // Public interface
-                return {
-                    initMap: function() {
-                        $scope.initMap;
-                    }
-                };
-            };
+				// Public interface
+				return {
+					initMap: function() {
+						$scope.initMap;
+					}
+				};
+			};
 
-        }
+		}
 	]);
 
 

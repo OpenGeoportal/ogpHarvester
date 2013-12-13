@@ -36,6 +36,8 @@ import java.util.HashSet;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @DiscriminatorValue("WEBDAV")
@@ -44,9 +46,11 @@ public class IngestWebDav extends Ingest {
 	private static final long serialVersionUID = -5488792457603165652L;
 
 	@Column
+	@Temporal(TemporalType.DATE)
 	private Date dateFrom;
 
 	@Column
+	@Temporal(TemporalType.DATE)
 	private Date dateTo;
 
 	public IngestWebDav() {

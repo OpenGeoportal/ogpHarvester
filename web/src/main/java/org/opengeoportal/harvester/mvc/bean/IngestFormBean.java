@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.mvc.bean;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.Map;
 
@@ -36,15 +37,19 @@ import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.mvc.utils.CustomJsonDateDeserializer;
+import org.opengeoportal.harvester.mvc.utils.CustomJsonDateSerializer;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author jlrodriguez
  * 
  */
 public class IngestFormBean {
+	private Long id;
+	private Boolean scheduled;
 	private InstanceType typeOfInstance;
 	private Long catalogOfServices;
 	private String nameOgpRepository;
@@ -54,20 +59,29 @@ public class IngestFormBean {
 	private String topic;
 	private String originator;
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date contentRangeFrom;
+
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date contentRangeTo;
+
 	private DataType[] dataTypes;
 	private String[] dataRepositories;
 	private boolean excludeRestricted;
+
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrFrom;
+
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date rangeSolrTo;
+
 	private Map<String, Boolean> requiredFields;
 	private String gnTitle;
 	private String gnKeyword;
@@ -77,24 +91,37 @@ public class IngestFormBean {
 	private String cswTitle;
 	private String cswSubject;
 	private String cswFreeText;
+
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date cswRangeFrom;
+
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
 	private Date cswRangeTo;
+
 	private String cswCustomQuery;
+
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date webdavFromLastModified;
+
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date webdavToLastModified;
+
 	private String solrCustomQuery;
 	private String ingestName;
+
 	@DateTimeFormat(pattern = "MM/dd/yyyy")
+	@JsonSerialize(using = CustomJsonDateSerializer.class)
 	@JsonDeserialize(using = CustomJsonDateDeserializer.class)
 	private Date beginDate;
+
 	private Frequency frequency;
 	private BoundingBox extent;
 
@@ -615,6 +642,22 @@ public class IngestFormBean {
 	 */
 	public void setContentRangeTo(Date contentRangeTo) {
 		this.contentRangeTo = contentRangeTo;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Boolean getScheduled() {
+		return scheduled;
+	}
+
+	public void setScheduled(Boolean scheduled) {
+		this.scheduled = scheduled;
 	}
 
 }

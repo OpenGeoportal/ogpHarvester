@@ -29,10 +29,11 @@
 		<webjars-bootstrap.version>3.0.2</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
-		<webjars-angularjs.version>1.2.1</webjars-angularjs.version>
+		<webjars-angularjs.version>1.2.3</webjars-angularjs.version>
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
-        <webjars-openlayers.version>2.13.1</webjars-openlayers.version>
-        <hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
+		<webjars-openlayers.version>2.13.1</webjars-openlayers.version>
+		<webjars-momentjs.version>2.4.0</webjars-momentjs.version>
+		<hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -145,11 +146,16 @@
 			<artifactId>angular-ui-bootstrap</artifactId>
 			<version>${webjars-angularjs-bootstrap.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>openlayers</artifactId>
-            <version>${webjars-openlayers.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>openlayers</artifactId>
+			<version>${webjars-openlayers.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>momentjs</artifactId>
+			<version>${webjars-momentjs.version}</version>
+		</dependency>
 
 		<!-- Sitemesh -->
 		<dependency>
@@ -157,7 +163,7 @@
 			<artifactId>sitemesh</artifactId>
 			<version>${sitemesh.version}</version>
 		</dependency>
-		
+
 		<!-- Hibernate Validator -->
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -243,25 +249,11 @@
 
 				</configuration>
 			</plugin>
-			<!--<plugin>
-				<groupId>com.kelveden</groupId>
-				<artifactId>maven-karma-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>start</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<configFile>${basedir}/src/test/webapp/static/js/ogpharvester.conf.js</configFile>
-					<browsers>PhantomJS</browsers>
-					<reporters>dots</reporters>
-					<colors>false</colors>
-					<autoWatch>false</autoWatch>
-				</configuration>
-			</plugin>-->
+			<!--<plugin> <groupId>com.kelveden</groupId> <artifactId>maven-karma-plugin</artifactId> 
+				<version>1.5</version> <executions> <execution> <goals> <goal>start</goal> 
+				</goals> </execution> </executions> <configuration> <configFile>${basedir}/src/test/webapp/static/js/ogpharvester.conf.js</configFile> 
+				<browsers>PhantomJS</browsers> <reporters>dots</reporters> <colors>false</colors> 
+				<autoWatch>false</autoWatch> </configuration> </plugin> -->
 
 		</plugins>
 	</build>

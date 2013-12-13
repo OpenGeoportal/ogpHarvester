@@ -13,7 +13,7 @@
 	</thead>
 	<tbody>
 		<tr data-ng-repeat="ingest in ingestPage.elements">
-			<td class="ingest-name">{{ingest.name}}</td>
+			<td><a href="#/editIngest/{{ingest.id}}" class="ingest-name">{{ingest.name}}</a></td>
 			<td><span data-ng-hide="ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></span> {{ingest.lastRun}}</td>
 			<td>{{ingest.nextRun}}</td>
 			<td>{{ingest.nameOgpRepository}}</td>

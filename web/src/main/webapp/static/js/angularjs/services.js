@@ -16,6 +16,11 @@
 					method: 'GET',
 					url: 'rest/ingests',
 					isArray: true
+				},
+				'getDetails': {
+					method: 'GET',
+					url: 'rest/ingests/:id/details',
+					isArray: false
 				}
 
 			});
@@ -147,6 +152,9 @@
 				},
 				validate: function() {
 
+				},
+				copy: function(sourceIngest) {
+					angular.copy(sourceIngest, ingest);
 				}
 			};
 		}]);

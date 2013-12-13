@@ -1,18 +1,19 @@
 /**
  *
  */
-(function () {
+(function() {
 	'use strict';
 
 	angular.module(
-		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'rcForm',  
-		                 'ui.bootstrap',
+		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'rcForm',
+			'ui.bootstrap',
 			'ogpHarvester.filters', 'ogpHarvester.services',
 			'ogpHarvester.services', 'ogpHarvester.directives',
-			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl'
+			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl',
+			'ogpHavester.controllers.editIngestCtrl'
 		]).config(
 		['$routeProvider', '$locationProvider',
-			function ($routeProvider, $locationProvider) {
+			function($routeProvider, $locationProvider) {
 				//$locationProvider.html5Mode(true);
 				$routeProvider.when('/manageIngests', {
 					templateUrl: 'resources/ingestsList.html',
@@ -31,6 +32,19 @@
 					templateUrl: 'resources/newIngestFormStep2.html',
 					controller: 'NewIngestCtrl'
 				});
+				$routeProvider.when('/editIngest/:id', {
+					templateUrl: 'resources/newIngestForm.html',
+					controller: 'NewIngestCtrl'
+				});
+				$routeProvider.when('/editIngest/:id/step2', {
+					templateUrl: 'resources/newIngestFormStep2.html',
+					controller: 'NewIngestCtrl'
+				});
+				$routeProvider.when('/editIngest/:id/:back', {
+					templateUrl: 'resources/newIngestForm.html',
+					controller: 'NewIngestCtrl'
+				});
+
 				$routeProvider.when('/admin', {
 					templateUrl: 'resources/admin.html',
 					controller: 'AdminCtrl'
@@ -41,7 +55,7 @@
 				});
 			}
 		]).config(['$translateProvider',
-		function ($translateProvider) {
+		function($translateProvider) {
 			$translateProvider.useStaticFilesLoader({
 				prefix: 'resources/locales/locale-',
 				suffix: '.json'
