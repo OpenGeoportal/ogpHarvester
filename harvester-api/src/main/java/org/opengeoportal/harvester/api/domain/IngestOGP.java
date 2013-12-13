@@ -41,8 +41,11 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
+
+import com.google.common.collect.Lists;
 
 @Entity
 @DiscriminatorValue("SOLR")
@@ -65,18 +68,18 @@ public class IngestOGP extends Ingest {
 	@Column
 	private String originator;
 
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name = "ingestogp_data_type", joinColumns = @JoinColumn(name = "ingest_id"))
 	@OrderColumn
 	@Column
 	@Enumerated(EnumType.STRING)
-	private List<DataType> dataTypes;
+	private List<DataType> dataTypes = Lists.newArrayList();
 
-	@ElementCollection
+	@ElementCollection(fetch=FetchType.EAGER)
 	@CollectionTable(name = "ingestogp_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
 	@Column(name = "repository_name")
 	@OrderColumn
-	private List<String> dataRepositories;
+	private List<String> dataRepositories = Lists.newArrayList();
 
 	@Column
 	private boolean excludeRestrictedData;
@@ -101,7 +104,7 @@ public class IngestOGP extends Ingest {
 	public IngestOGP() {
 		super();
 		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"geographicExtent", "themeKeyword", "placeKeyword",
+				"extent", "themeKeyword", "placeKeyword",
 				"webServices", "topic", "dateOfContent", "originator",
 				"dataType", "dataRepository" }));
 	}

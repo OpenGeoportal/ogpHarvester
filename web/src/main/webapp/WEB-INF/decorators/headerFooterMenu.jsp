@@ -137,6 +137,8 @@
 	<spring:url value="/static/js/angularjs/filters.js" var="filtersUrl" />
 	<spring:url value="/static/js/angularjs/directives.js"
 		var="directivesUrl" />
+	<spring:url value="/webjars/momentjs/2.4.0/min/moment.min.js" var="momentjsUrl" />
+	<script type="text/javascript" src="${momentjsUrl}"></script>
 	<script type="text/javascript" src="${angularjsUrl}"></script>
 	<!--<script src="${angularjsAnimateUrl}"></script>-->
 	<script type="text/javascript" src="${angularRouteUrl}"></script>

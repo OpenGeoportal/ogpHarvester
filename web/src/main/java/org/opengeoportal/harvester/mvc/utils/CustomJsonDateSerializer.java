@@ -1,5 +1,5 @@
-/*
- * IngestFormBean.java
+/**
+ * CustomDateSerializer.java
  *
  * Copyright (C) 2013
  *
@@ -25,54 +25,45 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.domain;
+package org.opengeoportal.harvester.mvc.utils;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 
-@Entity
-@DiscriminatorValue("WEBDAV")
-public class IngestWebDav extends Ingest {
+/**
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
+public class CustomJsonDateSerializer extends JsonSerializer<Date> {
 
-	private static final long serialVersionUID = -5488792457603165652L;
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
+	 * com.fasterxml.jackson.core.JsonGenerator,
+	 * com.fasterxml.jackson.databind.SerializerProvider)
+	 */
+	@Override
+	public void serialize(Date value, JsonGenerator jgen,
+			SerializerProvider provider) throws IOException,
+			JsonProcessingException {
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+		String formattedDate = null;
+		if (value != null) {
+			formattedDate = formatter.format(value);
+		}
 
-	@Column
-	@Temporal(TemporalType.DATE)
-	private Date dateFrom;
+		jgen.writeString(formattedDate);
 
-	@Column
-	@Temporal(TemporalType.DATE)
-	private Date dateTo;
-
-	public IngestWebDav() {
-		super();
-		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
-				"dateOfContent", "originator", "dataType", "dataRepository" }));
 	}
 
-	public Date getDateFrom() {
-		return dateFrom;
-	}
-
-	public void setDateFrom(Date dateFrom) {
-		this.dateFrom = dateFrom;
-	}
-
-	public Date getDateTo() {
-		return dateTo;
-	}
-
-	public void setDateTo(Date dateTo) {
-		this.dateTo = dateTo;
-	}
 }
