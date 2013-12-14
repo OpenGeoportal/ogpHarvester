@@ -5,6 +5,9 @@ jdk:
   - openjdk6
 node_js:
   - "0.10"
+cache:
+  directories:
+  - $HOME/.m2
 install:
   - npm install karma
   - npm install karma-jasmine
