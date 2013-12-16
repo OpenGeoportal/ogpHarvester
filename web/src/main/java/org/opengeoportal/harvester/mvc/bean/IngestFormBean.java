@@ -29,7 +29,6 @@
  */
 package org.opengeoportal.harvester.mvc.bean;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Date;
 import java.util.Map;
 
@@ -124,6 +123,8 @@ public class IngestFormBean {
 
 	private Frequency frequency;
 	private BoundingBox extent;
+	private boolean customRepoDeleted = false;
+	private String customRepoName;
 
 	/**
 	 * 
@@ -658,6 +659,22 @@ public class IngestFormBean {
 
 	public void setScheduled(Boolean scheduled) {
 		this.scheduled = scheduled;
+	}
+
+	public boolean isCustomRepoDeleted() {
+		return customRepoDeleted;
+	}
+
+	public void setCustomRepoDeleted(boolean customRepoDeleted) {
+		this.customRepoDeleted = customRepoDeleted;
+	}
+
+	public String getCustomRepoName() {
+		return customRepoName;
+	}
+
+	public void setCustomRepoName(String customRepoName) {
+		this.customRepoName = customRepoName;
 	}
 
 }

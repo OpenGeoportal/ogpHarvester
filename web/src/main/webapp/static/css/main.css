@@ -507,3 +507,11 @@ input.form-control {
   padding:0 10px;
 }
 
+.help-block-text-warning {
+  color: #c09853;
+}
+
+.help-block-text-warning:hover {
+  color: #a47e3c;
+}
+

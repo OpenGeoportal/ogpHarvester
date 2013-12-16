@@ -1,6 +1,5 @@
 package org.opengeoportal.harvester.mvc;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,7 +11,6 @@ import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
-import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
 import org.opengeoportal.harvester.api.domain.InstanceType;
@@ -48,7 +46,9 @@ public class IngestController {
 		if (updating) {
 			ingest = ingestService.findById(ingestFormBean.getId());
 			if (ingest == null) {
-				throw new ItemNotFoundException("Cannot find an Ingest with id "+ ingestFormBean.getId());
+				throw new ItemNotFoundException(
+						"Cannot find an Ingest with id "
+								+ ingestFormBean.getId());
 			}
 		} else {
 			switch (instanceType) {
@@ -61,21 +61,20 @@ public class IngestController {
 			case CSW:
 				ingest = new IngestCsw();
 				break;
-			case WEBDAV: 
+			case WEBDAV:
 				ingest = new IngestWebDav();
 				break;
 
 			default:
-				throw new InvalidParameterValue(ingestFormBean.getTypeOfInstance()
-						.name()
+				throw new InvalidParameterValue(ingestFormBean
+						.getTypeOfInstance().name()
 						+ " is not a valid instance type. Please add a new "
 						+ "case to the switch instruction");
 			}
-			
-		}
-		
-		boolean usesCustomRepo = ingestFormBean.getCatalogOfServices() != null;
 
+		}
+
+		boolean usesCustomRepo = ingestFormBean.getCatalogOfServices() != null;
 
 		switch (ingestFormBean.getTypeOfInstance()) {
 		case SOLR:
@@ -105,7 +104,7 @@ public class IngestController {
 
 			break;
 		case GEONETWORK:
-			IngestGeonetwork ingestGN =(IngestGeonetwork) ingest;
+			IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
 
 			ingestGN.setAbstractText(ingestFormBean.getGnAbstractText());
 			ingestGN.setFreeText(ingestFormBean.getGnFreeText());
@@ -113,7 +112,7 @@ public class IngestController {
 					.getGnSources()));
 			ingestGN.setKeyword(ingestFormBean.getGnKeyword());
 			ingestGN.setTitle(ingestFormBean.getGnTitle());
-;
+			;
 			break;
 		case CSW:
 			IngestCsw ingestCsw = (IngestCsw) ingest;
@@ -155,6 +154,7 @@ public class IngestController {
 		ingest.setScheduled(true);
 		if (!usesCustomRepo) {
 			ingest.setUrl(ingestFormBean.getUrl());
+			ingest.setRepository(null);
 		}
 		for (Entry<String, Boolean> requiredField : ingestFormBean
 				.getRequiredFields().entrySet()) {
@@ -188,14 +188,14 @@ public class IngestController {
 		// Check if ingest exist
 		Ingest ingest = ingestService.findById(id);
 		if (ingest == null) {
-			throw new ItemNotFoundException(
-					"Cannot find an ingest with id " + id);
+			throw new ItemNotFoundException("Cannot find an ingest with id "
+					+ id);
 		}
 
 		if (ingest instanceof IngestOGP) {
 			IngestOGP ingestOGP = (IngestOGP) ingest;
 			result.setTypeOfInstance(InstanceType.SOLR);
-		
+
 			BoundingBox bbox = new BoundingBox();
 			if (ingestOGP.getBboxEast() != null
 					&& ingestOGP.getBboxNorth() != null
@@ -273,15 +273,19 @@ public class IngestController {
 		result.setUrl(ingest.getUrl());
 		CustomRepository repository = ingest.getRepository();
 		if (repository != null) {
-			result.setCatalogOfServices(repository.getId());
+			if (!repository.isDeleted()) {
+				result.setCatalogOfServices(repository.getId());
+			}
+			result.setCustomRepoName(repository.getName());
+			result.setCustomRepoDeleted(repository.isDeleted());
 		}
-		
-		Map<String, Boolean> requiredFields = result.getRequiredFields(); 
+
+		Map<String, Boolean> requiredFields = result.getRequiredFields();
 		if (requiredFields == null) {
 			requiredFields = Maps.newHashMap();
 			result.setRequiredFields(requiredFields);
 		}
-		for(String requiredField : ingest.getRequiredFields()) {
+		for (String requiredField : ingest.getRequiredFields()) {
 			requiredFields.put(requiredField, Boolean.TRUE);
 		}
 

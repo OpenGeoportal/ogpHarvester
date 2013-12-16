@@ -297,8 +297,10 @@
 			 * Clean url if no source is selected
 			 */
 			$scope.cleanServiceUrl = function() {
-				if ($scope.ingest.catalogOfServices !== null) {
+				if ($scope.ingest.catalogOfServices != null) {
 					$scope.ingest.url = null;
+				} else {
+					$scope.newIngest.url.$dirty = true;
 				}
 			};
 
@@ -335,7 +337,7 @@
 			$scope.getRemoteSourcesByRepoId = function() {
 				var repoType = $scope.ingest.typeOfInstance;
 				var repoId = $scope.ingest.catalogOfServices;
-				if (repoId !== null) {
+				if (repoId != null) {
 					remoteRepositories.getRemoteSourcesByRepoId(repoId).
 					success(function(data) {
 						$log.info("Remote sources by Id " + JSON.stringify(data));
