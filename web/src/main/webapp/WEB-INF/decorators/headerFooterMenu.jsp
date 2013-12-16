@@ -38,16 +38,12 @@
 <spring:url value="/webjars/bootstrap/3.0.2/js/bootstrap.min.js"
 	var="bootstrapJs" />
 <script src="${bootstrapJs}"></script>
-<spring:url value="/static/css/bootstrap-datetimepicker.min.css"
-	var="datetimepicker" />
-<link rel="stylesheet" href="${datetimepicker}">
+
 
 <spring:url value="/static/css/bootstrap-multiselect.css"
 	var="multiselect" />
 <link rel="stylesheet" href="${multiselect}">
-<spring:url value="/static/js/bootstrap-datetimepicker.js"
-	var="datetimepickerJS" />
-<script type="text/javascript" src="${datetimepickerJS}"></script>
+
 <spring:url value="/static/js/bootstrap-multiselect.js"
 	var="multiselectJS" />
 <script type="text/javascript" src="${multiselectJS}"></script>

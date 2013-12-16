@@ -12,13 +12,16 @@
 
             <div class="clearfix"></div>
             <div class="form-group  col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.beginDate)}">
-                <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label>           
-                <div class='input-group date' name="beginDate" id='beginDate' data-ng-model="ingest.beginDate" data-datetimepicker required>
-                    <input class="form-control" ></input>
-                    <span class="input-group-addon"><span
-                        class="glyphicon glyphicon-calendar"></span> </span>
-                </div>
-                
+                <label class="control-label" for="beginDate" data-translate="INGEST_FORM.STEP2_BEGIN_INGEST_ON"></label> 
+                <div class="input-group date">
+                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
+                        data-ng-model="ingest.beginDate" data-datepicker-options="dateOptions" 
+                        data-is-open="dtOpened['beginDate']"
+                        name="beginDate" id="beginDate"></input>
+                    <span class="input-group-addon" data-ng-click="open('beginDate')">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>                 
             </div>
 			<div class="clearfix"></div>
             <div class="form-group col-md-4" data-ng-class="{'has-error': rc.form.needsAttention(form.frequency)}">
