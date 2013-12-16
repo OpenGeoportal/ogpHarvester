@@ -12,11 +12,17 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    List<String> preferredOriginatorKey = new ArrayList<String>();
+    List<String> preferredPublisherKey = new ArrayList<String>();
+
 
     public static enum Iso19139Tag implements Tag {
         Title("title", "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString"),
@@ -48,11 +54,31 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
         }
     }
 
+    public Iso19139MetadataParser() {
+        List<String> originatorKeys = new ArrayList<String>();
+        List<String> publisherKeys = new ArrayList<String>();
+
+        originatorKeys.add("owner");
+        originatorKeys.add("principalInvestigator");
+        originatorKeys.add("author");
+        originatorKeys.add("originator");
+
+        publisherKeys.add("processor");
+        publisherKeys.add("custodian");
+        publisherKeys.add("resourceProvider");
+        publisherKeys.add("distributor");
+        publisherKeys.add("publisher");
+
+        preferredOriginatorKey.addAll(publisherKeys);
+        preferredOriginatorKey.addAll(originatorKeys);
+
+        preferredPublisherKey.addAll(originatorKeys);
+        preferredPublisherKey.addAll(publisherKeys);
+    }
 
     @Override
     void handleOriginator() {
-        // TODO: Implement
-        //prefer CI_RoleCode originator, author, principalInvestigator, owner
+
         /* Xml to parse:
          * <gmd:contact>
             <gmd:CI_ResponsibleParty>
@@ -107,6 +133,109 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
             </gmd:CI_ResponsibleParty>
           </gmd:contact>
          */
+
+        Map<String, Node> originatorsTable = new HashMap<String,Node>();
+        String contactsRoleXPath = "/gmd:MD_Metadata/gmd:contact/gmd:CI_ResponsibleParty/gmd:role/gmd:CI_RoleCode";
+
+        try {
+            NodeList roleNodes = (NodeList) xPath.evaluate(contactsRoleXPath, document, XPathConstants.NODESET);
+
+            for(int i = 0 ; i < roleNodes.getLength(); i++) {
+                Node roleNode = roleNodes.item(i);
+
+                String roleCode = roleNode.getAttributes().getNamedItem("codeListValue").getNodeValue();
+                originatorsTable.put(roleCode, roleNode);
+                logger.debug("citation role: " + roleCode);
+            }
+
+            Node originatorNode = null;
+            Node publisherNode = null;
+
+            String originatorValue = "";
+            String publisherValue = "";
+
+            //prefer CI_RoleCode originator, author, principalInvestigator, owner in inverse order of preference
+            for (String key: preferredOriginatorKey){
+                if (originatorsTable.containsKey(key)){
+                    originatorNode = originatorsTable.get(key);
+                }
+            }
+
+            if (originatorNode != null){
+                try {
+                    originatorValue = getCitationInfo(originatorNode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //prefer CI_RoleCode publisher, distributor, resourceProvider, custodian, processor in inverse order of preference
+            for (String key: preferredPublisherKey){
+                if (originatorsTable.containsKey(key)){
+                    publisherNode = originatorsTable.get(key);
+                }
+            }
+
+
+            if (publisherNode != null){
+                try {
+                    publisherValue = getCitationInfo(publisherNode);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            try {
+                this.metadataParserResponse.getMetadata().setOriginator(originatorValue);
+            } catch (Exception e) {
+                logger.error("handleOriginator: " + e.getMessage());
+                this.metadataParserResponse.addError("Originator", "CI_ResponsibleParty", e.getClass().getName(), e.getMessage());
+            }
+            try {
+                this.metadataParserResponse.getMetadata().setPublisher(publisherValue);
+            } catch (Exception e) {
+                logger.error("handlePublisher: " + e.getMessage());
+                this.metadataParserResponse.addError("Publisher", "CI_ResponsibleParty", e.getClass().getName(), e.getMessage());
+            }
+
+        } catch (Exception ex) {
+
+        }
+    }
+
+
+    private String getCitationInfo(Node node) throws Exception {
+        /*<gmd:individualName>
+        <gco:CharacterString>Francesca Perez</gco:CharacterString>
+        </gmd:individualName>
+        <gmd:organisationName>
+        <gco:CharacterString>ITHACA - Information Technology for Humanitarian Assistance, Cooperation and Action</gco:CharacterString>
+        </gmd:organisationName>
+        <gmd:positionName gco:nilReason="missing">
+        <gco:CharacterString />
+        </gmd:positionName>*/
+
+        String citationInfoValue = "";
+
+        Node parentNode = node.getParentNode().getParentNode();
+
+        NodeList childNodes = parentNode.getChildNodes();
+
+        for (int i = 0; i < childNodes.getLength(); i++){
+            Node currentNode = childNodes.item(i);
+            String nodeName = currentNode.getNodeName();
+            if (nodeName.contains("organisationName")){
+                citationInfoValue = currentNode.getTextContent();
+                break;
+            } else if (nodeName.contains("individualName")){
+                citationInfoValue = currentNode.getTextContent();
+            } else if (nodeName.contains("positionName")){
+                citationInfoValue = currentNode.getTextContent();
+            }
+        }
+
+
+        return citationInfoValue.trim();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.opengeoportal.harvester.api.metadata;
+package org.opengeoportal.harvester.api.metadata.parser;
 
 
 import org.junit.After;
@@ -63,7 +63,8 @@ public class Iso19139MetadataParserTest {
             Assert.assertEquals("farming", metadata.getTopic());
             Assert.assertEquals("2008", metadata.getContentDate());
 
-
+            Assert.assertEquals("Author organisation", metadata.getOriginator());
+            Assert.assertEquals("Publisher organisation", metadata.getPublisher());
         } catch (Exception ex) {
             ex.printStackTrace();
             Assert.fail();
