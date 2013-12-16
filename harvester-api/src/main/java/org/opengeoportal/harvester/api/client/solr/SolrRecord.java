@@ -1,6 +1,8 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
+import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 
 import java.util.HashMap;
@@ -277,17 +279,36 @@ public class SolrRecord {
         record.setPublisher(metadata.getPublisher());
         record.setInstitution(metadata.getInstitution());
         record.setAccess(metadata.getAccess().toString());
-        record.setMinX(Double.toString(metadata.getBounds().getMinX()));
-        record.setMaxX(Double.toString(metadata.getBounds().getMaxX()));
-        record.setMinY(Double.toString(metadata.getBounds().getMinY()));
-        record.setMaxY(Double.toString(metadata.getBounds().getMaxY()));
-        record.setArea(metadata.getBounds().getArea().toString());
+
+        BoundingBox bounds = metadata.getBounds();
+        if (bounds.isValid()) {
+            record.setMinX(Double.toString(bounds.getMinX()));
+            record.setMaxX(Double.toString(bounds.getMaxX()));
+            record.setMinY(Double.toString(bounds.getMinY()));
+            record.setMaxY(Double.toString(bounds.getMaxY()));
+
+            //calculated fields
+            record.setHalfHeight(Double.toString(bounds.getHeight()/2.));
+            record.setHalfWidth(Double.toString(bounds.getWidth()/2.));
+
+            record.setCenterX(Double.toString(bounds.getCenterX()));
+            record.setCenterY(Double.toString(bounds.getCenterY()));
+
+            record.setArea(Double.toString(bounds.getArea()));
+        }
+
         record.setContentDate(metadata.getContentDate());
         record.setPlaceKeywords(metadata.getPlaceKeywordsAsString());
         record.setThemeKeywords(metadata.getThemeKeywordsAsString());
         record.setDataType(metadata.getGeometryType().toString());
 
-        // TODO: Complete mapping
+        record.setAccess(metadata.getAccess().toString());
+        if (StringUtils.isNotEmpty(metadata.getWorkspaceName()))
+            record.setWorkspaceName(metadata.getWorkspaceName().toString());
+        record.setGeoreferenced(Boolean.toString(metadata.getGeoreferenced()));
+
+        // TODO: Check
+        record.setAvailability("online");
 
         return record;
     }

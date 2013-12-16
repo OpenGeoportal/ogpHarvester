@@ -31,6 +31,7 @@ public class Metadata {
         setId(layerId);
         themeKeywords = new ArrayList<ThemeKeywords>();
         placeKeywords = new ArrayList<PlaceKeywords>();
+        georeferenced = Boolean.FALSE;
 
     }
     public Metadata(){

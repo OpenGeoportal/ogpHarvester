@@ -136,5 +136,26 @@ public class BoundingBox {
     private Double getLength(Double a, Double b){
         return Math.abs(a - b);
     }
-	
+
+    public Double getHeight(){
+        return Math.abs(this.minY - this.maxY);
+    }
+
+    public Double getWidth(){
+        return Math.abs(this.minX - this.maxX);
+
+    }
+
+    public Double getCenterX() {
+        return getCenter(this.minX, this.maxX);
+    }
+
+    public Double getCenterY() {
+        return getCenter(this.minY, this.maxY);
+    }
+
+    private  Double getCenter(Double a, Double b){
+        return (a + b)/2.;
+    }
+
 }

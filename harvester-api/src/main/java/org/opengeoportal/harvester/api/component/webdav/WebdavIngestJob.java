@@ -5,6 +5,7 @@ import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
 import org.jdom.JDOMException;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
+import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
@@ -94,11 +95,17 @@ public class WebdavIngestJob extends BaseIngestJob {
             MetadataParser parser = new Iso19139MetadataParser();
             MetadataParserResponse parserResult = parser.parse(document);
 
-            boolean valid = metadataValidator.validate(parserResult.getMetadata(), report);
-            if (valid) metadataIngester.ingest(parserResult.getMetadata());
+            Metadata metadata = parserResult.getMetadata();
+            metadata.setInstitution(ingest.getNameOgpRepository());
+
+            boolean valid = metadataValidator.validate(metadata, report);
+            if (valid) {
+                metadataIngester.ingest(metadata);
+            }
 
         } catch (Exception ex1) {
             // TODO: Add error in the ingest report
+            ex1.printStackTrace();
         }
     }
 

@@ -252,7 +252,9 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
          */
         Tag tag = Iso19139Tag.LayerName;
         try {
-            this.metadataParserResponse.getMetadata().setOwsName(getDocumentValue(tag));
+            String uuidVal = getDocumentValue(tag);
+            this.metadataParserResponse.getMetadata().setOwsName(uuidVal);
+            this.metadataParserResponse.getMetadata().setId(uuidVal);
         } catch (Exception e) {
             logger.error("handleLayerName: " + e.getMessage());
             this.metadataParserResponse.addError(tag.toString(), tag.getTagName(), e.getClass().getName(), e.getMessage());

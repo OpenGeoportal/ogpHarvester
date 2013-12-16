@@ -29,8 +29,10 @@
  */
 package org.opengeoportal.harvester.api.client.geonetwork;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.jdom.output.DOMOutputter;
 
 import java.net.URL;
 import java.util.AbstractMap;
@@ -92,7 +94,7 @@ public class GeoNetworkClient {
         return sources;
     }
 
-    public Element retrieveMetadata(int metadataId) throws Exception {
+    public org.w3c.dom.Document retrieveMetadata(int metadataId) throws Exception {
         request.setAddress(serverUrl + "/srv/eng/xml.metadata.get");
         request.clearParams();
         request.addParam("id", metadataId);
@@ -103,7 +105,13 @@ public class GeoNetworkClient {
 
             if (info != null) info.detach();
 
-            return md;
+
+            Document doc = new Document(md);
+
+            DOMOutputter domOutputter = new DOMOutputter();
+            org.w3c.dom.Document document =  domOutputter.output(doc);
+
+            return document;
         } catch(Exception e) {
             // TODO: Log error in ingest report
 

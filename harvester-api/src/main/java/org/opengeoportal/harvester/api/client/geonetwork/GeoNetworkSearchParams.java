@@ -46,10 +46,10 @@ public class GeoNetworkSearchParams {
     public Element toXml() {
         Element req = new Element("request");
 
-        add(req, "any", this.freeText);
-        add(req, "title", this.title);
-        add(req, "abstract", this.abstractText);
-        add(req, "themekey", this.keyword);
+        add(req, "any", (this.freeText != null)?this.freeText:"");
+        add(req, "title", (this.title != null)?this.title:"");
+        add(req, "abstract", (this.abstractText != null)?this.abstractText:"");
+        add(req, "themekey", (this.keyword != null)?this.keyword:"");
         add(req, "siteId", this.siteId);
         add(req, "from", this.from + "");
         add(req, "to", (this.from + this.pageSize) + "");
