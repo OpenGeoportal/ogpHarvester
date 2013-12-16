@@ -130,7 +130,8 @@
         "BBOX_NORTH_LABEL": "N: ",
         "BBOX_WEST_LABEL": "W: ",
         "BBOX_SOUTH_LABEL": "S: ",
-        "BBOX_EAST_LABEL": "E: "
+        "BBOX_EAST_LABEL": "E: ",
+        "REPO_DELETED": "The previous repository \"{{customRepoName}}\" has been deleted. You can select another one or enter an URL."
 
 	},
 
