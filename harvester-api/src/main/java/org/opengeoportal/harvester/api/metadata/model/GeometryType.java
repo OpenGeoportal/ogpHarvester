@@ -19,7 +19,7 @@ public enum GeometryType {
 	
 		public static GeometryType parseGeometryType(String geometryString){
 			geometryString = geometryString.trim();
-			geometryString.replace(" ", ""); //remove spaces
+			geometryString = geometryString.replace(" ", ""); //remove spaces
 			for (GeometryType geomType : GeometryType.values()){
 				if (geomType.toString().equalsIgnoreCase(geometryString)){
 					return geomType;
