@@ -4,6 +4,7 @@
     
     <h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
     <form name="newIngest" data-rc-submit="step2()" novalidate>
+    	<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
        
         <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.typeOfInstance)}">
             <label class="control-label" for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
@@ -28,14 +29,16 @@
                 data-ng-required="!ingest.catalogOfServices"></input>
         </div> 
 
-        <div class="form-group multiselect col-md-7" data-ng-hide="ingest.typeOfInstance === 'SOLR'">
+        <div class="form-group multiselect col-md-7" data-ng-hide="ingest.typeOfInstance === 'SOLR'"
+        	data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.nameOgpRepository)}">
             <label class="control-label" for="nameOgpRepository" data-translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
                 data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
                 class="glyphicon glyphicon-question-sign black"></span></a>
-            <select class="form-control" id="nameOgpRepository" 
+            <select class="form-control" id="nameOgpRepository" name="nameOgpRepository"
                 data-ng-model="ingest.nameOgpRepository"
                 data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
-                data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate">
+                data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate"
+                data-ng-required="ingest.typeOfInstance !== 'SOLR'">
             </select>
         </div>
         <div class="clearfix"></div>

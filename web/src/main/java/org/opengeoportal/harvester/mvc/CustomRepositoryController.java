@@ -198,10 +198,21 @@ public class CustomRepositoryController {
 
 	@RequestMapping(value = "/rest/localSolr/institutions")
 	@ResponseBody
-	public List<SimpleEntry<String, String>> getLocalSolrInstitutions() {
-		List<SimpleEntry<String, String>> institutions = repositoryService
-				.getLocalSolrInstitutions();
-		return institutions;
+	public JsonResponse getLocalSolrInstitutions() {
+		JsonResponse response = new JsonResponse();
+		try {
+			List<SimpleEntry<String, String>> institutions = repositoryService
+					.getLocalSolrInstitutions();
+			response.setStatus(STATUS.SUCCESS);
+			response.setResult(institutions);
+		} catch (Exception e) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_CONNECTING_TO_LOCAL_SOLR");
+			response.setResult(errorMap);
+		}
+
+		return response;
 	}
 
 	@RequestMapping(value = "/rest/checkIfOtherRepoExist")

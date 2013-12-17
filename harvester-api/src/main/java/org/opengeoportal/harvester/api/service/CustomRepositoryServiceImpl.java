@@ -37,6 +37,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
+import org.opengeoportal.harvester.api.client.solr.SolrClient;
 import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
@@ -57,6 +58,8 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	private CustomRepositoryRepository customRepositoryRepository;
 	@Resource
 	private IngestService ingestService;
+	@Resource
+	private SolrClient localSolrClient;
 
 	@Override
 	@Transactional
@@ -65,7 +68,7 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	}
 
 	@Override
-	@Transactional(readOnly=false)
+	@Transactional(readOnly = false)
 	public void logicalDelete(Long id) {
 		CustomRepository cRepository = customRepositoryRepository.findOne(id);
 		if (cRepository != null) {
@@ -96,12 +99,14 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	 * getAllGroupByType()
 	 */
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
 		Sort typeSortAsc = new Sort(new Order(
-				CustomRepository.COLUMN_SERVICE_TYPE), new Order(CustomRepository.COLUMN_NAME));
-		List<CustomRepository> repositories = customRepositoryRepository.findByDeletedFalse(typeSortAsc);
-			
+				CustomRepository.COLUMN_SERVICE_TYPE), new Order(
+				CustomRepository.COLUMN_NAME));
+		List<CustomRepository> repositories = customRepositoryRepository
+				.findByDeletedFalse(typeSortAsc);
+
 		ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
 				.create();
 		for (CustomRepository repository : repositories) {
@@ -156,12 +161,10 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	public List<SimpleEntry<String, String>> getLocalSolrInstitutions() {
 		// TODO connect to local Solr index and get the institutions
 		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
-		result.add(new SimpleEntry<String, String>("Tufts", "Tufts"));
-		result.add(new SimpleEntry<String, String>("Harvard", "Harvard"));
-		result.add(new SimpleEntry<String, String>("Berkeley", "Berkeley"));
-		result.add(new SimpleEntry<String, String>("MIT", "MIT"));
-		result.add(new SimpleEntry<String, String>("MassGIS", "MassGIS"));
-
+		List<String> institutionsList = localSolrClient.getInstitutions();
+		for (String institution : institutionsList) {
+			result.add(new SimpleEntry<String, String>(institution, institution));
+		}
 		return result;
 	}
 

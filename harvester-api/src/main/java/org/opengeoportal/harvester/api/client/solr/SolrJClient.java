@@ -1,29 +1,43 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.TermsResponse;
+import org.apache.solr.client.solrj.response.TermsResponse.Term;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
+import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import com.google.common.collect.Sets;
 
-public class SolrJClient implements SolrClient{
-	
-	//private String solrUrl;
+public class SolrJClient implements SolrClient {
+
+	/**
+	 * 
+	 */
+	private static final String INSTITUTIONS_SORT_FIELD = "InstitutionSort";
+
+	// private String solrUrl;
 	private HttpSolrServer solrServer;
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	public SolrJClient(String solrUrl) {
 		HttpSolrServer solr = new HttpSolrServer(solrUrl);
 		this.solrServer = solr;
 	}
-	
-	public HttpSolrServer getSolrServer(){
+
+	public HttpSolrServer getSolrServer() {
 		return solrServer;
 	}
 
@@ -33,40 +47,41 @@ public class SolrJClient implements SolrClient{
 			return successResponse(updateResponse);
 		} catch (SolrServerException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Error in Sorl commit", e);
+
 			return false;
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("IOExcpetion when performing Solr commit operation", e);
 			return false;
 
 		}
 
 	}
 
-	private Boolean successResponse(UpdateResponse updateResponse){
-		if (updateResponse.getStatus() == 200){
+	private Boolean successResponse(UpdateResponse updateResponse) {
+		if (updateResponse.getStatus() == HttpStatus.SC_OK) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	public String delete(String[] layerIds) throws Exception {
-		//List<String> ids = Arrays.asList(layerIds);
+		// List<String> ids = Arrays.asList(layerIds);
 		String query = "";
-		for (String layerId : layerIds){
+		for (String layerId : layerIds) {
 			query += "LayerId:" + layerId.trim();
 			query += " OR ";
 		}
-		if (query.length() > 0){
+		if (query.length() > 0) {
 			query = query.substring(0, query.lastIndexOf(" OR "));
 		}
-		//logger.info(query);
+		// logger.info(query);
 		UpdateResponse updateResponse = solrServer.deleteByQuery(query);
-		//UpdateResponse updateResponse = solrServer.deleteById(ids);
-		if (successResponse(updateResponse)){
+		// UpdateResponse updateResponse = solrServer.deleteById(ids);
+		if (successResponse(updateResponse)) {
 			return updateResponse.toString();
 		}
 		return "";
@@ -74,14 +89,16 @@ public class SolrJClient implements SolrClient{
 
 	public Boolean verifyIngest(String layerId) throws Exception {
 		SolrQuery query = new SolrQuery();
-	    query.setQuery("LayerId:" + layerId);
+		query.setQuery("LayerId:" + layerId);
 		QueryResponse queryResponse = solrServer.query(query);
-		int numFound = Integer.getInteger(queryResponse.getResponseHeader().get("numFound").toString());
-		if (numFound == 1){
+		int numFound = Integer.getInteger(queryResponse.getResponseHeader()
+				.get("numFound").toString());
+		if (numFound == 1) {
 			return true;
 		} else {
-			if (numFound > 1){
-				throw new Exception("There is more than 1 layer with LayerId:" + layerId);
+			if (numFound > 1) {
+				throw new Exception("There is more than 1 layer with LayerId:"
+						+ layerId);
 			} else {
 				return false;
 			}
@@ -98,19 +115,48 @@ public class SolrJClient implements SolrClient{
 			logger.debug("Status code: " + Integer.toString(status));
 
 		} catch (IOException e) {
-			logger.error("IO Exception trying to add Bean");
-			e.printStackTrace();
+			logger.error("IO Exception trying to add Bean", e);
 		} catch (SolrServerException e) {
-			logger.error("SolrServer Exception trying to add Bean");
-			e.printStackTrace();
-		} catch (SolrException e){
-			logger.error("SolrException: SolrRecord values =" + solrRecord.toString());
-		} catch (Exception e){
-			logger.error("Unknown Exception trying to add Bean");
-			e.printStackTrace();
+			logger.error("SolrServer Exception trying to add Bean", e);
+		} catch (SolrException e) {
+			logger.error(
+					"SolrException: SolrRecord values ="
+							+ solrRecord.toString(), e);
+		} catch (Exception e) {
+			logger.error("Unknown Exception trying to add Bean", e);
 		}
 		logger.info("committing add to Solr");
 		commit();
 		return status;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.client.solr.SolrClient#getInstitutions()
+	 */
+	@Override
+	public List<String> getInstitutions() {
+		SolrQuery query = new SolrQuery()
+				.addTermsField(INSTITUTIONS_SORT_FIELD)
+				.setRequestHandler("/terms").setTerms(true);
+		Set<String> institutionsSet = Sets.newTreeSet();
+		try {
+			QueryResponse response = solrServer.query(query);
+			TermsResponse termsResponse = response.getTermsResponse();
+			List<Term> termList = termsResponse
+					.getTerms(INSTITUTIONS_SORT_FIELD);
+			for (Term term : termList) {
+				institutionsSet.add(term.getTerm());
+			}
+
+		} catch (SolrServerException e) {
+			logger.error("Error getting Solr institutions list", e);
+			throw new OgpSorlException("Error getting Solr institutions list",
+					e);
+
+		}
+		return new ArrayList<String>(institutionsSet);
 	};
 }
