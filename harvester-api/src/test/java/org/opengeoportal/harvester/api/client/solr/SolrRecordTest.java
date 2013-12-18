@@ -1,5 +1,8 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import static org.junit.Assert.*;
+import static org.junit.matchers.JUnitMatchers.*;
+import static org.hamcrest.Matchers.*;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -10,8 +13,11 @@ import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.util.XmlUtil;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 public class SolrRecordTest {
     private InputStream in = null;
@@ -58,5 +64,16 @@ public class SolrRecordTest {
             ex.printStackTrace();
             Assert.fail();
         }
+    }
+    
+    @Test
+    public void testGetInstitutions() {
+    	SolrClient client = new SolrJClient("http://geodata.tufts.edu/solr");
+    	List<String> expected = Lists.newArrayList("Berkeley", "Harvard", "MIT", "MassGIS", "Tufts");
+    	List<String> result = client.getInstitutions();
+    	
+    	assertThat("Returned institution list does not contain the expected elements", result,
+    			 equalTo(expected));
+    	
     }
 }

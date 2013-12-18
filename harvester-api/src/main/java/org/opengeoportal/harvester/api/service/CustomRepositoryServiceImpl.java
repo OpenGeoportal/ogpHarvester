@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -37,9 +38,16 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
+import org.opengeoportal.harvester.api.client.solr.SolrClient;
+import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.dao.CustomRepositoryRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.exception.BadDatabaseContentsException;
+import org.opengeoportal.harvester.api.exception.GeonetworkException;
+import org.opengeoportal.harvester.api.exception.OgpSorlException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -52,6 +60,8 @@ import com.google.common.collect.ListMultimap;
 
 @Service
 public class CustomRepositoryServiceImpl implements CustomRepositoryService {
+	private Logger logger = LoggerFactory
+			.getLogger(CustomRepositoryServiceImpl.class);
 
 	@Resource
 	private CustomRepositoryRepository customRepositoryRepository;
@@ -65,7 +75,7 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	}
 
 	@Override
-	@Transactional(readOnly=false)
+	@Transactional(readOnly = false)
 	public void logicalDelete(Long id) {
 		CustomRepository cRepository = customRepositoryRepository.findOne(id);
 		if (cRepository != null) {
@@ -96,12 +106,14 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 	 * getAllGroupByType()
 	 */
 	@Override
-	@Transactional(readOnly=true)
+	@Transactional(readOnly = true)
 	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
 		Sort typeSortAsc = new Sort(new Order(
-				CustomRepository.COLUMN_SERVICE_TYPE), new Order(CustomRepository.COLUMN_NAME));
-		List<CustomRepository> repositories = customRepositoryRepository.findByDeletedFalse(typeSortAsc);
-			
+				CustomRepository.COLUMN_SERVICE_TYPE), new Order(
+				CustomRepository.COLUMN_NAME));
+		List<CustomRepository> repositories = customRepositoryRepository
+				.findByDeletedFalse(typeSortAsc);
+
 		ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
 				.create();
 		for (CustomRepository repository : repositories) {
@@ -125,6 +137,8 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 
 		if (repoType == InstanceType.GEONETWORK) {
 			result = retrieveGeoNetworkSources(url);
+		} else if (repoType == InstanceType.SOLR) {
+			result = retrieveSolrInstitutions(url);
 		} else {
 			// TODO connect to url, parse response, and search remote origins.
 			// Build
@@ -146,22 +160,26 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
-	 * getLocalSolrInstitutions()
+	/**
+	 * @param url
+	 * @return
 	 */
-	@Override
-	public List<SimpleEntry<String, String>> getLocalSolrInstitutions() {
-		// TODO connect to local Solr index and get the institutions
+	private List<SimpleEntry<String, String>> retrieveSolrInstitutions(URL url) {
 		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
-		result.add(new SimpleEntry<String, String>("Tufts", "Tufts"));
-		result.add(new SimpleEntry<String, String>("Harvard", "Harvard"));
-		result.add(new SimpleEntry<String, String>("Berkeley", "Berkeley"));
-		result.add(new SimpleEntry<String, String>("MIT", "MIT"));
-		result.add(new SimpleEntry<String, String>("MassGIS", "MassGIS"));
-
+		SolrClient solrClient = new SolrJClient(url.toString());
+		try {
+			List<String> institutionsList = solrClient.getInstitutions();
+			for (String institution : institutionsList) {
+				result.add(new SimpleEntry<String, String>(institution,
+						institution));
+			}
+		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Can not retrieve institutions from " + url, e);
+			}
+			throw new OgpSorlException("Can not retrieve institutions from "
+					+ url, e);
+		}
 		return result;
 	}
 
@@ -180,14 +198,13 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 		if (repository != null) {
 			String url = repository.getUrl();
 			InstanceType serviceType = repository.getServiceType();
-
-			// TODO with the repository URL and its type, fecth the URL and look
-			// for remote sources
-			for (int i = 0; i < 6; i++) {
-				result.add(new SimpleEntry<String, String>("guid" + i,
-						"Remote source " + serviceType.name() + " " + i));
+			try {
+				result = getRemoteRepositories(serviceType, new URL(url));
+			} catch (MalformedURLException e) {
+				throw new BadDatabaseContentsException(
+						"Cannot parse the url stored in database for repository "
+								+ repoId + " (" + url + ")", e);
 			}
-
 		}
 		return result;
 	}
@@ -204,6 +221,13 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 		return customRepositoryRepository.findOne(id);
 	}
 
+	/**
+	 * Retrieve Geonetwork remote sources
+	 * 
+	 * @param url
+	 *            service URL, for example http://www.example.com/geonetwork.
+	 * @return
+	 */
 	private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(URL url) {
 		List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
 
@@ -212,8 +236,14 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 
 			sources = gnClient.getSources();
 		} catch (Exception e) {
-			// TODO handle exception and return error message
-			e.printStackTrace();
+			if (logger.isDebugEnabled()) {
+				logger.debug(
+						"Cannot retrieve remote Geonetwork sources for server "
+								+ url, e);
+			}
+			throw new GeonetworkException(
+					"Cannot retrieve remote Geonetwork sources for server "
+							+ url, e);
 		}
 
 		return sources;

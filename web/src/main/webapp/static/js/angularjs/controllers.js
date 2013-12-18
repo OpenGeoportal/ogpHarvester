@@ -152,9 +152,9 @@
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
 		'remoteRepositories', '$route', '$routeParams', '$location', '$http', '$timeout', '$log', '$modal', '$filter',
-		'Ingest',
+		'Ingest', '$translate',
 		function($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $routeParams,
-			$location, $http, $timeout, $log, $modal, $filter, Ingest) {
+			$location, $http, $timeout, $log, $modal, $filter, Ingest, $translate) {
 
 			if (angular.isUndefined($rootScope.checkBackStep))
 			 {
@@ -167,6 +167,10 @@
 				$rootScope.$on('$routeChangeStart', $rootScope.checkBackStep);
 
 			}
+			$scope.alerts = [];
+			$scope.closeAlert = function(index) {
+			    $scope.alerts.splice(index, 1);
+			};
 
 			$scope.isTypeOfInstanceDisabled = function() {
 				return angular.isDefined($routeParams.id);
@@ -388,9 +392,14 @@
 
 			remoteRepositories.getLocalSolrInstitutions().success(
 				function(data) {
-					$scope.nameOgpRepositoryList = data;
-					if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined) {
-						$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
+					if (data.status === "SUCCESS") {						
+						$scope.nameOgpRepositoryList = data.result;
+						if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined) {
+							$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
+						}
+					} else {
+						$log.warn("Can not retrieve local Solr institutions list: " + data.result.errorCode);
+						$scope.alerts.push({type: "danger", msg: $translate("INGEST_FORM." + data.result.errorCode)});
 					}
 				}).error(
 				function(errorMessage) {

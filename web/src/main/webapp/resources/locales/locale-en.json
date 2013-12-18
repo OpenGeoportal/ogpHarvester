@@ -131,7 +131,8 @@
         "BBOX_WEST_LABEL": "W: ",
         "BBOX_SOUTH_LABEL": "S: ",
         "BBOX_EAST_LABEL": "E: ",
-        "REPO_DELETED": "The previous repository \"{{customRepoName}}\" has been deleted. You can select another one or enter an URL."
+        "REPO_DELETED": "The previous repository \"{{customRepoName}}\" has been deleted. You can select another one or enter an URL.",
+        "ERROR_CONNECTING_TO_LOCAL_SOLR": "Can not retrieve institutions from Local OGP instance"
 
 	},
 

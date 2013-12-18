@@ -68,13 +68,6 @@ public interface CustomRepositoryService {
 	public List<SimpleEntry<String, String>> getRemoteRepositories(
 			InstanceType repoType, URL urlObj);
 
-	/**
-	 * Contact the local Solr index and returns the content of all fields
-	 * <code>institution</code> found in the instance.
-	 * 
-	 * @return
-	 */
-	public List<SimpleEntry<String, String>> getLocalSolrInstitutions();
 
 	/**
 	 * Fetch the remote repository with <code>repoID</code> and connect to its
