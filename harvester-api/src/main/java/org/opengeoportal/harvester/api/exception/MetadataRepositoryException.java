@@ -1,5 +1,5 @@
 /**
- * OgpSorlException.java
+ * MetadataRepositoryException.java
  *
  * Copyright (C) 2013
  *
@@ -31,39 +31,40 @@ package org.opengeoportal.harvester.api.exception;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
-public class OgpSorlException extends MetadataRepositoryException {
-
-	private static final long serialVersionUID = 7299991676005559713L;
+public class MetadataRepositoryException extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	public OgpSorlException() {
+	public MetadataRepositoryException() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public OgpSorlException(String message) {
+	public MetadataRepositoryException(String message) {
 		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param cause
 	 */
-	public OgpSorlException(Throwable cause) {
+	public MetadataRepositoryException(Throwable cause) {
 		super(cause);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public OgpSorlException(String message, Throwable cause) {
+	public MetadataRepositoryException(String message, Throwable cause) {
 		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
-
 
 }

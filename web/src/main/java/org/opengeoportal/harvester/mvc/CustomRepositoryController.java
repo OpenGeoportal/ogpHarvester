@@ -46,6 +46,7 @@ import org.opengeoportal.harvester.mvc.bean.JsonResponse;
 import org.opengeoportal.harvester.mvc.bean.JsonResponse.STATUS;
 import org.opengeoportal.harvester.mvc.bean.RemoteRepositoryFormBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -72,6 +73,9 @@ public class CustomRepositoryController {
 	private CustomRepositoryService repositoryService;
 	@Autowired
 	private IngestService ingestService;
+
+	@Value("#{localSolr['localSolr.url']}")
+	private String localSolrUrl;
 
 	@Autowired
 	private Validator validator;
@@ -202,7 +206,8 @@ public class CustomRepositoryController {
 		JsonResponse response = new JsonResponse();
 		try {
 			List<SimpleEntry<String, String>> institutions = repositoryService
-					.getLocalSolrInstitutions();
+					.getRemoteRepositories(InstanceType.SOLR, new URL(
+							localSolrUrl));
 			response.setStatus(STATUS.SUCCESS);
 			response.setResult(institutions);
 		} catch (Exception e) {

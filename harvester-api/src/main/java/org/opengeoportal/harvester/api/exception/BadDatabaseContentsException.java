@@ -1,5 +1,5 @@
 /**
- * OgpSorlException.java
+ * BadDatabaseContentsException.java
  *
  * Copyright (C) 2013
  *
@@ -31,39 +31,42 @@ package org.opengeoportal.harvester.api.exception;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
-public class OgpSorlException extends MetadataRepositoryException {
+public class BadDatabaseContentsException extends RuntimeException {
 
-	private static final long serialVersionUID = 7299991676005559713L;
+	private static final long serialVersionUID = 1338387588567815405L;
 
 	/**
 	 * 
 	 */
-	public OgpSorlException() {
+	public BadDatabaseContentsException() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public OgpSorlException(String message) {
+	public BadDatabaseContentsException(String message) {
 		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param cause
 	 */
-	public OgpSorlException(Throwable cause) {
+	public BadDatabaseContentsException(Throwable cause) {
 		super(cause);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public OgpSorlException(String message, Throwable cause) {
+	public BadDatabaseContentsException(String message, Throwable cause) {
 		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
-
 
 }

@@ -1,5 +1,5 @@
 /**
- * OgpSorlException.java
+ * GeonetworkException.java
  *
  * Copyright (C) 2013
  *
@@ -31,39 +31,42 @@ package org.opengeoportal.harvester.api.exception;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
-public class OgpSorlException extends MetadataRepositoryException {
+public class GeonetworkException extends MetadataRepositoryException {
 
-	private static final long serialVersionUID = 7299991676005559713L;
+	private static final long serialVersionUID = 1597923228958472497L;
 
 	/**
 	 * 
 	 */
-	public OgpSorlException() {
+	public GeonetworkException() {
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 */
-	public OgpSorlException(String message) {
+	public GeonetworkException(String message) {
 		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param cause
 	 */
-	public OgpSorlException(Throwable cause) {
+	public GeonetworkException(Throwable cause) {
 		super(cause);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
 	 * @param message
 	 * @param cause
 	 */
-	public OgpSorlException(String message, Throwable cause) {
+	public GeonetworkException(String message, Throwable cause) {
 		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
-
 
 }
