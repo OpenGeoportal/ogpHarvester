@@ -56,7 +56,7 @@
 	<!-- Container -->
 	<div class="container">
 		<div class="row">
-			<div class="col-md-3" data-ng-controller="MenuCtrl">
+			<div class="col-md-3" data-ng-controller="MenuCtrl"> 
 				<div class="well sidebar-nav">
 					<ul class="nav nav-list">
 						<spring:url value="/uploadMetadata" var="uploadMetadataURL" />
