@@ -299,10 +299,13 @@
                             <input type="hidden" class="form-control" id="extent.maxx" data-ng-model="ingest.extent.maxx"></input>
                             <input type="hidden" class="form-control" id="extent.minx" data-ng-model="ingest.extent.minx"></input>
 
-                            <span data-ng-show="ingest.extent.maxy" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                            <div class="clearfix"></div>
+                            <span data-ng-show="ingest.extent.maxy" class="label label-default" >
+                            	{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
                                 {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
                                 {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
                                 {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
+                        </div>
                         </div>
 
                         <div class="form-group col-md-9">
