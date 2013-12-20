@@ -281,7 +281,7 @@ public class SolrRecord {
         record.setAccess(metadata.getAccess().toString());
 
         BoundingBox bounds = metadata.getBounds();
-        if (bounds.isValid()) {
+        if ((bounds != null) && (bounds.isValid())) {
             record.setMinX(Double.toString(bounds.getMinX()));
             record.setMaxX(Double.toString(bounds.getMaxX()));
             record.setMinY(Double.toString(bounds.getMinY()));

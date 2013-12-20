@@ -77,7 +77,15 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleOriginator() {
+    protected HashMap<String, String> getNamespaces() {
+        return new HashMap<String, String>() {{
+            put("gmd", "http://www.isotc211.org/2005/gmd");
+            put("gco", "http://www.isotc211.org/2005/gco");
+        }};
+    }
+
+    @Override
+    protected void handleOriginator() {
 
         /* Xml to parse:
          * <gmd:contact>
@@ -239,12 +247,12 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handlePublisher() {
+    protected void handlePublisher() {
         // TODO: Implement
     }
 
     @Override
-    void handleLayerName() {
+    protected void handleLayerName() {
         /* Xml to parse:
          * <gmd:fileIdentifier xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gmx="http://www.isotc211.org/2005/gmx">
             <gco:CharacterString>11334f95-ceee-44d9-b2f8-cd9daf08c427</gco:CharacterString>
@@ -262,7 +270,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleAbstract() {
+    protected void handleAbstract() {
         /* Xml to parse:
          * <gmd:abstract>
             <gco:CharacterString>Global Volcano Proportional Economic Loss Risk Deciles is a 2.5 by 2.5 minute grid of volcano hazard economic loss as proportions of gross domestic product (GDP) per analytical unit. Estimates of GDP at risk are based on regional economic loss rates derived from historical records of the Emergency Events Database (EM-DAT). Loss rates are weighted by the hazard's frequency and distribution. The methodology of Sachs et al. (2003) is followed to determine baseline estimates of GDP per grid cell. To better reflect the confidence surrounding the data and procedures, the range of proportionalities is classified into deciles, 10 class of an approximately equal number of grid cells of increasing risk. The dataset is a result of the collaboration among the Center for Hazards and Risk Research (CHRR), International Bank for Reconstruction and Development/The World Bank, and the Columbia University Center for International Earth Science Information Network (CIESIN).
@@ -279,7 +287,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleTitle() {
+    protected void handleTitle() {
        /* <gmd:title>
         <gco:CharacterString>Global Volcano Proportional Economic Loss Risk Deciles_CHRR</gco:CharacterString>
       </gmd:title>*/
@@ -293,7 +301,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleDate() {
+    protected void handleDate() {
         /* Xml to parse:
          * <gmd:date>
             <gmd:CI_Date>
@@ -320,7 +328,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleDataType() {
+    protected void handleDataType() {
         /* Xml to parse:
          * <gmd:MD_SpatialRepresentationTypeCode codeListValue="grid" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_SpatialRepresentationTypeCode" />
          */
@@ -354,7 +362,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleAccess() {
+    protected void handleAccess() {
         /* Xml to parse:
          * <gmd:resourceConstraints>
             <gmd:MD_LegalConstraints>
@@ -393,7 +401,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleKeywords() {
+    protected void handleKeywords() {
         /* Xml to parse (topic category):
          * <gmd:topicCategory>
             <gmd:MD_TopicCategoryCode>environment</gmd:MD_TopicCategoryCode>
@@ -467,7 +475,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleBounds() {
+    protected void handleBounds() {
         /* Xml to parse:
          * <gmd:extent>
             <gmd:EX_Extent>
@@ -512,7 +520,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     }
 
     @Override
-    void handleFullText() {
+    protected void handleFullText() {
         this.metadataParserResponse.getMetadata().setFullText(getFullText());
     }
 }

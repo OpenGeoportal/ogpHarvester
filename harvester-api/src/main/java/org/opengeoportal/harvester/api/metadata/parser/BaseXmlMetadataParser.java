@@ -39,11 +39,7 @@ public abstract class BaseXmlMetadataParser implements MetadataParser {
         XPathFactory factory=XPathFactory.newInstance();
         xPath=factory.newXPath();
 
-        HashMap<String, String> prefMap = new HashMap<String, String>() {{
-            put("gmd", "http://www.isotc211.org/2005/gmd");
-            put("gco", "http://www.isotc211.org/2005/gco");
-        }};
-
+        HashMap<String, String> prefMap = getNamespaces();
         SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
         xPath.setNamespaceContext(namespaces);
 
@@ -64,27 +60,29 @@ public abstract class BaseXmlMetadataParser implements MetadataParser {
         return metadataParserResponse;
     }
 
-    abstract void handleOriginator();
+    protected abstract HashMap<String, String> getNamespaces();
 
-    abstract void handlePublisher();
+    protected abstract void handleOriginator();
 
-    abstract void handleLayerName();
+    protected abstract void handlePublisher();
 
-    abstract void handleAbstract();
+    protected abstract void handleLayerName();
 
-    abstract void handleTitle();
+    protected abstract void handleAbstract();
 
-    abstract void handleDate();
+    protected abstract void handleTitle();
 
-    abstract void handleDataType();
+    protected abstract void handleDate();
 
-    abstract void handleAccess();
+    protected abstract void handleDataType();
 
-    abstract void handleKeywords();
+    protected abstract void handleAccess();
 
-    abstract void handleBounds();
+    protected abstract void handleKeywords();
 
-    abstract void handleFullText();
+    protected abstract void handleBounds();
+
+    protected abstract void handleFullText();
 
 
     public String getDocumentValue(Tag tag) throws Exception {

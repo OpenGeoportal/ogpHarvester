@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.fgdc.gov/schemas/metadata/fgdc-std-001-1998.xsd">
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <origin>Sample test user</origin>
+                <pubdate>Unknown</pubdate>
+                <ftname>layer-100</ftname>
+                <title>Globally threatened species of the world</title>
+                <pubinfo>
+                    <pubplace>Rome, Italy</pubplace>
+                    <publish>Sample test centre</publish>
+                </pubinfo>
+                <onlink>http://www.mysite.org</onlink>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>Contains information on animals and plants threatened at the global level.</abstract>
+            <purpose />
+        </descript>
+        <timeperd>
+            <timeinfo>
+                <rngdates>
+                    <begdate>20131215</begdate>
+                    <enddate>Unknown</enddate>
+                </rngdates>
+            </timeinfo>
+            <current>Publication date</current>
+        </timeperd>
+        <status>
+            <progress>Complete</progress>
+            <update>Unknown</update>
+        </status>
+        <spdom>
+            <bounding>
+                <westbc>-180.0</westbc>
+                <eastbc>180.0</eastbc>
+                <northbc>90.0</northbc>
+                <southbc>-90.0</southbc>
+            </bounding>
+        </spdom>
+        <keywords>
+            <theme>
+                <themekt>GEMET 2000</themekt>
+                <themekey>biodiversity</themekey>
+                <themekey>endangered animal species</themekey>
+                <themekey>endangered plant species</themekey>
+            </theme>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>Biology</themekey>
+            </theme>
+            <place>
+                <placekt>None</placekt>
+                <placekey>Global</placekey>
+            </place>
+        </keywords>
+        <accconst>None</accconst>
+        <useconst>No restrictions</useconst>
+    </idinfo>
+    <spdoinfo>
+        <direct>Raster</direct>
+        <ptvctinf>
+            <sdtsterm>
+                <sdtstype>G-polygon</sdtstype>
+                <ptvctcnt>43</ptvctcnt>
+            </sdtsterm>
+        </ptvctinf>
+    </spdoinfo>
+    <metainfo>
+        <metd>20011220</metd>
+        <metc>
+            <cntinfo>
+                <cntperp>
+                    <cntper>Charlie Brown</cntper>
+                </cntperp>
+                <cntaddr>
+                    <addrtype>mailing and physical</addrtype>
+                    <address>99 St. John Road</address>
+                    <city>Cambridge</city>
+                    <state>--</state>
+                    <postal>CB3 0DL</postal>
+                    <country>United Kingdom</country>
+                </cntaddr>
+                <cntvoice>0044 (0)111 111111</cntvoice>
+                <cntfax>+44 1111 111112</cntfax>
+                <cntemail>info@mysite.org</cntemail>
+            </cntinfo>
+        </metc>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+    </metainfo>
+</metadata>
+
