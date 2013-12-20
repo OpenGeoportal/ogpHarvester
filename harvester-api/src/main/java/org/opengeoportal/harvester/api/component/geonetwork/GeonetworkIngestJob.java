@@ -8,7 +8,6 @@ import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchRespons
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
 
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
-import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
                 for(GeoNetworkSearchResult record : searchResponse.getMetadataSearchResults()) {
                     Document document = gnClient.retrieveMetadata(record.getId());
 
-                    MetadataParser parser = new Iso19139MetadataParser();
+                    MetadataParser parser = parserProvider.getMetadataParser(document);
                     MetadataParserResponse parserResult = parser.parse(document);
 
                     Metadata metadata = parserResult.getMetadata();

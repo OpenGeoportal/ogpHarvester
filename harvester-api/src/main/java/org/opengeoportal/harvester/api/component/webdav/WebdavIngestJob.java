@@ -6,7 +6,6 @@ import com.github.sardine.SardineFactory;
 import org.jdom.JDOMException;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
-import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
@@ -92,7 +91,7 @@ public class WebdavIngestJob extends BaseIngestJob {
             String absoluteHrefPath = getResourceAbsoluteUrl(res, baseUrl);
 
             Document document = XmlUtil.load(absoluteHrefPath);
-            MetadataParser parser = new Iso19139MetadataParser();
+            MetadataParser parser = parserProvider.getMetadataParser(document);
             MetadataParserResponse parserResult = parser.parse(document);
 
             Metadata metadata = parserResult.getMetadata();

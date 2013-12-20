@@ -10,7 +10,6 @@ import org.opengeoportal.harvester.api.client.csw.response.GetRecordsResponse;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
-import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.slf4j.Logger;
@@ -33,7 +32,6 @@ public class CswIngestJob extends BaseIngestJob {
             int start =  1;
             boolean processFinished = false;
 
-
             while (!processFinished) {
                 request.setStartPosition(start +"");
 
@@ -46,7 +44,7 @@ public class CswIngestJob extends BaseIngestJob {
                     DOMOutputter domOutputter = new DOMOutputter();
                     org.w3c.dom.Document document =  domOutputter.output(doc);
 
-                    MetadataParser parser = new Iso19139MetadataParser();
+                    MetadataParser parser = parserProvider.getMetadataParser(document);
                     MetadataParserResponse parserResult = parser.parse(document);
 
                     Metadata metadata = parserResult.getMetadata();
