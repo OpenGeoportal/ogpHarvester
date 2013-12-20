@@ -61,6 +61,11 @@
 			<artifactId>spring-data-jpa</artifactId>
 			<version>${springdatajpa.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-solr</artifactId>
+			<version>${springdatasolr.version}</version>
+		</dependency>
 
 		<!-- Apache http client -->
 		<dependency>

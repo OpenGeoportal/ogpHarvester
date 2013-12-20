@@ -13,6 +13,7 @@
 		<spring.version>3.2.4.RELEASE</spring.version>
 		<springsec.version>3.1.4.RELEASE</springsec.version>
         <springdatajpa.version>1.4.2.RELEASE</springdatajpa.version>
+        <springdatasolr.version>1.0.0.RELEASE</springdatasolr.version>
         <hibernate.version>4.2.7.Final</hibernate.version>
         <!--<hibernate.version>4.3.0.Beta5</hibernate.version>-->
         <postgres.version>9.1-901.jdbc4</postgres.version>
