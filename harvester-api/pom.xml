@@ -23,6 +23,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<solr.version>4.6.0</solr.version>
+		<jodatime.version>2.3</jodatime.version>
 	</properties>
 	<dependencies>
 
@@ -65,6 +66,11 @@
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-solr</artifactId>
 			<version>${springdatasolr.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${jodatime.version}</version>
 		</dependency>
 
 		<!-- Apache http client -->
