@@ -36,8 +36,15 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.springframework.data.solr.core.DefaultQueryParser;
+import org.springframework.data.solr.core.QueryParser;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.Field;
+import org.springframework.data.solr.core.query.SimpleField;
+import org.springframework.data.solr.core.query.SimpleQuery;
 
 import com.google.common.collect.Lists;
 
@@ -137,21 +144,106 @@ public class SolrSearchParams {
 		this.topicCategory = ingest.getTopicCategory();
 		this.toSolrTimestamp = ingest.getToSolrTimestamp();
 	}
-	
+
+	/**
+	 * Transform the record in {@link SolrQuery} executable by an
+	 * {@link HttpSolrServer}.
+	 * 
+	 * @return the {@link SolrQuery} built with the data from this.
+	 */
 	SolrQuery toSolrQuery() {
-		SolrQuery query = null;
+		Criteria criteria = new Criteria();
 		if (StringUtils.isNotBlank(customSolrQuery)) {
-			query = new SolrQuery(customSolrQuery);
-		} else {
-			query = new SolrQuery();
+			criteria.expression(customSolrQuery);
 		}
-		if (dateFrom != null) {
-			//query.addDateRangeFacet(field, start, end, gap)
-			
+		if (StringUtils.isNotBlank(themeKeyword)) {
+			Criteria themeCriteria = splitAndOrCriteria(themeKeyword,
+					SolrRecord.THEME_KEYWORDS);
+			if (themeCriteria != null) {
+				criteria.and(themeCriteria);
+			}
 		}
-		
-		
-		return query;
+		if (StringUtils.isNotBlank(placeKeyword)) {
+			Criteria placeCriteria = splitAndOrCriteria(placeKeyword,
+					SolrRecord.PLACE_KEYWORDS);
+			if (placeCriteria != null) {
+				criteria.and(placeCriteria);
+			}
+		}
+		// TODO ISO topic query
+		if (dateFrom != null || dateTo != null) {
+			criteria.and(SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
+		}
+		if (StringUtils.isNotBlank(originator)) {
+			Criteria originatorCriteria = splitAndOrCriteria(originator,
+					SolrRecord.ORIGINATOR);
+			if (originatorCriteria != null) {
+				criteria.and(originatorCriteria);
+			}
+		}
+		if (dataTypes != null && dataTypes.size() > 0) {
+			Criteria dataTypeCriteria = null;
+			for (DataType dt : dataTypes) {
+				if (dataTypeCriteria == null) {
+					dataTypeCriteria = new Criteria(SolrRecord.DATA_TYPE).is(dt
+							.toString());
+				} else {
+					dataTypeCriteria.or(new Criteria(SolrRecord.DATA_TYPE)
+							.is(dt.toString()));
+				}
+			}
+			criteria.and(dataTypeCriteria);
+
+		}
+
+		if (dataRepositories != null && dataRepositories.size() > 0) {
+			Criteria institutionCriteria = null;
+			for (String institution : dataRepositories) {
+				if (institutionCriteria == null) {
+					institutionCriteria = new Criteria(SolrRecord.INSTITUTION)
+							.is(institution);
+				} else {
+					institutionCriteria.or(new Criteria(SolrRecord.INSTITUTION)
+							.is(institution));
+				}
+			}
+			criteria.and(institutionCriteria);
+		}
+
+		if (excludeRestrictedData) {
+			criteria.and(new Criteria(SolrRecord.ACCESS).not().is("Restricted"));
+		}
+
+		if (fromSolrTimestamp != null || toSolrTimestamp != null) {
+			criteria.and(new Criteria(SolrRecord.TIMESTAMP));
+		}
+
+		return new DefaultQueryParser().constructSolrQuery(new SimpleQuery(
+				criteria));
+	}
+
+	/**
+	 * Split wordlist by blank space and create an OR criteria with each
+	 * resulting word. Words are added using wildcards.
+	 * 
+	 * @param wordList
+	 *            a string with a list of words
+	 * @param fieldName
+	 *            the name of the field where criteria is applied.
+	 * @return an OR criteria with each word contained in wordlist.
+	 */
+	private Criteria splitAndOrCriteria(String wordList, String fieldName) {
+		Criteria orCriteria = null;
+		String[] words = StringUtils.split(wordList);
+		for (String word : words) {
+			if (orCriteria == null) {
+				orCriteria = new Criteria(fieldName).contains(word);
+			} else {
+				orCriteria.or(new Criteria(fieldName).contains(word));
+			}
+
+		}
+		return orCriteria;
 	}
 
 	/**

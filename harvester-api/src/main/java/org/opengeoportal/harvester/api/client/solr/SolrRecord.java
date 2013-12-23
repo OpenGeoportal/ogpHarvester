@@ -17,15 +17,24 @@ import org.opengeoportal.harvester.api.metadata.model.Metadata;
  * 
  */
 public class SolrRecord {
-	/**
-	 * Name Theme Keywords field.
-	 */
+	/** Name Theme Keywords field. */
 	public static final String THEME_KEYWORDS = "ThemeKeywords";
 
-	/**
-	 * Name of Place Keywords field.
-	 */
+	/** Name of Place Keywords field. */
 	public static final String PLACE_KEYWORDS = "PlaceKeywords";
+	
+	/** Content date field name. */
+	public static final String CONTENT_DATE = "ContentDate";
+	/** Originator field name. */
+	public static final String ORIGINATOR = "Originator";
+	/** Data type field name. */
+	public static final String DATA_TYPE = "DataType";
+	/** Institution field name. */
+	public static final String INSTITUTION = "Institution";
+	/** Access field name. */
+	public static final String ACCESS = "Access";
+	/** Solr timestamp field name. */
+	public static final String TIMESTAMP = "timestamp";
 
 	@Field("LayerId")
 	private String layerId;
