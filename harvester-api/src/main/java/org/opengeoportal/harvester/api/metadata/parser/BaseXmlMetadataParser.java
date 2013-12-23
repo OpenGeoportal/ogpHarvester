@@ -1,6 +1,5 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -12,10 +11,11 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
 import java.io.StringWriter;
 import java.util.*;
 
-public abstract class BaseXmlMetadataParser implements MetadataParser {
+public abstract class BaseXmlMetadataParser extends BaseMetadataParser implements MetadataParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected Document document;
@@ -119,16 +119,6 @@ public abstract class BaseXmlMetadataParser implements MetadataParser {
         }
         return null;
     }
-
-    protected Boolean validateBounds(String minX, String minY, String maxX, String maxY){
-        BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
-        if (bounds.isValid()){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
 
     private class SimpleNamespaceContext implements NamespaceContext {
 

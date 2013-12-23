@@ -24,7 +24,8 @@ public interface PredefinedRepositoryRepository extends
 	 * @return
 	 */
 	@Query("select pr from PredefinedRepository pr where not exists (select "
-			+ "cr from CustomRepository cr where cr.serviceType = pr.serviceType and cr.url = pr.url) "
+			+ "cr from CustomRepository cr where cr.serviceType = pr.serviceType "
+			+"and cr.url = pr.url and cr.deleted=false) "
 			+ "order by pr.name asc")
 	List<PredefinedRepository> findAllNotInCustomRepositories();
 
