@@ -36,14 +36,14 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.DefaultQueryParser;
-import org.springframework.data.solr.core.QueryParser;
 import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.Field;
-import org.springframework.data.solr.core.query.SimpleField;
 import org.springframework.data.solr.core.query.SimpleQuery;
 
 import com.google.common.collect.Lists;
@@ -59,12 +59,12 @@ public class SolrSearchParams {
 	 * Number of result records requested per page.
 	 */
 	public static final int NUMBER_OF_RESULTS_PER_PAGE = 40;
-	/** Content range date from. */
+	/** Content range date page. */
 	private Date dateFrom;
 	/** Content range date to. */
 	private Date dateTo;
-	/** Number of the page to retrieve. */
-	private int from = 1;
+	/** Number of the page to retrieve (zero based). */
+	private int page = 0;
 	/** Data originator. */
 	private String originator;
 	/** Number of elements in one page. */
@@ -149,7 +149,7 @@ public class SolrSearchParams {
 	 * Transform the record in {@link SolrQuery} executable by an
 	 * {@link HttpSolrServer}.
 	 * 
-	 * @return the {@link SolrQuery} built with the data from this.
+	 * @return the {@link SolrQuery} built with the data page this.
 	 */
 	SolrQuery toSolrQuery() {
 		Criteria criteria = new Criteria();
@@ -171,6 +171,7 @@ public class SolrSearchParams {
 			}
 		}
 		// TODO ISO topic query
+		// TODO BoundingBox
 		if (dateFrom != null || dateTo != null) {
 			criteria.and(SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
 		}
@@ -211,15 +212,19 @@ public class SolrSearchParams {
 		}
 
 		if (excludeRestrictedData) {
-			criteria.and(new Criteria(SolrRecord.ACCESS).not().is("Restricted"));
+			criteria.and(new Criteria(SolrRecord.ACCESS).not().is(AccessLevel.Restricted.toString()));
 		}
 
 		if (fromSolrTimestamp != null || toSolrTimestamp != null) {
 			criteria.and(new Criteria(SolrRecord.TIMESTAMP));
 		}
+	
 
-		return new DefaultQueryParser().constructSolrQuery(new SimpleQuery(
-				criteria));
+		SimpleQuery query = new SimpleQuery(
+				criteria);
+		Pageable pageRequest = new PageRequest(page, pageSize);
+		query.setPageRequest(pageRequest);
+		return new DefaultQueryParser().constructSolrQuery(query);
 	}
 
 	/**
@@ -261,10 +266,10 @@ public class SolrSearchParams {
 	}
 
 	/**
-	 * @return the from.
+	 * @return the page.
 	 */
-	public int getFrom() {
-		return from;
+	public int getPage() {
+		return page;
 	}
 
 	/**
@@ -319,11 +324,11 @@ public class SolrSearchParams {
 	}
 
 	/**
-	 * @param from
-	 *            the from to set
+	 * @param page
+	 *            the page to set
 	 */
-	public void setFrom(int from) {
-		this.from = from;
+	public void setPage(int from) {
+		this.page = from;
 	}
 
 	/**
@@ -515,5 +520,101 @@ public class SolrSearchParams {
 	public void setBboxSouth(Double bboxSouth) {
 		this.bboxSouth = bboxSouth;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SolrSearchParams [");
+		if (dateFrom != null) {
+			builder.append("dateFrom=");
+			builder.append(dateFrom);
+			builder.append(", ");
+		}
+		if (dateTo != null) {
+			builder.append("dateTo=");
+			builder.append(dateTo);
+			builder.append(", ");
+		}
+		builder.append("page=");
+		builder.append(page);
+		builder.append(", ");
+		if (originator != null) {
+			builder.append("originator=");
+			builder.append(originator);
+			builder.append(", ");
+		}
+		builder.append("pageSize=");
+		builder.append(pageSize);
+		builder.append(", ");
+		if (placeKeyword != null) {
+			builder.append("placeKeyword=");
+			builder.append(placeKeyword);
+			builder.append(", ");
+		}
+		if (themeKeyword != null) {
+			builder.append("themeKeyword=");
+			builder.append(themeKeyword);
+			builder.append(", ");
+		}
+		if (topicCategory != null) {
+			builder.append("topicCategory=");
+			builder.append(topicCategory);
+			builder.append(", ");
+		}
+		if (dataTypes != null) {
+			builder.append("dataTypes=");
+			builder.append(dataTypes);
+			builder.append(", ");
+		}
+		if (dataRepositories != null) {
+			builder.append("dataRepositories=");
+			builder.append(dataRepositories);
+			builder.append(", ");
+		}
+		builder.append("excludeRestrictedData=");
+		builder.append(excludeRestrictedData);
+		builder.append(", ");
+		if (fromSolrTimestamp != null) {
+			builder.append("fromSolrTimestamp=");
+			builder.append(fromSolrTimestamp);
+			builder.append(", ");
+		}
+		if (toSolrTimestamp != null) {
+			builder.append("toSolrTimestamp=");
+			builder.append(toSolrTimestamp);
+			builder.append(", ");
+		}
+		if (customSolrQuery != null) {
+			builder.append("customSolrQuery=");
+			builder.append(customSolrQuery);
+			builder.append(", ");
+		}
+		if (bboxWest != null) {
+			builder.append("bboxWest=");
+			builder.append(bboxWest);
+			builder.append(", ");
+		}
+		if (bboxEast != null) {
+			builder.append("bboxEast=");
+			builder.append(bboxEast);
+			builder.append(", ");
+		}
+		if (bboxNorth != null) {
+			builder.append("bboxNorth=");
+			builder.append(bboxNorth);
+			builder.append(", ");
+		}
+		if (bboxSouth != null) {
+			builder.append("bboxSouth=");
+			builder.append(bboxSouth);
+		}
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }
