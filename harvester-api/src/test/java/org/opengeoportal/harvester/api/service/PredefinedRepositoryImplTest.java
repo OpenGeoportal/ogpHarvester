@@ -69,7 +69,7 @@ public class PredefinedRepositoryImplTest {
 			idList.add(repository.getId());
 		}
 
-		assertThat(idList, is(equalTo(Arrays.asList(2l, 5l, 4l))));
+		assertThat(idList, is(equalTo(Arrays.asList(2l, 1l, 5l, 4l, 3l))));
 
 	}
 
