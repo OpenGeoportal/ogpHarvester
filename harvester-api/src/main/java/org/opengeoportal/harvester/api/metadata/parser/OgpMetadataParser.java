@@ -32,7 +32,6 @@ package org.opengeoportal.harvester.api.metadata.parser;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.classification.InterfaceAudience.Public;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
 import org.opengeoportal.harvester.api.metadata.model.GeometryType;
@@ -49,7 +48,7 @@ import com.google.common.collect.Lists;
 public class OgpMetadataParser extends BaseMetadataParser {
 	public static final String ACCESS_NOT_VALID = "ACCESS_NOT_VALID";
 	public static final String BBOX_NOT_VALID = "BBOX_NOT_VALID";
-	private static final String GEOMETRY_TYPE_NOT_VALID = null;
+	private static final String GEOMETRY_TYPE_NOT_VALID = "GEOMETRY_TYPE_NOT_VALID";
 
 	public MetadataParserResponse parse(SolrRecord record) {
 		MetadataParserResponse response = new MetadataParserResponse();
