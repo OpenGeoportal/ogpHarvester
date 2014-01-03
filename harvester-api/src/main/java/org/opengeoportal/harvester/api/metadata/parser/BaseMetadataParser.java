@@ -33,25 +33,35 @@ import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- *
+ * 
  */
 public class BaseMetadataParser {
 
 	/**
-	 * 
+	 * Constructor.
 	 */
 	public BaseMetadataParser() {
-		
+
 	}
 
+	/**
+	 * Check if the bounding box is valid.
+	 * 
+	 * @param minX
+	 *            lower horizontal value.
+	 * @param minY
+	 *            lower vertical value.
+	 * @param maxX
+	 *            upper horizontal value.
+	 * @param maxY
+	 *            upper vertical value.
+	 * @return <code>true</code> if passed values can be a valid bounding box
+	 *         and false otherwhise.
+	 */
 	protected Boolean validateBounds(String minX, String minY, String maxX,
 			String maxY) {
-			    BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
-			    if (bounds.isValid()){
-			        return true;
-			    } else {
-			        return false;
-			    }
-			}
+		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
+		return bounds.isValid();
+	}
 
 }

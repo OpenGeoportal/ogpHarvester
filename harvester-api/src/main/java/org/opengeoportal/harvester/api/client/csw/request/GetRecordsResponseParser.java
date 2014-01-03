@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public class GetRecordsResponseParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public GetRecordsResponse parse(Element response) {
+	public GetRecordsResponse parse(Element response) {
         GetRecordsResponse getRecordsResponse = new GetRecordsResponse();
 
         Element results  = response.getChild("SearchResults", Csw.NAMESPACE_CSW);
