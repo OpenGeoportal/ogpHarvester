@@ -1,15 +1,12 @@
 package org.opengeoportal.harvester.api.client.solr;
 
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -20,7 +17,6 @@ import org.apache.solr.common.SolrException;
 import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
 
 import com.google.common.collect.Sets;
 
@@ -169,22 +165,6 @@ public class SolrJClient implements SolrClient {
 		}
 		return new ArrayList<String>(institutionsSet);
 	};
-
-	Page<SolrRecord> findRecordsByExample(SolrRecord record, Pageable page) {
-		// SolrQuery query = new SolrQuery();
-		// boolean someField = false;
-		// if (StringUtils.isNotBlank(record.getThemeKeywords())) {
-		// query.add(SolrRecord.THEME_KEYWORDS, record.getThemeKeywords());
-		// someField = true;
-		// }
-		// if (StringUtils.isNotBlank(record.getPlaceKeywords())) {
-		// query.add(SolrRecord.PLACE_KEYWORDS, record.getPlaceKeywords());
-		// someField = true;
-		// }
-		// TODO add topic field
-		return null;
-
-	}
 
 	/*
 	 * (non-Javadoc)

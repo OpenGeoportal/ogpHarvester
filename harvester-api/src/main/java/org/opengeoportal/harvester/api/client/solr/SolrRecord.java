@@ -22,7 +22,7 @@ public class SolrRecord {
 
 	/** Name of Place Keywords field. */
 	public static final String PLACE_KEYWORDS = "PlaceKeywords";
-	
+
 	/** Content date field name. */
 	public static final String CONTENT_DATE = "ContentDate";
 	/** Originator field name. */
@@ -35,6 +35,17 @@ public class SolrRecord {
 	public static final String ACCESS = "Access";
 	/** Solr timestamp field name. */
 	public static final String TIMESTAMP = "timestamp";
+
+	/** Topic Category field name. */
+	public static final String ISO_TOPIC_CATEGORY = "ThemeKeywordsSynonymsIso";
+	/** MinX field name. */
+	public static final String MINX = "MinX";
+	/** MinY field name. */
+	public static final String MINY = "MinY";
+	/** MaxX field name. */
+	public static final String MAXX = "MaxX";
+	/** MaxY field name. */
+	public static final String MAXY = "MaxY";
 
 	@Field("LayerId")
 	private String layerId;
@@ -94,6 +105,8 @@ public class SolrRecord {
 	private String contentDate;
 	@Field("FgdcText")
 	private String fgdcText;
+	@Field("ThemeKeywordsSynonymsIso")
+	private String topicCategory;
 
 	/**
 	 * @return the layerId
@@ -542,6 +555,7 @@ public class SolrRecord {
 				+ this.maxY);
 		map.put("Originator", this.originator);
 		map.put("Publisher", this.publisher);
+		map.put("TopicCatetory", this.topicCategory);
 		return map;
 	}
 
@@ -570,12 +584,12 @@ public class SolrRecord {
 		record.setInstitution(metadata.getInstitution());
 		record.setAccess(metadata.getAccess().toString());
 
-        BoundingBox bounds = metadata.getBounds();
-        if ((bounds != null) && (bounds.isValid())) {
-            record.setMinX(Double.toString(bounds.getMinX()));
-            record.setMaxX(Double.toString(bounds.getMaxX()));
-            record.setMinY(Double.toString(bounds.getMinY()));
-            record.setMaxY(Double.toString(bounds.getMaxY()));
+		BoundingBox bounds = metadata.getBounds();
+		if ((bounds != null) && (bounds.isValid())) {
+			record.setMinX(Double.toString(bounds.getMinX()));
+			record.setMaxX(Double.toString(bounds.getMaxX()));
+			record.setMinY(Double.toString(bounds.getMinY()));
+			record.setMaxY(Double.toString(bounds.getMaxY()));
 
 			// calculated fields
 			record.setHalfHeight(Double.toString(bounds.getHeight() / 2.));
@@ -597,10 +611,26 @@ public class SolrRecord {
 			record.setWorkspaceName(metadata.getWorkspaceName().toString());
 		}
 		record.setGeoreferenced(Boolean.toString(metadata.getGeoreferenced()));
+		record.setTopicCategory(metadata.getTopic());
 
 		// TODO: Check
 		record.setAvailability("online");
 
 		return record;
+	}
+
+	/**
+	 * @return the topicCategory
+	 */
+	public String getTopicCategory() {
+		return topicCategory;
+	}
+
+	/**
+	 * @param topicCategory
+	 *            the topicCategory to set
+	 */
+	public void setTopicCategory(String topicCategory) {
+		this.topicCategory = topicCategory;
 	}
 }

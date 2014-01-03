@@ -29,7 +29,6 @@
  */
 package org.opengeoportal.harvester.api.client.solr;
 
-import java.security.InvalidParameterException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +40,6 @@ import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -122,7 +120,7 @@ public class SolrSearchParams {
 	public SolrSearchParams(final IngestOGP ingest,
 			final int numberOfElementsPerPage) {
 		if (ingest == null) {
-			throw new InvalidParameterException(
+			throw new IllegalArgumentException(
 					"ingest parameter cannot be null when"
 							+ " creating a new SolrSearchParams");
 		}
@@ -147,7 +145,7 @@ public class SolrSearchParams {
 
 	/**
 	 * Transform the record in {@link SolrQuery} executable by an
-	 * {@link HttpSolrServer}.
+	 * {@link org.apache.solr.client.solrj.impl.HttpSolrServer}.
 	 * 
 	 * @return the {@link SolrQuery} built with the data page this.
 	 */
@@ -155,76 +153,109 @@ public class SolrSearchParams {
 		Criteria criteria = new Criteria();
 		if (StringUtils.isNotBlank(customSolrQuery)) {
 			criteria.expression(customSolrQuery);
-		}
-		if (StringUtils.isNotBlank(themeKeyword)) {
-			Criteria themeCriteria = splitAndOrCriteria(themeKeyword,
-					SolrRecord.THEME_KEYWORDS);
-			if (themeCriteria != null) {
-				criteria.and(themeCriteria);
-			}
-		}
-		if (StringUtils.isNotBlank(placeKeyword)) {
-			Criteria placeCriteria = splitAndOrCriteria(placeKeyword,
-					SolrRecord.PLACE_KEYWORDS);
-			if (placeCriteria != null) {
-				criteria.and(placeCriteria);
-			}
-		}
-		// TODO ISO topic query
-		// TODO BoundingBox
-		if (dateFrom != null || dateTo != null) {
-			criteria.and(SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
-		}
-		if (StringUtils.isNotBlank(originator)) {
-			Criteria originatorCriteria = splitAndOrCriteria(originator,
-					SolrRecord.ORIGINATOR);
-			if (originatorCriteria != null) {
-				criteria.and(originatorCriteria);
-			}
-		}
-		if (dataTypes != null && dataTypes.size() > 0) {
-			Criteria dataTypeCriteria = null;
-			for (DataType dt : dataTypes) {
-				if (dataTypeCriteria == null) {
-					dataTypeCriteria = new Criteria(SolrRecord.DATA_TYPE).is(dt
-							.toString());
-				} else {
-					dataTypeCriteria.or(new Criteria(SolrRecord.DATA_TYPE)
-							.is(dt.toString()));
+		} else {
+			if (StringUtils.isNotBlank(themeKeyword)) {
+				Criteria themeCriteria = splitAndOrCriteria(themeKeyword,
+						SolrRecord.THEME_KEYWORDS);
+				if (themeCriteria != null) {
+					criteria.and(themeCriteria);
 				}
 			}
-			criteria.and(dataTypeCriteria);
-
-		}
-
-		if (dataRepositories != null && dataRepositories.size() > 0) {
-			Criteria institutionCriteria = null;
-			for (String institution : dataRepositories) {
-				if (institutionCriteria == null) {
-					institutionCriteria = new Criteria(SolrRecord.INSTITUTION)
-							.is(institution);
-				} else {
-					institutionCriteria.or(new Criteria(SolrRecord.INSTITUTION)
-							.is(institution));
+			if (StringUtils.isNotBlank(placeKeyword)) {
+				Criteria placeCriteria = splitAndOrCriteria(placeKeyword,
+						SolrRecord.PLACE_KEYWORDS);
+				if (placeCriteria != null) {
+					criteria.and(placeCriteria);
 				}
 			}
-			criteria.and(institutionCriteria);
+			if (StringUtils.isNotBlank(topicCategory)) {
+				criteria.and(new Criteria(SolrRecord.ISO_TOPIC_CATEGORY)
+						.is(this.topicCategory));
+			}
+			if (isValidBBox()) {
+				criteria.and(new Criteria(SolrRecord.MINX).between(
+						this.bboxWest, this.bboxEast, true, true));
+				criteria.and(new Criteria(SolrRecord.MAXX).between(
+						this.bboxWest, this.bboxEast, true, true));
+				criteria.and(new Criteria(SolrRecord.MINY).between(
+						this.bboxSouth, this.bboxNorth, true, true));
+				criteria.and(new Criteria(SolrRecord.MAXY).between(
+						this.bboxSouth, this.bboxNorth, true, true));
+
+			}
+			if (dateFrom != null || dateTo != null) {
+				criteria.and(SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
+			}
+			if (StringUtils.isNotBlank(originator)) {
+				Criteria originatorCriteria = splitAndOrCriteria(originator,
+						SolrRecord.ORIGINATOR);
+				if (originatorCriteria != null) {
+					criteria.and(originatorCriteria);
+				}
+			}
+			if (dataTypes != null && dataTypes.size() > 0) {
+				Criteria dataTypeCriteria = null;
+				for (DataType dt : dataTypes) {
+					if (dataTypeCriteria == null) {
+						dataTypeCriteria = new Criteria(SolrRecord.DATA_TYPE)
+								.is(dt.toString());
+					} else {
+						dataTypeCriteria.or(new Criteria(SolrRecord.DATA_TYPE)
+								.is(dt.toString()));
+					}
+				}
+				criteria.and(dataTypeCriteria);
+
+			}
+
+			if (dataRepositories != null && dataRepositories.size() > 0) {
+				Criteria institutionCriteria = null;
+				for (String institution : dataRepositories) {
+					if (institutionCriteria == null) {
+						institutionCriteria = new Criteria(
+								SolrRecord.INSTITUTION).is(institution);
+					} else {
+						institutionCriteria.or(new Criteria(
+								SolrRecord.INSTITUTION).is(institution));
+					}
+				}
+				criteria.and(institutionCriteria);
+			}
+
+			if (excludeRestrictedData) {
+				criteria.and(new Criteria(SolrRecord.ACCESS).not().is(
+						AccessLevel.Restricted.toString()));
+			}
+
+			if (fromSolrTimestamp != null || toSolrTimestamp != null) {
+				criteria.and(new Criteria(SolrRecord.TIMESTAMP));
+			}
 		}
 
-		if (excludeRestrictedData) {
-			criteria.and(new Criteria(SolrRecord.ACCESS).not().is(AccessLevel.Restricted.toString()));
-		}
-
-		if (fromSolrTimestamp != null || toSolrTimestamp != null) {
-			criteria.and(new Criteria(SolrRecord.TIMESTAMP));
-		}
-	
-
-		SimpleQuery query = new SimpleQuery(
-				criteria);
+		SimpleQuery query = new SimpleQuery(criteria);
 		Pageable pageRequest = new PageRequest(page, pageSize);
 		query.setPageRequest(pageRequest);
 		return new DefaultQueryParser().constructSolrQuery(query);
+	}
+
+	/**
+	 * Check if bounding box coordinates are valid. Bounding Box is valid if its
+	 * four components are not null and west coordinate is lesser than east
+	 * coordinate and south coord is lesser than north coord.
+	 * 
+	 * @return <code>true</code> if bounding box is valid; otherwise return
+	 *         <code>false</code>.
+	 */
+	private boolean isValidBBox() {
+		boolean valid = false;
+
+		if (bboxWest != null && bboxEast != null && bboxNorth != null
+				&& bboxSouth != null) {
+			valid = this.bboxWest < this.bboxEast
+					&& this.bboxSouth < this.bboxNorth;
+		}
+
+		return valid;
 	}
 
 	/**
@@ -324,7 +355,7 @@ public class SolrSearchParams {
 	}
 
 	/**
-	 * @param page
+	 * @param from
 	 *            the page to set
 	 */
 	public void setPage(int from) {
@@ -521,7 +552,9 @@ public class SolrSearchParams {
 		this.bboxSouth = bboxSouth;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -614,7 +647,5 @@ public class SolrSearchParams {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
 
 }
