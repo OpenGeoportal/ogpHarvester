@@ -217,7 +217,7 @@
                                 data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" data-ng-model="ingest.solrCustomQuery"
-                                id="solrCustomQuery" data-ng-change="resetOtherFields()"></textarea>
+                                id="solrCustomQuery" data-ng-change="resetOtherFieldsSolr()"></textarea>
                         </div>
 
                     </div>
@@ -305,11 +305,6 @@
                             <a data-tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
                                     class="glyphicon glyphicon-question-sign black"></span></a>
 
-                            <input type="hidden" class="form-control" id="extent.maxy" data-ng-model="ingest.extent.maxy"></input>
-                            <input type="hidden" class="form-control" id="extent.miny" data-ng-model="ingest.extent.miny"></input>
-                            <input type="hidden" class="form-control" id="extent.maxx" data-ng-model="ingest.extent.maxx"></input>
-                            <input type="hidden" class="form-control" id="extent.minx" data-ng-model="ingest.extent.minx"></input>
-
                             <div class="clearfix"></div>
                             <span data-ng-show="ingest.extent.maxy" class="label label-default" >
                             	{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
@@ -324,7 +319,8 @@
                                 data-tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
                                 class="glyphicon glyphicon-question-sign black"></span>
                             </a>
-                            <input type="text" class="form-control" id="cswTitle" data-ng-model="ingest.cswTitle"></input>
+                            <input type="text" class="form-control" id="cswTitle" data-ng-model="ingest.cswTitle"
+                            	data-ng-disabled="isCswCustomQueryFilled()"></input>
                         </div>
 
                         <div class="form-group col-md-9">
@@ -332,14 +328,14 @@
                                 data-tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" data-ng-model="ingest.cswSubject"
-                                id="cswSubject"></textarea>
+                                id="cswSubject" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
                         </div>
                          <div class="form-group col-md-9">
                             <label for="cswFreeText" data-translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" data-ng-model="ingest.cswFreeText"
-                                id="cswFreeText"></textarea>
+                                id="cswFreeText" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
                         </div>
                         <div class="clearfix"></div>
 
@@ -353,7 +349,7 @@
                                     <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
                                         data-ng-model="ingest.cswRangeFrom" data-datepicker-options="dateOptions" 
                                         data-is-open="dtOpened['cswRangeFrom']"
-                                        name="cswRangeFrom" id="cswRangeFrom"></input>
+                                        name="cswRangeFrom" id="cswRangeFrom" data-ng-disabled="isCswCustomQueryFilled()"></input>
                                     <span class="input-group-addon" data-ng-click="open('cswRangeFrom')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -364,7 +360,7 @@
                                     <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
                                         data-ng-model="ingest.cswRangeTo" data-datepicker-options="dateOptions" 
                                         data-is-open="dtOpened['cswRangeTo']" data-ogp-check-after2="ingest.cswRangeFrom"
-                                        name="cswRangeTo" id="cswRangeTo"></input>
+                                        name="cswRangeTo" id="cswRangeTo" data-ng-disabled="isCswCustomQueryFilled()"></input>
                                     <span class="input-group-addon" data-ng-click="open('cswRangeTo')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -377,7 +373,7 @@
                                 data-tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" data-ng-model="ingest.cswCustomQuery"
-                                id="cswCustomQuery"></textarea>
+                                id="cswCustomQuery" data-ng-change="resetOtherFieldsCsw()"></textarea>
                         </div>
                     </div>
                 </div>
