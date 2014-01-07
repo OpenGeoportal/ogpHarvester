@@ -27,13 +27,17 @@
 						event.preventDefault();
 						return false;
 					}
-				}
-
+				};
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
 		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest', '$log',
 			function($scope, $routeParams, Ingest, $log) {
+			
+				$scope.isSolrCustomQueryFilled = function() {
+					var solrCustomQuery = $scope.ingest.solrCustomQuery;
+					return $.trim(solrCustomQuery).length > 0;
+				};
 
 				var isSelectedAll = function($event, elementList) {
 					var allSelected = elementList !== undefined;
@@ -196,6 +200,26 @@
 
 				});
 			}
+			
+			$scope.isSolrCustomQueryFilled = function() {
+				var solrCustomQuery = $scope.ingest.solrCustomQuery;
+				return $.trim(solrCustomQuery).length > 0;
+			};
+			$scope.resetOtherFields = function() {
+				if($scope.isSolrCustomQueryFilled()) {
+					$scope.ingest.themeKeyword = null;
+					$scope.ingest.placeKeyword = null;
+					$scope.ingest.topic = null;
+					$scope.ingest.contentRangeFrom = null;
+					$scope.ingest.contentRangeTo = null;
+					$scope.ingest.originator = null;
+					$scope.ingest.dataTypes = [];
+					$scope.ingest.dataRepositories = [];
+					$scope.ingest.excludeRestricted = null;
+					$scope.ingest.rangeSolrFrom = null;
+					$scope.ingest.rangeSolrTo = null;					
+				}
+			};
 
 			$scope.getRemoteReposByUrl = function(repoType, url) {
 				var targetField, targetModel;
@@ -256,7 +280,7 @@
 					// go to step 2
 					$location.path('/newIngest');
 				}
-			}
+			};
 
 
 			$scope.resetForm = function() {
@@ -298,7 +322,7 @@
 
 
 			/**
-			 * Clean url if no source is selected
+			 * Clean URL if no source is selected.
 			 */
 			$scope.cleanServiceUrl = function() {
 				if ($scope.ingest.catalogOfServices != null) {

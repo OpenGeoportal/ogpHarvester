@@ -44,7 +44,6 @@
         <div class="clearfix"></div>
         <div data-ng-switch data-on="ingest.typeOfInstance"  id="fagment">
             <div data-ng-switch-when="SOLR" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-
                 <div class="custom-panel">
                     <div class="custom-panel-heading collapsed" data-toggle="collapse"
                         data-target="#collapseSorlSearchCriteria">
@@ -82,7 +81,7 @@
                                 data-tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
                                 class="glyphicon glyphicon-question-sign black"></span></a> 
                             <input class="form-control" id="themeKeyword"
-                                data-ng-model="ingest.themeKeyword" ></input>
+                                data-ng-model="ingest.themeKeyword" data-ng-disabled="isSolrCustomQueryFilled()"></input>
                         </div>
 
                         <div class="form-group col-md-9">
@@ -90,7 +89,7 @@
                                 data-tooltip='{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <input type="text" class="form-control" id="placeKeyword"
-                                data-ng-model="ingest.placeKeyword" ></input>
+                                data-ng-model="ingest.placeKeyword" data-ng-disabled="isSolrCustomQueryFilled()" ></input>
                         </div>
 
                         <div class="form-group col-md-7">
@@ -98,7 +97,8 @@
                                 data-tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="topic" data-ng-model="ingest.topic" 
-                                data-ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList">
+                                data-ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList"
+                                data-ng-disabled="isSolrCustomQueryFilled()">
                                 <option value="" data-translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
                             </select>
                         </div>
@@ -110,7 +110,10 @@
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <div class="row no-margin">
                                 <div class="input-group col-md-4 date">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" data-ng-model="ingest.contentRangeFrom" data-datepicker-options="dateOptions" data-is-open="dtOpened['contentRangeFrom']"  
+                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
+                                    data-ng-model="ingest.contentRangeFrom" data-datepicker-options="dateOptions" 
+                                    data-is-open="dtOpened['contentRangeFrom']"
+                                    data-ng-disabled="isSolrCustomQueryFilled()"  
                                     id='contentRangeFrom' 
                                     name="contentRangeFrom" />
                                     <span class="input-group-addon" data-ng-click="open('contentRangeFrom')">
@@ -124,6 +127,7 @@
                                     <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
                                         data-ng-model="ingest.contentRangeTo" data-datepicker-options="dateOptions" 
                                         data-is-open="dtOpened['contentRangeTo']" data-ogp-check-after2="ingest.contentRangeFrom"
+                                        data-ng-disabled="isSolrCustomQueryFilled()"
                                         name="contentRangeTo" id="contentRangeTo"></input>
                                     <span class="input-group-addon" data-ng-click="open('contentRangeTo')">
                                         <span class="glyphicon glyphicon-calendar"></span>
@@ -136,7 +140,8 @@
                             <label for="originator" data-translate="INGEST_FORM.ORIGINATOR"></label> <a 
                                 data-tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input class="form-control" id="originator" data-ng-model="ingest.originator" ></input>
+                            <input class="form-control" id="originator" data-ng-model="ingest.originator" 
+                            	data-ng-disabled="isSolrCustomQueryFilled()"></input>
                         </div>
 
                         <div class="form-group multiselect col-md-7">
@@ -144,8 +149,9 @@
                                 data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select data-ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
-                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" data-multiselect-dropdown >
-                        
+                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" 
+                                data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" 
+                                data-ng-disabled="isSolrCustomQueryFilled()" data-multiselect-dropdown >
                             </select>
                         </div>
 
@@ -155,7 +161,9 @@
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <select class="form-control" id="dataRepository" data-ng-model="ingest.dataRepositories"
                                 multiple="multiple" data-ng-options="item.key as item.value for item in solrDataRepositoryList" 
-                                data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" data-multiselect-dropdown>
+                                data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" 
+                                data-ng-disabled="isSolrCustomQueryFilled()"
+                                data-multiselect-dropdown>
                             </select>
                         </div>
                         <div class="clearfix"></div>
@@ -164,7 +172,8 @@
                             <div class="col-md-12 no-left-padding">
                                 <div class="checkbox">
                                     <label for="excludeRestricted">
-                                         <input type="checkbox" data-ng-model="ingest.excludeRestricted" id="excludeRestricted"></input>
+                                         <input type="checkbox" data-ng-model="ingest.excludeRestricted" id="excludeRestricted"
+                                         	data-ng-disabled="isSolrCustomQueryFilled()"></input>
 
                                         {{"INGEST_FORM.EXCLUDE_RESTRICTED" | translate }}
                                     </label> <a data-tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
@@ -182,7 +191,8 @@
                                     <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
                                         data-ng-model="ingest.rangeSolrFrom" data-datepicker-options="dateOptions" 
                                         data-is-open="dtOpened['rangeSolrFrom']"
-                                        name="rangeSolrFrom" id="rangeSolrFrom"></input>
+                                        name="rangeSolrFrom" id="rangeSolrFrom"
+                                        data-ng-disabled="isSolrCustomQueryFilled()"></input>
                                     <span class="input-group-addon" data-ng-click="open('rangeSolrFrom')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -194,7 +204,8 @@
                                     <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
                                         data-ng-model="ingest.rangeSolrTo" data-datepicker-options="dateOptions" 
                                         data-is-open="dtOpened['rangeSolrTo']" data-ogp-check-after2="ingest.rangeSolrFrom"
-                                        name="rangeSolrTo" id="rangeSolrTo"></input>
+                                        name="rangeSolrTo" id="rangeSolrTo"
+                                        data-ng-disabled="isSolrCustomQueryFilled()"></input>
                                     <span class="input-group-addon" data-ng-click="open('rangeSolrTo')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
@@ -206,7 +217,7 @@
                                 data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
                                 class="glyphicon glyphicon-question-sign black"></span></a>
                             <textarea class="form-control" rows="3" data-ng-model="ingest.solrCustomQuery"
-                                id="solrCustomQuery"></textarea>
+                                id="solrCustomQuery" data-ng-change="resetOtherFields()"></textarea>
                         </div>
 
                     </div>
