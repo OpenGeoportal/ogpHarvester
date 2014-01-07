@@ -27,14 +27,12 @@
 						event.preventDefault();
 						return false;
 					}
-				}
-
+				};
 			}
 		]);
 	angular.module('ogpHarvester.controllers')
 		.controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest', '$log',
 			function($scope, $routeParams, Ingest, $log) {
-
 				var isSelectedAll = function($event, elementList) {
 					var allSelected = elementList !== undefined;
 					for (var i = 0; allSelected && (i < elementList.length); i++) {
@@ -196,6 +194,42 @@
 
 				});
 			}
+			
+			$scope.isSolrCustomQueryFilled = function() {
+				var solrCustomQuery = $scope.ingest.solrCustomQuery;
+				return $.trim(solrCustomQuery).length > 0;
+			};
+			
+			$scope.isCswCustomQueryFilled = function() {
+				var cswCustomQuery = $scope.ingest.cswCustomQuery;
+				return $.trim(cswCustomQuery).length > 0;
+			};
+			
+			$scope.resetOtherFieldsSolr = function() {
+				if($scope.isSolrCustomQueryFilled()) {
+					$scope.ingest.themeKeyword = null;
+					$scope.ingest.placeKeyword = null;
+					$scope.ingest.topic = null;
+					$scope.ingest.contentRangeFrom = null;
+					$scope.ingest.contentRangeTo = null;
+					$scope.ingest.originator = null;
+					$scope.ingest.dataTypes = [];
+					$scope.ingest.dataRepositories = [];
+					$scope.ingest.excludeRestricted = null;
+					$scope.ingest.rangeSolrFrom = null;
+					$scope.ingest.rangeSolrTo = null;					
+				}
+			};
+			
+			$scope.resetOtherFieldsCsw = function() {
+				if ($scope.isCswCustomQueryFilled()) {
+					$scope.ingest.cswTitle = null;
+					$scope.ingest.cswSubject = null;
+					$scope.ingest.cswFreeText = null;
+					$scope.ingest.cswRangeFrom = null;
+					$scope.ingest.cswRangeTo = null;
+				}
+			};
 
 			$scope.getRemoteReposByUrl = function(repoType, url) {
 				var targetField, targetModel;
@@ -256,7 +290,7 @@
 					// go to step 2
 					$location.path('/newIngest');
 				}
-			}
+			};
 
 
 			$scope.resetForm = function() {
@@ -298,7 +332,7 @@
 
 
 			/**
-			 * Clean url if no source is selected
+			 * Clean URL if no source is selected.
 			 */
 			$scope.cleanServiceUrl = function() {
 				if ($scope.ingest.catalogOfServices != null) {
