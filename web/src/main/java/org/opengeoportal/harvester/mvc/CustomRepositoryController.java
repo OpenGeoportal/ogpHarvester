@@ -38,7 +38,9 @@ import java.util.Map;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.exception.GeonetworkException;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
+import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
@@ -159,9 +161,25 @@ public class CustomRepositoryController {
 
 	@RequestMapping("/rest/repositories/{repoId}/remoteSources")
 	@ResponseBody
-	public List<SimpleEntry<String, String>> getRemoteRepositoriesById(
+	public JsonResponse getRemoteRepositoriesById(
 			@PathVariable Long repoId) {
-		return repositoryService.getRemoteRepositoriesByRepoId(repoId);
+		JsonResponse response = new JsonResponse();
+		try {
+			List<SimpleEntry<String, String>> sourcesList = repositoryService.getRemoteRepositoriesByRepoId(repoId);
+			response.setStatus(STATUS.SUCCESS);
+			response.setResult(sourcesList);
+		} catch (GeonetworkException gne) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_CONNECTING_TO_PREDEFINED_GEONETWORK");
+			response.setResult(errorMap);
+		} catch (OgpSorlException ose) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_CONNECTING_TO_PREDEFINED_SOLR");
+			response.setResult(errorMap);
+		}
+		return response;
 
 	}
 
@@ -187,17 +205,44 @@ public class CustomRepositoryController {
 
 	}
 
+	/**
+	 * Retrieve remote sources present in the given URL.
+	 * 
+	 * @param repository
+	 * @return a JsonResponse with a list of remote sources.
+	 */
 	@RequestMapping(value = "/rest/repositoriesbyurl/remoteSources", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public List<SimpleEntry<String, String>> getRemoteRepositoriesByUrl(
-			@RequestBody RemoteRepositoryFormBean repository)
-			throws MalformedURLException {
-		URL urlObj = new URL(repository.getRepoUrl());
+	public JsonResponse getRemoteRepositoriesByUrl(
+			@RequestBody RemoteRepositoryFormBean repository) {
+		JsonResponse response = new JsonResponse();
+		try {
+			URL urlObj = new URL(repository.getRepoUrl());
 
-		List<SimpleEntry<String, String>> repositories = repositoryService
-				.getRemoteRepositories(repository.getRepoType(), urlObj);
+			List<SimpleEntry<String, String>> repositories = repositoryService
+					.getRemoteRepositories(repository.getRepoType(), urlObj);
+			response.setStatus(STATUS.SUCCESS);
+			response.setResult(repositories);
+		} catch (OgpSorlException ose) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_CONNECTING_TO_REMOTE_SOLR");
+			response.setResult(errorMap);
 
-		return repositories;
+		} catch (GeonetworkException gne) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_CONNECTING_TO_REMOTE_GEONETWORK");
+			response.setResult(errorMap);
+		} 
+		catch (MalformedURLException e) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "ERROR_MALFORMED_URL");
+			response.setResult(errorMap);
+		}
+
+		return response;
 	}
 
 	@RequestMapping(value = "/rest/localSolr/institutions")

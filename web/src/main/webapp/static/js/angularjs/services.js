@@ -166,13 +166,18 @@
 
 			// Public interface
 			return {
-				getRemoteSourcesByRepoId: function(repoId) {
-					return $http.get('rest/repositories/' + repoId + '/remoteSources');
+				getRemoteSourcesByRepoId: function(repoId, canceler) {
+					return $http.get('rest/repositories/' + repoId + '/remoteSources',
+							{
+								timeout: canceler
+							});
 				},
-				getRemoteSourcesByUrl: function(repoType, repoUrl) {
+				getRemoteSourcesByUrl: function(repoType, repoUrl, canceler) {
 					return $http.post('rest/repositoriesbyurl/remoteSources', {
 						repoType: repoType,
 						repoUrl: repoUrl
+					}, {
+						timeout: canceler						
 					});
 				},
 				getRepositoryList: function() {
