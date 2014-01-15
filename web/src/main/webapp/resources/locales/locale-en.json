@@ -132,7 +132,14 @@
         "BBOX_SOUTH_LABEL": "S: ",
         "BBOX_EAST_LABEL": "E: ",
         "REPO_DELETED": "The previous repository \"{{customRepoName}}\" has been deleted. You can select another one or enter an URL.",
-        "ERROR_CONNECTING_TO_LOCAL_SOLR": "Can not retrieve institutions from Local OGP instance"
+        "ERROR_CONNECTING_TO_LOCAL_SOLR": "Can not retrieve institutions from Local OGP instance",
+        "ERROR_MALFORMED_URL": "Malformed URL",
+        "ERROR_CONNECTING_TO_REMOTE_SOLR": "Cannot retrieve remote sources from this URL. Please check the URL.",
+        "ERROR_RETRIEVING_REMOTE_SOURCES": "An internal error occurred while retrieving sources from the remote server. Please check the URL.",
+        "ERROR_CONNECTING_TO_REMOTE_GEONETWORK": "Cannot retrieve remote sources from this URL. Please check the URL.",
+        "ERROR_CONNECTING_TO_PREDEFINED_GEONETWORK": "Cannot retrieve remote sources from the remote server. Please, contact with the admin.",
+        "ERROR_CONNECTING_TO_PREDEFINED_SOLR": "Cannot retrieve remote sources from the remote server. Please, contact with the admin.",
+        "ERROR_RETRIEVING_PREDEFINED_REMOTE_SOURCES": "An internal error occurred while retriving sources from the remote server. Please, contact with the admin."
 
 	},
 

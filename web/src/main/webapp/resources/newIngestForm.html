@@ -14,6 +14,7 @@
         </div>
         <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.catalogOfServices)}">
             <label class="control-label" for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
+            <div data-alert data-ng-repeat="error in serviceAlerts" data-type="warning" data-close="closeServiceAlerts()">{{error}}</div>
             <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6" name="catalogOfServices"
                     data-ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
                     data-ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId();ingest.customRepoDeleted=false;" 
@@ -24,6 +25,7 @@
         </div>
         <div class="form-group col-md-9" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.url)}">
             <label class="control-label" for="url" data-translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
+            <div data-alert data-ng-repeat="error in urlErrors" data-type="warning" data-close="closeUrlAlerts()">{{error}}</div>
             <input type="url" id="url" name="url" data-ng-model="ingest.url" class="form-control" 
                 data-ng-disabled="ingest.catalogOfServices != null" data-ng-blur="getRemoteSourcesByUrl();" 
                 data-ng-required="!ingest.catalogOfServices"></input>

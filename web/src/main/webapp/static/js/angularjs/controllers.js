@@ -150,24 +150,34 @@
 
 	angular.module('ogpHarvester.controllers').controller('NewIngestCtrl', ['$rootScope', '$scope', 'ingestMultiform',
 		'remoteRepositories', '$route', '$routeParams', '$location', '$http', '$timeout', '$log', '$modal', '$filter',
-		'Ingest', '$translate',
+		'Ingest', '$translate', '$q',
 		function($rootScope, $scope, ingestMultiform, remoteRepositories, $route, $routeParams,
-			$location, $http, $timeout, $log, $modal, $filter, Ingest, $translate) {
+			$location, $http, $timeout, $log, $modal, $filter, Ingest, $translate, $q) {
 
-			if (angular.isUndefined($rootScope.checkBackStep))
-			 {
+			if (angular.isUndefined($rootScope.checkBackStep)) {
 				$rootScope.checkBackStep = function(angularEvent, next, current) {
 					if (next.$$route && next.$$route.originalPath === '/newIngest' &&
 						current.$$route.originalPath !== '/newIngest/step2') {
 						ingestMultiform.reset();
+						ingestMultiform.getIngest().typeOfInstance="SOLR";
 					}
 				};
 				$rootScope.$on('$routeChangeStart', $rootScope.checkBackStep);
 
 			}
 			$scope.alerts = [];
+			$scope.urlErrors = [];
+			$scope.serviceAlerts = [];
 			$scope.closeAlert = function(index) {
-			    $scope.alerts.splice(index, 1);
+				$scope.alerts.splice(index, 1);
+			};
+
+			$scope.closeUrlAlerts = function() {
+				$scope.urlErrors = [];
+			};
+
+			$scope.closeServiceAlerts = function() {
+				$scope.urlErrors = [];
 			};
 
 			$scope.isTypeOfInstanceDisabled = function() {
@@ -194,19 +204,19 @@
 
 				});
 			}
-			
+
 			$scope.isSolrCustomQueryFilled = function() {
 				var solrCustomQuery = $scope.ingest.solrCustomQuery;
 				return $.trim(solrCustomQuery).length > 0;
 			};
-			
+
 			$scope.isCswCustomQueryFilled = function() {
 				var cswCustomQuery = $scope.ingest.cswCustomQuery;
 				return $.trim(cswCustomQuery).length > 0;
 			};
-			
+
 			$scope.resetOtherFieldsSolr = function() {
-				if($scope.isSolrCustomQueryFilled()) {
+				if ($scope.isSolrCustomQueryFilled()) {
 					$scope.ingest.themeKeyword = null;
 					$scope.ingest.placeKeyword = null;
 					$scope.ingest.topic = null;
@@ -217,10 +227,10 @@
 					$scope.ingest.dataRepositories = [];
 					$scope.ingest.excludeRestricted = null;
 					$scope.ingest.rangeSolrFrom = null;
-					$scope.ingest.rangeSolrTo = null;					
+					$scope.ingest.rangeSolrTo = null;
 				}
 			};
-			
+
 			$scope.resetOtherFieldsCsw = function() {
 				if ($scope.isCswCustomQueryFilled()) {
 					$scope.ingest.cswTitle = null;
@@ -243,24 +253,48 @@
 					return;
 				}
 
-				if (url !== null && url !== '') {
-					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function(data) {
-						$scope[targetField] = data;
-					}).error(function() {
-						$scope[targetField] = [];
-					});
+				if (url !== null && url.trim() !== '') {
+					if ($scope.remoteRepositoriesRequest != null) {
+						$scope.remoteRepositoriesRequest.reject();
+
+					}
+					$scope.remoteRepositoriesRequest = remoteRepositories
+						.getRemoteSourcesByUrl(repoType, url).success(function(data) {
+							if (data.status === "SUCCESS") {
+								$scope[targetField] = data.result;
+							} else {
+								$scope[targetField] = [];
+								$scope.urlError = $translate("INGEST_FORM." + data.errorCode);
+							}
+							$scope.remoteRepositoriesRequest = null;
+						}).error(function() {
+							$scope[targetField] = [];
+							$scope.remoteRepositoriesRequest = null;
+						});
 				}
 			};
 
 			$scope.getRemoteReposByRepoId = function(repoType, repoId) {
+				$scope.serviceAlerts = [];
+				if ($scope.servicesPromise != null) {
+					$scope.servicesPromise.resolve();
+					$scope.servicesPromise = null;
+				}
 				if (repoId !== null) {
-					remoteRepositories.getRemoteSourcesByRepoId(repoId).
+					$scope.servicesPromise = $q.defer();
+					remoteRepositories.getRemoteSourcesByRepoId(repoId, $scope.servicesPromise).
 					success(function(data) {
-						if (repoType === "SOLR") {
-							$scope.solrDataRepositoryList = data;
-						} else if (repoType === "GEONETWORK") {
-							$scope.gnSourcesList = data;
+						if (data.status === 'SUCCESS') {
+							if (repoType === "SOLR") {
+								$scope.solrDataRepositoryList = data.result;
+							} else if (repoType === "GEONETWORK") {
+								$scope.gnSourcesList = data.result;
+							}
+						} else {
+							$scope.serviceAlerts.push($translate("INGEST_FORM." + data.result.errorCode));
 						}
+					}).error(function() {
+						$scope.serviceAlerts.push($translate("INGEST_FORM.ERROR_RETRIEVING_PREDEFINED_REMOTE_SOURCES"));
 					});
 				}
 			};
@@ -294,6 +328,8 @@
 
 
 			$scope.resetForm = function() {
+				$scope.urlErrors = [];
+				$scope.serviceAlerts = [];
 				$scope.ingest.url = null;
 				$scope.ingest.catalogOfServices = null;
 				$scope.gnSourcesList = [];
@@ -337,12 +373,15 @@
 			$scope.cleanServiceUrl = function() {
 				if ($scope.ingest.catalogOfServices != null) {
 					$scope.ingest.url = null;
+					$scope.urlErrors = [];
+					$scope.serviceAlerts = [];
 				} else {
 					$scope.newIngest.url.$dirty = true;
 				}
 			};
 
 			$scope.getRemoteSourcesByUrl = function() {
+				$scope.urlErrors = [];
 				var repoType = $scope.ingest.typeOfInstance;
 				var url = $scope.ingest.url;
 				var valid = $scope.newIngest.url.$valid;
@@ -357,14 +396,30 @@
 					return;
 				}
 
-				if (valid && url !== null && url !== '') {
-					remoteRepositories.getRemoteSourcesByUrl(repoType, url).success(function(data) {
-						$log.info("Updated remote repository list with data " + JSON.stringify(data));
-						$scope.ingest[targetModel] = [];
-						$scope[targetField] = data;
+				if ($scope.remoteRepositoriesPromise != null) {
+					$scope.remoteRepositoriesPromise.resolve();
+					$scope.remoteRepositoriesPromise = null;
+				}
+
+				if (valid && url !== null && url.trim() !== '') {
+					$scope.remoteRepositoriesPromise = $q.defer();
+
+					remoteRepositories.getRemoteSourcesByUrl(repoType, url,
+						$scope.remoteRepositoriesPromise).success(function(data) {
+						if (data.status === "SUCCESS") {
+							$scope.ingest[targetModel] = [];
+							$scope[targetField] = data.result;
+							$scope.urlErrors = [];
+						} else {
+							$scope.ingest[targetModel] = [];
+							$scope[targetField] = [];
+							$scope.urlErrors.push($translate("INGEST_FORM." + data.result.errorCode));
+						}
 					}).error(function() {
 						$scope.ingest[targetModel] = [];
 						$scope[targetField] = [];
+						$scope.urlErrors = [];
+						$scope.urlErrors.push($translate("INGEST_FORM.ERROR_RETRIEVING_REMOTE_SOURCES"));
 					});
 				} else if (!valid || url === null || url === '') {
 					$scope.ingest[targetModel] = [];
@@ -375,16 +430,25 @@
 			$scope.getRemoteSourcesByRepoId = function() {
 				var repoType = $scope.ingest.typeOfInstance;
 				var repoId = $scope.ingest.catalogOfServices;
+				$scope.serviceAlerts = [];
+				if ($scope.servicesPromise != null) {
+					$scope.servicesPromise.resolve();
+					$scope.servicesPromise = null;
+				}
 				if (repoId != null) {
-					remoteRepositories.getRemoteSourcesByRepoId(repoId).
+					$scope.servicesPromise = $q.defer();
+					remoteRepositories.getRemoteSourcesByRepoId(repoId, $scope.servicesPromise).
 					success(function(data) {
-						$log.info("Remote sources by Id " + JSON.stringify(data));
-						if (repoType === "SOLR") {
-							$scope.ingest.dataRepositories = [];
-							$scope.solrDataRepositoryList = data;
-						} else if (repoType === "GEONETWORK") {
-							$scope.ingest.gnSources = [];
-							$scope.gnSourcesList = data;
+						if (data.status === "SUCCESS") {
+							if (repoType === "SOLR") {
+								$scope.ingest.dataRepositories = [];
+								$scope.solrDataRepositoryList = data.result;
+							} else if (repoType === "GEONETWORK") {
+								$scope.ingest.gnSources = [];
+								$scope.gnSourcesList = data.result;
+							}
+						} else {
+							$scope.serviceAlerts.push($translate("INGEST_FORM." + data.result.errorCode));
 						}
 					});
 				} else {
@@ -426,14 +490,17 @@
 
 			remoteRepositories.getLocalSolrInstitutions().success(
 				function(data) {
-					if (data.status === "SUCCESS") {						
+					if (data.status === "SUCCESS") {
 						$scope.nameOgpRepositoryList = data.result;
 						if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined) {
 							$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
 						}
 					} else {
 						$log.warn("Can not retrieve local Solr institutions list: " + data.result.errorCode);
-						$scope.alerts.push({type: "danger", msg: $translate("INGEST_FORM." + data.result.errorCode)});
+						$scope.alerts.push({
+							type: "danger",
+							msg: $translate("INGEST_FORM." + data.result.errorCode)
+						});
 					}
 				}).error(
 				function(errorMessage) {
@@ -513,11 +580,13 @@
 
 
 				// Public interface
-				return {
+				var publicInterface = {
 					initMap: function() {
 						$scope.initMap;
 					}
 				};
+				return publicInterface;
+
 			};
 
 		}
