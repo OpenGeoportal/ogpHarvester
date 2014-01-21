@@ -3,6 +3,7 @@ package org.opengeoportal.harvester.api.metadata.model;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public class Metadata {
     GeometryType geometryType;
     private String publisher;
     private Boolean georeferenced;
-    private String contentDate;
+    private Date contentDate;
     private String topic;
 
     public Metadata(String layerId){
@@ -69,6 +70,10 @@ public class Metadata {
     }
 
     public void setBounds(String minX, String minY, String maxX, String maxY) {
+        this.bounds = new BoundingBox(minX, minY, maxX, maxY);
+    }
+    
+    public void setBounds(Double minX, Double minY, Double maxX, Double maxY) {
         this.bounds = new BoundingBox(minX, minY, maxX, maxY);
     }
 
@@ -161,11 +166,11 @@ public class Metadata {
         this.georeferenced = georeferenced;
     }
 
-    public String getContentDate() {
+    public Date getContentDate() {
         return contentDate;
     }
 
-    public void setContentDate(String contentDate){
+    public void setContentDate(Date contentDate){
         this.contentDate = contentDate;
     }
 
@@ -199,7 +204,7 @@ public class Metadata {
         String value = "";
 
         if (property.equals("dateOfContent")) {
-            value = this.getContentDate();
+            value = this.getContentDate().toString();
         } else if (property.equals("originator")) {
             value = this.getOriginator();
         } else if (property.equals("themeKeyword")) {

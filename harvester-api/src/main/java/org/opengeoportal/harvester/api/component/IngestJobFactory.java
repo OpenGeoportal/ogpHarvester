@@ -1,9 +1,9 @@
-/*
- * Frequency.java
+/**
+ * IngestJobFactory.java
  *
- * Copyright (C) 2013
+ * Copyright (C) 2014
  *
- * This file is part of Open Geoportal Harvester
+ * This file is part of Open Geoportal Harvester.
  *
  * This software is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,31 +25,28 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.domain;
+package org.opengeoportal.harvester.api.component;
+
+import org.opengeoportal.harvester.api.domain.Ingest;
 
 /**
- * Indicate the status of an ingest job.
+ * An IngestJobFactory is responsible for producing instances of concrete
+ * BaseIngestJob according with the Ingest passed to it.
  * 
- * @author <a href="mailto:jose.garcia@geocat.net">Jose García</a>.
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  * 
  */
-public enum IngestJobStatusValue {
+public interface IngestJobFactory {
 	/**
-	 * The job execution has not been started yet.
+	 * Create a new ingest job based on the ingest passed as parameter.
+	 * 
+	 * @param ingest
+	 *            the ingest.
+	 * @return a concrete {@link BaseIngestJob} subclass. This instance must be
+	 *         inited calling its method <code>init</code>.
 	 */
-	NOT_STARTED_YET,
-	/**
-	 * The ingest is being processed.
-	 */
-	PROCESSING,
-	/**
-	 * The execution has finished with success.
-	 */
-	SUCCESSED,
-	/**
-	 * The execution has finished but it has failed.
-	 */
-	FAILED;
+	BaseIngestJob newIngestJob(Ingest ingest);
+
 }

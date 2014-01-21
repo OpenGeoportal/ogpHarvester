@@ -1,12 +1,11 @@
 package org.opengeoportal.harvester.api.component.geonetwork;
 
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
-import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchParams;
-import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResult;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResponse;
+import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResult;
+import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
-
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
@@ -14,49 +13,67 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-
+/**
+ * IngestJob that read from a remote Geonetwork.
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 public class GeonetworkIngestJob extends BaseIngestJob {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/** Logger. */
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/*
+	 * (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.component.BaseIngestJob#ingest()
+	 */
+	@Override
+	public void ingest() {
+		try {
+			boolean processFinished = false;
+			int start = 1;
 
-    @Override
-    public void run() {
-        try {
-            boolean processFinished = false;
-            int start = 1;
+			GeoNetworkClient gnClient = new GeoNetworkClient(ingest.getUrl());
+			GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
+					(IngestGeonetwork) ingest);
+			logger.info("GeonetworkIngestJob: search parameters "
+					+ searchParameters.toString());
 
-            GeoNetworkClient gnClient = new GeoNetworkClient(ingest.getUrl());
-            GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams((IngestGeonetwork) ingest);
-            logger.info("GeonetworkIngestJob: search parameters " + searchParameters.toString());
+			while (!processFinished) {
+				searchParameters.setFrom(start);
+				GeoNetworkSearchResponse searchResponse = gnClient
+						.search(searchParameters);
 
-            while (!processFinished) {
-                searchParameters.setFrom(start);
-                GeoNetworkSearchResponse searchResponse = gnClient.search(searchParameters);
+				for (GeoNetworkSearchResult record : searchResponse
+						.getMetadataSearchResults()) {
+					Document document = gnClient.retrieveMetadata(record
+							.getId());
 
-                for(GeoNetworkSearchResult record : searchResponse.getMetadataSearchResults()) {
-                    Document document = gnClient.retrieveMetadata(record.getId());
+					MetadataParser parser = parserProvider
+							.getMetadataParser(document);
+					MetadataParserResponse parserResult = parser
+							.parse(document);
 
-                    MetadataParser parser = parserProvider.getMetadataParser(document);
-                    MetadataParserResponse parserResult = parser.parse(document);
+					Metadata metadata = parserResult.getMetadata();
+					metadata.setInstitution(ingest.getNameOgpRepository());
 
-                    Metadata metadata = parserResult.getMetadata();
-                    metadata.setInstitution(ingest.getNameOgpRepository());
+					boolean valid = metadataValidator
+							.validate(metadata, report);
+					if (valid) {
+						metadataIngester.ingest(metadata);
+					}
 
-                    boolean valid = metadataValidator.validate(metadata, report);
-                    if (valid) {
-                        metadataIngester.ingest(metadata);
-                    }
+				}
 
-                }
+				// --- check to see if we have to perform additional searches
+				processFinished = (start + searchParameters.getPageSize() > searchResponse
+						.getTotal());
 
-                //--- check to see if we have to perform additional searches
-                processFinished =  (start+searchParameters.getPageSize() > searchResponse.getTotal());
+				start += searchParameters.getPageSize();
 
-                start += searchParameters.getPageSize();
+			}
+		} catch (Exception ex) {
+			// TODO: Log exception
+		}
 
-            }
-        } catch (Exception ex) {
-            //TODO: Log exception
-        }
-
-    }
+	}
 }

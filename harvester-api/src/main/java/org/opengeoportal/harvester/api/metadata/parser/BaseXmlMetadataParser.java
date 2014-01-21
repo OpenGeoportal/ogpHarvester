@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -13,6 +14,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import java.io.StringWriter;
+import java.text.ParseException;
 import java.util.*;
 
 public abstract class BaseXmlMetadataParser extends BaseMetadataParser implements MetadataParser {
@@ -120,7 +122,42 @@ public abstract class BaseXmlMetadataParser extends BaseMetadataParser implement
         return null;
     }
 
-    private class SimpleNamespaceContext implements NamespaceContext {
+    protected Date processDateString(String passedDate) throws ParseException {
+		// can't do anything if there's no value passed
+		if ((passedDate == null) || (passedDate.equalsIgnoreCase("unknown"))) {
+			return null;
+		}
+		List<String> formatsList = new ArrayList<String>();
+		// add likely formats in order of likelihood
+	
+		formatsList.add("yyyyMMdd");
+		formatsList.add("yyyyMM");
+		formatsList.add("MM/yyyy");
+		formatsList.add("MM/dd/yyyy");
+		formatsList.add("MM/dd/yy");
+		formatsList.add("MM-dd-yyyy");
+		formatsList.add("MMMM yyyy");
+		formatsList.add("MMM yyyy");
+		formatsList.add("dd MMMM yyyy");
+		formatsList.add("dd MMM yyyy");
+		formatsList.add("yyyy");
+	
+		String[] parsePatterns = formatsList.toArray(new String[formatsList
+				.size()]);
+		// String returnYear = null;
+	
+		passedDate = passedDate.trim();
+		Date date = DateUtils.parseDate(passedDate, parsePatterns);
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		logger.debug("Document date: " + passedDate + ", Parsed date: "
+				+ calendar.get(Calendar.YEAR));
+		// returnYear = Integer.toString(calendar.get(Calendar.YEAR));
+	
+		return date;
+	}
+
+	private class SimpleNamespaceContext implements NamespaceContext {
 
         private final Map<String, String> PREF_MAP = new HashMap<String, String>();
 

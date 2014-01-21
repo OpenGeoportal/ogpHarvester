@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,33 +77,33 @@ public class SolrRecord {
 	@Field("PlaceKeywords")
 	private String placeKeywords;
 	@Field("GeoReferenced")
-	private String georeferenced;
+	private Boolean georeferenced;
 	@Field("Abstract")
 	private String description;
 	@Field("Location")
 	private String location;
 	@Field("MaxY")
-	private String maxY;
+	private Double maxY;
 	@Field("MinY")
-	private String minY;
+	private Double minY;
 	@Field("MaxX")
-	private String maxX;
+	private Double maxX;
 	@Field("MinX")
-	private String minX;
+	private Double minX;
 	@Field("CenterX")
-	private String centerX;
+	private Double centerX;
 	@Field("CenterY")
-	private String centerY;
+	private Double centerY;
 	@Field("HalfWidth")
-	private String halfWidth;
+	private Double halfWidth;
 	@Field("HalfHeight")
-	private String halfHeight;
+	private Double halfHeight;
 	@Field("Area")
-	private String area;
+	private Double area;
 	@Field("WorkspaceName")
 	private String workspaceName;
 	@Field("ContentDate")
-	private String contentDate;
+	private Date contentDate;
 	@Field("FgdcText")
 	private String fgdcText;
 	@Field("ThemeKeywordsSynonymsIso")
@@ -321,7 +322,7 @@ public class SolrRecord {
 	/**
 	 * @return the georeferenced
 	 */
-	public String getGeoreferenced() {
+	public Boolean getGeoreferenced() {
 		return georeferenced;
 	}
 
@@ -329,7 +330,7 @@ public class SolrRecord {
 	 * @param georeferenced
 	 *            the georeferenced to set
 	 */
-	public void setGeoreferenced(String georeferenced) {
+	public void setGeoreferenced(Boolean georeferenced) {
 		this.georeferenced = georeferenced;
 	}
 
@@ -366,7 +367,7 @@ public class SolrRecord {
 	/**
 	 * @return the maxY
 	 */
-	public String getMaxY() {
+	public Double getMaxY() {
 		return maxY;
 	}
 
@@ -374,14 +375,14 @@ public class SolrRecord {
 	 * @param maxY
 	 *            the maxY to set
 	 */
-	public void setMaxY(String maxY) {
+	public void setMaxY(Double maxY) {
 		this.maxY = maxY;
 	}
 
 	/**
 	 * @return the minY
 	 */
-	public String getMinY() {
+	public Double getMinY() {
 		return minY;
 	}
 
@@ -389,14 +390,14 @@ public class SolrRecord {
 	 * @param minY
 	 *            the minY to set
 	 */
-	public void setMinY(String minY) {
+	public void setMinY(Double minY) {
 		this.minY = minY;
 	}
 
 	/**
 	 * @return the maxX
 	 */
-	public String getMaxX() {
+	public Double getMaxX() {
 		return maxX;
 	}
 
@@ -404,14 +405,14 @@ public class SolrRecord {
 	 * @param maxX
 	 *            the maxX to set
 	 */
-	public void setMaxX(String maxX) {
+	public void setMaxX(Double maxX) {
 		this.maxX = maxX;
 	}
 
 	/**
 	 * @return the minX
 	 */
-	public String getMinX() {
+	public Double getMinX() {
 		return minX;
 	}
 
@@ -419,14 +420,14 @@ public class SolrRecord {
 	 * @param minX
 	 *            the minX to set
 	 */
-	public void setMinX(String minX) {
+	public void setMinX(Double minX) {
 		this.minX = minX;
 	}
 
 	/**
 	 * @return the centerX
 	 */
-	public String getCenterX() {
+	public Double getCenterX() {
 		return centerX;
 	}
 
@@ -434,14 +435,14 @@ public class SolrRecord {
 	 * @param centerX
 	 *            the centerX to set
 	 */
-	public void setCenterX(String centerX) {
+	public void setCenterX(Double centerX) {
 		this.centerX = centerX;
 	}
 
 	/**
 	 * @return the centerY
 	 */
-	public String getCenterY() {
+	public Double getCenterY() {
 		return centerY;
 	}
 
@@ -449,14 +450,14 @@ public class SolrRecord {
 	 * @param centerY
 	 *            the centerY to set
 	 */
-	public void setCenterY(String centerY) {
+	public void setCenterY(Double centerY) {
 		this.centerY = centerY;
 	}
 
 	/**
 	 * @return the halfWidth
 	 */
-	public String getHalfWidth() {
+	public Double getHalfWidth() {
 		return halfWidth;
 	}
 
@@ -464,14 +465,14 @@ public class SolrRecord {
 	 * @param halfWidth
 	 *            the halfWidth to set
 	 */
-	public void setHalfWidth(String halfWidth) {
+	public void setHalfWidth(Double halfWidth) {
 		this.halfWidth = halfWidth;
 	}
 
 	/**
 	 * @return the halfHeight
 	 */
-	public String getHalfHeight() {
+	public Double getHalfHeight() {
 		return halfHeight;
 	}
 
@@ -479,14 +480,14 @@ public class SolrRecord {
 	 * @param halfHeight
 	 *            the halfHeight to set
 	 */
-	public void setHalfHeight(String halfHeight) {
+	public void setHalfHeight(Double halfHeight) {
 		this.halfHeight = halfHeight;
 	}
 
 	/**
 	 * @return the area
 	 */
-	public String getArea() {
+	public Double getArea() {
 		return area;
 	}
 
@@ -494,7 +495,7 @@ public class SolrRecord {
 	 * @param area
 	 *            the area to set
 	 */
-	public void setArea(String area) {
+	public void setArea(Double area) {
 		this.area = area;
 	}
 
@@ -516,7 +517,7 @@ public class SolrRecord {
 	/**
 	 * @return the contentDate.
 	 */
-	public String getContentDate() {
+	public Date getContentDate() {
 		return contentDate;
 	}
 
@@ -524,7 +525,7 @@ public class SolrRecord {
 	 * @param contentDate
 	 *            the contentDate to set
 	 */
-	public void setContentDate(String contentDate) {
+	public void setContentDate(Date contentDate) {
 		this.contentDate = contentDate;
 	}
 
@@ -550,7 +551,8 @@ public class SolrRecord {
 		map.put("Title", this.layerDisplayName);
 		map.put("DataType", this.dataType);
 		map.put("Access", this.access);
-		map.put("ContentDate", this.contentDate);
+		map.put("ContentDate", this.contentDate == null ? null
+				: this.contentDate.toString());
 		map.put("Bounds", this.minX + "," + this.minY + "," + this.maxX + ","
 				+ this.maxY);
 		map.put("Originator", this.originator);
@@ -586,19 +588,19 @@ public class SolrRecord {
 
 		BoundingBox bounds = metadata.getBounds();
 		if ((bounds != null) && (bounds.isValid())) {
-			record.setMinX(Double.toString(bounds.getMinX()));
-			record.setMaxX(Double.toString(bounds.getMaxX()));
-			record.setMinY(Double.toString(bounds.getMinY()));
-			record.setMaxY(Double.toString(bounds.getMaxY()));
+			record.setMinX(bounds.getMinX());
+			record.setMaxX(bounds.getMaxX());
+			record.setMinY(bounds.getMinY());
+			record.setMaxY(bounds.getMaxY());
 
 			// calculated fields
-			record.setHalfHeight(Double.toString(bounds.getHeight() / 2.));
-			record.setHalfWidth(Double.toString(bounds.getWidth() / 2.));
+			record.setHalfHeight(bounds.getHeight() / 2.);
+			record.setHalfWidth(bounds.getWidth() / 2.);
 
-			record.setCenterX(Double.toString(bounds.getCenterX()));
-			record.setCenterY(Double.toString(bounds.getCenterY()));
+			record.setCenterX(bounds.getCenterX());
+			record.setCenterY(bounds.getCenterY());
 
-			record.setArea(Double.toString(bounds.getArea()));
+			record.setArea(bounds.getArea());
 		}
 
 		record.setContentDate(metadata.getContentDate());
@@ -610,7 +612,7 @@ public class SolrRecord {
 		if (StringUtils.isNotEmpty(metadata.getWorkspaceName())) {
 			record.setWorkspaceName(metadata.getWorkspaceName().toString());
 		}
-		record.setGeoreferenced(Boolean.toString(metadata.getGeoreferenced()));
+		record.setGeoreferenced(metadata.getGeoreferenced());
 		record.setTopicCategory(metadata.getTopic());
 
 		// TODO: Check

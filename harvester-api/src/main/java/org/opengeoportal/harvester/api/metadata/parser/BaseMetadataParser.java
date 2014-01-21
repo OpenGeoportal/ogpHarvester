@@ -63,5 +63,11 @@ public class BaseMetadataParser {
 		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
 		return bounds.isValid();
 	}
+	
+	protected Boolean validateBounds(Double minX, Double minY, Double maxX,
+			Double maxY) {
+		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
+		return bounds.isValid();
+	}
 
 }

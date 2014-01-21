@@ -125,10 +125,8 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	 */
 	private void handleGeoreference(SolrRecord record,
 			MetadataParserResponse response, Metadata metadata) {
-		String isGeorerferenced = record.getGeoreferenced();
-
-		boolean isGeorefBoolean = Boolean.parseBoolean(isGeorerferenced);
-		metadata.setGeoreferenced(isGeorefBoolean);
+		Boolean isGeorerferenced = record.getGeoreferenced();
+		metadata.setGeoreferenced(isGeorerferenced);
 	}
 
 	/**
@@ -167,10 +165,10 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	 */
 	private void handleBounds(SolrRecord record,
 			MetadataParserResponse response, Metadata metadata) {
-		String minX = record.getMinX();
-		String minY = record.getMinY();
-		String maxX = record.getMaxX();
-		String maxY = record.getMaxY();
+		Double minX = record.getMinX();
+		Double minY = record.getMinY();
+		Double maxX = record.getMaxX();
+		Double maxY = record.getMaxY();
 		if (validateBounds(minX, minY, maxX, maxY)) {
 			metadata.setBounds(minX, minY, maxX, maxY);
 		} else {

@@ -29,60 +29,141 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
+import java.util.Date;
+import java.util.UUID;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
-import javax.persistence.*;
-import java.util.Date;
-
+/**
+ * Every execution of a Ingest Job creates a new IngestJob.
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 @Entity
 public class IngestJobStatus extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -5208109428117150361L;
+	/** Unique identifier for serialization. */
+	private static final long serialVersionUID = -5208109428117150361L;
 
-    @OneToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name="report_id")
-    private IngestReport ingestReport;
+	/**
+	 * Each IngestJobStatus has a {@link IngestReportError} where to store the
+	 * results of the ingest.
+	 */
+	@OneToOne(cascade = { CascadeType.ALL })
+	@JoinColumn(name = "report_id")
+	private IngestReport ingestReport;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private IngestJobStatusValue status;
+	/**
+	 * The status of the execution.
+	 */
+	@Column
+	@Enumerated(EnumType.STRING)
+	private IngestJobStatusValue status;
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date startTime;
+	/**
+	 * Start time.
+	 */
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date startTime;
 
-    @Column
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date endTime;
+	/**
+	 * End time.
+	 */
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endTime;
 
-    public IngestReport getIngestReport() {
-        return ingestReport;
-    }
+	/**
+	 * Job execution identifier. This can be used to retrieve actual job in the
+	 * scheduler.
+	 */
+	@Column
+	private UUID jobExecutionIdentifier;
 
-    public void setIngestReport(IngestReport ingestReport) {
-        this.ingestReport = ingestReport;
-    }
+	/**
+	 * @return the ingestReport
+	 */
+	public IngestReport getIngestReport() {
+		return ingestReport;
+	}
 
-    public IngestJobStatusValue getStatus() {
-        return status;
-    }
+	/**
+	 * @param ingestReport
+	 *            the ingestReport to set
+	 */
+	public void setIngestReport(IngestReport ingestReport) {
+		this.ingestReport = ingestReport;
+	}
 
-    public void setStatus(IngestJobStatusValue status) {
-        this.status = status;
-    }
+	/**
+	 * @return the status
+	 */
+	public IngestJobStatusValue getStatus() {
+		return status;
+	}
 
-    public Date getStartTime() {
-        return startTime;
-    }
+	/**
+	 * @param status
+	 *            the status to set
+	 */
+	public void setStatus(IngestJobStatusValue status) {
+		this.status = status;
+	}
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
+	/**
+	 * @return the startTime
+	 */
+	public Date getStartTime() {
+		return startTime;
+	}
 
-    public Date getEndTime() {
-        return endTime;
-    }
+	/**
+	 * @param startTime
+	 *            the startTime to set
+	 */
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
+	/**
+	 * @return the endTime
+	 */
+	public Date getEndTime() {
+		return endTime;
+	}
+
+	/**
+	 * @param endTime
+	 *            the endTime to set
+	 */
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * @return the jobExecutionIdentifier
+	 */
+	public UUID getJobExecutionIdentifier() {
+		return jobExecutionIdentifier;
+	}
+
+	/**
+	 * @param jobExecutionIdentifier
+	 *            the jobExecutionIdentifier to set
+	 */
+	public void setJobExecutionIdentifier(UUID jobExecutionIdentifier) {
+		this.jobExecutionIdentifier = jobExecutionIdentifier;
+	}
+
 }
