@@ -1,9 +1,9 @@
-/*
- * Frequency.java
+/**
+ * UnscheduledIngestException.java
  *
- * Copyright (C) 2013
+ * Copyright (C) 2014
  *
- * This file is part of Open Geoportal Harvester
+ * This file is part of Open Geoportal Harvester.
  *
  * This software is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,31 +25,33 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.domain;
+package org.opengeoportal.harvester.api.exception;
 
 /**
- * Indicate the status of an ingest job.
- * 
- * @author <a href="mailto:jose.garcia@geocat.net">Jose García</a>.
- * 
+ * This exception is thrown when an ingest with isScheduled property has been
+ * tried to launch.
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ *
  */
-public enum IngestJobStatusValue {
+public class UnscheduledIngestException extends RuntimeException {
+
+	/** Serial version UID. */
+	private static final long serialVersionUID = -5819029852731979252L;
+
 	/**
-	 * The job execution has not been started yet.
+	 * Default constructor. 
 	 */
-	NOT_STARTED_YET,
+	public UnscheduledIngestException() {
+
+	}
+
 	/**
-	 * The ingest is being processed.
+	 * @param message the message.
 	 */
-	PROCESSING,
-	/**
-	 * The execution has finished with success.
-	 */
-	SUCCESSED,
-	/**
-	 * The execution has finished but it has failed.
-	 */
-	FAILED;
+	public UnscheduledIngestException(String message) {
+		super(message);
+	}
+
 }

@@ -1,8 +1,6 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +8,6 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
 import org.opengeoportal.harvester.api.metadata.model.GeometryType;
 import org.opengeoportal.harvester.api.metadata.model.PlaceKeywords;
@@ -143,24 +140,25 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 
 	@Override
 	protected void handleDate() {
-		String dateValue = null;
+		String dateString = null;
+		Date dateValue = null;
 		try {
-			dateValue = getDocumentValue(FgdcTag.Date_Caldate);
+			dateString = getDocumentValue(FgdcTag.Date_Caldate);
 		} catch (Exception e) {
-			dateValue = null;
+			dateString = null;
 		}
 
-		if (StringUtils.isEmpty(dateValue)) {
+		if (StringUtils.isEmpty(dateString)) {
 			try {
-				dateValue = getDocumentValue(FgdcTag.Date_Begdate);
+				dateString = getDocumentValue(FgdcTag.Date_Begdate);
 			} catch (Exception e) {
-				dateValue = null;
+				dateString = null;
 			}
 		}
 
-		if (StringUtils.isEmpty(dateValue)) {
+		if (StringUtils.isEmpty(dateString)) {
 			try {
-				dateValue = getDocumentValue(FgdcTag.Date_DateStamp);
+				dateString = getDocumentValue(FgdcTag.Date_DateStamp);
 			} catch (Exception e) {
 				logger.warn("No valid Content Date could be found in the document.");
 				this.metadataParserResponse.getMetadata().setContentDate(null);
@@ -169,17 +167,17 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 		}
 
 		try {
-			logger.debug("DATE VALUE#######:" + dateValue);
-			dateValue = processDateString(dateValue);
+			logger.debug("DATE VALUE#######:" + dateString);
+			dateValue = processDateString(dateString);
 			this.metadataParserResponse.getMetadata().setContentDate(dateValue);
 		} catch (Exception e) {
 			try {
-				dateValue = dateValue.substring(0, 3);
-				int dateValueInt = Integer.parseInt(dateValue);
-				dateValue = Integer.toString(dateValueInt);
-				if (dateValue.length() == 4) {
+				dateString = dateString.substring(0, 3);
+				int dateValueInt = Integer.parseInt(dateString);
+				dateString = Integer.toString(dateValueInt);
+				if (dateString.length() == 4) {
 					this.metadataParserResponse.getMetadata().setContentDate(
-							processDateString(dateValue));
+							processDateString(dateString));
 				}
 			} catch (Exception e1) {
 				logger.warn("No valid Content Date could be found in the document.");
@@ -190,9 +188,9 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 
 	@Override
 	protected void handleDataType() {
-		String direct = null;// raster?
-		String sdtsType = null;// vector type
-		String srcCiteA = null;// scanned map
+		String direct = null; // raster?
+		String sdtsType = null; // vector type
+		String srcCiteA = null; // scanned map
 
 		try {
 			srcCiteA = getDocumentValue(FgdcTag.DataType_Srccitea);
@@ -373,40 +371,5 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 	@Override
 	protected void handleFullText() {
 		this.metadataParserResponse.getMetadata().setFullText(getFullText());
-	}
-
-	private String processDateString(String passedDate) throws ParseException {
-		// can't do anything if there's no value passed
-		if ((passedDate == null) || (passedDate.equalsIgnoreCase("unknown"))) {
-			return "";
-		}
-		List<String> formatsList = new ArrayList<String>();
-		// add likely formats in order of likelihood
-
-		formatsList.add("yyyyMMdd");
-		formatsList.add("yyyyMM");
-		formatsList.add("MM/yyyy");
-		formatsList.add("MM/dd/yyyy");
-		formatsList.add("MM/dd/yy");
-		formatsList.add("MM-dd-yyyy");
-		formatsList.add("MMMM yyyy");
-		formatsList.add("MMM yyyy");
-		formatsList.add("dd MMMM yyyy");
-		formatsList.add("dd MMM yyyy");
-		formatsList.add("yyyy");
-
-		String[] parsePatterns = formatsList.toArray(new String[formatsList
-				.size()]);
-		String returnYear = null;
-
-		passedDate = passedDate.trim();
-		Date date = DateUtils.parseDate(passedDate, parsePatterns);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		logger.debug("Document date: " + passedDate + ", Parsed date: "
-				+ calendar.get(Calendar.YEAR));
-		returnYear = Integer.toString(calendar.get(Calendar.YEAR));
-
-		return returnYear;
 	}
 }

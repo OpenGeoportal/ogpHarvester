@@ -112,7 +112,7 @@ public class IngestRepositoryTest {
         Ingest ingest = ingestRepository.findByName("ingest2");
 
         IngestJobStatus job = new IngestJobStatus();
-        job.setStatus(IngestJobStatusValue.Succeeded);
+        job.setStatus(IngestJobStatusValue.SUCCESSED);
         job.setStartTime(new Date());
         job.setEndTime(new Date());
 
@@ -146,7 +146,7 @@ public class IngestRepositoryTest {
         IngestReport reportRetrieved = ingestRetrieved.getIngestJobStatuses().get(0).getIngestReport();
         Assert.assertEquals(ingestUpdated.getIngestJobStatuses().get(0).getIngestReport(), reportRetrieved);
 
-        Assert.assertEquals(IngestJobStatusValue.Succeeded, ingestRetrieved.getIngestJobStatuses().get(0).getStatus());
+        Assert.assertEquals(IngestJobStatusValue.SUCCESSED, ingestRetrieved.getIngestJobStatuses().get(0).getStatus());
         Assert.assertEquals(100, reportRetrieved.getPublicRecords());
         Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
     }

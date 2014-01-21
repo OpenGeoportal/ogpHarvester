@@ -43,6 +43,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.SimpleStringCriteria;
 
 import com.google.common.collect.Lists;
 
@@ -150,47 +151,68 @@ public class SolrSearchParams {
 	 * @return the {@link SolrQuery} built with the data page this.
 	 */
 	SolrQuery toSolrQuery() {
-		Criteria criteria = new Criteria();
+		Criteria criteria = null;
+
 		if (StringUtils.isNotBlank(customSolrQuery)) {
-			criteria.expression(customSolrQuery);
+			criteria = new SimpleStringCriteria(customSolrQuery);
 		} else {
+			if (dataRepositories != null && dataRepositories.size() > 0) {
+				Criteria institutionCriteria = null;
+				for (String institution : dataRepositories) {
+					if (institutionCriteria == null) {
+						institutionCriteria = new Criteria(
+								SolrRecord.INSTITUTION).is(institution);
+					} else {
+						institutionCriteria = institutionCriteria
+								.or(new Criteria(SolrRecord.INSTITUTION)
+										.is(institution));
+					}
+				}
+				criteria = institutionCriteria;
+			} else {
+				criteria = new SimpleStringCriteria(SolrRecord.INSTITUTION
+						+ ":*");
+			}
+
 			if (StringUtils.isNotBlank(themeKeyword)) {
 				Criteria themeCriteria = splitAndOrCriteria(themeKeyword,
 						SolrRecord.THEME_KEYWORDS);
 				if (themeCriteria != null) {
-					criteria.and(themeCriteria);
+					criteria = criteria.and(themeCriteria);
 				}
 			}
 			if (StringUtils.isNotBlank(placeKeyword)) {
 				Criteria placeCriteria = splitAndOrCriteria(placeKeyword,
 						SolrRecord.PLACE_KEYWORDS);
 				if (placeCriteria != null) {
-					criteria.and(placeCriteria);
+					criteria = criteria.and(placeCriteria);
 				}
 			}
 			if (StringUtils.isNotBlank(topicCategory)) {
-				criteria.and(new Criteria(SolrRecord.ISO_TOPIC_CATEGORY)
-						.is(this.topicCategory));
+				criteria = criteria.and(new Criteria(
+						SolrRecord.ISO_TOPIC_CATEGORY).is(this.topicCategory));
 			}
 			if (isValidBBox()) {
-				criteria.and(new Criteria(SolrRecord.MINX).between(
-						this.bboxWest, this.bboxEast, true, true));
-				criteria.and(new Criteria(SolrRecord.MAXX).between(
-						this.bboxWest, this.bboxEast, true, true));
-				criteria.and(new Criteria(SolrRecord.MINY).between(
-						this.bboxSouth, this.bboxNorth, true, true));
-				criteria.and(new Criteria(SolrRecord.MAXY).between(
-						this.bboxSouth, this.bboxNorth, true, true));
+				criteria = criteria
+						.and(new Criteria(SolrRecord.MINX).between(
+								this.bboxWest, this.bboxEast, true, true))
+						.and(new Criteria(SolrRecord.MAXX).between(
+								this.bboxWest, this.bboxEast, true, true))
+						.and(new Criteria(SolrRecord.MINY).between(
+								this.bboxSouth, this.bboxNorth, true, true))
+						.and(new Criteria(SolrRecord.MAXY).between(
+								this.bboxSouth, this.bboxNorth, true, true));
 
 			}
 			if (dateFrom != null || dateTo != null) {
-				criteria.and(SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
+				criteria = criteria.and(SolrRecord.CONTENT_DATE).between(
+						dateFrom, dateTo);
 			}
 			if (StringUtils.isNotBlank(originator)) {
 				Criteria originatorCriteria = splitAndOrCriteria(originator,
 						SolrRecord.ORIGINATOR);
 				if (originatorCriteria != null) {
-					criteria.and(originatorCriteria);
+					criteria = criteria.and(originatorCriteria);
 				}
 			}
 			if (dataTypes != null && dataTypes.size() > 0) {
@@ -200,35 +222,21 @@ public class SolrSearchParams {
 						dataTypeCriteria = new Criteria(SolrRecord.DATA_TYPE)
 								.is(dt.toString());
 					} else {
-						dataTypeCriteria.or(new Criteria(SolrRecord.DATA_TYPE)
-								.is(dt.toString()));
+						dataTypeCriteria = dataTypeCriteria.or(new Criteria(
+								SolrRecord.DATA_TYPE).is(dt.toString()));
 					}
 				}
-				criteria.and(dataTypeCriteria);
+				criteria = criteria.and(dataTypeCriteria);
 
-			}
-
-			if (dataRepositories != null && dataRepositories.size() > 0) {
-				Criteria institutionCriteria = null;
-				for (String institution : dataRepositories) {
-					if (institutionCriteria == null) {
-						institutionCriteria = new Criteria(
-								SolrRecord.INSTITUTION).is(institution);
-					} else {
-						institutionCriteria.or(new Criteria(
-								SolrRecord.INSTITUTION).is(institution));
-					}
-				}
-				criteria.and(institutionCriteria);
 			}
 
 			if (excludeRestrictedData) {
-				criteria.and(new Criteria(SolrRecord.ACCESS).not().is(
-						AccessLevel.Restricted.toString()));
+				criteria = criteria.and(new Criteria(SolrRecord.ACCESS).not()
+						.is(AccessLevel.Restricted.toString()));
 			}
 
 			if (fromSolrTimestamp != null || toSolrTimestamp != null) {
-				criteria.and(new Criteria(SolrRecord.TIMESTAMP));
+				criteria = criteria.and(new Criteria(SolrRecord.TIMESTAMP));
 			}
 		}
 
@@ -275,11 +283,20 @@ public class SolrSearchParams {
 			if (orCriteria == null) {
 				orCriteria = new Criteria(fieldName).contains(word);
 			} else {
-				orCriteria.or(new Criteria(fieldName).contains(word));
+				orCriteria = orCriteria.or(new Criteria(fieldName)
+						.contains(word));
 			}
 
 		}
-		return orCriteria;
+
+		if (orCriteria != null) {
+			SimpleQuery query = new SimpleQuery(orCriteria);
+			DefaultQueryParser parser = new DefaultQueryParser();
+			String queryString = parser.getQueryString(query);
+			return new SimpleStringCriteria("(" + queryString + ")");
+		} else {
+			return null;
+		}
 	}
 
 	/**

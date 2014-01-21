@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<ingest id="10" name="ingest1" url="http://geodata.tufts.edu/solr"
+		beginDate="2010-10-01" scheduled="true" frequency="DAILY" dtype="SOLR"
+		excludeRestrictedData="false" themeKeyword="world atmospheric temperature isoth" 
+		originator="Michael Bauer" />
+	<ingest id="11" name="ingest2" url="http://ingest2" beginDate="2010-10-01"
+		frequency="WEEKLY" dtype="SOLR" excludeRestrictedData="false" />
+</dataset>

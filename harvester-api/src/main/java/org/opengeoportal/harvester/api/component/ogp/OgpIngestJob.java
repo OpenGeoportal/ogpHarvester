@@ -25,7 +25,7 @@ public class OgpIngestJob extends BaseIngestJob {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Override
-	public void run() {
+	public void ingest() {
 		try {
 			boolean processFinished = false;
 			int startPage = 0;
@@ -41,7 +41,7 @@ public class OgpIngestJob extends BaseIngestJob {
 			while (!processFinished) {
 				searchParams.setPage(startPage);
 				QueryResponse searchResponse = client.search(searchParams);
-				//long numFound = searchResponse.getResults().getNumFound();
+				// long numFound = searchResponse.getResults().getNumFound();
 				List<SolrRecord> records = searchResponse
 						.getBeans(SolrRecord.class);
 				if (records.size() > 0) {
@@ -66,6 +66,9 @@ public class OgpIngestJob extends BaseIngestJob {
 
 			}
 		} catch (Exception e) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Error getting remote records", e);
+			}
 			// LOG exception
 		}
 

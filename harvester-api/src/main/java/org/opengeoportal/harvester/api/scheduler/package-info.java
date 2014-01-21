@@ -1,9 +1,9 @@
 /*
- * Frequency.java
+ * package-info.java
  *
- * Copyright (C) 2013
+ * Copyright (C) 2014
  *
- * This file is part of Open Geoportal Harvester
+ * This file is part of Open Geoportal Harvester.
  *
  * This software is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,31 +25,13 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.domain;
-
 /**
- * Indicate the status of an ingest job.
+ * In this package you can find classes and interfaces related with the 
+ * scheduling of ingest jobs.
  * 
- * @author <a href="mailto:jose.garcia@geocat.net">Jose García</a>.
- * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ *
  */
-public enum IngestJobStatusValue {
-	/**
-	 * The job execution has not been started yet.
-	 */
-	NOT_STARTED_YET,
-	/**
-	 * The ingest is being processed.
-	 */
-	PROCESSING,
-	/**
-	 * The execution has finished with success.
-	 */
-	SUCCESSED,
-	/**
-	 * The execution has finished but it has failed.
-	 */
-	FAILED;
-}
+package org.opengeoportal.harvester.api.scheduler;

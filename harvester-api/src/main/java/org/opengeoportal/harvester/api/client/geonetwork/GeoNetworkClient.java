@@ -44,9 +44,10 @@ import java.util.List;
  *
  */
 public class GeoNetworkClient {
-    private static final Namespace GEONET_NS = Namespace.getNamespace("geonet", "http://www.fao.org/geonetwork");
+    private static final Namespace GEONET_NS = Namespace.getNamespace("geonet",
+    		"http://www.fao.org/geonetwork");
 
-    /** GeoNetwork server url **/
+    /** GeoNetwork server url. **/
     private String serverUrl;
 
     private XmlRequest request;
@@ -103,7 +104,7 @@ public class GeoNetworkClient {
             Element md   = request.execute();
             Element info = md.getChild("info", GEONET_NS);
 
-            if (info != null) info.detach();
+            if (info != null) { info.detach(); }
 
 
             Document doc = new Document(md);
