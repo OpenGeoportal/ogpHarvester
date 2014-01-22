@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class GetRecordsResponseParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	@SuppressWarnings("unchecked")
 	public GetRecordsResponse parse(Element response) {
         GetRecordsResponse getRecordsResponse = new GetRecordsResponse();
 

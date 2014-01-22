@@ -67,7 +67,8 @@ public class GeoNetworkClient {
      * @return A list of GeoNetwork sources (source uuid, source name).
      * @throws Exception
      */
-    public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
+    @SuppressWarnings("unchecked")
+	public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
         List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
 
         request.setAddress(serverUrl + "/srv/eng/xml.info?type=sources");
@@ -120,7 +121,8 @@ public class GeoNetworkClient {
         }
     }
 
-    public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
+    @SuppressWarnings("unchecked")
+	public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
         GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
 
         request.setAddress(serverUrl + "/srv/eng/xml.search");

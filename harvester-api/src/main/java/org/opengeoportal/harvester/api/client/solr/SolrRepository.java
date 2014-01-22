@@ -29,8 +29,6 @@
  */
 package org.opengeoportal.harvester.api.client.solr;
 
-import javax.annotation.Resource;
-
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Repository;
 

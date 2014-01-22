@@ -35,6 +35,8 @@ package org.opengeoportal.harvester.api.exception;
  */
 public class MetadataRepositoryException extends RuntimeException {
 
+	private static final long serialVersionUID = 1389846125285958611L;
+
 	/**
 	 * 
 	 */

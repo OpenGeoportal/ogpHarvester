@@ -63,7 +63,8 @@ public class GetCapabilitiesParser {
      * @param oper
      * @return
      */
-    private CswOperation extractOperation(Element oper, String preferredServerVersion) {
+    @SuppressWarnings("unchecked")
+	private CswOperation extractOperation(Element oper, String preferredServerVersion) {
         String name = oper.getAttributeValue("name");
 
         if (name == null) {

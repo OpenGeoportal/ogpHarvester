@@ -1,8 +1,12 @@
 package org.opengeoportal.harvester.api.client.solr;
 
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,10 +18,6 @@ import org.opengeoportal.harvester.api.util.XmlUtil;
 import org.w3c.dom.Document;
 
 import com.google.common.collect.Lists;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
 
 public class SolrRecordTest {
     private InputStream in = null;

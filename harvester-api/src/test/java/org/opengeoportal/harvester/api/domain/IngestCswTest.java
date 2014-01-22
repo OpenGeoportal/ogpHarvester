@@ -1,13 +1,10 @@
 package org.opengeoportal.harvester.api.domain;
 
-import org.apache.commons.lang3.StringUtils;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 
 public class IngestCswTest {
