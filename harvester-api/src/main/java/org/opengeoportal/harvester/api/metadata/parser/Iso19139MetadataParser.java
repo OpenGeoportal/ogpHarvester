@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.Maps;
+
 import javax.xml.xpath.XPathConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,10 +81,10 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
 
     @Override
     protected HashMap<String, String> getNamespaces() {
-        return new HashMap<String, String>() {{
-            put("gmd", "http://www.isotc211.org/2005/gmd");
-            put("gco", "http://www.isotc211.org/2005/gco");
-        }};
+    	HashMap<String, String> namespacesMap = Maps.newHashMap();
+    	namespacesMap.put("gmd", "http://www.isotc211.org/2005/gmd");
+    	namespacesMap.put("gco", "http://www.isotc211.org/2005/gco");
+        return namespacesMap;
     }
 
     @Override

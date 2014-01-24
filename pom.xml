@@ -16,7 +16,7 @@
         <springdatasolr.version>1.0.0.RELEASE</springdatasolr.version>
         <hibernate.version>4.2.7.Final</hibernate.version>
         <!--<hibernate.version>4.3.0.Beta5</hibernate.version>-->
-        <postgres.version>9.1-901.jdbc4</postgres.version>
+        <postgres.version>9.3-1100-jdbc4</postgres.version>
 		<junit.version>4.11</junit.version>
 		<jackson.version>2.2.3</jackson.version>
 		<!-- Logging -->

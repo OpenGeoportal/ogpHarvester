@@ -36,8 +36,21 @@ import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+/**
+ * Ingest service interface.
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 public interface IngestService {
-	public Ingest save(Ingest ingest);
+	/**
+	 * Save or update an Ingest.
+	 * 
+	 * @param ingest
+	 *            the {@link Ingest} to save.
+	 * @return the saved ingest instance.
+	 */
+	Ingest save(Ingest ingest);
 
 	/**
 	 * Save an {@link Ingest} into the database. Associate it with the
@@ -47,21 +60,45 @@ public interface IngestService {
 	 *            the <code>Ingest</code> to save.
 	 * @param customRepositoryId
 	 *            the custom repository identifier to be associated with.
+	 * @param customRepoInstanceType
+	 *            repository type.
 	 * @return the saved Ingest.
 	 * @throws InstanceNotFoundException
 	 *             if a {@link CustomRepository} with
 	 *             <code>customRepositoryId</code> as identifier and type
 	 *             <code>customRepositoryId</code> is not found.
 	 */
-	public Ingest save(Ingest ingest, Long customRepositoryId,
+	Ingest save(Ingest ingest, Long customRepositoryId,
 			InstanceType customRepoInstanceType)
 			throws InstanceNotFoundException;
 
-	public void delete(Long id);
+	/**
+	 * Remove the {@link Ingest} with identified id from the database.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 */
+	void delete(Long id);
 
-	public Ingest findByName(String name);
+	/**
+	 * Find the {@link Ingest} with the name passed as parameter.
+	 * 
+	 * @param name
+	 *            the ingest name.
+	 * @return the {@link Ingest} with the name passed or <code>null</code> if
+	 *         it cannot be found.
+	 */
+	Ingest findByName(String name);
 
-	public Page<Ingest> findAll(Pageable pageable);
+	/**
+	 * Get a {@link Page} of ingests.
+	 * 
+	 * @param pageable
+	 *            parameters used to implement the pagination (sort, page,
+	 *            number of elements, ...)
+	 * @return a {@link Page} of {@link Ingest}s.
+	 */
+	Page<Ingest> findAll(Pageable pageable);
 
 	/**
 	 * Returns the {@link Ingest} with the passed id.
@@ -70,16 +107,48 @@ public interface IngestService {
 	 *            ingest identifier.
 	 * @return the {@link Ingest} with the passed id.
 	 */
-	public Ingest findById(Long id);
+	Ingest findById(Long id);
 
 	/**
-	 * Unscheduled all ingests that use repositoy parameter.
+	 * Unschedule all ingests that use repository parameter.
 	 * 
 	 * @param repoId
 	 *            the repository ID.
 	 * @return how many ingests has been unscheduled.
 	 */
-	public int unscheduleByRepository(Long repoId);
-	
-	public Long countScheduledIngestsByRepo(Long repoId); 
+	int unscheduleByRepository(Long repoId);
+
+	/**
+	 * Given a repository identifier returns the count of Ingest that use this
+	 * repo and are currently scheduled (its attribute scheduled is
+	 * <code>true</code>).
+	 * 
+	 * @param repoId
+	 *            repository identifier.
+	 * @return the count of scheduled ingests for the repository.
+	 */
+	Long countScheduledIngestsByRepo(Long repoId);
+
+	/**
+	 * Save the ingest and schedule a trigger for executing it.
+	 * 
+	 * @param ingest
+	 *            the ingest.
+	 * @param customRepositoryId
+	 *            custom repository identifier.
+	 * @param typeOfInstance
+	 *            type of instance (SOLR, CSW, ...).
+	 * @return the saved ingest.
+	 */
+	Ingest saveAndSchedule(Ingest ingest, Long customRepositoryId,
+			InstanceType typeOfInstance);
+
+	/**
+	 * Save the ingest and schedule a trigger for executing it.
+	 * 
+	 * @param ingest
+	 *            the ingest
+	 * @return the saved ingest.
+	 */
+	Ingest saveAndSchedule(Ingest ingest);
 }

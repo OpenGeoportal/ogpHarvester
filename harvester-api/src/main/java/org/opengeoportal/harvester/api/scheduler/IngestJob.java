@@ -74,7 +74,7 @@ public class IngestJob implements Job {
 	private MetadataIngester metadataIngester;
 
 	/** Ingest identifier in the database. */
-	private Long ingestId;
+	private String ingestId;
 
 	/**
 	 * Public constructor.
@@ -118,7 +118,7 @@ public class IngestJob implements Job {
 			throw new IllegalStateException(
 					"ingestId property has not been set");
 		}
-		Ingest ingest = ingestService.findById(ingestId);
+		Ingest ingest = ingestService.findById(Long.valueOf(ingestId));
 		if (ingest == null) {
 			throw new InstanceNotFoundException(
 					"Job cannot find Ingest with ingestId " + ingestId);
@@ -135,7 +135,7 @@ public class IngestJob implements Job {
 	/**
 	 * @return the ingestId
 	 */
-	public Long getIngestId() {
+	public String getIngestId() {
 		return ingestId;
 	}
 
@@ -143,7 +143,7 @@ public class IngestJob implements Job {
 	 * @param ingestId
 	 *            the ingestId to set
 	 */
-	public void setIngestId(Long ingestId) {
+	public void setIngestId(String  ingestId) {
 		this.ingestId = ingestId;
 	}
 

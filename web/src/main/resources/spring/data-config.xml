@@ -1,87 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans default-lazy-init="true"
-	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
 		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="classpath:spring/jdbc.properties" file-encoding="UTF-8" ignore-unresolvable="true" order="1"/>
-	<tx:annotation-driven transaction-manager="transactionManager"/>
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-          destroy-method="close">
-        <property name="driverClassName" value="${jdbc.DriverClassName}" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
-        <property name="removeAbandoned" value="${jdbc.basic.removeAbandoned}" />
-        <property name="removeAbandonedTimeout" value="${jdbc.basic.removeAbandonedTimeout}" />
-        <property name="logAbandoned" value="${jdbc.basic.logAbandoned}" />
-        <property name="maxActive" value="${jdbc.basic.maxActive}" />
-        <property name="maxIdle" value="${jdbc.basic.maxIdle}" />
-        <property name="maxWait" value="${jdbc.basic.maxWait}" />
-        <property name="testOnBorrow" value="${jdbc.basic.testOnBorrow}" />
-        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.basic.timeBetweenEvictionRunsMillis}" />
-        <property name="minEvictableIdleTimeMillis" value="${jdbc.basic.minEvictableIdleTimeMillis}" />
-        <property name="testWhileIdle" value="${jdbc.basic.testWhileIdle}" />
-        <property name="numTestsPerEvictionRun" value="${jdbc.basic.numTestsPerEvictionRun}" />
-        <property name="poolPreparedStatements" value="${jdbc.basic.poolPreparedStatements}" />
-        <property name="maxOpenPreparedStatements" value="${jdbc.basic.maxOpenPreparedStatements}" />
-        <property name="validationQuery" value="${jdbc.basic.validationQuery}" />
-        <property name="defaultReadOnly" value="${jdbc.basic.defaultReadOnly}" />
-        <property name="defaultAutoCommit" value="${jdbc.basic.defaultAutoCommit}" />
-        <property name="initialSize" value="${jdbc.basic.initialSize}" />
-    </bean>
+	<context:property-placeholder location="classpath:spring/jdbc.properties"
+		file-encoding="UTF-8" ignore-unresolvable="true" order="1" />
+	<context:component-scan base-package="org.opengeoportal.harvester.api.component" />
 
-    <bean id="jpaVendorAdapterDatabaseParam" class="java.lang.String">
-        <constructor-arg value="POSTGRESQL"/>
-    </bean>
+		
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="${jdbc.DriverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="removeAbandoned" value="${jdbc.basic.removeAbandoned}" />
+		<property name="removeAbandonedTimeout" value="${jdbc.basic.removeAbandonedTimeout}" />
+		<property name="logAbandoned" value="${jdbc.basic.logAbandoned}" />
+		<property name="maxActive" value="${jdbc.basic.maxActive}" />
+		<property name="maxIdle" value="${jdbc.basic.maxIdle}" />
+		<property name="maxWait" value="${jdbc.basic.maxWait}" />
+		<property name="testOnBorrow" value="${jdbc.basic.testOnBorrow}" />
+		<property name="timeBetweenEvictionRunsMillis" value="${jdbc.basic.timeBetweenEvictionRunsMillis}" />
+		<property name="minEvictableIdleTimeMillis" value="${jdbc.basic.minEvictableIdleTimeMillis}" />
+		<property name="testWhileIdle" value="${jdbc.basic.testWhileIdle}" />
+		<property name="numTestsPerEvictionRun" value="${jdbc.basic.numTestsPerEvictionRun}" />
+		<property name="poolPreparedStatements" value="${jdbc.basic.poolPreparedStatements}" />
+		<property name="maxOpenPreparedStatements" value="${jdbc.basic.maxOpenPreparedStatements}" />
+		<property name="validationQuery" value="${jdbc.basic.validationQuery}" />
+		<property name="defaultReadOnly" value="${jdbc.basic.defaultReadOnly}" />
+		<property name="defaultAutoCommit" value="${jdbc.basic.defaultAutoCommit}" />
+		<property name="initialSize" value="${jdbc.basic.initialSize}" />
+	</bean>
 
-    <bean id="jdbcDriverClassName" class="java.lang.String">
-        <constructor-arg value="org.postgresql.Driver"/>
-    </bean>
+	<bean id="jpaVendorAdapterDatabaseParam" class="java.lang.String">
+		<constructor-arg value="POSTGRESQL" />
+	</bean>
 
-    <bean id="jdbcURL" class="java.lang.String">
-        <constructor-arg value="jdbc:postgresql://localhost:5432/ogpharvester"/>
-    </bean>
+	<bean id="jdbcDriverClassName" class="java.lang.String">
+		<constructor-arg value="org.postgresql.Driver" />
+	</bean>
 
-    <!-- Look up the JPA repositories -->
-    <jpa:repositories base-package="org.opengeoportal.harvester.api.dao"
-                      entity-manager-factory-ref="entityManagerFactory"
-                      transaction-manager-ref="transactionManager"/>
+	<bean id="jdbcURL" class="java.lang.String">
+		<constructor-arg value="jdbc:postgresql://localhost:5432/ogpharvester" />
+	</bean>
 
-    <bean id="entityManagerFactory"
-          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource"/>
-        <property name="packagesToScan" value="org.opengeoportal.harvester.api.domain"/>
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="access" value="PROPERTY"/>
-                <entry key="hibernate.id.new_generator_mappings" value="true"/>
-                <entry key="hibernate.cache.use_second_level_cache" value="false"/>
-                <entry key="hibernate.jdbc.batch_size" value="3"/>
-                <entry key="hibernate.jdbc.batch_versioned_data" value="true"/>
-            </map>
-        </property>
-    </bean>
+	<!-- Look up the JPA repositories -->
+	<jpa:repositories base-package="org.opengeoportal.harvester.api.dao"
+		entity-manager-factory-ref="entityManagerFactory"
+		transaction-manager-ref="transactionManager" />
 
-    <bean id="generateDdl" class="java.lang.String" scope="singleton">
-        <constructor-arg value="true"/>
-    </bean>
+	<bean id="entityManagerFactory"
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="org.opengeoportal.harvester.api.domain" />
+		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="access" value="PROPERTY" />
+				<entry key="hibernate.id.new_generator_mappings" value="true" />
+				<entry key="hibernate.cache.use_second_level_cache" value="false" />
+				<entry key="hibernate.jdbc.batch_size" value="3" />
+				<entry key="hibernate.jdbc.batch_versioned_data" value="true" />
+			</map>
+		</property>
+	</bean>
 
-    <bean lazy-init="true" id="jpaVendorAdapter"
-          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="generateDdl" ref="generateDdl"/>
-        <property name="showSql" value="false"/>
-        <property name="database" ref="jpaVendorAdapterDatabaseParam"/>
-    </bean>
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+	<bean id="generateDdl" class="java.lang.String" scope="singleton">
+		<constructor-arg value="true" />
+	</bean>
 
+	<bean lazy-init="true" id="jpaVendorAdapter"
+		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+		<property name="generateDdl" ref="generateDdl" />
+		<property name="showSql" value="false" />
+		<property name="database" ref="jpaVendorAdapterDatabaseParam" />
+	</bean>
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+
+	<bean id="flyway" class="com.googlecode.flyway.core.Flyway"
+		init-method="migrate">
+		<property name="dataSource" ref="dataSource" />
+		<property name="initOnMigrate" value="true"></property>
+	</bean>
+
+	<util:properties id="quarzProperties" location="classpath:/quartz.properties"></util:properties>
+
+
+	<bean
+		class="org.opengeoportal.harvester.api.scheduler.AutowiringSpringBeanJobFactory"
+		id="autowiringSpringBeanJobFactory">
+
+	</bean>
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
+		p:dataSource-ref="dataSource" p:transactionManager-ref="transactionManager"
+		p:overwriteExistingJobs="true" p:schedulerName="ogp-harvester-scheduler"
+		p:jobFactory-ref="autowiringSpringBeanJobFactory"
+
+		p:quartzProperties-ref="quarzProperties">
+	</bean>
 </beans>

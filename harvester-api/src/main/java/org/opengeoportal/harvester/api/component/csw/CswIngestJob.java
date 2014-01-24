@@ -41,7 +41,7 @@ public class CswIngestJob extends BaseIngestJob {
 				request.setStartPosition(start + "");
 
 				GetRecordsResponse response = cswClient.getRecords(request,
-						start, cswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
+						start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
 
 				for (Element record : response.getResults()) {
 					Document doc = new Document((Element) record.clone());
@@ -68,14 +68,16 @@ public class CswIngestJob extends BaseIngestJob {
 				int recCount = response.getNumberOfRecordsMatched();
 
 				processFinished = (start
-						+ cswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE > recCount);
+						+ CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE > recCount);
 
-				start += cswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
+				start += CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
 			}
 
 		} catch (Exception ex) {
 			// TODO: Add error in report
-			ex.printStackTrace();
+			if (logger.isDebugEnabled()) {
+				logger.debug("Error processing CSW record", ex);
+			}
 		}
 	}
 }

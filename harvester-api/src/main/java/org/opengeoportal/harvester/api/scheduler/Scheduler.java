@@ -29,11 +29,35 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
+import org.opengeoportal.harvester.api.domain.Ingest;
+import org.quartz.SchedulerException;
+
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- *
+ * 
  */
 public interface Scheduler {
+	/**
+	 * Schedule the ingest.
+	 * 
+	 * @param ingest
+	 *            the ingest.
+	 * @return <code>true</code> if ingest can be scheduled, <code>false</code>
+	 *         otherwise.
+	 */
+	boolean scheduleIngest(Ingest ingest);
 
+	/**
+	 * Unschedule an ingest forever. Remove the job and all its triggers from
+	 * the scheduler.
+	 * 
+	 * @param ingest
+	 *            ingest to be unscheduled.
+	 * @return <code>true</code> if the Job was found and deleted.
+	 * 
+	 * @throws SchedulerException
+	 *             if there is any problem while unscheduling the ingest.
+	 */
+	boolean unschedule(Ingest ingest) throws SchedulerException;
 
 }

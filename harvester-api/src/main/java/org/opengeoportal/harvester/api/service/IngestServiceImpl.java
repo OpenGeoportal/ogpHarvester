@@ -29,11 +29,17 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.List;
+
 import org.opengeoportal.harvester.api.dao.IngestRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
+import org.opengeoportal.harvester.api.scheduler.Scheduler;
+import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,13 +47,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+/**
+ * Ingest service implementation.
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 @Service
 public class IngestServiceImpl implements IngestService {
+	private final Logger logger = LoggerFactory.getLogger(IngestServiceImpl.class);
 
 	@Resource
 	private IngestRepository ingestRepository;
 	@Resource
 	private CustomRepositoryService customRepositoryService;
+	@Resource
+	private Scheduler scheduler;
 
 	@Override
 	@Transactional
@@ -115,21 +130,71 @@ public class IngestServiceImpl implements IngestService {
 		return ingestRepository.findOne(id);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.opengeoportal.harvester.api.service.IngestService#unscheduleByRepository(Long repositoryId)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#unscheduleByRepository
+	 * (Long repositoryId)
 	 */
 	@Override
 	@Transactional
 	public int unscheduleByRepository(Long repositoryId) {
-		return ingestRepository.setScheduledForRepositoryId(repositoryId);
+		List<Ingest> scheduledIngests = ingestRepository.findByRepositoryIdAndScheduledTrue(repositoryId);
+		for(Ingest ingest: scheduledIngests) {
+			try {
+				scheduler.unschedule(ingest);
+			} catch (SchedulerException e) {
+				if (logger.isWarnEnabled()) {
+					logger.warn("Cannot unschedule ingest with id " + ingest.getId(), e);
+				}
+			}
+		}
 		
+		return ingestRepository.setScheduledForRepositoryId(repositoryId);
+
 	}
 
-	/* (non-Javadoc)
-	 * @see org.opengeoportal.harvester.api.service.IngestService#countScheduledIngestsByRepo(java.lang.Long)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestService#
+	 * countScheduledIngestsByRepo(java.lang.Long)
 	 */
 	@Override
 	public Long countScheduledIngestsByRepo(Long repoId) {
 		return ingestRepository.countByRepositoryIdAndScheduledTrue(repoId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#saveAndSchedule
+	 * (org.opengeoportal.harvester.api.domain.Ingest, java.lang.Long,
+	 * org.opengeoportal.harvester.api.domain.InstanceType)
+	 */
+	@Override
+	@Transactional
+	public Ingest saveAndSchedule(Ingest ingest, Long customRepositoryId,
+			InstanceType typeOfInstance) {
+		Ingest savedIngest = save(ingest, customRepositoryId, typeOfInstance);
+		scheduler.scheduleIngest(savedIngest);
+		return savedIngest;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#saveAndSchedule
+	 * (org.opengeoportal.harvester.api.domain.Ingest)
+	 */
+	@Override
+	@Transactional
+	public Ingest saveAndSchedule(Ingest ingest) {
+		Ingest savedIngest = save(ingest);
+		scheduler.scheduleIngest(savedIngest);
+		return savedIngest;
 	}
 }

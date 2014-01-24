@@ -30,6 +30,12 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.Maps;
 
+/**
+ * Web controller that manage the Ingests.
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 @Controller
 @SessionAttributes(types = { IngestFormBean.class })
 public class IngestController {
@@ -164,11 +170,11 @@ public class IngestController {
 		}
 
 		if (usesCustomRepo) {
-			ingest = ingestService.save(ingest,
+			ingest = ingestService.saveAndSchedule(ingest,
 					ingestFormBean.getCatalogOfServices(),
 					ingestFormBean.getTypeOfInstance());
 		} else {
-			ingest = ingestService.save(ingest);
+			ingest = ingestService.saveAndSchedule(ingest);
 		}
 		Map<String, Object> result = Maps.newHashMap();
 		result.put("success", true);
@@ -180,6 +186,13 @@ public class IngestController {
 		return result;
 	}
 
+	/**
+	 * Return details about an ingest.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 * @return JSON with ingest details.
+	 */
 	@RequestMapping(value = "/rest/ingests/{id}/details")
 	@ResponseBody
 	public IngestFormBean getDetails(@PathVariable("id") Long id) {
