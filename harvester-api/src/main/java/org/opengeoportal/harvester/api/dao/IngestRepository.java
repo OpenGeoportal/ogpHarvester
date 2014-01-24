@@ -29,6 +29,8 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import java.util.List;
+
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -37,13 +39,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface IngestRepository extends JpaRepository<Ingest, Long> {
 
+	/**
+	 * 
+	 * @param name
+	 *            ingest name.
+	 * @return the ingest with the given name.
+	 */
 	Ingest findByName(String name);
 
 	/**
 	 * Set <code>scheduled</code> property to null for all Ingests related with
 	 * repository.
 	 * 
-	 * @param repository
+	 * @param repositoryId
+	 *            repository Id
+	 * @return modified repositories count.
 	 */
 	@Modifying
 	@Transactional
@@ -56,6 +66,14 @@ public interface IngestRepository extends JpaRepository<Ingest, Long> {
 	 * @param repoId
 	 * @return
 	 */
-	@Query(value="select count(i) from Ingest i where i.repository.id=?1 and i.scheduled=true")
+	@Query(value = "select count(i) from Ingest i where i.repository.id=?1 and i.scheduled=true")
 	Long countByRepositoryIdAndScheduledTrue(Long repoId);
+
+	/**
+	 * 
+	 * @param repositoryId
+	 *            repository id.
+	 * @return return the list of scheduled ingests for a given repository.
+	 */
+	List<Ingest> findByRepositoryIdAndScheduledTrue(Long repositoryId);
 }

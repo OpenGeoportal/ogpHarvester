@@ -14,6 +14,7 @@
 	<context:property-placeholder location="classpath:spring/jdbc.properties"
 		file-encoding="UTF-8" ignore-unresolvable="true" order="1" />
 	<context:component-scan base-package="org.opengeoportal.harvester.api.component" />
+
 		
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -107,8 +108,7 @@
 		p:dataSource-ref="dataSource" p:transactionManager-ref="transactionManager"
 		p:overwriteExistingJobs="true" p:schedulerName="ogp-harvester-scheduler"
 		p:jobFactory-ref="autowiringSpringBeanJobFactory"
+
 		p:quartzProperties-ref="quarzProperties">
 	</bean>
-
-
 </beans>

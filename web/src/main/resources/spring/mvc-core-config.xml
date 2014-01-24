@@ -23,7 +23,7 @@
 					<bean class="com.fasterxml.jackson.databind.ObjectMapper">
 						<property name="dateFormat">
 							<bean class="com.fasterxml.jackson.databind.util.ISO8601DateFormat" />
-								
+
 						</property>
 					</bean>
 				</property>
@@ -63,9 +63,12 @@
 		<property name="warnLogCategory" value="warn" />
 		<!-- needed otherwise exceptions won't be logged anywhere -->
 	</bean>
-	
+
 	<!-- Bean validator -->
-	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+
+
 
 
 </beans>
