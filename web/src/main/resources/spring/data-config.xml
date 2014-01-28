@@ -13,7 +13,7 @@
 
 	<context:property-placeholder location="classpath:spring/jdbc.properties"
 		file-encoding="UTF-8" ignore-unresolvable="true" order="1" />
-	<context:component-scan base-package="org.opengeoportal.harvester.api.component" />
+
 
 		
 	<tx:annotation-driven transaction-manager="transactionManager" />
@@ -87,6 +87,9 @@
 	</bean>
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />
+		<property name="jpaDialect" >
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"></bean>
+		</property>
 	</bean>
 
 	<bean id="flyway" class="com.googlecode.flyway.core.Flyway"
@@ -95,20 +98,5 @@
 		<property name="initOnMigrate" value="true"></property>
 	</bean>
 
-	<util:properties id="quarzProperties" location="classpath:/quartz.properties"></util:properties>
 
-
-	<bean
-		class="org.opengeoportal.harvester.api.scheduler.AutowiringSpringBeanJobFactory"
-		id="autowiringSpringBeanJobFactory">
-
-	</bean>
-
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"
-		p:dataSource-ref="dataSource" p:transactionManager-ref="transactionManager"
-		p:overwriteExistingJobs="true" p:schedulerName="ogp-harvester-scheduler"
-		p:jobFactory-ref="autowiringSpringBeanJobFactory"
-
-		p:quartzProperties-ref="quarzProperties">
-	</bean>
 </beans>

@@ -29,7 +29,11 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
+import javax.persistence.Id;
+
+import org.opengeoportal.harvester.api.service.IngestService;
 import org.quartz.spi.TriggerFiredBundle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -49,6 +53,12 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 		implements ApplicationContextAware {
 
 	private transient AutowireCapableBeanFactory beanFactory;
+	
+	/**
+	 * Ingest service.
+	 */
+	@Autowired
+	private IngestService ingestService;
 
 
 	@Override
@@ -65,8 +75,28 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 					"beanFactory must be initialized before calling createJobInstance");
 		}
 
-		final Object job = super.createJobInstance(bundle);
+		Object job = super.createJobInstance(bundle);
+		if (job instanceof IngestJob) {
+			IngestJob ingestJob = (IngestJob) job;
+			ingestJob.setIngestService(ingestService);
+		}
+		
 		beanFactory.autowireBean(job);
+		job = (IngestJob) beanFactory.applyBeanPostProcessorsAfterInitialization(job, "ingestJob");
 		return job;
+	}
+
+	/**
+	 * @return the ingestService
+	 */
+	public IngestService getIngestService() {
+		return ingestService;
+	}
+
+	/**
+	 * @param ingestService the ingestService to set
+	 */
+	public void setIngestService(IngestService ingestService) {
+		this.ingestService = ingestService;
 	}
 }
