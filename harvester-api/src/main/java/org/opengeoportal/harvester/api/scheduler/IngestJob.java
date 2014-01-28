@@ -42,6 +42,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * An Ingest Job to be executed.
@@ -89,6 +90,7 @@ public class IngestJob implements Job {
 	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
 	 */
 	@Override
+	@Transactional
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
 		try {
@@ -152,6 +154,20 @@ public class IngestJob implements Job {
 	 */
 	public void setMetadataIngester(MetadataIngester metadataIngester) {
 		this.metadataIngester = metadataIngester;
+	}
+
+	/**
+	 * @return the ingestService
+	 */
+	public IngestService getIngestService() {
+		return ingestService;
+	}
+
+	/**
+	 * @param ingestService the ingestService to set
+	 */
+	public void setIngestService(IngestService ingestService) {
+		this.ingestService = ingestService;
 	}
 
 }
