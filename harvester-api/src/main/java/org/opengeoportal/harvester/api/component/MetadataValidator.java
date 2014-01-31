@@ -19,7 +19,7 @@ public class MetadataValidator {
 		Set<String> requiredFields = ingest.getRequiredFields();
 		boolean isValid = true;
 
-		for (String field : ingest.getValidRequiredFields()) {
+		for (String field : ingest.getRequiredFields()) {
 			boolean hasValue = metadata.hasValueForProperty(field);
 
 			if (!hasValue) {

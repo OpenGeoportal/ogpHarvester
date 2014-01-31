@@ -35,32 +35,48 @@ import org.opengeoportal.harvester.api.domain.Ingest;
 
 /**
  * @author jlrodriguez
- *
+ * 
  */
 public class IngestListItem {
-	private Ingest ingest; 
+	private Ingest ingest;
+	private Date nextRun;
+	private boolean inProgress = false;
 
 	public IngestListItem(Ingest ingest) {
 		this.ingest = ingest;
-		
+
 	}
-	
+
 	public Long getId() {
 		return ingest.getId();
 	}
-	
+
 	public String getName() {
 		return ingest.getName();
 	}
-	
+
 	public Date getLastRun() {
 		return ingest.getLastRun();
 	}
-	
+
 	public String getNameOgpRepository() {
 		return ingest.getNameOgpRepository();
 	}
-	
-	
+
+	public Date getNextRun() {
+		return nextRun;
+	}
+
+	public void setNextRun(Date nextRun) {
+		this.nextRun = nextRun;
+	}
+
+	public boolean isInProgress() {
+		return inProgress;
+	}
+
+	public void setInProgress(boolean inProgress) {
+		this.inProgress = inProgress;
+	}
 
 }

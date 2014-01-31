@@ -9,6 +9,7 @@ import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserProvider;
 import org.opengeoportal.harvester.api.metadata.parser.XmlMetadataParserProvider;
+import org.opengeoportal.harvester.api.service.IngestService;
 
 /**
  * Base class for ingest jobs.
@@ -47,6 +48,8 @@ public abstract class BaseIngestJob implements Runnable {
 	 * Job execution status and statistics.
 	 */
 	private IngestJobStatus jobStatus;
+
+	private IngestService ingestService;
 
 	/**
 	 * Create a new instance.
@@ -106,12 +109,14 @@ public abstract class BaseIngestJob implements Runnable {
 		try {
 			jobStatus.setStartTime(Calendar.getInstance().getTime());
 			jobStatus.setStatus(IngestJobStatusValue.PROCESSING);
+			ingestService.save(ingest);
 			ingest();
 			jobStatus.setStatus(IngestJobStatusValue.SUCCESSED);
 		} catch (Exception e) {
 			jobStatus.setStatus(IngestJobStatusValue.FAILED);
 		} finally {
 			jobStatus.setEndTime(Calendar.getInstance().getTime());
+			ingestService.save(ingest);
 
 		}
 	}
@@ -121,5 +126,20 @@ public abstract class BaseIngestJob implements Runnable {
 	 * ingest work.
 	 */
 	protected abstract void ingest();
+
+	/**
+	 * @return the ingestService
+	 */
+	public IngestService getIngestService() {
+		return ingestService;
+	}
+
+	/**
+	 * @param ingestService
+	 *            the ingestService to set
+	 */
+	public void setIngestService(IngestService ingestService) {
+		this.ingestService = ingestService;
+	}
 
 }

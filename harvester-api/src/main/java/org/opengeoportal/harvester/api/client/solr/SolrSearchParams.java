@@ -45,6 +45,7 @@ import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.core.query.SimpleStringCriteria;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
 /**
@@ -75,9 +76,9 @@ public class SolrSearchParams {
 	/** ISO topic category. */
 	private String topicCategory;
 	/** Data types (Line, Point, Polygon, ...). */
-	private List<DataType> dataTypes = Lists.newArrayList();
+	private List<DataType> dataTypes;
 	/** Remote repositories. */
-	private List<String> dataRepositories = Lists.newArrayList();
+	private List<String> dataRepositories;
 	/** <code>true</code> if restricted data should be excluded. */
 	private boolean excludeRestrictedData;
 	/** Returned metadata can not ha a solr timestamp before this date. */
@@ -131,8 +132,8 @@ public class SolrSearchParams {
 		this.bboxSouth = ingest.getBboxSouth();
 		this.bboxWest = ingest.getBboxWest();
 		this.customSolrQuery = ingest.getCustomSolrQuery();
-		Collections.copy(this.dataRepositories, ingest.getDataRepositories());
-		Collections.copy(this.dataTypes, ingest.getDataTypes());
+		this.dataRepositories = Lists.newArrayList(ingest.getDataRepositories());
+		this.dataTypes = Lists.newArrayList(ingest.getDataTypes());
 		this.dateFrom = ingest.getDateFrom();
 		this.dateTo = ingest.getDateTo();
 		this.excludeRestrictedData = ingest.isExcludeRestrictedData();

@@ -1,0 +1,14 @@
+<div class="modal-header">
+    <h2>{{ "MANAGE_INGESTS.STOP_INGEST_HEADER" | translate}} <a
+        data-tooltip='{{ "MANAGE_INGESTS.STOP_INGEST_HEADER_TOOLTIP" | translate }}'><span
+        class="glyphicon glyphicon-question-sign black"></span></a></h2>
+</div>
+<div class="modal-body">
+	<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
+	<p data-translate="MANAGE_INGESTS.STOP_INGEST_CONFIRM_TEXT" data-translate-values="{{repoToDelete}}">
+	</p>
+</div>
+<div class="modal-footer">
+	    <button class="btn btn-primary" data-translate="MANAGE_INGESTS.CONFIRM_STOP" data-ng-disabled="stopButtonDisabled" data-ng-click=stopIngest()></button>
+	    <button class="btn btn-default" data-translate="MANAGE_INGESTS.CANCEL_STOP" data-ng-click="cancel()"></button>
+</div>

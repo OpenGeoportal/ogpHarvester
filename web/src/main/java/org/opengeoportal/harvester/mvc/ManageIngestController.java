@@ -33,9 +33,11 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +83,7 @@ public class ManageIngestController {
 			page = 1;
 		}
 
-		// Pages are zero base. We need to substract 1 to the received page
+		// Pages are zero base. We need to subtract 1 to the received page
 		page = page - 1;
 		Pageable pageable = new PageRequest(page, pageSize);
 		Page<Ingest> resultPage = ingestService.findAll(pageable);
@@ -92,8 +94,14 @@ public class ManageIngestController {
 
 		List<IngestListItem> resultList = Lists
 				.newArrayListWithCapacity(resultPage.getNumberOfElements());
+		Set<Long> executingJobs = ingestService.getCurrentlyExecutingJobs();
 		for (Ingest ingest : resultPage) {
 			IngestListItem ingestListItem = new IngestListItem(ingest);
+			Date nextRun = ingestService.getNextRun(ingest);
+			ingestListItem.setNextRun(nextRun);
+			ingestListItem
+					.setInProgress(executingJobs.contains(ingest.getId()));
+
 			resultList.add(ingestListItem);
 		}
 		resultMap.put("elements", resultList);

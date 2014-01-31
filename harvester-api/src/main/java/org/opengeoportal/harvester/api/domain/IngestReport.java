@@ -39,93 +39,93 @@ import java.util.List;
 
 @Entity
 public class IngestReport extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = 2909056496657495298L;
+	private static final long serialVersionUID = 2909056496657495298L;
 
-    @Column
-    private long restrictedRecords;
+	@Column
+	private long restrictedRecords;
 
-    @Column
-    private long publicRecords;
+	@Column
+	private long publicRecords;
 
-    @Column
-    private long vectorRecords;
+	@Column
+	private long vectorRecords;
 
-    @Column
-    private long rasterRecords;
+	@Column
+	private long rasterRecords;
 
-    @Column
-    private long unrequiredFieldWarnings;
+	@Column
+	private long unrequiredFieldWarnings;
 
-    @Column
-    private long webServiceWarnings;
+	@Column
+	private long webServiceWarnings;
 
-    @OneToMany(cascade= CascadeType.ALL)
-    @JoinColumn(name="report_id")
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<IngestReportError> errors  = new ArrayList<IngestReportError>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "report_id")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	private List<IngestReportError> errors = new ArrayList<IngestReportError>();
 
-    public long getRestrictedRecords() {
-        return restrictedRecords;
-    }
+	public long getRestrictedRecords() {
+		return restrictedRecords;
+	}
 
-    public void setRestrictedRecords(long restrictedRecords) {
-        this.restrictedRecords = restrictedRecords;
-    }
+	public void setRestrictedRecords(long restrictedRecords) {
+		this.restrictedRecords = restrictedRecords;
+	}
 
-    public long getPublicRecords() {
-        return publicRecords;
-    }
+	public long getPublicRecords() {
+		return publicRecords;
+	}
 
-    public void setPublicRecords(long publicRecords) {
-        this.publicRecords = publicRecords;
-    }
+	public void setPublicRecords(long publicRecords) {
+		this.publicRecords = publicRecords;
+	}
 
-    public long getVectorRecords() {
-        return vectorRecords;
-    }
+	public long getVectorRecords() {
+		return vectorRecords;
+	}
 
-    public void setVectorRecords(long vectorRecords) {
-        this.vectorRecords = vectorRecords;
-    }
+	public void setVectorRecords(long vectorRecords) {
+		this.vectorRecords = vectorRecords;
+	}
 
-    public long getRasterRecords() {
-        return rasterRecords;
-    }
+	public long getRasterRecords() {
+		return rasterRecords;
+	}
 
-    public void setRasterRecords(long rasterRecords) {
-        this.rasterRecords = rasterRecords;
-    }
+	public void setRasterRecords(long rasterRecords) {
+		this.rasterRecords = rasterRecords;
+	}
 
-    public long getUnrequiredFieldWarnings() {
-        return unrequiredFieldWarnings;
-    }
+	public long getUnrequiredFieldWarnings() {
+		return unrequiredFieldWarnings;
+	}
 
-    public void setUnrequiredFieldWarnings(long unrequiredFieldWarnings) {
-        this.unrequiredFieldWarnings = unrequiredFieldWarnings;
-    }
+	public void setUnrequiredFieldWarnings(long unrequiredFieldWarnings) {
+		this.unrequiredFieldWarnings = unrequiredFieldWarnings;
+	}
 
-    public void increaseUnrequiredFieldWarnings() {
-        this.unrequiredFieldWarnings++;
-    }
+	public void increaseUnrequiredFieldWarnings() {
+		this.unrequiredFieldWarnings++;
+	}
 
-    public long getWebServiceWarnings() {
-        return webServiceWarnings;
-    }
+	public long getWebServiceWarnings() {
+		return webServiceWarnings;
+	}
 
-    public void setWebServiceWarnings(long webServiceWarnings) {
-        this.webServiceWarnings = webServiceWarnings;
-    }
+	public void setWebServiceWarnings(long webServiceWarnings) {
+		this.webServiceWarnings = webServiceWarnings;
+	}
 
-    public List<IngestReportError> getErrors() {
-        return errors;
-    }
+	public List<IngestReportError> getErrors() {
+		return errors;
+	}
 
-    public void setErrors(List<IngestReportError> errors) {
-        this.errors = errors;
-    }
+	public void setErrors(List<IngestReportError> errors) {
+		this.errors = errors;
+	}
 
-    public void addError(IngestReportError error) {
-        errors.add(error);
-    }
+	public void addError(IngestReportError error) {
+		errors.add(error);
+	}
 
 }

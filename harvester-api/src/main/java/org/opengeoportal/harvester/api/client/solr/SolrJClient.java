@@ -2,6 +2,7 @@ package org.opengeoportal.harvester.api.client.solr;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 /**
@@ -128,6 +130,29 @@ public class SolrJClient implements SolrClient {
 			logger.error(
 					"SolrException: SolrRecord values ="
 							+ solrRecord.toString(), e);
+		} catch (Exception e) {
+			logger.error("Unknown Exception trying to add Bean", e);
+		}
+		logger.info("committing add to Solr");
+		commit();
+		return status;
+	}
+	
+	@Override
+	public int add(Collection<SolrRecord> records) {
+		int status = 0;
+		UpdateResponse updateResponse = null;
+		try {
+			logger.debug("Begin adding solr record batch");
+			updateResponse = solrServer.addBeans(records);
+			status = updateResponse.getStatus();
+			logger.debug("Status code: " + status);
+		} catch (IOException e) {
+			logger.error("IO Exception trying to add a bean collection", e);
+		} catch (SolrServerException e) {
+			logger.error("SolrServer Exception trying to add a bean collection", e);
+		} catch (SolrException e) {
+			logger.error("SolrException: ", e);
 		} catch (Exception e) {
 			logger.error("Unknown Exception trying to add Bean", e);
 		}

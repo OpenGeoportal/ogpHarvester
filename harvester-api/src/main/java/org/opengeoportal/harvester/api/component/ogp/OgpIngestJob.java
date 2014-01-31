@@ -2,18 +2,24 @@ package org.opengeoportal.harvester.api.component.ogp;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.opengeoportal.harvester.api.client.solr.SolrClient;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
+import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.OgpMetadataParser;
+import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 /**
  * 
@@ -29,8 +35,21 @@ public class OgpIngestJob extends BaseIngestJob {
 		try {
 			boolean processFinished = false;
 			int startPage = 0;
+			String url = ingest.getUrl();
+			if (StringUtils.isBlank(url)) {
+				CustomRepository cRepository = ingest.getRepository();
+				if (cRepository != null
+						&& cRepository.getServiceType() == InstanceType.SOLR) {
+					url = cRepository.getUrl();
+				} else {
+					throw new SchedulerException(
+							"Ingest "
+									+ ingest.getId()
+									+ " has not a valid URL or valid SOLR repository associated");
+				}
+			}
 
-			SolrClient client = new SolrJClient(ingest.getUrl());
+			SolrClient client = new SolrJClient(url);
 			SolrSearchParams searchParams = new SolrSearchParams(
 					(IngestOGP) ingest);
 			if (logger.isInfoEnabled()) {
@@ -46,6 +65,8 @@ public class OgpIngestJob extends BaseIngestJob {
 						.getBeans(SolrRecord.class);
 				if (records.size() > 0) {
 					OgpMetadataParser parser = new OgpMetadataParser();
+					List<Metadata> metadataList = Lists
+							.newArrayListWithCapacity(records.size());
 					for (SolrRecord record : records) {
 						MetadataParserResponse parseResult = parser
 								.parse(record);
@@ -53,10 +74,10 @@ public class OgpIngestJob extends BaseIngestJob {
 						boolean valid = metadataValidator.validate(metadata,
 								report);
 						if (valid) {
-							metadataIngester.ingest(metadata);
+							metadataList.add(metadata);
 						}
-
 					}
+					metadataIngester.ingest(metadataList);
 
 				} else {
 					processFinished = true;

@@ -29,7 +29,11 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.SortedSet;
+
+import javax.annotation.Resource;
 
 import org.opengeoportal.harvester.api.dao.IngestRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
@@ -45,8 +49,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-
 /**
  * Ingest service implementation.
  * 
@@ -55,12 +57,17 @@ import javax.annotation.Resource;
  */
 @Service
 public class IngestServiceImpl implements IngestService {
-	private final Logger logger = LoggerFactory.getLogger(IngestServiceImpl.class);
+	/** The logger. */
+	private final Logger logger = LoggerFactory
+			.getLogger(IngestServiceImpl.class);
 
+	/** The ingest repository. */
 	@Resource
 	private IngestRepository ingestRepository;
+	/** The custom repository service. */
 	@Resource
 	private CustomRepositoryService customRepositoryService;
+	/** The scheduler. */
 	@Resource
 	private Scheduler scheduler;
 
@@ -140,17 +147,20 @@ public class IngestServiceImpl implements IngestService {
 	@Override
 	@Transactional
 	public int unscheduleByRepository(Long repositoryId) {
-		List<Ingest> scheduledIngests = ingestRepository.findByRepositoryIdAndScheduledTrue(repositoryId);
-		for(Ingest ingest: scheduledIngests) {
+		List<Ingest> scheduledIngests = ingestRepository
+				.findByRepositoryIdAndScheduledTrue(repositoryId);
+		for (Ingest ingest : scheduledIngests) {
 			try {
 				scheduler.unschedule(ingest);
 			} catch (SchedulerException e) {
 				if (logger.isWarnEnabled()) {
-					logger.warn("Cannot unschedule ingest with id " + ingest.getId(), e);
+					logger.warn(
+							"Cannot unschedule ingest with id "
+									+ ingest.getId(), e);
 				}
 			}
 		}
-		
+
 		return ingestRepository.setScheduledForRepositoryId(repositoryId);
 
 	}
@@ -162,6 +172,7 @@ public class IngestServiceImpl implements IngestService {
 	 * countScheduledIngestsByRepo(java.lang.Long)
 	 */
 	@Override
+	@Transactional
 	public Long countScheduledIngestsByRepo(Long repoId) {
 		return ingestRepository.countByRepositoryIdAndScheduledTrue(repoId);
 	}
@@ -178,6 +189,7 @@ public class IngestServiceImpl implements IngestService {
 	@Transactional
 	public Ingest saveAndSchedule(Ingest ingest, Long customRepositoryId,
 			InstanceType typeOfInstance) {
+		ingest.setScheduled(true);
 		Ingest savedIngest = save(ingest, customRepositoryId, typeOfInstance);
 		scheduler.scheduleIngest(savedIngest);
 		return savedIngest;
@@ -193,8 +205,67 @@ public class IngestServiceImpl implements IngestService {
 	@Override
 	@Transactional
 	public Ingest saveAndSchedule(Ingest ingest) {
+		ingest.setScheduled(true);
 		Ingest savedIngest = save(ingest);
 		scheduler.scheduleIngest(savedIngest);
 		return savedIngest;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#getNextRun(org.
+	 * opengeoportal.harvester.api.domain.Ingest)
+	 */
+	@Override
+	@Transactional
+	public Date getNextRun(Ingest ingest) {
+		Date nextRun = scheduler.getNextRun(ingest);
+		return nextRun;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestService#
+	 * getCurrentlyExecutingJobs()
+	 */
+	@Override
+	@Transactional
+	public SortedSet<Long> getCurrentlyExecutingJobs() {
+		return scheduler.getCurrentlyExecutingJobs();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestService#unscheduleIngest
+	 * (java.lang.Long)
+	 */
+	@Override
+	@Transactional
+	public boolean unscheduleIngest(Long id) {
+		boolean unscheduled = false;
+		Ingest ingest = findById(id);
+		if (ingest != null) {
+			try {
+				scheduler.unschedule(ingest);
+				ingest.setScheduled(false);
+				ingest = save(ingest);
+				unscheduled = true;
+			} catch (SchedulerException e) {
+				if (logger.isErrorEnabled()) {
+					logger.error("Cannot unschedule ingest id = "
+							+ ingest.getId());
+				}
+			}
+		} else {
+			unscheduled = true;
+		}
+		return unscheduled;
+
+	}
+
 }

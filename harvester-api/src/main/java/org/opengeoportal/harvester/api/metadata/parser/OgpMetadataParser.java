@@ -50,6 +50,13 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	public static final String BBOX_NOT_VALID = "BBOX_NOT_VALID";
 	private static final String GEOMETRY_TYPE_NOT_VALID = "GEOMETRY_TYPE_NOT_VALID";
 
+	/**
+	 * Transform the {@link SolrRecord} into a {@link MetadataParserResponse}.
+	 * 
+	 * @param record
+	 *            the Solr record.
+	 * @return an MetadataParserResponse with a {@link Metadata} inside.
+	 */
 	public MetadataParserResponse parse(SolrRecord record) {
 		MetadataParserResponse response = new MetadataParserResponse();
 		Metadata metadata = response.getMetadata();
@@ -64,14 +71,12 @@ public class OgpMetadataParser extends BaseMetadataParser {
 		metadata.setInstitution(record.getInstitution());
 		metadata.setLocation(record.getLocation());
 		metadata.setOriginator(record.getOriginator());
-		// TODO OWS Name
-		// metadata.setOwsName(record);
+		metadata.setOwsName(record.getName());
 		handlePlaceKeywords(record, response, metadata);
 		metadata.setPublisher(record.getPublisher());
 		handleThemeKeywords(record, response, metadata);
 		metadata.setTitle(record.getLayerDisplayName());
-		// TODO Topic
-		// metadata.setTopic(record.get);
+		metadata.setTopic(record.getTopicCategory());
 		metadata.setWorkspaceName(record.getWorkspaceName());
 
 		return response;

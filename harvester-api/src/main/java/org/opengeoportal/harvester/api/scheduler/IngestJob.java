@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
+import java.util.Calendar;
 import java.util.UUID;
 
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
@@ -94,11 +95,13 @@ public class IngestJob implements Job {
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
 		try {
-			// TODO Autowire bean
+
 			Ingest ingest = findAndValidateIngest();
 			BaseIngestJob ingestJob = ingestJobFactory.newIngestJob(ingest);
+			ingestJob.setIngestService(ingestService);
 			UUID jobUuid = UUID.randomUUID();
 			ingestJob.init(jobUuid, ingest, metadataIngester);
+			ingest.setLastRun(Calendar.getInstance().getTime());
 			ingestService.save(ingest);
 			ingestJob.run();
 			ingestService.save(ingest);

@@ -44,7 +44,10 @@ import static org.quartz.impl.matchers.OrMatcher.*;
 import static org.quartz.impl.matchers.EverythingMatcher.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TimeZone;
 
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -53,9 +56,13 @@ import javax.transaction.TransactionManager;
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,14 +75,17 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  * 
  */
 @Service
-public class IngestScheduler implements Scheduler {
+public class IngestScheduler implements
+		org.opengeoportal.harvester.api.scheduler.Scheduler {
 	/**
 	 * 
 	 */
@@ -188,7 +198,7 @@ public class IngestScheduler implements Scheduler {
 	private Trigger createTrigger(Long ingestId, Date startDate,
 			Frequency frequency, JobDetail jobDetail) {
 		TriggerBuilder<Trigger> triggerBuilder = newTrigger();
-		triggerBuilder.withIdentity(TRIGGER_PREFIX + ingestId)
+		triggerBuilder.withIdentity(generateTriggerIdentity(ingestId))
 				.forJob(jobDetail).startAt(startDate);
 		switch (frequency) {
 		case ONCE:
@@ -205,10 +215,19 @@ public class IngestScheduler implements Scheduler {
 		case MONTHLY:
 			triggerBuilder.withSchedule(calendarIntervalSchedule()
 					.withIntervalInMonths(1));
+			break;
 		default:
 			break;
 		}
 		return triggerBuilder.build();
+	}
+
+	/**
+	 * @param ingestId
+	 * @return
+	 */
+	private String generateTriggerIdentity(Long ingestId) {
+		return TRIGGER_PREFIX + ingestId;
 	}
 
 	/**
@@ -220,12 +239,77 @@ public class IngestScheduler implements Scheduler {
 	 */
 	private JobDetail createJobDetail(Ingest ingest) {
 		JobDetailFactoryBean jdFactory = new JobDetailFactoryBean();
-		jdFactory.setName(JOB_PREFIX + ingest.getId());
+		jdFactory.setName(generateJobName(ingest));
 		jdFactory.setJobClass(IngestJob.class);
 		jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
 				ingest.getId().toString());
 		jdFactory.afterPropertiesSet();
 		return jdFactory.getObject();
+	}
+
+	private String generateJobName(Ingest ingest) {
+		return JOB_PREFIX + ingest.getId();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.scheduler.Scheduler#getNextRun(org.
+	 * opengeoportal.harvester.api.domain.Ingest)
+	 */
+	@Override
+	public Date getNextRun(Ingest ingest) {
+		Date nextFireTimeUtc = null;
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		String jobName = generateJobName(ingest);
+		JobKey jobKey = new JobKey(jobName, Scheduler.DEFAULT_GROUP);
+		TriggerKey triggerKey = new TriggerKey(
+				generateTriggerIdentity(ingest.getId()),
+				Scheduler.DEFAULT_GROUP);
+		boolean isTriggerExisting;
+		try {
+			isTriggerExisting = scheduler.checkExists(triggerKey);
+
+			if (isTriggerExisting) {
+				Trigger trigger = scheduler.getTrigger(triggerKey);
+				nextFireTimeUtc = trigger.getNextFireTime();
+			}
+		} catch (SchedulerException e) {
+			if (logger.isErrorEnabled()) {
+				logger.error("Error getting next fire time for ingest: "
+						+ ingest.getId(), e);
+			}
+		}
+
+		return nextFireTimeUtc;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.scheduler.Scheduler#getCurrentlyExecutingJobs
+	 * ()
+	 */
+	@Override
+	public SortedSet<Long> getCurrentlyExecutingJobs() {
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		SortedSet<Long> ingestIdList = Sets.newTreeSet();
+		try {
+			List<JobExecutionContext> jobList = scheduler
+					.getCurrentlyExecutingJobs();
+			for (JobExecutionContext jec : jobList) {
+				Long ingestId = Long.valueOf((String) jec.getMergedJobDataMap()
+						.get(IngestJob.INGEST_ID));
+				ingestIdList.add(ingestId);
+			}
+
+		} catch (SchedulerException e) {
+			if (logger.isErrorEnabled()) {
+				logger.error("Error getting currently executing ingests", e);
+			}
+		}
+		return ingestIdList;
 	}
 
 }
