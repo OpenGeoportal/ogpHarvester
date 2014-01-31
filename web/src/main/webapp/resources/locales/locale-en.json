@@ -150,7 +150,20 @@
 		"LIST_HEADER_NEXT": "Next Ingest",
 		"LIST_HEADER_REPOS": "Repositories",
 		"VIEW_REPORT_BUTTON": "View Report",
-		"NONE": "none"
+		"NONE": "none",
+		"IN_PROGRESS": "In progress",
+		"CANCEL": "Cancel",
+		"UNSCHEDULE_INGEST_HEADER": "Unschedule ingest",
+		"UNSCHEDULE_INGEST_HEADER_TOOLTIP": "This is the Unschedule Ingest dialog tooltip",
+		"UNSCHEDULE_INGEST_CONFIRM_TEXT": "You are about to cancel all the scheduled executions of this ingest. Are you sure you want to continue?",
+		"CONFIRM_UNSCHEDULE": "Unschedule",
+		"CANCEL_UNSCHEDULE": "Cancel",
+		"STOP_INGEST_HEADER": "Cancel current execution",
+		"STOP_INGEST_HEADER_TOOLTIP": "This is the Stop Ingest dialog tooltip",
+		"STOP_INGEST_CONFIRM_TEXT": "You are about to stop the current xecution of this ingest. Are you sure you want to continue? This functionality has not been implemented yet.",
+		"CONFIRM_STOP": "Unschedule",
+		"CANCEL_STOP": "Cancel"
+
 	},
 	"INGEST_DETAILS": {
 		"HEADER": "Ingest Report, {{name}} - {{lastRun}}",

@@ -1,8 +1,11 @@
 package org.opengeoportal.harvester.mvc;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javassist.expr.NewArray;
 
 import javax.annotation.Resource;
 
@@ -17,6 +20,8 @@ import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.BoundingBox;
 import org.opengeoportal.harvester.mvc.bean.IngestFormBean;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse.STATUS;
 import org.opengeoportal.harvester.mvc.exception.InvalidParameterValue;
 import org.opengeoportal.harvester.mvc.exception.ItemNotFoundException;
 import org.springframework.http.MediaType;
@@ -303,6 +308,44 @@ public class IngestController {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Unschedule the passed ingest.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 * @return a {@link JsonResponse} object with the result of the operation.
+	 */
+	@RequestMapping(value = "/rest/ingests/{id}/unschedule")
+	@ResponseBody
+	public JsonResponse unscheduleIngest(@PathVariable("id") Long id) {
+		JsonResponse response = new JsonResponse();
+		Ingest ingest = ingestService.findById(id);
+		if (ingest == null) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "INGEST_NOT_FOUND");
+			errorMap.put("ingestId", id.toString());
+			response.setResult(errorMap);
+		}
+
+		boolean unscheduled = ingestService.unscheduleIngest(id);
+		if (unscheduled) {
+			response.setStatus(STATUS.SUCCESS);
+			Map<String, Object> resultMap = Maps.newHashMap();
+			resultMap.put("ingestId", id);
+			response.setResult(resultMap);
+		} else {
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "INGEST_NOT_FOUND");
+			errorMap.put("ingestId", id.toString());
+			response.setResult(errorMap);
+		}
+
+		return response;
+
 	}
 
 	@RequestMapping("/")

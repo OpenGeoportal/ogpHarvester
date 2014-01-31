@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -24,5 +25,11 @@ public interface SolrClient {
 	public List<String> getInstitutions();
 	
 	public QueryResponse search(SolrSearchParams params);
+
+	/**
+	 * @param records
+	 * @return
+	 */
+	int add(Collection<SolrRecord> records);
 
 }

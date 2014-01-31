@@ -29,6 +29,9 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.Date;
+import java.util.SortedSet;
+
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.InstanceType;
@@ -151,4 +154,31 @@ public interface IngestService {
 	 * @return the saved ingest.
 	 */
 	Ingest saveAndSchedule(Ingest ingest);
+
+	/**
+	 * Return the date of the ingest next run.
+	 * 
+	 * @param ingest
+	 *            the ingest.
+	 * @return the next run date or null if ingest will not be run more.
+	 */
+	Date getNextRun(Ingest ingest);
+
+	/**
+	 * Return the set of ingest currently being executed.
+	 * 
+	 * @return the set of the ingest identifiers currently being executed. This
+	 *         set is sorted in natural order.
+	 */
+	SortedSet<Long> getCurrentlyExecutingJobs();
+
+	/**
+	 * Unschedule the ingest execution.
+	 * 
+	 * @param id
+	 *            identifier.
+	 * @return <code>true</code> if the ingest has been successfully
+	 *         unscheduled.
+	 */
+	boolean unscheduleIngest(Long id);
 }

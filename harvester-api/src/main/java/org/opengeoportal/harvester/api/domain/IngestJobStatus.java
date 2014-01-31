@@ -37,6 +37,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -59,7 +60,7 @@ public class IngestJobStatus extends AbstractPersistable<Long> {
 	 * Each IngestJobStatus has a {@link IngestReportError} where to store the
 	 * results of the ingest.
 	 */
-	@OneToOne(cascade = { CascadeType.ALL })
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "report_id")
 	private IngestReport ingestReport;
 

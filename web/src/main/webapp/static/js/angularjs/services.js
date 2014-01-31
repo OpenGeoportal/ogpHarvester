@@ -21,6 +21,11 @@
 					method: 'GET',
 					url: 'rest/ingests/:id/details',
 					isArray: false
+				},
+				'unshedule': {
+					method: 'GET',
+					url: 'rest/ingests/:id/unschedule',
+					isArray: false
 				}
 
 			});

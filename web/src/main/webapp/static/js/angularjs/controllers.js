@@ -7,8 +7,8 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', '$location', '$log',
-			function($scope, $routeParams, IngestPage, $location, $log) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', 'Ingest', '$location', '$log', '$modal',
+			function($scope, $routeParams, IngestPage, Ingest, $location, $log, $modal) {
 				$scope.data = {};
 				IngestPage.query($routeParams.page, $routeParams.pageSize, function(response) {
 					$scope.ingestPage = response;
@@ -28,6 +28,95 @@
 						return false;
 					}
 				};
+
+				$scope.UnscheduleIngestCtrl = function($scope, $modalInstance, ingestToUnschedule) {
+					$scope.ingestToUnschedule = ingestToUnschedule;
+
+					$scope.cancel = function() {
+						$modalInstance.dismiss('cancel');
+					};
+
+					$scope.unschedule = function() {
+						$scope.unscheduleButtonDisabled = true;
+
+						var id = $scope.ingestToUnschedule.id;
+						Ingest.unshedule({id: id},
+							function(data) {
+								// success callback
+								if (data.status === 'SUCCESS') {
+									$modalInstance.close();
+									$scope.ingestToUnschedule.nextRun = null;
+								} else {
+									$scope.unscheduleButtonDisable = false;
+									$scope.alerts = [];
+									$scope.alerts.push({type: 'danger', msg: data.result.errorCode});
+								}
+								
+							},
+							function(reason) {
+								// error callback
+								$scope.unscheduleButtonDisable = false;
+								$scope.alerts = [];
+								$scope.alerts.push({type: 'danger', msg: reason});
+							}
+						);
+					};
+				};
+
+
+				$scope.unscheduleIngest = function(ingest) {
+
+					var ingestToUnschedule = ingest;
+					var modalInstance = $modal.open({
+						templateUrl: 'resources/unscheduleIngest.html',
+						controller: $scope.UnscheduleIngestCtrl,
+						backdrop: 'static',
+						keyboard: false,
+						resolve: {
+							ingestToUnschedule: function() {
+								return ingestToUnschedule;
+							}
+						}
+					});
+					
+					modalInstance.result.then(function(result) {
+						// $scope.alerts.push({
+						// 	type: 'success', 
+						// 	msg: $translate("ADMIN.REPO_SUCCESFULLY_DELETED", {name: repoToDelete.value})
+						// });
+						//$scope.repositoryList.splice(indexToRemove, 1);
+					});
+
+				};
+
+				$scope.CancelExecutionCtrl = function($scope, $modalInstance, ingestToCancel) {
+					$scope.ingestToCancel = ingestToCancel;
+					$scope.stopButtonDisabled = true;
+
+					$scope.cancel = function() {
+						$modalInstance.dismiss('cancel');
+					};
+
+					$scope.stopIngest = function () {
+						$scope.stopButtonDisabled = false;
+
+					};
+				};
+				$scope.stopIngest = function(ingest) {
+					var ingestToStop = ingest;
+					var modalInstance = $modal.open({
+						templateUrl: 'resources/stopIngest.html',
+						controller: $scope.CancelExecutionCtrl,
+						backdrop: 'static',
+						keyboard: 'false',
+						resolve: {
+							ingestToCancel: function() {
+								return ingestToStop;
+							}
+						}
+					});
+				};
+
 			}
 		]);
 	angular.module('ogpHarvester.controllers')

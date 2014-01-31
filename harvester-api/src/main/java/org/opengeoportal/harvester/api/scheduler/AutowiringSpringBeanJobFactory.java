@@ -29,8 +29,6 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
-import javax.persistence.Id;
-
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.quartz.spi.TriggerFiredBundle;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,6 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
-import org.springframework.stereotype.Component;
 
 /**
  * This JobFactory autowires automatically the created quartz bean with spring

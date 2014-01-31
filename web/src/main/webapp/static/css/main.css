@@ -410,9 +410,12 @@ input.form-control {
 }
 
 .ingest-name {
+	cursor: pointer; 
+	cursor: hand;
 	text-decoration: underline;
 	color: black;
 }
+
 .ingest-list .btn-default {
 	font-size: 14px;
 }
@@ -514,4 +517,5 @@ input.form-control {
 .help-block-text-warning:hover {
   color: #a47e3c;
 }
+
 

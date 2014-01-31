@@ -29,6 +29,10 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
+
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.quartz.SchedulerException;
 
@@ -59,5 +63,21 @@ public interface Scheduler {
 	 *             if there is any problem while unscheduling the ingest.
 	 */
 	boolean unschedule(Ingest ingest) throws SchedulerException;
+
+	/**
+	 * Return the next date an ingest will be run.
+	 * 
+	 * @param ingest
+	 *            the ingest.
+	 * @return the next date an ingest will be run.
+	 */
+	Date getNextRun(Ingest ingest);
+
+	/**
+	 * 
+	 * @return the set of the ingest identifiers currently being executed. This
+	 *         set is sorted in natural order.
+	 */
+	SortedSet<Long> getCurrentlyExecutingJobs();
 
 }
