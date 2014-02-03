@@ -585,6 +585,9 @@ public class SolrRecord {
 		record.setPublisher(metadata.getPublisher());
 		record.setInstitution(metadata.getInstitution());
 		record.setAccess(metadata.getAccess().toString());
+		record.setFgdcText(metadata.getFullText());
+		// TODO location.
+		// record.setLocation(location);
 
 		BoundingBox bounds = metadata.getBounds();
 		if ((bounds != null) && (bounds.isValid())) {
