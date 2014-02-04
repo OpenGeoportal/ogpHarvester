@@ -18,7 +18,12 @@
 				<p data-ng-show="!ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></p>
 				<p data-ng-show="ingest.lastRun">{{ingest.lastRun}}</p>
 			</td>
-			<td><p data-ng-show="ingest.inProgress" data-translate="MANAGE_INGESTS.IN_PROGRESS"></p>
+			<td>
+				<div class="progress progress-striped active" data-ng-show="ingest.inProgress">
+  					<div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+   					 <span class="sr-only" data-translate="MANAGE_INGESTS.IN_PROGRESS"></span>
+ 			 		</div>
+				</div>
 				<p data-ng-show="ingest.inProgress"><a data-translate="MANAGE_INGESTS.CANCEL" data-ng-click="stopIngest(ingestPage.elements[$index])" class="ingest-name"></a></p>
 				<p data-ng-show="!ingest.inProgress && !ingest.nextRun" data-translate="MANAGE_INGESTS.NONE"></p>
 				<p data-ng-show="!ingest.inProgress && ingest.nextRun">{{ingest.nextRun}}</p>

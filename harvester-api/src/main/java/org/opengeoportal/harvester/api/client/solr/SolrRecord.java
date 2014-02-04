@@ -573,6 +573,14 @@ public class SolrRecord {
 		return s;
 	}
 
+	/**
+	 * Build a SolrRecord with the data contained in a {@link Metadata} object.
+	 * 
+	 * @param metadata
+	 *            the metadata instance.
+	 * @return a SolrRecord built with the data contained in
+	 *         <code>metadata</code> parameter.
+	 */
 	public static SolrRecord build(Metadata metadata) {
 		SolrRecord record = new SolrRecord();
 
@@ -585,6 +593,9 @@ public class SolrRecord {
 		record.setPublisher(metadata.getPublisher());
 		record.setInstitution(metadata.getInstitution());
 		record.setAccess(metadata.getAccess().toString());
+		record.setFgdcText(metadata.getFullText());
+		// TODO location.
+		// record.setLocation(location);
 
 		BoundingBox bounds = metadata.getBounds();
 		if ((bounds != null) && (bounds.isValid())) {
