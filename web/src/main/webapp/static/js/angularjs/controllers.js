@@ -7,13 +7,33 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', 'Ingest', '$location', '$log', '$modal',
-			function($scope, $routeParams, IngestPage, Ingest, $location, $log, $modal) {
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', 'Ingest', '$location', '$log',
+			'$modal', '$interval',
+			function($scope, $routeParams, IngestPage, Ingest, $location, $log, $modal, $interval) {
 				$scope.data = {};
-				IngestPage.query($routeParams.page, $routeParams.pageSize, function(response) {
-					$scope.ingestPage = response;
-					$scope.pageSize = response.pageDetails.size;
+				$scope.loadData = function () {
+					IngestPage.query($routeParams.page, $routeParams.pageSize,  function(response) {
+						var pageFromRoute = $routeParams.page ? $routeParams.page : 1;
+						if (pageFromRoute == response.pageDetails.number) {
+							$scope.ingestPage = response;
+							$scope.pageSize = response.pageDetails.size;	
+						}
+						
+					});
+				};
+				$scope.loadData();
+
+				$scope.refreshData = $interval($scope.loadData, 10000);
+
+				// Cancel $interval when controller is destroyed
+				$scope.$on('$destroy', function() {
+					if ($scope.refreshData) {
+						console.log("Refresh data $interval destroyed");
+						$interval.cancel($scope.refreshData);
+					}
 				});
+				
+
 				if ($routeParams.name) {
 					$log.info('Ingest "' + $routeParams.name + " has been successfully created");
 				}
@@ -86,6 +106,8 @@
 						// });
 						//$scope.repositoryList.splice(indexToRemove, 1);
 					});
+
+
 
 				};
 

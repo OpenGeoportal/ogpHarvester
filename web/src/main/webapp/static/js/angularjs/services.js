@@ -15,7 +15,8 @@
 				'query': {
 					method: 'GET',
 					url: 'rest/ingests',
-					isArray: true
+					isArray: true,
+					cache: false
 				},
 				'getDetails': {
 					method: 'GET',

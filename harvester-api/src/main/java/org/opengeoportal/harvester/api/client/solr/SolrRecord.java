@@ -573,6 +573,14 @@ public class SolrRecord {
 		return s;
 	}
 
+	/**
+	 * Build a SolrRecord with the data contained in a {@link Metadata} object.
+	 * 
+	 * @param metadata
+	 *            the metadata instance.
+	 * @return a SolrRecord built with the data contained in
+	 *         <code>metadata</code> parameter.
+	 */
 	public static SolrRecord build(Metadata metadata) {
 		SolrRecord record = new SolrRecord();
 
