@@ -1,9 +1,13 @@
 package org.opengeoportal.harvester.api.component.ogp;
 
+import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.util.ClientUtils;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 import org.opengeoportal.harvester.api.client.solr.SolrClient;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
@@ -19,6 +23,7 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.sardine.model.Response;
 import com.google.common.collect.Lists;
 
 /**
@@ -63,6 +68,14 @@ public class OgpIngestJob extends BaseIngestJob {
 				// long numFound = searchResponse.getResults().getNumFound();
 				List<SolrRecord> records = searchResponse
 						.getBeans(SolrRecord.class);
+				for (int i = 0; i < records.size(); i++) {
+					SolrDocument record = searchResponse.getResults().get(i);
+					SolrInputDocument inputDocument = ClientUtils
+							.toSolrInputDocument(record);
+					String xmlString = ClientUtils.toXML(inputDocument);
+					records.get(i).setOriginalXmlMetadata(xmlString);
+
+				}
 				if (records.size() > 0) {
 					OgpMetadataParser parser = new OgpMetadataParser();
 					List<Metadata> metadataList = Lists

@@ -39,6 +39,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,7 +61,7 @@ public class IngestJobStatus extends AbstractPersistable<Long> {
 	 * Each IngestJobStatus has a {@link IngestReportError} where to store the
 	 * results of the ingest.
 	 */
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@OneToOne
 	@JoinColumn(name = "report_id")
 	private IngestReport ingestReport;
 
@@ -91,6 +92,13 @@ public class IngestJobStatus extends AbstractPersistable<Long> {
 	 */
 	@Column
 	private UUID jobExecutionIdentifier;
+
+	/**
+	 * The owner ingest of the status.
+	 */
+	@ManyToOne
+	@JoinColumn(name = "ingest_id")
+	private Ingest ingest;
 
 	/**
 	 * @return the ingestReport
@@ -165,6 +173,20 @@ public class IngestJobStatus extends AbstractPersistable<Long> {
 	 */
 	public void setJobExecutionIdentifier(UUID jobExecutionIdentifier) {
 		this.jobExecutionIdentifier = jobExecutionIdentifier;
+	}
+
+	/**
+	 * @return the ingest
+	 */
+	public Ingest getIngest() {
+		return ingest;
+	}
+
+	/**
+	 * @param ingest the ingest to set
+	 */
+	public void setIngest(Ingest ingest) {
+		this.ingest = ingest;
 	}
 
 }

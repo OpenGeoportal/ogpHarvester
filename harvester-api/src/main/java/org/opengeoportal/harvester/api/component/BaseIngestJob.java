@@ -9,7 +9,9 @@ import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserProvider;
 import org.opengeoportal.harvester.api.metadata.parser.XmlMetadataParserProvider;
-import org.opengeoportal.harvester.api.service.IngestService;
+import org.opengeoportal.harvester.api.service.IngestJobStatusService;
+import org.opengeoportal.harvester.api.service.IngestReportErrorService;
+import org.opengeoportal.harvester.api.service.IngestReportService;
 
 /**
  * Base class for ingest jobs.
@@ -49,7 +51,13 @@ public abstract class BaseIngestJob implements Runnable {
 	 */
 	private IngestJobStatus jobStatus;
 
-	private IngestService ingestService;
+	/** Job status service. */
+	private IngestJobStatusService jobStatusService;
+
+	/** Ingest Report service. */
+	private IngestReportService reportService;
+
+	private IngestReportErrorService errorService;
 
 	/**
 	 * Create a new instance.
@@ -74,13 +82,14 @@ public abstract class BaseIngestJob implements Runnable {
 		this.jobId = jobId;
 		this.ingest = ingest;
 		this.metadataIngester = metadataIngester;
-		this.metadataValidator = new MetadataValidator(ingest);
+		this.metadataValidator = new MetadataValidator(ingest, errorService);
 		this.jobStatus = new IngestJobStatus();
 		jobStatus.setStatus(IngestJobStatusValue.NOT_STARTED_YET);
 		jobStatus.setJobExecutionIdentifier(jobId);
-		ingest.addJobStatus(jobStatus);
-		jobStatus.setIngestReport(report);
-
+		jobStatus.setIngest(ingest);
+		jobStatus = jobStatusService.save(jobStatus);
+		report.setJobStatus(jobStatus);
+		reportService.save(report);
 	}
 
 	/**
@@ -109,14 +118,14 @@ public abstract class BaseIngestJob implements Runnable {
 		try {
 			jobStatus.setStartTime(Calendar.getInstance().getTime());
 			jobStatus.setStatus(IngestJobStatusValue.PROCESSING);
-			ingestService.save(ingest);
+			jobStatus = jobStatusService.save(jobStatus);
 			ingest();
 			jobStatus.setStatus(IngestJobStatusValue.SUCCESSED);
 		} catch (Exception e) {
 			jobStatus.setStatus(IngestJobStatusValue.FAILED);
 		} finally {
 			jobStatus.setEndTime(Calendar.getInstance().getTime());
-			ingestService.save(ingest);
+			jobStatus = jobStatusService.save(jobStatus);
 
 		}
 	}
@@ -128,18 +137,48 @@ public abstract class BaseIngestJob implements Runnable {
 	protected abstract void ingest();
 
 	/**
-	 * @return the ingestService
+	 * @return the jobStatusService
 	 */
-	public IngestService getIngestService() {
-		return ingestService;
+	public IngestJobStatusService getJobStatusService() {
+		return jobStatusService;
 	}
 
 	/**
-	 * @param ingestService
-	 *            the ingestService to set
+	 * @param jobStatusService
+	 *            the jobStatusService to set
 	 */
-	public void setIngestService(IngestService ingestService) {
-		this.ingestService = ingestService;
+	public void setJobStatusService(IngestJobStatusService jobStatusService) {
+		this.jobStatusService = jobStatusService;
+	}
+
+	/**
+	 * @return the reportService
+	 */
+	public IngestReportService getReportService() {
+		return reportService;
+	}
+
+	/**
+	 * @param reportService
+	 *            the reportService to set
+	 */
+	public void setReportService(IngestReportService reportService) {
+		this.reportService = reportService;
+	}
+
+	/**
+	 * @return the errorService
+	 */
+	public IngestReportErrorService getErrorService() {
+		return errorService;
+	}
+
+	/**
+	 * @param errorService
+	 *            the errorService to set
+	 */
+	public void setErrorService(IngestReportErrorService errorService) {
+		this.errorService = errorService;
 	}
 
 }

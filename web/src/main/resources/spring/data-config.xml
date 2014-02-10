@@ -82,7 +82,7 @@
 	<bean lazy-init="true" id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 		<property name="generateDdl" ref="generateDdl" />
-		<property name="showSql" value="false" />
+		<property name="showSql" value="true" />
 		<property name="database" ref="jpaVendorAdapterDatabaseParam" />
 	</bean>
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

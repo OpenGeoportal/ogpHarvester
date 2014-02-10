@@ -29,9 +29,14 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import static org.junit.Assert.*;
+import ch.qos.logback.core.boolex.Matcher;
+
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Lists;
 
+import org.hamcrest.MatcherAssert;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +47,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,107 +55,161 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/test-data-config.xml"})
+@ContextConfiguration(locations = { "classpath:spring/test-data-config.xml" })
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
-        DbUnitTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class,
-        TransactionalTestExecutionListener.class})
-@Transactional
+		DbUnitTestExecutionListener.class,
+		DirtiesContextTestExecutionListener.class,
+		TransactionalTestExecutionListener.class })
+@TransactionConfiguration(defaultRollback = true)
 public class IngestRepositoryTest {
-    @Autowired
-    private IngestRepository ingestRepository;
+	@Autowired
+	private IngestRepository ingestRepository;
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testFindIngest() {
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testFindIngest() {
 
-        Ingest ingest = ingestRepository.findOne(1L);
-        Assert.assertNotNull(ingest);
-        Assert.assertEquals("ingest1", ingest.getName());
-    }
+		Ingest ingest = ingestRepository.findOne(1L);
+		Assert.assertNotNull(ingest);
+		Assert.assertEquals("ingest1", ingest.getName());
+	}
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testDeleteIngest() {
-        ingestRepository.delete(1L);
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testDeleteIngest() {
+		ingestRepository.delete(1L);
 
-        List<Ingest> ingests = ingestRepository.findAll();
-        Assert.assertEquals(1, ingests.size());
-    }
+		List<Ingest> ingests = ingestRepository.findAll();
+		Assert.assertEquals(1, ingests.size());
+	}
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testUpdateIngest() {
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testUpdateIngest() {
 
-        Ingest ingest = ingestRepository.findByName("ingest2");
-        ingest.setName("ingest2 changed");
-        Ingest ingestSaved = ingestRepository.save(ingest);
+		Ingest ingest = ingestRepository.findByName("ingest2");
+		ingest.setName("ingest2 changed");
+		Ingest ingestSaved = ingestRepository.save(ingest);
 
-        Assert.assertEquals("ingest2 changed", ingestSaved.getName());
-    }
+		Assert.assertEquals("ingest2 changed", ingestSaved.getName());
+	}
 
-    @Test
-    public void testInsertIngest() {
-        Ingest ingest = new IngestOGP();
-        ingest.setName("ingest3");
-        ingest.setUrl("http://ingest3");
-        ingest.setBeginDate(new Date());
-        ingest.setFrequency(Frequency.DAILY);
-        ingest.addRequiredField("themeKeyword");
+	@Test
+	public void testInsertIngest() {
+		Ingest ingest = new IngestOGP();
+		ingest.setName("ingest3");
+		ingest.setUrl("http://ingest3");
+		ingest.setBeginDate(new Date());
+		ingest.setFrequency(Frequency.DAILY);
+		ingest.addRequiredField("themeKeyword");
 
-        Ingest ingestCreated = ingestRepository.save(ingest);
+		Ingest ingestCreated = ingestRepository.save(ingest);
 
-        Assert.assertNotNull(ingestCreated);
+		Assert.assertNotNull(ingestCreated);
 
-        Ingest ingestRetrieved = ingestRepository.findByName("ingest3");
+		Ingest ingestRetrieved = ingestRepository.findByName("ingest3");
 
-        Assert.assertEquals(ingestCreated, ingestRetrieved);
-    }
+		Assert.assertEquals(ingestCreated, ingestRetrieved);
+	}
 
-    @Test
-    @DatabaseSetup("ingestData.xml")
-    public void testUpdateIngestWithJob() {
-        Ingest ingest = ingestRepository.findByName("ingest2");
+	@Test
+	@DatabaseSetup("ingestData.xml")
+	public void testUpdateIngestWithJob() {
+		Ingest ingest = ingestRepository.findByName("ingest2");
 
-        IngestJobStatus job = new IngestJobStatus();
-        job.setStatus(IngestJobStatusValue.SUCCESSED);
-        job.setStartTime(new Date());
-        job.setEndTime(new Date());
+		IngestJobStatus job = new IngestJobStatus();
+		job.setStatus(IngestJobStatusValue.SUCCESSED);
+		job.setStartTime(new Date());
+		job.setEndTime(new Date());
 
-        IngestReport report = new IngestReport();
-        report.setPublicRecords(100);
-        report.setRestrictedRecords(20);
-        report.setRasterRecords(70);
-        report.setVectorRecords(50);
+		IngestReport report = new IngestReport();
+		report.setPublicRecords(100);
+		report.setRestrictedRecords(20);
+		report.setRasterRecords(70);
+		report.setVectorRecords(50);
 
-        report.setWebServiceWarnings(20);
-        report.setUnrequiredFieldWarnings(60);
+		report.setWebServiceWarnings(20);
+		report.setUnrequiredFieldWarnings(60);
 
-        IngestReportError reportError = new IngestReportError();
-        reportError.setField("title");
-        reportError.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
-        report.addError(reportError);
+		IngestReportError reportError = new IngestReportError();
+		reportError.setField("title");
+		reportError.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
+		report.addError(reportError);
 
-        job.setIngestReport(report);
+		job.setIngestReport(report);
 
-        ingest.addJobStatus(job);
+		ingest.addJobStatus(job);
 
-        Ingest ingestUpdated = ingestRepository.save(ingest);
+		Ingest ingestUpdated = ingestRepository.save(ingest);
 
-        Assert.assertNotNull(ingestUpdated);
+		Assert.assertNotNull(ingestUpdated);
 
-        Ingest ingestRetrieved = ingestRepository.findByName("ingest2");
-        Assert.assertEquals(ingestUpdated, ingestRetrieved);
+		Ingest ingestRetrieved = ingestRepository.findByName("ingest2");
+		Assert.assertEquals(ingestUpdated, ingestRetrieved);
 
-        Assert.assertEquals(1, ingestRetrieved.getIngestJobStatuses().size());
+		Assert.assertEquals(1, ingestRetrieved.getIngestJobStatuses().size());
 
-        IngestReport reportRetrieved = ingestRetrieved.getIngestJobStatuses().get(0).getIngestReport();
-        Assert.assertEquals(ingestUpdated.getIngestJobStatuses().get(0).getIngestReport(), reportRetrieved);
+		IngestReport reportRetrieved = ingestRetrieved.getIngestJobStatuses()
+				.get(0).getIngestReport();
+		Assert.assertEquals(ingestUpdated.getIngestJobStatuses().get(0)
+				.getIngestReport(), reportRetrieved);
 
-        Assert.assertEquals(IngestJobStatusValue.SUCCESSED, ingestRetrieved.getIngestJobStatuses().get(0).getStatus());
-        Assert.assertEquals(100, reportRetrieved.getPublicRecords());
-        Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
-    }
+		Assert.assertEquals(IngestJobStatusValue.SUCCESSED, ingestRetrieved
+				.getIngestJobStatuses().get(0).getStatus());
+		Assert.assertEquals(100, reportRetrieved.getPublicRecords());
+		Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
+	}
 
+	@Test
+	public void testIngestSaveCascade() {
+		Ingest ingest = new IngestOGP();
+		ingest.setBeginDate(new Date());
+		ingest.setFrequency(Frequency.ONCE);
+		ingest.setLastRun(new Date());
+		ingest.setNameOgpRepository("Name Ogp Repository");
+		ingest.setUrl("http://geodata.tufts.edu");
+		ingest.setScheduled(true);
+		ingest.setName("Test name");
+
+		ingest = ingestRepository.save(ingest);
+
+		assertNotNull(ingest.getId());
+
+		IngestJobStatus jStatus = new IngestJobStatus();
+		jStatus.setStatus(IngestJobStatusValue.SUCCESSED);
+		jStatus.setStartTime(new Date());
+		jStatus.setEndTime(new Date());
+		ingest.addJobStatus(jStatus);
+
+		long numRecords = 1000L;
+		ingest = ingestRepository.save(ingest);
+		IngestReport iReport = new IngestReport();
+		iReport.setPublicRecords(numRecords);
+		iReport.setRasterRecords(numRecords);
+		iReport.setRestrictedRecords(numRecords);
+		iReport.setUnrequiredFieldWarnings(numRecords);
+		iReport.setVectorRecords(numRecords);
+		iReport.setWebServiceWarnings(numRecords);
+		ingest.getIngestJobStatuses().get(0).setIngestReport(iReport);
+
+		List<IngestReportError> errorList = Lists
+				.newArrayListWithCapacity((int) numRecords);
+		iReport.setErrors(errorList);
+
+		for (int i = 0; i < numRecords; i++) {
+			IngestReportError error = new IngestReportError();
+			error.setField("my_field");
+			error.setMessage("My error message");
+			error.setMetadata("My metadata");
+			error.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
+			errorList.add(error);
+		}
+
+		ingest = ingestRepository.save(ingest);
+		assertTrue(ingest.getIngestJobStatuses().get(0).getIngestReport()
+				.getErrors().size() == 1000L);
+		ingest.setLastRun(new Date());
+		ingest = ingestRepository.save(ingest);
+	}
 
 }

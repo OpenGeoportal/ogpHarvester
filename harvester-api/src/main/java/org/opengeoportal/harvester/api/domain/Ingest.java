@@ -61,76 +61,70 @@ import org.springframework.util.Assert;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Check(constraints = "(url IS NULL AND repository_id IS NOT NULL) OR (url IS NOT NULL AND repository_id IS NULL)")
 public abstract class Ingest extends AbstractPersistable<Long> {
+	/** Version UID for serialisation. */
 	private static final long serialVersionUID = -3390351777452085398L;
 
+	/** Ingest name. */
 	@Column(unique = true, nullable = false)
 	private String name;
 
+	/** Ingest begin date. */
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private Date beginDate;
 
+	/** Frequency of execution. */
 	@Column
 	@Enumerated(EnumType.STRING)
 	private Frequency frequency;
 
+	/**
+	 * Repository URL. If it is <code>null</code> a {@link CustomRepository}
+	 * must be provided instead.
+	 */
 	@Column
 	private String url;
 
+	/** <code>true</code> if there is any future execution scheduled. */
 	@Column
 	private Boolean scheduled;
 
+	/** Last run timestamp. */
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastRun;
 
+	/** Repository where the data will be stored. */
 	@Column
 	private String nameOgpRepository;
 
+	/**
+	 * Mandatorye fields that a record must have to be stored into the local
+	 * instance.
+	 */
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> requiredFields = new HashSet<String>();
 
+	/**
+	 * Set of the fields that an ingest can have. This can be different for each
+	 * child class.
+	 */
 	@Transient
 	protected Set<String> validRequiredFields = new HashSet<String>();
 
+	/**
+	 * If {@link Ingest#url} is null a custom repository has to be set. The data
+	 * will be retrieved from this repository.
+	 */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "repository_id")
 	private CustomRepository repository;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	/**
+	 * List of previous executions of the ingest.
+	 */
+	@OneToMany
 	@JoinColumn(name = "ingest_id")
 	private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public Date getBeginDate() {
-		return beginDate;
-	}
-
-	public void setBeginDate(Date beginDate) {
-		this.beginDate = beginDate;
-	}
-
-	public Frequency getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(Frequency frequency) {
-		this.frequency = frequency;
-	}
 
 	/**
 	 * Sets the attribute with the given name to the given value.
@@ -151,7 +145,7 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	 * @return
 	 */
 	public Set<String> getRequiredFields() {
-		return Collections.unmodifiableSet(requiredFields);
+		return requiredFields;
 	}
 
 	/**
@@ -213,7 +207,7 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	 * @return the ingestJobStatuses
 	 */
 	public List<IngestJobStatus> getIngestJobStatuses() {
-		return Collections.unmodifiableList(ingestJobStatuses);
+		return ingestJobStatuses;
 	}
 
 	/**
@@ -234,5 +228,72 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 
 	public void setScheduled(Boolean scheduled) {
 		this.scheduled = scheduled;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * @param name
+	 *            the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * @return the beginDate
+	 */
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+	/**
+	 * @param beginDate
+	 *            the beginDate to set
+	 */
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	/**
+	 * @return the frequency
+	 */
+	public Frequency getFrequency() {
+		return frequency;
+	}
+
+	/**
+	 * @param frequency
+	 *            the frequency to set
+	 */
+	public void setFrequency(Frequency frequency) {
+		this.frequency = frequency;
+	}
+
+	/**
+	 * @return the url
+	 */
+	public String getUrl() {
+		return url;
+	}
+
+	/**
+	 * @param url
+	 *            the url to set
+	 */
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	/**
+	 * @return the scheduled
+	 */
+	public Boolean getScheduled() {
+		return scheduled;
 	}
 }

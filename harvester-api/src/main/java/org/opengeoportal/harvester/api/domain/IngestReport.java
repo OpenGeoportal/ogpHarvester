@@ -29,13 +29,16 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class IngestReport extends AbstractPersistable<Long> {
@@ -59,9 +62,11 @@ public class IngestReport extends AbstractPersistable<Long> {
 	@Column
 	private long webServiceWarnings;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne
+	private IngestJobStatus jobStatus;
+
+	@OneToMany
 	@JoinColumn(name = "report_id")
-	@LazyCollection(LazyCollectionOption.FALSE)
 	private List<IngestReportError> errors = new ArrayList<IngestReportError>();
 
 	public long getRestrictedRecords() {
@@ -126,6 +131,20 @@ public class IngestReport extends AbstractPersistable<Long> {
 
 	public void addError(IngestReportError error) {
 		errors.add(error);
+	}
+
+	/**
+	 * @return the jobStatus
+	 */
+	public IngestJobStatus getJobStatus() {
+		return jobStatus;
+	}
+
+	/**
+	 * @param jobStatus the jobStatus to set
+	 */
+	public void setJobStatus(IngestJobStatus jobStatus) {
+		this.jobStatus = jobStatus;
 	}
 
 }

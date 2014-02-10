@@ -29,59 +29,114 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class IngestReportError extends AbstractPersistable<Long> {
-    private static final long serialVersionUID = -760972452971727537L;
+	private static final long serialVersionUID = -760972452971727537L;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private IngestReportErrorType type;
+	/** Error type. */
+	@Column
+	@Enumerated(EnumType.STRING)
+	private IngestReportErrorType type;
 
-    @Column
-    private String field;
+	/** Field name where the error exists. */
+	@Column
+	private String field;
 
-    @Column
-    private String message;
+	/** Error message. */
+	@Column
+	private String message;
 
-    @Column
-    private String metadata;
+	/** Original metadata. */
+	@Column
+	@Lob
+	private String metadata;
 
-    public IngestReportErrorType getType() {
-        return type;
-    }
+	/** Report where the error was detected. */
+	@ManyToOne
+	private IngestReport report;
 
-    public void setType(IngestReportErrorType type) {
-        this.type = type;
-    }
+	/**
+	 * @return the type
+	 */
+	public IngestReportErrorType getType() {
+		return type;
+	}
 
-    public String getField() {
-        return field;
-    }
+	/**
+	 * @param type
+	 *            the type to set
+	 */
+	public void setType(IngestReportErrorType type) {
+		this.type = type;
+	}
 
-    public void setField(String field) {
-        this.field = field;
-    }
+	/**
+	 * @return the field
+	 */
+	public String getField() {
+		return field;
+	}
 
-    public String getMessage() {
-        return message;
-    }
+	/**
+	 * @param field
+	 *            the field to set
+	 */
+	public void setField(String field) {
+		this.field = field;
+	}
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
+	}
 
-    public String getMetadata() {
-        return metadata;
-    }
+	/**
+	 * @param message
+	 *            the message to set
+	 */
+	public void setMessage(String message) {
+		this.message = message;
+	}
 
-    public void setMetadata(String metadata) {
-        this.metadata = metadata;
-    }
+	/**
+	 * @return the metadata
+	 */
+	public String getMetadata() {
+		return metadata;
+	}
+
+	/**
+	 * @param metadata
+	 *            the metadata to set
+	 */
+	public void setMetadata(String metadata) {
+		this.metadata = metadata;
+	}
+
+	/**
+	 * @return the report
+	 */
+	public IngestReport getReport() {
+		return report;
+	}
+
+	/**
+	 * @param report
+	 *            the report to set
+	 */
+	public void setReport(IngestReport report) {
+		this.report = report;
+	}
+
 }

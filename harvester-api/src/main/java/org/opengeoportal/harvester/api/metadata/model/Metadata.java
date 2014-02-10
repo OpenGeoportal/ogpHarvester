@@ -27,6 +27,8 @@ public class Metadata {
     private Boolean georeferenced;
     private Date contentDate;
     private String topic;
+    /** Raw metadata as retrieved from remote source. */
+	private String originalMetadata;
 
     public Metadata(String layerId){
         setId(layerId);
@@ -237,4 +239,16 @@ public class Metadata {
             out.append(glue).append(s[x]);
         return out.toString();
     }
+	/**
+	 * @return the originalMetadata
+	 */
+	public String getOriginalMetadata() {
+		return originalMetadata;
+	}
+	/**
+	 * @param originalMetadata the originalMetadata to set
+	 */
+	public void setOriginalMetadata(String originalMetadata) {
+		this.originalMetadata = originalMetadata;
+	}
 }
