@@ -78,6 +78,7 @@ public class OgpMetadataParser extends BaseMetadataParser {
 		metadata.setTitle(record.getLayerDisplayName());
 		metadata.setTopic(record.getTopicCategory());
 		metadata.setWorkspaceName(record.getWorkspaceName());
+		metadata.setOriginalMetadata(record.getOriginalXmlMetadata());
 
 		return response;
 	}

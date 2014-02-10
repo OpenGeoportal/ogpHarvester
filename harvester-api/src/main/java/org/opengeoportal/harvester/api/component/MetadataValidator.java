@@ -7,12 +7,18 @@ import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
+import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 
 public class MetadataValidator {
 	private Ingest ingest;
 
-	public MetadataValidator(Ingest ingest) {
+	/** Report error service. */
+	private IngestReportErrorService reportErrorService;
+
+	public MetadataValidator(Ingest ingest,
+			IngestReportErrorService reportErrorService) {
 		this.ingest = ingest;
+		this.reportErrorService = reportErrorService;
 	}
 
 	public boolean validate(Metadata metadata, IngestReport report) {
@@ -30,7 +36,10 @@ public class MetadataValidator {
 					error.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
 					error.setMessage("Required field (" + field
 							+ ") has no value.");
-					report.addError(error);
+					error.setReport(report);
+					error.setMetadata(metadata.getOriginalMetadata());
+					error = reportErrorService.save(error);
+					// report.addError(error);
 
 					isValid = false;
 				} else {

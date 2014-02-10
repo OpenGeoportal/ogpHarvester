@@ -47,6 +47,8 @@ public class SolrRecord {
 	public static final String MAXX = "MaxX";
 	/** MaxY field name. */
 	public static final String MAXY = "MaxY";
+	
+	private String originalXmlMetadata;
 
 	@Field("LayerId")
 	private String layerId;
@@ -645,5 +647,19 @@ public class SolrRecord {
 	 */
 	public void setTopicCategory(String topicCategory) {
 		this.topicCategory = topicCategory;
+	}
+
+	/**
+	 * @return the originalXmlMetadata
+	 */
+	public String getOriginalXmlMetadata() {
+		return originalXmlMetadata;
+	}
+
+	/**
+	 * @param originalXmlMetadata the originalXmlMetadata to set
+	 */
+	public void setOriginalXmlMetadata(String originalXmlMetadata) {
+		this.originalXmlMetadata = originalXmlMetadata;
 	}
 }

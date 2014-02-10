@@ -38,6 +38,9 @@ import org.opengeoportal.harvester.api.component.MetadataIngester;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.opengeoportal.harvester.api.exception.UnscheduledIngestException;
+import org.opengeoportal.harvester.api.service.IngestJobStatusService;
+import org.opengeoportal.harvester.api.service.IngestReportErrorService;
+import org.opengeoportal.harvester.api.service.IngestReportService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -63,6 +66,21 @@ public class IngestJob implements Job {
 	 */
 	@Autowired
 	private IngestService ingestService;
+
+	/** Job status service. */
+	@Autowired
+	private IngestJobStatusService jobStatusService;
+
+	/** Ingest Report Service. */
+	@Autowired
+	private IngestReportService reportService;
+
+	/**
+	 * The error service.
+	 */
+	@Autowired
+	private IngestReportErrorService errorService;
+
 	/**
 	 * Factory that can create {@link IngestJob} instances based on an
 	 * {@link Ingest}.
@@ -97,13 +115,15 @@ public class IngestJob implements Job {
 		try {
 
 			Ingest ingest = findAndValidateIngest();
-			BaseIngestJob ingestJob = ingestJobFactory.newIngestJob(ingest);
-			ingestJob.setIngestService(ingestService);
+			BaseIngestJob job = ingestJobFactory.newIngestJob(ingest);
+			job.setJobStatusService(jobStatusService);
+			job.setReportService(reportService);
+			job.setErrorService(errorService);
 			UUID jobUuid = UUID.randomUUID();
-			ingestJob.init(jobUuid, ingest, metadataIngester);
+			job.init(jobUuid, ingest, metadataIngester);
 			ingest.setLastRun(Calendar.getInstance().getTime());
 			ingestService.save(ingest);
-			ingestJob.run();
+			job.run();
 			ingestService.save(ingest);
 
 		} catch (Exception e) {
@@ -148,12 +168,13 @@ public class IngestJob implements Job {
 	 * @param ingestId
 	 *            the ingestId to set
 	 */
-	public void setIngestId(String  ingestId) {
+	public void setIngestId(String ingestId) {
 		this.ingestId = ingestId;
 	}
 
 	/**
-	 * @param metadataIngester the metadataIngester to set
+	 * @param metadataIngester
+	 *            the metadataIngester to set
 	 */
 	public void setMetadataIngester(MetadataIngester metadataIngester) {
 		this.metadataIngester = metadataIngester;
@@ -167,7 +188,8 @@ public class IngestJob implements Job {
 	}
 
 	/**
-	 * @param ingestService the ingestService to set
+	 * @param ingestService
+	 *            the ingestService to set
 	 */
 	public void setIngestService(IngestService ingestService) {
 		this.ingestService = ingestService;

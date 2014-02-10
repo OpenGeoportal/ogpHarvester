@@ -98,7 +98,7 @@ public class SchedulerTest {
 		jdFactory.setName("jdFactory");
 		jdFactory.setJobClass(IngestJob.class);
 		Map<String, Object> jobDataMap = Maps.newHashMap();
-		jobDataMap.put(IngestJob.INGEST_ID, 10L);
+		jobDataMap.put(IngestJob.INGEST_ID, Long.toString(10L));
 		jdFactory.setJobDataAsMap(jobDataMap);
 		jdFactory.afterPropertiesSet();
 		JobDetail jobDetail = jdFactory.getObject();

@@ -1,5 +1,5 @@
 /*
- * IngestFormBean.java
+ * IngestRepository.java
  *
  * Copyright (C) 2013
  *
@@ -37,6 +37,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 public interface IngestRepository extends JpaRepository<Ingest, Long> {
 
 	/**
@@ -57,16 +62,19 @@ public interface IngestRepository extends JpaRepository<Ingest, Long> {
 	 */
 	@Modifying
 	@Transactional
-	@Query(value = "update Ingest i set i.scheduled=false where  i.repository.id=?1")
+	@Query(value = "update Ingest i set i.scheduled=false where "
+			+ "i.repository.id=?1")
 	int setScheduledForRepositoryId(Long repositoryId);
 
 	/**
 	 * Count the ingests scheduled that use a given repository.
 	 * 
 	 * @param repoId
-	 * @return
+	 *            repository identifier.
+	 * @return the number of ingests scheduled for a repository.
 	 */
-	@Query(value = "select count(i) from Ingest i where i.repository.id=?1 and i.scheduled=true")
+	@Query(value = "select count(i) from Ingest i where "
+			+ "i.repository.id=?1 and i.scheduled=true")
 	Long countByRepositoryIdAndScheduledTrue(Long repoId);
 
 	/**

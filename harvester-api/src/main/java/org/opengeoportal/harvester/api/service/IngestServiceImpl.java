@@ -1,5 +1,5 @@
 /*
- * IngestFormBean.java
+ * IngestServiceImpl.java
  *
  * Copyright (C) 2013
  *
@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Ingest service implementation.
  * 
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * @author <a href="mailto:jose.garcia@geocat.net">Jose Garcia</a>.
  * 
  */
 @Service
@@ -99,16 +100,14 @@ public class IngestServiceImpl implements IngestService {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.IngestService#save(org.opengeoportal
-	 * .harvester.api.domain.Ingest, java.lang.Long,
+	 * @see org.opengeoportal.harvester.api.service.IngestService#save(
+	 * org.opengeoportal .harvester.api.domain.Ingest, java.lang.Long,
 	 * org.opengeoportal.harvester.api.domain.InstanceType)
 	 */
 	@Override
 	@Transactional(readOnly = false)
 	public Ingest save(Ingest ingest, Long customRepositoryId,
-			InstanceType customRepoInstanceType)
-			throws InstanceNotFoundException {
+			InstanceType customRepoInstanceType) {
 		CustomRepository cRepository = customRepositoryService
 				.findById(customRepositoryId);
 		if (cRepository == null

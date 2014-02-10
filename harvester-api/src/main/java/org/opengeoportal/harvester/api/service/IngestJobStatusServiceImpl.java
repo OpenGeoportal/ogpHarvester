@@ -1,7 +1,7 @@
-/*
- * IngestRepository.java
+/**
+ * IngestJobStatusServiceImpl.java
  *
- * Copyright (C) 2013
+ * Copyright (C) 2014
  *
  * This file is part of Open Geoportal Harvester.
  *
@@ -25,35 +25,33 @@
  * however invalidate any other reasons why the executable file might be covered
  * by the GNU General Public License.
  *
- * Authors:: Jose García (mailto:jose.garcia@geocat.net)
+ * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
-package org.opengeoportal.harvester.api.dao;
+package org.opengeoportal.harvester.api.service;
 
-import java.util.List;
+import javax.annotation.Resource;
 
-import org.opengeoportal.harvester.api.domain.PredefinedRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+import org.opengeoportal.harvester.api.dao.IngestJobStatusRepository;
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
+import org.springframework.stereotype.Service;
 
 /**
- * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
- * 
- * 
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ *
  */
-public interface PredefinedRepositoryRepository extends
-		JpaRepository<PredefinedRepository, Long> {
+@Service
+public class IngestJobStatusServiceImpl implements IngestJobStatusService {
 
-	/**
-	 * Return all the predefined repositories that has not been added yet to
-	 * custom repositories.
-	 * 
-	 * @return all the predefined repositories not added to custom repositories.
+	/** IngestJobStatusRepository. */
+	@Resource
+	private IngestJobStatusRepository jobStatusRepository;
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#save(org.opengeoportal.harvester.api.domain.IngestJobStatus)
 	 */
-	@Query("select pr from PredefinedRepository pr where not exists (select "
-			+ "cr from CustomRepository cr where "
-			+ "cr.serviceType = pr.serviceType "
-			+ "and cr.url = pr.url and cr.deleted=false) "
-			+ "order by pr.name asc")
-	List<PredefinedRepository> findAllNotInCustomRepositories();
+	@Override
+	public IngestJobStatus save(IngestJobStatus jobStatus) {
+		return jobStatusRepository.save(jobStatus);
+	}
 
 }
