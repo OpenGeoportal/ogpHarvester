@@ -50,13 +50,12 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 		implements ApplicationContextAware {
 
 	private transient AutowireCapableBeanFactory beanFactory;
-	
+
 	/**
 	 * Ingest service.
 	 */
 	@Autowired
 	private IngestService ingestService;
-
 
 	@Override
 	public void setApplicationContext(final ApplicationContext context) {
@@ -69,7 +68,8 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 			throws Exception {
 		if (beanFactory == null) {
 			throw new IllegalStateException(
-					"beanFactory must be initialized before calling createJobInstance");
+					"beanFactory must be initialized before calling "
+							+ "createJobInstance");
 		}
 
 		Object job = super.createJobInstance(bundle);
@@ -77,9 +77,10 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 			IngestJob ingestJob = (IngestJob) job;
 			ingestJob.setIngestService(ingestService);
 		}
-		
+
 		beanFactory.autowireBean(job);
-		job = (IngestJob) beanFactory.applyBeanPostProcessorsAfterInitialization(job, "ingestJob");
+		job = beanFactory.applyBeanPostProcessorsAfterInitialization(job,
+				"ingestJob");
 		return job;
 	}
 
@@ -91,7 +92,8 @@ public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
 	}
 
 	/**
-	 * @param ingestService the ingestService to set
+	 * @param ingestService
+	 *            the ingestService to set
 	 */
 	public void setIngestService(IngestService ingestService) {
 		this.ingestService = ingestService;

@@ -29,6 +29,8 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.opengeoportal.harvester.api.dao.IngestJobStatusRepository;
@@ -52,6 +54,14 @@ public class IngestJobStatusServiceImpl implements IngestJobStatusService {
 	@Override
 	public IngestJobStatus save(IngestJobStatus jobStatus) {
 		return jobStatusRepository.save(jobStatus);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#getStatusesForIngest(java.lang.Long)
+	 */
+	@Override
+	public List<IngestJobStatus> getStatusesForIngest(Long ingestId) {
+		return jobStatusRepository.findByIngestId(ingestId);
 	}
 
 }
