@@ -20,8 +20,13 @@
 
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
-
-	<jdbc:embedded-database type="H2" id="dataSource" />
+<!--  	<jdbc:embedded-database type="H2" id="dataSource"/>  -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="org.h2.Driver" />
+		<property name="url" value="jdbc:h2:mem:test;REFERENTIAL_INTEGRITY=FALSE;DB_CLOSE_DELAY=-1" />
+		<property name="username" value="sa" />
+		<property name="password" value="sa" />
+	</bean>
 
 	<!-- Look up the JPA repositories -->
 	<jpa:repositories base-package="org.opengeoportal.harvester.api.dao"

@@ -29,6 +29,8 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import java.util.List;
+
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -39,5 +41,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface IngestJobStatusRepository extends
 		JpaRepository<IngestJobStatus, Long> {
+
+	/**
+	 * @param ingestId
+	 * @return
+	 */
+	List<IngestJobStatus> findByIngestId(Long ingestId);
 
 }

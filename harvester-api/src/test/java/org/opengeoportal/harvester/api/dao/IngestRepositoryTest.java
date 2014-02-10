@@ -37,10 +37,14 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Lists;
 
 import org.hamcrest.MatcherAssert;
+import org.hibernate.Hibernate;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opengeoportal.harvester.api.domain.*;
+import org.opengeoportal.harvester.api.service.IngestJobStatusService;
+import org.opengeoportal.harvester.api.service.IngestReportErrorService;
+import org.opengeoportal.harvester.api.service.IngestReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -64,6 +68,12 @@ import java.util.List;
 public class IngestRepositoryTest {
 	@Autowired
 	private IngestRepository ingestRepository;
+	@Autowired
+	private IngestJobStatusService jobStatusService;
+	@Autowired
+	private IngestReportErrorService reportErrorService;
+	@Autowired
+	private IngestReportService reportService;
 
 	@Test
 	@DatabaseSetup("ingestData.xml")
@@ -117,11 +127,13 @@ public class IngestRepositoryTest {
 	public void testUpdateIngestWithJob() {
 		Ingest ingest = ingestRepository.findByName("ingest2");
 
-		IngestJobStatus job = new IngestJobStatus();
-		job.setStatus(IngestJobStatusValue.SUCCESSED);
-		job.setStartTime(new Date());
-		job.setEndTime(new Date());
-
+		IngestJobStatus jobStatus = new IngestJobStatus();
+		jobStatus.setStatus(IngestJobStatusValue.SUCCESSED);
+		jobStatus.setStartTime(new Date());
+		jobStatus.setEndTime(new Date());
+		jobStatus.setIngest(ingest);
+		jobStatus = jobStatusService.save(jobStatus);
+ 
 		IngestReport report = new IngestReport();
 		report.setPublicRecords(100);
 		report.setRestrictedRecords(20);
@@ -130,16 +142,17 @@ public class IngestRepositoryTest {
 
 		report.setWebServiceWarnings(20);
 		report.setUnrequiredFieldWarnings(60);
+		report.setJobStatus(jobStatus);
+		report = reportService.save(report);
+		jobStatus.setIngestReport(report);
+		jobStatus = jobStatusService.save(jobStatus);
 
 		IngestReportError reportError = new IngestReportError();
 		reportError.setField("title");
 		reportError.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
-		report.addError(reportError);
-
-		job.setIngestReport(report);
-
-		ingest.addJobStatus(job);
-
+		reportError.setReport(report);
+		reportError = reportErrorService.save(reportError);
+	
 		Ingest ingestUpdated = ingestRepository.save(ingest);
 
 		Assert.assertNotNull(ingestUpdated);
@@ -147,15 +160,13 @@ public class IngestRepositoryTest {
 		Ingest ingestRetrieved = ingestRepository.findByName("ingest2");
 		Assert.assertEquals(ingestUpdated, ingestRetrieved);
 
-		Assert.assertEquals(1, ingestRetrieved.getIngestJobStatuses().size());
+		List<IngestJobStatus> jobStatuses = jobStatusService.getStatusesForIngest(ingest.getId());
+		Assert.assertEquals(1, jobStatuses.size());
 
-		IngestReport reportRetrieved = ingestRetrieved.getIngestJobStatuses()
-				.get(0).getIngestReport();
-		Assert.assertEquals(ingestUpdated.getIngestJobStatuses().get(0)
-				.getIngestReport(), reportRetrieved);
+		IngestReport reportRetrieved = jobStatuses.get(0).getIngestReport();
+		Assert.assertEquals(reportRetrieved, report);
 
-		Assert.assertEquals(IngestJobStatusValue.SUCCESSED, ingestRetrieved
-				.getIngestJobStatuses().get(0).getStatus());
+		Assert.assertEquals(IngestJobStatusValue.SUCCESSED, jobStatuses.get(0).getStatus());
 		Assert.assertEquals(100, reportRetrieved.getPublicRecords());
 		Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
 	}
@@ -179,7 +190,8 @@ public class IngestRepositoryTest {
 		jStatus.setStatus(IngestJobStatusValue.SUCCESSED);
 		jStatus.setStartTime(new Date());
 		jStatus.setEndTime(new Date());
-		ingest.addJobStatus(jStatus);
+		jStatus.setIngest(ingest);
+		jStatus = jobStatusService.save(jStatus);
 
 		long numRecords = 1000L;
 		ingest = ingestRepository.save(ingest);
@@ -190,11 +202,8 @@ public class IngestRepositoryTest {
 		iReport.setUnrequiredFieldWarnings(numRecords);
 		iReport.setVectorRecords(numRecords);
 		iReport.setWebServiceWarnings(numRecords);
-		ingest.getIngestJobStatuses().get(0).setIngestReport(iReport);
-
-		List<IngestReportError> errorList = Lists
-				.newArrayListWithCapacity((int) numRecords);
-		iReport.setErrors(errorList);
+		iReport.setJobStatus(jStatus);
+		iReport = reportService.save(iReport);
 
 		for (int i = 0; i < numRecords; i++) {
 			IngestReportError error = new IngestReportError();
@@ -202,12 +211,10 @@ public class IngestRepositoryTest {
 			error.setMessage("My error message");
 			error.setMetadata("My metadata");
 			error.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
-			errorList.add(error);
+			error.setReport(iReport);
+			error = reportErrorService.save(error);
 		}
 
-		ingest = ingestRepository.save(ingest);
-		assertTrue(ingest.getIngestJobStatuses().get(0).getIngestReport()
-				.getErrors().size() == 1000L);
 		ingest.setLastRun(new Date());
 		ingest = ingestRepository.save(ingest);
 	}

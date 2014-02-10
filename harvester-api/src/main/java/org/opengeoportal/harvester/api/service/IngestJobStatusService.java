@@ -29,6 +29,9 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.List;
+
+import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 
 /**
@@ -44,5 +47,15 @@ public interface IngestJobStatusService {
 	 * @return the saved {@link IngestJobStatus} instance.
 	 */
 	IngestJobStatus save(IngestJobStatus jobStatus);
+
+	/**
+	 * Return the list of statuses for an ingest
+	 * 
+	 * @param ingestId
+	 *            ingest identifier.
+	 * @return the list of {@link IngestJobStatus} associated to the
+	 *         {@link Ingest}.
+	 */
+	List<IngestJobStatus> getStatusesForIngest(Long ingestId);
 
 }
