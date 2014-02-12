@@ -108,14 +108,9 @@ public abstract class BaseXmlMetadataParser extends BaseMetadataParser implement
             return fileContents;
 
         } catch (TransformerConfigurationException e) {
-            // TODO Auto-generated catch block
-            logger.error("transformer configuration error");
-            e.printStackTrace();
+            logger.error("transformer configuration error", e);
         } catch (TransformerException e) {
-            // TODO Auto-generated catch block
-            logger.error("transformer error");
-
-            e.printStackTrace();
+            logger.error("transformer error", e);
         } catch (Exception e){
             logger.error("Problem processing full text: " + e.getMessage());
         }
