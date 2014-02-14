@@ -29,8 +29,16 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import java.util.List;
+
+import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
@@ -38,5 +46,49 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface IngestReportErrorRepository extends
 		JpaRepository<IngestReportError, Long> {
+
+	/**
+	 * Gets the count of each errors group by error type for a given
+	 * {@link IngestReport}.
+	 * 
+	 * @param reportId
+	 *            the ingest report identifier.
+	 * @return A list of Object[]. Each Object[] has these elements:
+	 *         <ul>
+	 *         <li>Object[0]: the error type.</li>
+	 *         <li>Object[1]: errors count for that type.</li>
+	 *         </ul>
+	 */
+	@Query(value = "select r.type, count(r) from IngestReportError r where "
+			+ "r.report.id=:id group by r.type")
+	List<Object[]> getCountErrorTypesByReportId(@Param("id") Long reportId);
+
+	/**
+	 * Return the count errors of the passed type categorized by the error
+	 * subtype for a given ingest report.
+	 * 
+	 * @param id
+	 *            the ingest report identifier.
+	 * @return A list of Object[]. Each Object[] has these elements:
+	 *         <ul>
+	 *         <li>Object[0]: the field name.</li>
+	 *         <li>Object[1]: errors count for that field.</li>
+	 *         </ul>
+	 */
+	@Query(value = "select r.field, count(r) from IngestReportError r where "
+			+ "r.report.id=:id and " + "r.type=:errorType group by r.field")
+	List<Object[]> getCountErrorsByReportId(@Param("id") Long id,
+			@Param("errorType") IngestReportErrorType errorType);
+
+	/**
+	 * @param reportId
+	 * @param requiredFieldError
+	 * @param requiredField
+	 * @param pageRequest
+	 * @return
+	 */
+	Page<IngestReportError> findByReportIdAndTypeAndField(Long reportId,
+			IngestReportErrorType requiredFieldError, String requiredField,
+			Pageable pageRequest);
 
 }

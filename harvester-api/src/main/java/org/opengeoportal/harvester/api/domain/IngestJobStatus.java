@@ -61,7 +61,7 @@ public class IngestJobStatus extends AbstractPersistable<Long> {
 	 * Each IngestJobStatus has a {@link IngestReportError} where to store the
 	 * results of the ingest.
 	 */
-	@OneToOne
+	@OneToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "report_id")
 	private IngestReport ingestReport;
 

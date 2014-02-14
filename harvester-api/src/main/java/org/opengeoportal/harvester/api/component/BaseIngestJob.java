@@ -90,6 +90,7 @@ public abstract class BaseIngestJob implements Runnable {
 		jobStatus = jobStatusService.save(jobStatus);
 		report.setJobStatus(jobStatus);
 		reportService.save(report);
+		jobStatus.setIngestReport(report);
 	}
 
 	/**
@@ -121,11 +122,13 @@ public abstract class BaseIngestJob implements Runnable {
 			jobStatus = jobStatusService.save(jobStatus);
 			ingest();
 			jobStatus.setStatus(IngestJobStatusValue.SUCCESSED);
+			
 		} catch (Exception e) {
 			jobStatus.setStatus(IngestJobStatusValue.FAILED);
 		} finally {
 			jobStatus.setEndTime(Calendar.getInstance().getTime());
 			jobStatus = jobStatusService.save(jobStatus);
+			report = reportService.save(report);
 
 		}
 	}

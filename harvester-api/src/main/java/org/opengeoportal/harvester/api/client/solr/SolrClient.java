@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.opengeoportal.harvester.api.domain.IngestReport;
 
 public interface SolrClient {
 	public HttpSolrServer getSolrServer();
@@ -28,8 +29,9 @@ public interface SolrClient {
 
 	/**
 	 * @param records
+	 * @param report 
 	 * @return
 	 */
-	int add(Collection<SolrRecord> records);
+	boolean add(Collection<SolrRecord> records, IngestReport report);
 
 }

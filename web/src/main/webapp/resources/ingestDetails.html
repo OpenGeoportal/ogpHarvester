@@ -1,78 +1,126 @@
-<div data-ng-controller="IngestDetailsCtrl" class="right-column col-md-9 ingest-details">
-	<h1 data-translate="INGEST_DETAILS.HEADER" translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}"> <span data-ng-hide="ingestDetails.lastRun" data-translate="INGEST_DETAILS.STILL_NOT_RUN"></span></h1>
+<div data-ng-controller="IngestDetailsCtrl"
+	class="right-column col-md-9 ingest-details">
+	<h1 data-translate="INGEST_DETAILS.HEADER"
+		data-translate-values="{name: '{{ingestDetails.name}}', lastRun: '{{ingestDetails.lastRun | date:'M/d'}}'}">
+		<span data-ng-hide="ingestDetails.lastRun"
+			data-translate="INGEST_DETAILS.STILL_NOT_RUN"></span>
+	</h1>
 	<div class="custom-panel">
-		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#passedRecordsPanelBody">
-			<span class="glyphicon glyphicon-ok-sign sign passed-sign"></span> 
-			<strong class="bold" data-translate="INGEST_DETAILS.PASSED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalPassed}}
-			<a data-tooltip="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		<div class="custom-panel-heading collapsed" data-toggle="collapse"
+			data-target="#passedRecordsPanelBody">
+			<span class="glyphicon glyphicon-ok-sign sign passed-sign"></span> <strong
+				class="bold" data-translate="INGEST_DETAILS.PASSED_HEADER"></strong>
+			{{'INGEST_DETAILS.RECORD_COUNT' | translate:totalPassed}} <a
+				data-tooltip="{{'INGEST_DETAILS.PASSED_TOOLTIP' | translate }}"><span
+				class="glyphicon glyphicon-question-sign sign black"></span></a> <span
+				class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="passedRecordsPanelBody">
 			<ul>
-				<li class="odd" data-translate="INGEST_DETAILS.RESTRICTED_RECORDS" translate-values="{ count: '{{ingestDetails.passed.restrictedRecords}}' }"></li>
-				<li data-translate="INGEST_DETAILS.PUBLIC_RECORDS" translate-values="{ count: '{{ingestDetails.passed.publicRecords}}' }"></li>
-				<li class="odd" data-translate="INGEST_DETAILS.VECTOR_RECORDS" translate-values="{ count: '{{ingestDetails.passed.vectorRecords}}' }"></li>
-				<li data-translate="INGEST_DETAILS.RASTER_RECORDS" translate-values="{ count: '{{ingestDetails.passed.rasterRecords}}' }"></li>
+				<li class="odd" data-translate="INGEST_DETAILS.RESTRICTED_RECORDS"
+					data-translate-values="{ count: '{{ingestDetails.passed.restrictedRecords}}' }"></li>
+				<li data-translate="INGEST_DETAILS.PUBLIC_RECORDS"
+					data-translate-values="{ count: '{{ingestDetails.passed.publicRecords}}' }"></li>
+				<li class="odd" data-translate="INGEST_DETAILS.VECTOR_RECORDS"
+					data-translate-values="{ count: '{{ingestDetails.passed.vectorRecords}}' }"></li>
+				<li data-translate="INGEST_DETAILS.RASTER_RECORDS"
+					data-translate-values="{ count: '{{ingestDetails.passed.rasterRecords}}' }"></li>
 			</ul>
 		</div>
 	</div>
 	<div class="custom-panel">
-		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#warningRecordsPanelBody">
-			<span class="glyphicon glyphicon-exclamation-sign sign warning-sign"></span> 
-			<strong class="bold" data-translate="INGEST_DETAILS.WARNING_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a data-tooltip="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		<div class="custom-panel-heading collapsed" data-toggle="collapse"
+			data-target="#warningRecordsPanelBody">
+			<span class="glyphicon glyphicon-exclamation-sign sign warning-sign"></span>
+			<strong class="bold" data-translate="INGEST_DETAILS.WARNING_HEADER"></strong>
+			{{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a
+				data-tooltip="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span
+				class="glyphicon glyphicon-question-sign sign black"></span></a> <span
+				class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="warningRecordsPanelBody">
 			<ul>
-				<li class="odd"><span data-translate="INGEST_DETAILS.UNREQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span> <a data-tooltip="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
-				<li><span data-translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS" translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span> <a data-tooltip="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+				<li class="odd"><span
+					data-translate="INGEST_DETAILS.UNREQUIRED_FIELDS"
+					data-translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span>
+					<a
+					data-tooltip="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span
+						class="glyphicon glyphicon-question-sign sign black"></span></a></li>
+				<li><span data-translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS"
+					data-translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span>
+					<a
+					data-tooltip="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span
+						class="glyphicon glyphicon-question-sign sign black"></span></a></li>
 			</ul>
 		</div>
 	</div>
 	<div class="custom-panel">
-		<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#failedRecordsPanelBody">
-			<span class="glyphicon glyphicon-remove-sign sign failed-sign"></span> 
-			<strong class="bold" data-translate="INGEST_DETAILS.FAILED_HEADER"></strong> {{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a data-tooltip="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span class="glyphicon glyphicon-question-sign sign black"></span></a> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+		<div class="custom-panel-heading collapsed" data-toggle="collapse"
+			data-target="#failedRecordsPanelBody">
+			<span class="glyphicon glyphicon-remove-sign sign failed-sign"></span>
+			<strong class="bold" data-translate="INGEST_DETAILS.FAILED_HEADER"></strong>
+			{{'INGEST_DETAILS.RECORD_COUNT' | translate:totalFailed}} <a
+				data-tooltip="{{'INGEST_DETAILS.FAILED_TOOLTIP' | translate }}"><span
+				class="glyphicon glyphicon-question-sign sign black"></span></a> <span
+				class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="failedRecordsPanelBody">
-			<form data-ng-submit="downloadMetadata([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])">
+			<form
+				data-ng-submit="downloadMetadata({requiredFields: ingestDetails.error.requiredFieldsList, webserviceError: ingestDetails.error.webServiceErrorList, systemError: ingestDetails.error.systemErrorList})">
 				<ul>
 					<li>
 						<div class="custom-panel">
 							<div class="failed-main-check">
-								<input name="allRequired" type="checkbox" data-ng-checked="isSelectedAll($event, ingestDetails.error.requiredFieldsList)" data-ng-click="selectAll($event, ingestDetails.error.requiredFieldsList)">
-							</div >
-							<div class="custom-panel-heading odd collapsed" data-toggle="collapse" data-target="#requiredFieldErrors">
-								
-								<span data-translate="INGEST_DETAILS.REQUIRED_FIELDS" translate-values="{ count: '{{ingestDetails.error.requiredFields}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+								<input name="allRequired" type="checkbox"
+									data-ng-checked="isSelectedAll($event, ingestDetails.error.requiredFieldsList)"
+									data-ng-click="selectAll($event, ingestDetails.error.requiredFieldsList)">
+							</div>
+							<div class="custom-panel-heading odd collapsed"
+								data-toggle="collapse" data-target="#requiredFieldErrors">
+
+								<span data-translate="INGEST_DETAILS.REQUIRED_FIELDS"
+									data-translate-values="{ count: '{{ingestDetails.error.requiredFields}}' }"></span>
+								<span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 							</div>
 							<div class="custom-panel-body collapse" id="requiredFieldErrors">
 								<ul>
-									<li data-ng-repeat="fieldError in ingestDetails.error.requiredFieldsList">
-										<input type="checkbox" 
-											ng-model="fieldError.isChecked"  
-											id="fe-{{fieldError.key}}" />
-										<label for="fe-{{fieldError.key}}" data-translate="{{ 'INGEST_DETAILS.ERROR_FIELD_'+fieldError.key }}" translate-values="{{fieldError}}"></label>
+									<li
+										data-ng-repeat="fieldError in ingestDetails.error.requiredFieldsList">
+										<input type="checkbox" data-ng-model="fieldError.isChecked"
+										id="fe-{{fieldError.key}}" /> <label
+										for="fe-{{fieldError.key}}"
+										data-translate="{{ 'INGEST_DETAILS.ERROR_FIELD_'+fieldError.key }}"
+										data-translate-values="{{fieldError}}"></label>
 									</li>
 								</ul>
 
 							</div>
 						</div>
 					</li>
-					
+
 					<li>
 						<div class="custom-panel">
 							<div class="failed-main-check">
-								<input name="allWebservice" type="checkbox"  data-ng-checked="isSelectedAll($event, ingestDetails.error.webServiceErrorList)" data-ng-click="selectAll($event, ingestDetails.error.webServiceErrorList)">
-							</div >
-							<div class="custom-panel-heading collapsed" data-toggle="collapse" data-target="#webServiceErrors">
-									<span data-translate="INGEST_DETAILS.WEB_SERVICE_ERRORS" translate-values="{ count: '{{ingestDetails.error.webServiceErrors}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+								<input name="allWebservice" type="checkbox"
+									data-ng-checked="isSelectedAll($event, ingestDetails.error.webServiceErrorList)"
+									data-ng-click="selectAll($event, ingestDetails.error.webServiceErrorList)">
+							</div>
+							<div class="custom-panel-heading collapsed"
+								data-toggle="collapse" data-target="#webServiceErrors">
+								<span data-translate="INGEST_DETAILS.WEB_SERVICE_ERRORS"
+									data-translate-values="{ count: '{{ingestDetails.error.webServiceErrors}}' }"></span>
+								<span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 							</div>
 							<div class="custom-panel-body collapse" id="webServiceErrors">
 								<ul>
-									<li data-ng-repeat="webServiceError in ingestDetails.error.webServiceErrorList">
-										<input type="checkbox" name="errors" 
-											ng-model="webServiceError.isChecked" 
-											id="fe-{{webServiceError.key}}"/>
-										<label for="fe-{{webServiceError.key}}" data-translate="{{ 'INGEST_DETAILS.ERROR_WS_'+webServiceError.key }}" translate-values="{{webServiceError}}"></label>
+									<li
+										data-ng-repeat="webServiceError in ingestDetails.error.webServiceErrorList">
+										<input type="checkbox" name="errors"
+										data-ng-model="webServiceError.isChecked"
+										id="fe-{{webServiceError.key}}" /> <label
+										for="fe-{{webServiceError.key}}"
+										data-translate="{{ 'INGEST_DETAILS.ERROR_WS_'+webServiceError.key }}"
+										data-translate-values="{{webServiceError}}"></label>
 									</li>
 								</ul>
 							</div>
@@ -82,16 +130,26 @@
 					<li>
 						<div class="custom-panel">
 							<div class="failed-main-check">
-								<input name="allSystem" type="checkbox"  data-ng-checked="isSelectedAll($event, ingestDetails.error.systemErrorList)" data-ng-click="selectAll($event, ingestDetails.error.systemErrorList)">
-							</div >
-							<div class="custom-panel-heading odd collapsed" data-toggle="collapse" data-target="#systemErrors">
-									<span data-translate="INGEST_DETAILS.SYSTEM_ERRORS" translate-values="{ count: '{{ingestDetails.error.systemErrors}}' }"></span> <span class="glyphicon glyphicon-chevron-up pull-right black"></span>
+								<input name="allSystem" type="checkbox"
+									data-ng-checked="isSelectedAll($event, ingestDetails.error.systemErrorList)"
+									data-ng-click="selectAll($event, ingestDetails.error.systemErrorList)">
+							</div>
+							<div class="custom-panel-heading odd collapsed"
+								data-toggle="collapse" data-target="#systemErrors">
+								<span data-translate="INGEST_DETAILS.SYSTEM_ERRORS"
+									data-translate-values="{ count: '{{ingestDetails.error.systemErrors}}' }"></span>
+								<span class="glyphicon glyphicon-chevron-up pull-right black"></span>
 							</div>
 							<div class="custom-panel-body collapse" id="systemErrors">
 								<ul>
-									<li data-ng-repeat="systemError in ingestDetails.error.systemErrorList">
-										<input type="checkbox" name="errors" data-ng-model="systemError.isChecked" id="fe-{{systemError.key}}"/>
-										<label for="fe-{{systemError.key}}" data-translate="{{ 'INGEST_DETAILS.ERROR_SYSTEM_'+systemError.key }}" translate-values="{{systemError}}"></label>
+									<li
+										data-ng-repeat="systemError in ingestDetails.error.systemErrorList">
+										<input type="checkbox" name="errors"
+										data-ng-model="systemError.isChecked"
+										id="fe-{{systemError.key}}" /> <label
+										for="fe-{{systemError.key}}"
+										data-translate="{{ 'INGEST_DETAILS.ERROR_SYSTEM_'+systemError.key }}"
+										data-translate-values="{{systemError}}"></label>
 									</li>
 								</ul>
 							</div>
@@ -99,7 +157,9 @@
 					</li>
 
 				</ul>
-				<button data-translate="INGEST_DETAILS.DOWNLOAD_METADATA" class="btn btn-primary" data-ng-disabled="!anySelected([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])"></button>
+				<button data-translate="INGEST_DETAILS.DOWNLOAD_METADATA"
+					class="btn btn-primary"
+					data-ng-disabled="!anySelected([ingestDetails.error.requiredFieldsList, ingestDetails.error.webServiceErrorList, ingestDetails.error.systemErrorList])"></button>
 			</form>
 
 		</div>

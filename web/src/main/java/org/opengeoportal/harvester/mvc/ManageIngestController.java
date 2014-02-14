@@ -29,24 +29,37 @@
  */
 package org.opengeoportal.harvester.mvc;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
+import org.opengeoportal.harvester.api.domain.IngestReport;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.opengeoportal.harvester.api.service.IngestJobStatusService;
+import org.opengeoportal.harvester.api.service.IngestReportErrorService;
+import org.opengeoportal.harvester.api.service.IngestReportService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.IngestListItem;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse;
+import org.opengeoportal.harvester.mvc.bean.JsonResponse.STATUS;
 import org.opengeoportal.harvester.mvc.bean.PageWrapper;
-import org.opengeoportal.harvester.mvc.exception.ItemNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,6 +72,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
@@ -66,8 +80,17 @@ import com.google.common.collect.Maps;
  */
 @Controller
 public class ManageIngestController {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Resource
 	private IngestService ingestService;
+	@Resource
+	private IngestJobStatusService jobStatusService;
+	@Resource
+	private IngestReportService reportService;
+	@Resource
+	IngestReportErrorService errorService;
 
 	@RequestMapping("/manageIngests")
 	public String test(ModelMap model) {
@@ -109,15 +132,27 @@ public class ManageIngestController {
 		return resultMap;
 	}
 
+	/**
+	 * Return the last executed status for the ingest with identifier
+	 * <code>id</code>.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 * @return
+	 */
 	@RequestMapping("/rest/ingests/{id}")
 	@ResponseBody
-	public Map<String, Object> ingestDetails(ModelMap model,
-			@PathVariable Long id) {
+	public JsonResponse ingestDetails(@PathVariable Long id) {
+		JsonResponse response = new JsonResponse();
 
 		Ingest ingest = ingestService.findById(id);
 		if (ingest == null) {
-			throw new ItemNotFoundException("Ingest with id=" + id
-					+ "does not exist");
+			response.setStatus(STATUS.FAIL);
+			Map<String, String> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "INGEST_NOT_FOUND");
+			errorMap.put("ingestId", id.toString());
+			response.setResult(errorMap);
+			return response;
 		}
 
 		Map<String, Object> ingestMap = Maps.newHashMap();
@@ -125,83 +160,145 @@ public class ManageIngestController {
 		ingestMap.put("name", ingest.getName());
 		ingestMap.put("lastRun", ingest.getLastRun());
 
+		IngestJobStatus lastJobStatus = jobStatusService
+				.findLastStatusForIngest(id);
+		if (lastJobStatus == null) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, Object> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "INGEST_WITHOUT_PREVIOUS_EXECUTIONS");
+			errorMap.put("ingestId", id.toString());
+			response.setResult(errorMap);
+			if (logger.isInfoEnabled()) {
+				logger.info(String
+						.format("A finished IngestJobStatus could not be found for ingest with id=%d",
+								id));
+			}
+			return response;
+		}
+
+		IngestReport report = reportService
+				.findReportByJobStatusId(lastJobStatus.getId());
+		if (report == null) {
+			response.setStatus(STATUS.FAIL);
+			Map<String, Object> errorMap = Maps.newHashMap();
+			errorMap.put("errorCode", "INGEST_WITHOUT_AVAILABLE_REPORTS");
+			errorMap.put("ingestId", id.toString());
+			errorMap.put("ingestJobStatusId", lastJobStatus.getId());
+			response.setResult(errorMap);
+			if (logger.isWarnEnabled()) {
+				logger.warn(String
+						.format("Report not found when getting ingestDetails. [ingestId=%d, ingestJobStatusId=%d]",
+								id, lastJobStatus.getId()));
+			}
+
+			return response;
+		}
+
+		Long reportId = report.getId();
+		ingestMap.put("reportId", reportId);
+
 		Map<String, Object> passed = new HashMap<String, Object>();
-		passed.put("restrictedRecords", 745);
-		passed.put("publicRecords", 120);
-		passed.put("vectorRecords", 850);
-		passed.put("rasterRecords", 845);
+		passed.put("restrictedRecords", report.getRestrictedRecords());
+		passed.put("publicRecords", report.getPublicRecords());
+		passed.put("vectorRecords", report.getVectorRecords());
+		passed.put("rasterRecords", report.getRasterRecords());
 		ingestMap.put("passed", passed);
 
 		Map<String, Object> warning = new HashMap<String, Object>();
-		warning.put("unrequiredFields", 345);
-		warning.put("webserviceWarnings", 200);
+		warning.put("unrequiredFields", report.getUnrequiredFieldWarnings());
+		warning.put("webserviceWarnings", report.getWebServiceWarnings());
 		ingestMap.put("warning", warning);
 
+		Map<IngestReportErrorType, Long> errorMap = errorService
+				.getCountErrorTypesByReportId(reportId);
+		// Summarize error count by category
 		Map<String, Object> errorsMap = new HashMap<String, Object>();
-		errorsMap.put("requiredFields", 745);
-		errorsMap.put("webServiceErrors", 120);
-		errorsMap.put("systemErrors", 58);
-		List<SimpleEntry<String, Integer>> requiredFieldSubcat = new ArrayList<SimpleEntry<String, Integer>>();
-		requiredFieldSubcat
-				.add(new SimpleEntry<String, Integer>("extent", 245));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
-				"themeKeyword", 105));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
-				"placeKeyword", 200));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("topic", 125));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
-				"dateOfContent", 400));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("originator",
-				32));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("dataType",
-				400));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>(
-				"dataRepository", 320));
-		requiredFieldSubcat.add(new SimpleEntry<String, Integer>("editDate",
-				126));
+		errorsMap.put("requiredFields",
+				errorMap.get(IngestReportErrorType.REQUIRED_FIELD_ERROR));
+		errorsMap.put("webServiceErrors",
+				errorMap.get(IngestReportErrorType.WEB_SERVICE_ERROR));
+		errorsMap.put("systemErrors",
+				errorMap.get(IngestReportErrorType.SYSTEM_ERROR));
 
+		// Detail of required field errors
+		List<SimpleEntry<String, Long>> requiredFieldSubcat = handleDetailErrorCount(
+				reportId, IngestReportErrorType.REQUIRED_FIELD_ERROR);
 		errorsMap.put("requiredFieldsList", requiredFieldSubcat);
 
-		List<SimpleEntry<String, Integer>> webServiceErrorList = new ArrayList<SimpleEntry<String, Integer>>();
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error1", 120));
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error2", 120));
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error3", 120));
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error4", 120));
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error5", 120));
-		webServiceErrorList
-				.add(new SimpleEntry<String, Integer>("error6", 120));
+		// Detail of web service errors
+		List<SimpleEntry<String, Long>> webServiceErrorList = handleDetailErrorCount(
+				reportId, IngestReportErrorType.WEB_SERVICE_ERROR);
 		errorsMap.put("webServiceErrorList", webServiceErrorList);
 
-		List<SimpleEntry<String, Integer>> systemErrorList = new ArrayList<SimpleEntry<String, Integer>>();
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror1", 120));
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror2", 120));
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror3", 120));
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror4", 120));
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror5", 120));
-		systemErrorList.add(new SimpleEntry<String, Integer>("serror6", 120));
+		// Detail of system errors
+		List<SimpleEntry<String, Long>> systemErrorList = handleDetailErrorCount(
+				reportId, IngestReportErrorType.SYSTEM_ERROR);
 		errorsMap.put("systemErrorList", systemErrorList);
 
 		ingestMap.put("error", errorsMap);
 
-		return ingestMap;
+		response.setStatus(STATUS.SUCCESS);
+		response.setResult(ingestMap);
+
+		return response;
 	}
 
-	@RequestMapping("/rest/ingests/{id}/metadata")
-	public void downloadMetadata(@PathVariable String id, String[] categories,
-			Writer writer, HttpServletResponse response) {
-		response.setHeader("Content-Type", "text/plain; charset=utf-8");
+	/**
+	 * Return a list of SimpleEntry with the subcategory of the error as key and
+	 * the count of that subcategory for the ingest report passed as parameter.
+	 * 
+	 * @param reportId
+	 *            the ingest report identifier.
+	 * @param errorType
+	 *            the main category of errors.
+	 * @return a list of SimpleEntry with the subcategory of the error as key
+	 *         and the count of that subcategory for the ingest report passed as
+	 *         parameter.
+	 */
+	private List<SimpleEntry<String, Long>> handleDetailErrorCount(
+			Long reportId, IngestReportErrorType errorType) {
+		List<SimpleEntry<String, Long>> errorSubcateroryList = Lists
+				.newArrayList();
+		Map<String, Long> errorMap = errorService.getCountErrorsByReportId(
+				reportId, errorType);
+		for (Entry<String, Long> entry : errorMap.entrySet()) {
+			errorSubcateroryList.add(new SimpleEntry<String, Long>(entry
+					.getKey(), entry.getValue()));
+		}
+		return errorSubcateroryList;
+	}
+
+	@RequestMapping("/rest/ingests/{id}/metadata/{reportId}")
+	public void downloadMetadata(@PathVariable String id,
+			@PathVariable Long reportId,
+			@RequestParam(defaultValue = "") String[] requiredField,
+			@RequestParam(defaultValue = "") String[] webserviceError,
+			@RequestParam(defaultValue = "") String[] systemError,
+			OutputStream out, HttpServletResponse response) {
+
+		// response.setHeader("Content-Type", "text/plain; charset=utf-8");
+		response.setHeader("Content-Type:", "application/octet-stream");
 		response.setHeader("Content-Disposition",
-				"attachment; filename=metadata_" + id + ".txt");
+				"attachment; filename=metadata_" + id + ".zip");
 
-		PrintWriter outputWriter = new PrintWriter(writer);
+		ZipOutputStream zipOutputStream = null;
+		try {
+			zipOutputStream = new ZipOutputStream(out);
+			zipOutputStream.setLevel(9);
+			errorService.writeErrorZipForIngest(reportId, zipOutputStream,
+					requiredField, webserviceError, systemError);
+			zipOutputStream.close();
 
-		for (String category : categories) {
-			outputWriter.println("Category " + category);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				response.flushBuffer();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

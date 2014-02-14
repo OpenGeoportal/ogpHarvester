@@ -190,18 +190,41 @@
 				var downloadMetadata = function(listOfList) {
 					$('.downloadMetadata').remove();
 					var selected = [];
-					for (var i = 0; i < listOfList.length; i++) {
-						$.merge(selected, $(listOfList[i]).map(function() {
+		
+					for (var i = 0; i < listOfList.requiredFields.length; i++) {
+						$.merge(selected, $(listOfList.requiredFields[i]).map(function() {
 							if (this.isChecked) {
 								return {
-									name: 'categories',
+									name: 'requiredField',
 									value: this.key
 								};
 							}
 						}));
-					}
+					};
+						
+					for (var i = 0; i < listOfList.webserviceError.length; i++) {
+						$.merge(selected, $(listOfList.webserviceError[i]).map(function() {
+							if (this.isChecked) {
+								return {
+									name: 'webserviceError',
+									value: this.key
+								};
+							}
+						}));
+					};
+						
+					for (var i = 0; i < listOfList.systemError.length; i++) {
+						$.merge(selected, $(listOfList.systemError[i]).map(function() {
+							if (this.isChecked) {
+								return {
+									name: 'systemError',
+									value: this.key
+								};
+							}
+						}));
+					};
 					$log.info(selected);
-					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+					var url = "rest/ingests/" + $routeParams.id + "/metadata/" + $scope.ingestDetails.reportId + "?" + $.param(selected);
 
 					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
@@ -215,29 +238,31 @@
 				Ingest.get({
 					id: $scope.params.id
 				}, function(data) {
-					$scope.ingestDetails = data;
-					$scope.totalPassed = {
-						count: data.passed.restrictedRecords + data.passed.publicRecords + data.passed.vectorRecords + data.passed.rasterRecords
-					};
-					$scope.totalWarnig = {
-						count: data.warning.unrequiredFields + data.warning.webserviceWarnings
-					};
-					$scope.totalFailed = {
-						count: data.error.requiredFields + data.error.webServiceErrors + data.error.systemErrors
-					};
-					$scope.ingestDetails.error.allRequired = false;
-					$scope.ingestDetails.error.allWebservice = false;
-					$scope.ingestDetails.error.allSystem = false;
-
-					$scope.$watch('ingestDetails.error.allRequired', function(value) {
-						angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
-							requiredField.isChecked = value;
+					if (data.status === 'SUCCESS') {
+						var resp = data.result;
+						$scope.ingestDetails = resp;
+						$scope.totalPassed = {
+							count: resp.passed.restrictedRecords + resp.passed.publicRecords
+						};
+						$scope.totalWarnig = {
+							count: resp.warning.unrequiredFields + resp.warning.webserviceWarnings
+						};
+						$scope.totalFailed = {
+							count: resp.error.requiredFields + resp.error.webServiceErrors + resp.error.systemErrors
+						};
+						$scope.ingestDetails.error.allRequired = false;
+						$scope.ingestDetails.error.allWebservice = false;
+						$scope.ingestDetails.error.allSystem = false;
+	
+						$scope.$watch('ingestDetails.error.allRequired', function(value) {
+							angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
+								requiredField.isChecked = value;
+							});
 						});
-					});
-					angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
-						$scope.$watch();
-
-					});
+						angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
+							$scope.$watch();
+						});
+					}
 				});
 			}
 		]);

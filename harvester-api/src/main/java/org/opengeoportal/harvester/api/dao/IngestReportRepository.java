@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -38,5 +39,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface IngestReportRepository extends
 		JpaRepository<IngestReport, Long> {
+
+	/**
+	 * Find an {@link IngestReport} by its associated {@link IngestJobStatus}
+	 * identifier.
+	 * 
+	 * @param id
+	 *            job status identifier.
+	 * @return an IngestReport with an associadted {@link IngestJobStatus} with
+	 *         <code>id</code> identifier or <code>null</code>.
+	 */
+	IngestReport findByJobStatusId(Long id);
 
 }

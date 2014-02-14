@@ -59,4 +59,17 @@ public class IngestReportServiceImpl implements IngestReportService {
 		return reportRepository.save(report);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestReportService#
+	 * findReportByJobStatusId(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public IngestReport findReportByJobStatusId(Long id) {
+		IngestReport report = reportRepository.findByJobStatusId(id);
+		return report;
+	}
+
 }

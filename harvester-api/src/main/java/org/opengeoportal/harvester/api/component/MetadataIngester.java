@@ -2,6 +2,7 @@ package org.opengeoportal.harvester.api.component;
 
 import java.util.List;
 
+import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 
 /**
@@ -24,6 +25,7 @@ public interface MetadataIngester {
 	 * 
 	 * @param metadataList
 	 *            metadata list to ingest
+	 * @param ingestReport 
 	 */
-	void ingest(List<Metadata> metadataList);
+	void ingest(List<Metadata> metadataList, IngestReport ingestReport);
 }

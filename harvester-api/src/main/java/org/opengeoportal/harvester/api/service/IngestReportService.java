@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 
 /**
@@ -44,5 +45,15 @@ public interface IngestReportService {
 	 * @return the saved report.
 	 */
 	IngestReport save(IngestReport report);
+
+	/**
+	 * Find the IngestReport associated to an {@link IngestJobStatus}.
+	 * 
+	 * @param id
+	 *            the job status identifier.
+	 * @return the ingest report or <code>null</code> if an associated report
+	 *         cannot be found.
+	 */
+	IngestReport findReportByJobStatusId(Long id);
 
 }

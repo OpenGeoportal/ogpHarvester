@@ -561,6 +561,8 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
 
 	@Override
 	protected void handleFullText() {
-		this.metadataParserResponse.getMetadata().setFullText(getFullText());
+		String fullText = getFullText();
+		this.metadataParserResponse.getMetadata().setFullText(fullText);
+		this.metadataParserResponse.getMetadata().setOriginalMetadata(fullText);
 	}
 }

@@ -58,4 +58,15 @@ public interface IngestJobStatusService {
 	 */
 	List<IngestJobStatus> getStatusesForIngest(Long ingestId);
 
+	/**
+	 * Find the last IngestJobStatus available for the ingest with the passed
+	 * identifier.
+	 * 
+	 * @param id
+	 *            Ingest identifier.
+	 * @return the last Ingest available for the ingest or null if it has never
+	 *         been executed.
+	 */
+	IngestJobStatus findLastStatusForIngest(Long id);
+
 }

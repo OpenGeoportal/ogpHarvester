@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.hadoop.metrics2.util.MetricsCache.Record;
 import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -15,6 +16,7 @@ import org.apache.solr.client.solrj.response.TermsResponse;
 import org.apache.solr.client.solrj.response.TermsResponse.Term;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
+import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,14 +141,15 @@ public class SolrJClient implements SolrClient {
 	}
 	
 	@Override
-	public int add(Collection<SolrRecord> records) {
+	public boolean add(Collection<SolrRecord> records, IngestReport report) {
 		int status = 0;
+		boolean result = false;
 		UpdateResponse updateResponse = null;
 		try {
 			logger.debug("Begin adding solr record batch");
 			updateResponse = solrServer.addBeans(records);
-			status = updateResponse.getStatus();
-			logger.debug("Status code: " + status);
+			result = true;
+			logger.debug("Status code: " + updateResponse.getStatus());
 		} catch (IOException e) {
 			logger.error("IO Exception trying to add a bean collection", e);
 		} catch (SolrServerException e) {
@@ -158,7 +161,8 @@ public class SolrJClient implements SolrClient {
 		}
 		logger.info("committing add to Solr");
 		commit();
-		return status;
+		return result;
+
 	}
 
 	/*
