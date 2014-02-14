@@ -29,14 +29,22 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.opengeoportal.harvester.api.dao.IngestReportErrorRepository;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- *
+ * 
  */
 @Service
 public class IngestReportErrorServiceImpl implements IngestReportErrorService {
@@ -44,12 +52,71 @@ public class IngestReportErrorServiceImpl implements IngestReportErrorService {
 	@Autowired
 	private IngestReportErrorRepository reportErrorRepository;
 
-	/* (non-Javadoc)
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#save(org.opengeoportal.harvester.api.domain.IngestReportError)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.service.IngestReportErrorService#save
+	 * (org.opengeoportal.harvester.api.domain.IngestReportError)
 	 */
 	@Override
+	@Transactional
 	public IngestReportError save(IngestReportError reportError) {
 		return reportErrorRepository.save(reportError);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+	 * getCountErrorTypesByReportId(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Map<IngestReportErrorType, Long> getCountErrorTypesByReportId(
+			Long reportId) {
+		List<Object[]> items = reportErrorRepository
+				.getCountErrorTypesByReportId(reportId);
+		List<IngestReportErrorType> remainingTypes = Lists
+				.newArrayList(IngestReportErrorType.values());
+		Map<IngestReportErrorType, Long> result = Maps.newHashMap();
+		for (Object item : items) {
+			Object[] tuple = (Object[]) item;
+			IngestReportErrorType errorType = (IngestReportErrorType) tuple[0];
+			Long count = (Long) tuple[1];
+			result.put(errorType, count);
+			remainingTypes.remove(errorType);
+		}
+
+		// Set a default value for error types not returned by the repository
+		for (IngestReportErrorType errorType : remainingTypes) {
+			result.put(errorType, 0L);
+		}
+
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+	 * getCountFieldErrorsByReportId(java.lang.Long)
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public Map<String, Long> getCountErrorsByReportId(Long id,
+			IngestReportErrorType errorType) {
+		List<Object[]> errorList = reportErrorRepository
+				.getCountErrorsByReportId(id, errorType);
+		Map<String, Long> result = Maps.newTreeMap();
+		for (Object[] fieldError : errorList) {
+			String fieldName = (String) fieldError[0];
+			Long errorCount = (Long) fieldError[1];
+
+			result.put(fieldName, errorCount);
+
+		}
+		return result;
 	}
 
 }

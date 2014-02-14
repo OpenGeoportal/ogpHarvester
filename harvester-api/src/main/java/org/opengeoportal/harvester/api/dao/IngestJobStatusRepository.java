@@ -32,6 +32,8 @@ package org.opengeoportal.harvester.api.dao;
 import java.util.List;
 
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -43,9 +45,20 @@ public interface IngestJobStatusRepository extends
 		JpaRepository<IngestJobStatus, Long> {
 
 	/**
+	 * Get all IngestJobStatus from an Ingest.
+	 * 
 	 * @param ingestId
-	 * @return
+	 *            the ingest identifier.
+	 * @return all jobstatuses of the ingest.
 	 */
 	List<IngestJobStatus> findByIngestId(Long ingestId);
+
+	/**
+	 * @param id
+	 * @param page
+	 * @return
+	 */
+	Page<IngestJobStatus> findByIngestIdAndEndTimeNotNullOrderByEndTimeDesc(
+			Long id, Pageable page);
 
 }

@@ -215,29 +215,31 @@
 				Ingest.get({
 					id: $scope.params.id
 				}, function(data) {
-					$scope.ingestDetails = data;
-					$scope.totalPassed = {
-						count: data.passed.restrictedRecords + data.passed.publicRecords + data.passed.vectorRecords + data.passed.rasterRecords
-					};
-					$scope.totalWarnig = {
-						count: data.warning.unrequiredFields + data.warning.webserviceWarnings
-					};
-					$scope.totalFailed = {
-						count: data.error.requiredFields + data.error.webServiceErrors + data.error.systemErrors
-					};
-					$scope.ingestDetails.error.allRequired = false;
-					$scope.ingestDetails.error.allWebservice = false;
-					$scope.ingestDetails.error.allSystem = false;
-
-					$scope.$watch('ingestDetails.error.allRequired', function(value) {
-						angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
-							requiredField.isChecked = value;
+					if (data.status === 'SUCCESS') {
+						var resp = data.result;
+						$scope.ingestDetails = resp;
+						$scope.totalPassed = {
+							count: resp.passed.restrictedRecords + resp.passed.publicRecords + resp.passed.vectorRecords + resp.passed.rasterRecords
+						};
+						$scope.totalWarnig = {
+							count: resp.warning.unrequiredFields + resp.warning.webserviceWarnings
+						};
+						$scope.totalFailed = {
+							count: resp.error.requiredFields + resp.error.webServiceErrors + resp.error.systemErrors
+						};
+						$scope.ingestDetails.error.allRequired = false;
+						$scope.ingestDetails.error.allWebservice = false;
+						$scope.ingestDetails.error.allSystem = false;
+	
+						$scope.$watch('ingestDetails.error.allRequired', function(value) {
+							angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
+								requiredField.isChecked = value;
+							});
 						});
-					});
-					angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
-						$scope.$watch();
-
-					});
+						angular.forEach($scope.ingestDetails.requiredFieldsList, function(requiredField, key) {
+							$scope.$watch();
+						});
+					}
 				});
 			}
 		]);
