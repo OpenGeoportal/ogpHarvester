@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.hadoop.metrics2.util.MetricsCache.Record;
 import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -21,7 +20,6 @@ import org.opengeoportal.harvester.api.exception.OgpSorlException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 
 /**
