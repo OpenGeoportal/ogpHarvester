@@ -37,7 +37,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import org.hamcrest.DiagnosingMatcher;
 import org.opengeoportal.harvester.api.dao.IngestReportErrorRepository;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
@@ -49,8 +48,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import sun.tools.tree.ThisExpression;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
