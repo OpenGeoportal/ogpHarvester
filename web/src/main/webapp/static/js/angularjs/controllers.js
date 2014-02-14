@@ -190,18 +190,41 @@
 				var downloadMetadata = function(listOfList) {
 					$('.downloadMetadata').remove();
 					var selected = [];
-					for (var i = 0; i < listOfList.length; i++) {
-						$.merge(selected, $(listOfList[i]).map(function() {
+		
+					for (var i = 0; i < listOfList.requiredFields.length; i++) {
+						$.merge(selected, $(listOfList.requiredFields[i]).map(function() {
 							if (this.isChecked) {
 								return {
-									name: 'categories',
+									name: 'requiredField',
 									value: this.key
 								};
 							}
 						}));
-					}
+					};
+						
+					for (var i = 0; i < listOfList.webserviceError.length; i++) {
+						$.merge(selected, $(listOfList.webserviceError[i]).map(function() {
+							if (this.isChecked) {
+								return {
+									name: 'webserviceError',
+									value: this.key
+								};
+							}
+						}));
+					};
+						
+					for (var i = 0; i < listOfList.systemError.length; i++) {
+						$.merge(selected, $(listOfList.systemError[i]).map(function() {
+							if (this.isChecked) {
+								return {
+									name: 'systemError',
+									value: this.key
+								};
+							}
+						}));
+					};
 					$log.info(selected);
-					var url = "rest/ingests/" + $routeParams.id + "/metadata?" + $.param(selected);
+					var url = "rest/ingests/" + $routeParams.id + "/metadata/" + $scope.ingestDetails.reportId + "?" + $.param(selected);
 
 					// FIXME Bad practice. DOM shouldn't be manipulated in a controller. Please move it to a directive
 					$("body").append("<iframe class='downloadMetadata' src='" + url + "' style='display: none;' ></iframe>");
@@ -219,7 +242,7 @@
 						var resp = data.result;
 						$scope.ingestDetails = resp;
 						$scope.totalPassed = {
-							count: resp.passed.restrictedRecords + resp.passed.publicRecords + resp.passed.vectorRecords + resp.passed.rasterRecords
+							count: resp.passed.restrictedRecords + resp.passed.publicRecords
 						};
 						$scope.totalWarnig = {
 							count: resp.warning.unrequiredFields + resp.warning.webserviceWarnings

@@ -29,15 +29,19 @@
  */
 package org.opengeoportal.harvester.mvc;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -68,6 +72,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
@@ -190,6 +195,7 @@ public class ManageIngestController {
 		}
 
 		Long reportId = report.getId();
+		ingestMap.put("reportId", reportId);
 
 		Map<String, Object> passed = new HashMap<String, Object>();
 		passed.put("restrictedRecords", report.getRestrictedRecords());
@@ -262,17 +268,37 @@ public class ManageIngestController {
 		return errorSubcateroryList;
 	}
 
-	@RequestMapping("/rest/ingests/{id}/metadata")
-	public void downloadMetadata(@PathVariable String id, String[] categories,
-			Writer writer, HttpServletResponse response) {
-		response.setHeader("Content-Type", "text/plain; charset=utf-8");
+	@RequestMapping("/rest/ingests/{id}/metadata/{reportId}")
+	public void downloadMetadata(@PathVariable String id,
+			@PathVariable Long reportId,
+			@RequestParam(defaultValue = "") String[] requiredField,
+			@RequestParam(defaultValue = "") String[] webserviceError,
+			@RequestParam(defaultValue = "") String[] systemError,
+			OutputStream out, HttpServletResponse response) {
+
+		// response.setHeader("Content-Type", "text/plain; charset=utf-8");
+		response.setHeader("Content-Type:", "application/octet-stream");
 		response.setHeader("Content-Disposition",
-				"attachment; filename=metadata_" + id + ".txt");
+				"attachment; filename=metadata_" + id + ".zip");
 
-		PrintWriter outputWriter = new PrintWriter(writer);
+		ZipOutputStream zipOutputStream = null;
+		try {
+			zipOutputStream = new ZipOutputStream(out);
+			zipOutputStream.setLevel(9);
+			errorService.writeErrorZipForIngest(reportId, zipOutputStream,
+					requiredField, webserviceError, systemError);
+			zipOutputStream.close();
 
-		for (String category : categories) {
-			outputWriter.println("Category " + category);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				response.flushBuffer();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

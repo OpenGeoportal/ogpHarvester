@@ -90,7 +90,7 @@ public class OgpIngestJob extends BaseIngestJob {
 							metadataList.add(metadata);
 						}
 					}
-					metadataIngester.ingest(metadataList);
+					metadataIngester.ingest(metadataList, getIngestReport());
 
 				} else {
 					processFinished = true;

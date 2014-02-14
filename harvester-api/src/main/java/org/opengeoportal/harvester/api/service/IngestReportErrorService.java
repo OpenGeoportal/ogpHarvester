@@ -30,6 +30,7 @@
 package org.opengeoportal.harvester.api.service;
 
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
@@ -73,5 +74,25 @@ public interface IngestReportErrorService {
 	 */
 	Map<String, Long> getCountErrorsByReportId(Long id,
 			IngestReportErrorType errorType);
+
+	/**
+	 * Write the errors into a zipOutputStream.
+	 * 
+	 * @param reportId
+	 *            Ingest report identifier
+	 * @param zipOutputStream
+	 *            where to write errors.
+	 * @param requiredFieldErrors
+	 *            array with the name of the field errors to be writtrn.
+	 * @param webserviceErrors
+	 *            array with the name of the webservice error subcategories to
+	 *            be written.
+	 * @param systemErrors
+	 *            array with the name of the system error subcategories to be
+	 *            written.
+	 */
+	void writeErrorZipForIngest(Long reportId, ZipOutputStream zipOutputStream,
+			String[] requiredFieldErrors, String[] webserviceErrors,
+			String[] systemErrors);
 
 }

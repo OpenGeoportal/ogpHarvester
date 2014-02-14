@@ -34,6 +34,8 @@ import java.util.List;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -77,5 +79,16 @@ public interface IngestReportErrorRepository extends
 			+ "r.report.id=:id and " + "r.type=:errorType group by r.field")
 	List<Object[]> getCountErrorsByReportId(@Param("id") Long id,
 			@Param("errorType") IngestReportErrorType errorType);
+
+	/**
+	 * @param reportId
+	 * @param requiredFieldError
+	 * @param requiredField
+	 * @param pageRequest
+	 * @return
+	 */
+	Page<IngestReportError> findByReportIdAndTypeAndField(Long reportId,
+			IngestReportErrorType requiredFieldError, String requiredField,
+			Pageable pageRequest);
 
 }

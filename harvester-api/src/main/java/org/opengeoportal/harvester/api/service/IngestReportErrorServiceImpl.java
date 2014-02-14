@@ -29,15 +29,28 @@
  */
 package org.opengeoportal.harvester.api.service;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import org.hamcrest.DiagnosingMatcher;
 import org.opengeoportal.harvester.api.dao.IngestReportErrorRepository;
 import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import sun.tools.tree.ThisExpression;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -48,7 +61,10 @@ import com.google.common.collect.Maps;
  */
 @Service
 public class IngestReportErrorServiceImpl implements IngestReportErrorService {
+	/** Logger. */
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	/** Report error repository. */
 	@Autowired
 	private IngestReportErrorRepository reportErrorRepository;
 
@@ -117,6 +133,66 @@ public class IngestReportErrorServiceImpl implements IngestReportErrorService {
 
 		}
 		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+	 * writeErrorZipForIngest(java.lang.Long, java.util.zip.ZipOutputStream,
+	 * java.lang.String[], java.lang.String[], java.lang.String[])
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public void writeErrorZipForIngest(Long reportId, ZipOutputStream out,
+			String[] requiredFieldErrors, String[] webserviceErrors,
+			String[] systemErrors) {
+
+		writeErrors(reportId, IngestReportErrorType.REQUIRED_FIELD_ERROR,
+				requiredFieldErrors, out);
+		writeErrors(reportId, IngestReportErrorType.WEB_SERVICE_ERROR,
+				webserviceErrors, out);
+		writeErrors(reportId, IngestReportErrorType.SYSTEM_ERROR, systemErrors,
+				out);
+
+	}
+
+	private void writeErrors(Long reportId, IngestReportErrorType errorType,
+			String[] subcategories, ZipOutputStream out) {
+		if (subcategories != null && subcategories.length > 0) {
+			for (String subcat : subcategories) {
+				String fieldDir = errorType.toString().toLowerCase(Locale.ENGLISH) + "/" + subcat;
+				int page = 0;
+				int pageSize = 100;
+				boolean existNextPage = true;
+				while (existNextPage) {
+					Pageable pageRequest = new PageRequest(page, pageSize);
+					Page<IngestReportError> p = reportErrorRepository
+							.findByReportIdAndTypeAndField(reportId, errorType,
+									subcat, pageRequest);
+					for (IngestReportError error : p.getContent()) {
+						String metadata = error.getMetadata();
+
+						if (metadata != null) {
+							try {
+								out.putNextEntry(new ZipEntry(fieldDir
+										+ "/error_" + error.getId() + ".xml"));
+								out.write(metadata.getBytes(Charset
+										.forName("UTF-8")));
+							} catch (IOException e) {
+								if (logger.isErrorEnabled()) {
+									logger.error("Error adding entry (errorId="
+											+ error.getId() + " to zip file", e);
+								}
+							}
+						}
+					}
+
+					page++;
+					existNextPage = page < p.getTotalPages();
+				}
+			}
+		}
 	}
 
 }

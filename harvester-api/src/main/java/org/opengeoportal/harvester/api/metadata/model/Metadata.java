@@ -27,6 +27,7 @@ public class Metadata {
     private Boolean georeferenced;
     private Date contentDate;
     private String topic;
+    private boolean restricted = false;
     /** Raw metadata as retrieved from remote source. */
 	private String originalMetadata;
 
@@ -250,5 +251,17 @@ public class Metadata {
 	 */
 	public void setOriginalMetadata(String originalMetadata) {
 		this.originalMetadata = originalMetadata;
+	}
+	/**
+	 * @return the restricted
+	 */
+	public boolean isRestricted() {
+		return restricted;
+	}
+	/**
+	 * @param restricted the restricted to set
+	 */
+	public void setRestricted(boolean restricted) {
+		this.restricted = restricted;
 	}
 }
