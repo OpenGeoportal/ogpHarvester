@@ -59,6 +59,7 @@ public class SolrRecordTest {
             Assert.assertEquals(metadata.getDescription(), solrRecord.getDescription());
             Assert.assertEquals(metadata.getPlaceKeywordsAsString(), solrRecord.getPlaceKeywords());
             Assert.assertEquals(metadata.getThemeKeywordsAsString(), solrRecord.getThemeKeywords());
+            Assert.assertEquals(metadata.getLocation(), solrRecord.getLocation());
 
         } catch (Exception ex) {
             ex.printStackTrace();
