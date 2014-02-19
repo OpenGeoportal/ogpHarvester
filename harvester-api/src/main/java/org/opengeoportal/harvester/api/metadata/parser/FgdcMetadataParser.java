@@ -10,6 +10,8 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
 import org.opengeoportal.harvester.api.metadata.model.GeometryType;
+import org.opengeoportal.harvester.api.metadata.model.LocationLink;
+import org.opengeoportal.harvester.api.metadata.model.LocationLink.LocationType;
 import org.opengeoportal.harvester.api.metadata.model.PlaceKeywords;
 import org.opengeoportal.harvester.api.metadata.model.ThemeKeywords;
 import org.slf4j.Logger;
@@ -17,8 +19,20 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.Multimap;
+
+/**
+ * Metadata parser capable of process FGDC metadata.
+ * 
+ * @author <a href="mailto:jose.garcia@geocat.net">José García</a>.
+ * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
+ * 
+ */
 public class FgdcMetadataParser extends BaseXmlMetadataParser {
+	/** Logger. */
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/** Location resolver. */
+	private final LocationResolver locationResolver = new FgdcLocationResolver();
 
 	public static enum FgdcTag implements Tag {
 		Title("title", "/metadata/idinfo/citation/citeinfo/title"), Abstract(
@@ -205,7 +219,7 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 
 		try {
 			direct = getDocumentValue(FgdcTag.DataType_Direct);
-			if (direct.equalsIgnoreCase("raster") == true) {
+			if (direct.equalsIgnoreCase("raster")) {
 				this.metadataParserResponse.getMetadata().setGeometryType(
 						GeometryType.Raster);
 				return;
@@ -373,5 +387,29 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 		String fullText = getFullText();
 		this.metadataParserResponse.getMetadata().setFullText(fullText);
 		this.metadataParserResponse.getMetadata().setOriginalMetadata(fullText);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser
+	 * #handleLocation()
+	 */
+	@Override
+	protected void handleLocation() {
+		Multimap<LocationType, LocationLink> locationMap = locationResolver
+				.resolveLocation(document);
+		String locationJson = buildLocationJsonFromLocationLinks(locationMap);
+		this.metadataParserResponse.getMetadata().setLocation(locationJson);
+
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser#getLocationResolver()
+	 */
+	@Override
+	protected LocationResolver getLocationResolver() {
+		return this.locationResolver;
 	}
 }

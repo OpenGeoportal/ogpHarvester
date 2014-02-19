@@ -67,6 +67,9 @@ public class Iso19139MetadataParserTest {
 			Assert.assertEquals("Author organisation", metadata.getOriginator());
 			Assert.assertEquals("Publisher organisation",
 					metadata.getPublisher());
+			Assert.assertEquals(
+					"{\"wms\":[\"http://opengeoportal.org/geoserver?service=WMS&request=GetCapabilities\"]}",
+					metadata.getLocation());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Assert.fail();

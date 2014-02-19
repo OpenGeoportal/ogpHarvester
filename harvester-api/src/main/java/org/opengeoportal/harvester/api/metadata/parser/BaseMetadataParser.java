@@ -29,7 +29,14 @@
  */
 package org.opengeoportal.harvester.api.metadata.parser;
 
+import java.util.Iterator;
+
 import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
+import org.opengeoportal.harvester.api.metadata.model.LocationLink;
+import org.opengeoportal.harvester.api.metadata.model.LocationLink.LocationType;
+
+import java.util.Collection;
+import com.google.common.collect.Multimap;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
@@ -63,11 +70,49 @@ public class BaseMetadataParser {
 		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
 		return bounds.isValid();
 	}
-	
+
 	protected Boolean validateBounds(Double minX, Double minY, Double maxX,
 			Double maxY) {
 		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
 		return bounds.isValid();
 	}
 
+	protected String buildLocationJsonFromLocationLinks(
+			Multimap<LocationType, LocationLink> linksMultimap) {
+		StringBuilder sb = new StringBuilder("{");
+
+		for (Iterator<LocationType> keyIterator = linksMultimap.keySet()
+				.iterator(); keyIterator.hasNext();) {
+			LocationType type = keyIterator.next();
+			boolean isArray = type.getIsArray();
+			sb.append("\"").append(type.toString()).append("\":");
+			if (isArray) {
+				sb.append("[");
+				for (Iterator<LocationLink> linkIterator = linksMultimap.get(
+						type).iterator(); linkIterator.hasNext();) {
+					LocationLink link = linkIterator.next();
+					sb.append("\"").append(link.getUrl()).append("\"");
+					if (linkIterator.hasNext()) {
+						sb.append(", ");
+					}
+				}
+				sb.append("]");
+			} else { // not an array
+				sb.append("\"");
+				Collection<LocationLink> links = linksMultimap.get(type);
+				if (links.size() > 0) {
+					sb.append(links.iterator().next().getUrl());
+				}
+				sb.append("\"");
+			}
+
+			if (keyIterator.hasNext()) {
+				sb.append(", ");
+			}
+		}
+
+		sb.append("}");
+
+		return sb.toString();
+	}
 }

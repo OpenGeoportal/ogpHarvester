@@ -1,5 +1,12 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.xpath.XPathConstants;
+
 import org.apache.commons.lang3.StringUtils;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
 import org.opengeoportal.harvester.api.metadata.model.GeometryType;
@@ -12,16 +19,11 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.collect.Maps;
 
-import javax.xml.xpath.XPathConstants;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 
 public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	/** Location resolver. */
+	private final LocationResolver locationResolver = new Iso19139LocationResolver();
 
     List<String> preferredOriginatorKey = new ArrayList<String>();
     List<String> preferredPublisherKey = new ArrayList<String>();
@@ -565,4 +567,14 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
 		this.metadataParserResponse.getMetadata().setFullText(fullText);
 		this.metadataParserResponse.getMetadata().setOriginalMetadata(fullText);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser#getLocationResolver()
+	 */
+	@Override
+	protected LocationResolver getLocationResolver() {
+		return this.locationResolver;
+	}
+	
+
 }
