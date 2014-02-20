@@ -29,6 +29,7 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
+import java.util.Date;
 import java.util.Calendar;
 import java.util.UUID;
 
@@ -54,7 +55,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  * 
  */
-public class IngestJob implements Job {
+public class IngestJob implements Job, IngestJobFactorySetter {
 
 	/**
 	 * Key used to store the ingest identifier in the JobDetailsData map.
@@ -112,9 +113,11 @@ public class IngestJob implements Job {
 	@Transactional
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
+		Ingest ingest = null;
+		Date startTimestamp = Calendar.getInstance().getTime();
 		try {
 
-			Ingest ingest = findAndValidateIngest();
+			ingest = findAndValidateIngest();
 			BaseIngestJob job = ingestJobFactory.newIngestJob(ingest);
 			job.setJobStatusService(jobStatusService);
 			job.setReportService(reportService);
@@ -128,6 +131,12 @@ public class IngestJob implements Job {
 
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
+		} finally {
+			if (ingest != null) {
+				ingest = ingestService.findById(ingest.getId());
+				ingest.setLastRun(startTimestamp);
+				ingestService.save(ingest);
+			}
 		}
 	}
 
@@ -193,6 +202,13 @@ public class IngestJob implements Job {
 	 */
 	public void setIngestService(IngestService ingestService) {
 		this.ingestService = ingestService;
+	}
+
+	/**
+	 * @param ingestJobFactory the ingestJobFactory to set
+	 */
+	public void setIngestJobFactory(IngestJobFactory ingestJobFactory) {
+		this.ingestJobFactory = ingestJobFactory;
 	}
 
 }

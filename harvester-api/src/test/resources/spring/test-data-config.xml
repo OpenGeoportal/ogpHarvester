@@ -18,7 +18,7 @@
 	<context:component-scan base-package="org.opengeoportal.harvester.api.scheduler"></context:component-scan>
 	<context:annotation-config />
 
-	<tx:annotation-driven transaction-manager="transactionManager" />
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 
 <!--  	<jdbc:embedded-database type="H2" id="dataSource"/>  -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
