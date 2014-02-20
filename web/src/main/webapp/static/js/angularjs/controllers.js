@@ -7,18 +7,19 @@
 
 
 	angular.module("ogpHarvester.controllers")
-		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', 'Ingest', '$location', '$log',
+		.controller('ManageIngestsCtrl', ['$scope', '$routeParams', 'IngestPage', 'Ingest', 'ingestMultiform', '$location', '$log',
 			'$modal', '$interval',
-			function($scope, $routeParams, IngestPage, Ingest, $location, $log, $modal, $interval) {
+			function($scope, $routeParams, IngestPage, Ingest, ingestMultiform, $location, $log, $modal, $interval) {
 				$scope.data = {};
-				$scope.loadData = function () {
-					IngestPage.query($routeParams.page, $routeParams.pageSize,  function(response) {
+				ingestMultiform.init();
+				$scope.loadData = function() {
+					IngestPage.query($routeParams.page, $routeParams.pageSize, function(response) {
 						var pageFromRoute = $routeParams.page ? $routeParams.page : 1;
 						if (pageFromRoute == response.pageDetails.number) {
 							$scope.ingestPage = response;
-							$scope.pageSize = response.pageDetails.size;	
+							$scope.pageSize = response.pageDetails.size;
 						}
-						
+
 					});
 				};
 				$scope.loadData();
@@ -32,7 +33,7 @@
 						$interval.cancel($scope.refreshData);
 					}
 				});
-				
+
 
 				if ($routeParams.name) {
 					$log.info('Ingest "' + $routeParams.name + " has been successfully created");
@@ -60,7 +61,9 @@
 						$scope.unscheduleButtonDisabled = true;
 
 						var id = $scope.ingestToUnschedule.id;
-						Ingest.unshedule({id: id},
+						Ingest.unshedule({
+								id: id
+							},
 							function(data) {
 								// success callback
 								if (data.status === 'SUCCESS') {
@@ -69,15 +72,21 @@
 								} else {
 									$scope.unscheduleButtonDisable = false;
 									$scope.alerts = [];
-									$scope.alerts.push({type: 'danger', msg: data.result.errorCode});
+									$scope.alerts.push({
+										type: 'danger',
+										msg: data.result.errorCode
+									});
 								}
-								
+
 							},
 							function(reason) {
 								// error callback
 								$scope.unscheduleButtonDisable = false;
 								$scope.alerts = [];
-								$scope.alerts.push({type: 'danger', msg: reason});
+								$scope.alerts.push({
+									type: 'danger',
+									msg: reason
+								});
 							}
 						);
 					};
@@ -98,7 +107,7 @@
 							}
 						}
 					});
-					
+
 					modalInstance.result.then(function(result) {
 						// $scope.alerts.push({
 						// 	type: 'success', 
@@ -119,7 +128,7 @@
 						$modalInstance.dismiss('cancel');
 					};
 
-					$scope.stopIngest = function () {
+					$scope.stopIngest = function() {
 						$scope.stopButtonDisabled = false;
 
 					};
@@ -190,7 +199,7 @@
 				var downloadMetadata = function(listOfList) {
 					$('.downloadMetadata').remove();
 					var selected = [];
-		
+
 					for (var i = 0; i < listOfList.requiredFields.length; i++) {
 						$.merge(selected, $(listOfList.requiredFields[i]).map(function() {
 							if (this.isChecked) {
@@ -201,7 +210,7 @@
 							}
 						}));
 					};
-						
+
 					for (var i = 0; i < listOfList.webserviceError.length; i++) {
 						$.merge(selected, $(listOfList.webserviceError[i]).map(function() {
 							if (this.isChecked) {
@@ -212,7 +221,7 @@
 							}
 						}));
 					};
-						
+
 					for (var i = 0; i < listOfList.systemError.length; i++) {
 						$.merge(selected, $(listOfList.systemError[i]).map(function() {
 							if (this.isChecked) {
@@ -253,7 +262,7 @@
 						$scope.ingestDetails.error.allRequired = false;
 						$scope.ingestDetails.error.allWebservice = false;
 						$scope.ingestDetails.error.allSystem = false;
-	
+
 						$scope.$watch('ingestDetails.error.allRequired', function(value) {
 							angular.forEach($scope.ingestDetails.error.requiredFieldsList, function(requiredField, key) {
 								requiredField.isChecked = value;
@@ -295,7 +304,7 @@
 					if (next.$$route && next.$$route.originalPath === '/newIngest' &&
 						current.$$route.originalPath !== '/newIngest/step2') {
 						ingestMultiform.reset();
-						ingestMultiform.getIngest().typeOfInstance="SOLR";
+						ingestMultiform.getIngest().typeOfInstance = "SOLR";
 					}
 				};
 				$rootScope.$on('$routeChangeStart', $rootScope.checkBackStep);
@@ -444,20 +453,28 @@
 			};
 
 			$scope.step2 = function() {
-				if (angular.isNumber($scope.ingest.id)) {
+				if (angular.isNumber($scope.ingest.id) && $location.path().indexOf('/editIngest') != -1) {
 					$location.path('/editIngest/' + $scope.ingest.id + "/step2");
 				} else {
-					// go to step 2
+					// reset inget id and go to step 2
+					if ($scope.ingest) {
+						$scope.ingest.id = null;
+					}
+					ingestMultiform.getIngest().id = null;
 					$location.path('/newIngest/step2');
 				}
 
 			};
 
 			$scope.goBack = function() {
-				if (angular.isNumber($scope.ingest.id)) {
+				if (angular.isNumber($scope.ingest.id) && $location.path().indexOf('/editIngest') != -1) {
 					$location.path('/editIngest/' + $scope.ingest.id + '/back');
 				} else {
-					// go to step 2
+					// reset ingest id and go to step 2
+					if ($scope.ingest) {
+						$scope.ingest.id = null;
+					}
+					ingestMultiform.getIngest().id = null;
 					$location.path('/newIngest');
 				}
 			};

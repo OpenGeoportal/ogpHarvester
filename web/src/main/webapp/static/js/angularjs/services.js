@@ -116,6 +116,10 @@
 
 			// Public interface
 			return {
+				init: function() {
+					ingest = initBean();
+				},
+
 				reset: function() {
 					//ingest.typeOfInstance = 'SOLR';
 					ingest.catalogOfServices = null;
@@ -163,7 +167,8 @@
 					angular.copy(sourceIngest, ingest);
 				}
 			};
-		}]);
+		}
+	]);
 
 	servicesModule.service('remoteRepositories', ['$http', '$q',
 		function($http, $q) {
@@ -173,24 +178,23 @@
 			// Public interface
 			return {
 				getRemoteSourcesByRepoId: function(repoId, canceler) {
-					return $http.get('rest/repositories/' + repoId + '/remoteSources',
-							{
-								timeout: canceler
-							});
+					return $http.get('rest/repositories/' + repoId + '/remoteSources', {
+						timeout: canceler
+					});
 				},
 				getRemoteSourcesByUrl: function(repoType, repoUrl, canceler) {
 					return $http.post('rest/repositoriesbyurl/remoteSources', {
 						repoType: repoType,
 						repoUrl: repoUrl
 					}, {
-						timeout: canceler						
+						timeout: canceler
 					});
 				},
 				getRepositoryList: function() {
 					var deferred = $q.defer();
 
 					// Calling Repositories services to fetch repository list
-					$http.get('rest/repositories').success(function(data){
+					$http.get('rest/repositories').success(function(data) {
 						// Passing data to deferred's resolve function on successful completion
 						deferred.resolve(data);
 					}).error(function() {
@@ -216,7 +220,7 @@
 				},
 				remove: function(id) {
 					var deferred = $q.defer();
-					
+
 					$http.delete('rest/repositories/' + id).success(function(data) {
 						deferred.resolve(data);
 					}).error(function(data, status, headers, config) {
@@ -224,49 +228,49 @@
 							deferred.reject("The repository you are trying to remove does not exist anymore. You can dismiss this window.");
 						} else {
 							deferred.reject("An error occured while removing the repository");
-						}						
+						}
 					});
 					return deferred.promise;
-					
-				}, 
+
+				},
 				checkScheduledIngests: function(id) {
 					var deferred = $q.defer();
-					
-					$http.get('rest/repositories/' + id + '/hasScheduledIngests', 
-							{
-								repoId: id
-							}).success(
-							function (data) {
-								if (data.status === 'SUCCESS') {
-									deferred.resolve(data.result);
-								} else {
-									deferred.reject(data.result);
-								}
-							}).error(
-							function () {
-								deferred.reject("An error occured while checking if repository has scheduled ingests");
-							});
+
+					$http.get('rest/repositories/' + id + '/hasScheduledIngests', {
+						repoId: id
+					}).success(
+						function(data) {
+							if (data.status === 'SUCCESS') {
+								deferred.resolve(data.result);
+							} else {
+								deferred.reject(data.result);
+							}
+						}).error(
+						function() {
+							deferred.reject("An error occured while checking if repository has scheduled ingests");
+						});
 					return deferred.promise;
 				}
 			};
 		}
 	]);
-	
+
 	servicesModule.service('predefinedRepositories', ['$http', '$q',
-	                                      		function($http, $q) {
-		return {
-			getPredefinedNotInCustom : function() {
-				var deferred = $q.defer();
-				
-				$http.get('rest/predefinedRepositories/notInCustomRepos').success(function(data){
-					deferred.resolve(data);
-				}).error(function(data, status, headers, config) {
-					deferred.reject("Cannot retrieve existing repository list");
-				});
-				return deferred.promise;
-				
-			}			
-		};
-		
-	}]);
+		function($http, $q) {
+			return {
+				getPredefinedNotInCustom: function() {
+					var deferred = $q.defer();
+
+					$http.get('rest/predefinedRepositories/notInCustomRepos').success(function(data) {
+						deferred.resolve(data);
+					}).error(function(data, status, headers, config) {
+						deferred.reject("Cannot retrieve existing repository list");
+					});
+					return deferred.promise;
+
+				}
+			};
+
+		}
+	]);
 })();
