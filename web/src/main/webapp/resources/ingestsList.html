@@ -16,7 +16,7 @@
 			<td><a href="#/editIngest/{{ingest.id}}" class="ingest-name">{{ingest.name}}</a></td>
 			<td>
 				<p data-ng-show="!ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></p>
-				<p data-ng-show="ingest.lastRun">{{ingest.lastRun}}</p>
+				<p data-ng-show="ingest.lastRun">{{ingest.lastRun | date:'yyyy-MM-dd'}}</p>
 			</td>
 			<td>
 				<div class="progress progress-striped active" data-ng-show="ingest.inProgress">
@@ -26,7 +26,7 @@
 				</div>
 				<p data-ng-show="ingest.inProgress"><a data-translate="MANAGE_INGESTS.CANCEL" data-ng-click="stopIngest(ingestPage.elements[$index])" class="ingest-name"></a></p>
 				<p data-ng-show="!ingest.inProgress && !ingest.nextRun" data-translate="MANAGE_INGESTS.NONE"></p>
-				<p data-ng-show="!ingest.inProgress && ingest.nextRun">{{ingest.nextRun}}</p>
+				<p data-ng-show="!ingest.inProgress && ingest.nextRun">{{ingest.nextRun | date:'yyyy-MM-dd'}}</p>
 				<p data-ng-show="!ingest.inProgress && ingest.nextRun"><a data-translate="MANAGE_INGESTS.CANCEL" data-ng-click="unscheduleIngest(ingestPage.elements[$index])" class="ingest-name"></a></p></td>
 			<td>{{ingest.nameOgpRepository}}</td>
 			<td><a href="#/manageIngests/view/{{ingest.id}}" data-translate="MANAGE_INGESTS.VIEW_REPORT_BUTTON" data-ng-click="checkLastDate($event, $index)" 
