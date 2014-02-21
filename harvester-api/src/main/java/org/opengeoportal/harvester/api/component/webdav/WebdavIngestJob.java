@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.ImmutableList;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
@@ -123,7 +124,7 @@ public class WebdavIngestJob extends BaseIngestJob {
 
 			boolean valid = metadataValidator.validate(metadata, report);
 			if (valid) {
-				metadataIngester.ingest(metadata);
+			    metadataIngester.ingest(ImmutableList.of(metadata), getIngestReport());
 			}
 
 		} catch (Exception ex1) {

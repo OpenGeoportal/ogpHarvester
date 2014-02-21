@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.component.geonetwork;
 
+import com.google.common.collect.Lists;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchParams;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResponse;
@@ -12,6 +13,8 @@ import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
+
+import java.util.List;
 
 /**
  * IngestJob that read from a remote Geonetwork.
@@ -43,6 +46,9 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 				GeoNetworkSearchResponse searchResponse = gnClient
 						.search(searchParameters);
 
+                List<Metadata> metadataList = Lists
+                        .newArrayListWithCapacity(searchResponse.getMetadataSearchResults().size());
+
 				for (GeoNetworkSearchResult record : searchResponse
 						.getMetadataSearchResults()) {
 					Document document = gnClient.retrieveMetadata(record
@@ -59,10 +65,12 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 					boolean valid = metadataValidator
 							.validate(metadata, report);
 					if (valid) {
-						metadataIngester.ingest(metadata);
+                        metadataList.add(metadata);
 					}
 
 				}
+
+                metadataIngester.ingest(metadataList, getIngestReport());
 
 				// --- check to see if we have to perform additional searches
 				processFinished = (start + searchParameters.getPageSize() > searchResponse

@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.component.csw;
 
+import com.google.common.collect.Lists;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.DOMOutputter;
@@ -13,6 +14,8 @@ import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * Class that do the ingest retrieving the medatada from a remote CSW server and
@@ -43,6 +46,9 @@ public class CswIngestJob extends BaseIngestJob {
 				GetRecordsResponse response = cswClient.getRecords(request,
 						start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
 
+                List<Metadata> metadataList = Lists
+                        .newArrayListWithCapacity(response.getResults().size());
+
 				for (Element record : response.getResults()) {
 					Document doc = new Document((Element) record.clone());
 
@@ -60,11 +66,13 @@ public class CswIngestJob extends BaseIngestJob {
 					boolean valid = metadataValidator
 							.validate(metadata, report);
 					if (valid) {
-						metadataIngester.ingest(metadata);
+                        metadataList.add(metadata);
 					}
 				}
 
-				// --- check to see if we have to perform other searches
+                metadataIngester.ingest(metadataList, getIngestReport());
+
+                // --- check to see if we have to perform other searches
 				int recCount = response.getNumberOfRecordsMatched();
 
 				processFinished = (start
