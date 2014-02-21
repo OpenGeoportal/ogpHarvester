@@ -167,6 +167,9 @@ public class IngestController {
 			ingest.setUrl(ingestFormBean.getUrl());
 			ingest.setRepository(null);
 		}
+		
+		// remove old required fields and add the new ones
+		ingest.getRequiredFields().clear();
 		for (Entry<String, Boolean> requiredField : ingestFormBean
 				.getRequiredFields().entrySet()) {
 			if (requiredField.getValue()) {
