@@ -124,7 +124,6 @@ public class IngestJob implements Job, IngestJobFactorySetter {
 			job.setErrorService(errorService);
 			UUID jobUuid = UUID.randomUUID();
 			job.init(jobUuid, ingest, metadataIngester);
-			ingest.setLastRun(Calendar.getInstance().getTime());
 			ingestService.save(ingest);
 			job.run();
 			ingestService.save(ingest);
