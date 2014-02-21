@@ -85,7 +85,7 @@ public class OgpIngestJob extends BaseIngestJob {
 								.parse(record);
 						Metadata metadata = parseResult.getMetadata();
 						boolean valid = metadataValidator.validate(metadata,
-								report);
+								getIngestReport());
 						if (valid) {
 							metadataList.add(metadata);
 						}

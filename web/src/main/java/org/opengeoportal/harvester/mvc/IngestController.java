@@ -1,11 +1,8 @@
 package org.opengeoportal.harvester.mvc;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import javassist.expr.NewArray;
 
 import javax.annotation.Resource;
 
