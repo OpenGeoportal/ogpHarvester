@@ -453,6 +453,17 @@
 			};
 
 			$scope.step2 = function() {
+				if ($scope.ingest.typeOfInstance === "SOLR") {
+					if ($scope.ingest.dataRepositories.length != 0) {
+						$scope.ingest.nameOgpRepository = $scope.ingest.dataRepositories.join(", ");											
+					} else {
+						var repos = [];
+						$.each($scope.solrDataRepositoryList, function(idx, val) {
+							repos.push(val.value);
+						});
+						$scope.ingest.nameOgpRepository = repos.join(", ");
+					}
+				}
 				if (angular.isNumber($scope.ingest.id) && $location.path().indexOf('/editIngest') != -1) {
 					$location.path('/editIngest/' + $scope.ingest.id + "/step2");
 				} else {
@@ -645,8 +656,12 @@
 				function(data) {
 					if (data.status === "SUCCESS") {
 						$scope.nameOgpRepositoryList = data.result;
-						if ($scope.nameOgpRepositoryList && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined) {
-							$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
+						if ($scope.ingest.typeOfInstance !== 'SOLR') {
+							if ($scope.nameOgpRepositoryList 
+									&& $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined
+									&& $scope.ingest.nameOgpRepository === "") {
+								$scope.ingest.nameOgpRepository = $scope.nameOgpRepositoryList[0].key;
+							}
 						}
 					} else {
 						$log.warn("Can not retrieve local Solr institutions list: " + data.result.errorCode);
