@@ -458,9 +458,11 @@
 						$scope.ingest.nameOgpRepository = $scope.ingest.dataRepositories.join(", ");											
 					} else {
 						var repos = [];
-						$.each($scope.solrDataRepositoryList, function(idx, val) {
-							repos.push(val.value);
-						});
+						if($scope.solrDataRepositoryList) {							
+							$.each($scope.solrDataRepositoryList, function(idx, val) {
+								repos.push(val.value);
+							});
+						}
 						$scope.ingest.nameOgpRepository = repos.join(", ");
 					}
 				}
