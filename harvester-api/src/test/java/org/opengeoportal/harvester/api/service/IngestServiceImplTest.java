@@ -68,7 +68,7 @@ public class IngestServiceImplTest {
 	@DatabaseSetup("ingestData.xml")
 	public void testFindIngest() {
 
-		Ingest ingest = ingestService.findByName("ingest1");
+		Ingest ingest = ingestService.findById(1L);
 		Assert.assertNotNull(ingest);
 		Assert.assertEquals("ingest1", ingest.getName());
 	}
