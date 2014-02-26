@@ -45,14 +45,15 @@
 		                        var formController = (controllers.length > 1) ? controllers[1] : null;
 		                        var fn = $parse(attributes.rcSubmit);
 		                        
-		                        formElement.bind('submit', function () {
+		                        formElement.bind('submit', function (evt) {
 		                            submitController.setAttempted();
 		                            if (!scope.$$phase) scope.$apply();
 		                            
 		                            if (!formController.$valid) return false;
 		                    
-		                            scope.$apply(function() {
-		                                fn(scope, {$event:event});
+		                            var e = evt.originalEvent || event || window.event;
+		                            scope.$apply(function(evt) {
+		                                fn(scope, {$event: e});
 		                            });
 		                        });
 		                    }

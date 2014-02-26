@@ -84,11 +84,6 @@ public class IngestServiceImpl implements IngestService {
 		ingestRepository.delete(id);
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Ingest findByName(String name) {
-		return ingestRepository.findByName(name);
-	}
 
 	@Override
 	@Transactional(readOnly = true)

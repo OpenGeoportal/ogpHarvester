@@ -29,7 +29,7 @@
 		<webjars-bootstrap.version>3.0.2</webjars-bootstrap.version>
 		<webjars-jquery-ui.version>1.10.3</webjars-jquery-ui.version>
 		<webjars-jquery.version>1.10.2-1</webjars-jquery.version>
-		<webjars-angularjs.version>1.2.3</webjars-angularjs.version>
+		<webjars-angularjs.version>1.2.13</webjars-angularjs.version>
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
 		<webjars-openlayers.version>2.13.1</webjars-openlayers.version>
 		<webjars-momentjs.version>2.4.0</webjars-momentjs.version>
