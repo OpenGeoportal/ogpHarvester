@@ -42,10 +42,6 @@
 		<property name="initialSize" value="${jdbc.basic.initialSize}" />
 	</bean>
 
-	<bean id="jpaVendorAdapterDatabaseParam" class="java.lang.String">
-		<constructor-arg value="POSTGRESQL" />
-	</bean>
-
 	<bean id="jdbcDriverClassName" class="java.lang.String">
 		<constructor-arg value="org.postgresql.Driver" />
 	</bean>
@@ -83,7 +79,7 @@
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 		<property name="generateDdl" ref="generateDdl" />
 		<property name="showSql" value="true" />
-		<property name="database" ref="jpaVendorAdapterDatabaseParam" />
+		<property name="database" value="POSTGRESQL" />
 	</bean>
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
 		<property name="entityManagerFactory" ref="entityManagerFactory" />

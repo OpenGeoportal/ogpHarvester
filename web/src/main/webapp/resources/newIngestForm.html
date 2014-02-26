@@ -1,463 +1,495 @@
-<div class="col-md-9 right-column" data-ng-controller="NewIngestCtrl" >
-	<h1 data-translate="INGEST_FORM.HEADER"></h1>
-    <p data-translate="INGEST_FORM.SUBHEADER"></p>
-    
-    <h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
-    <form name="newIngest" data-rc-submit="step2()" novalidate>
-    	<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}</div>
-       
-        <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.typeOfInstance)}">
-            <label class="control-label" for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
-            <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance"  name="typeOfInstance"
-            data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList" 
+<div class="col-md-9 right-column" data-ng-controller="NewIngestCtrl">
+<h1 data-translate="INGEST_FORM.HEADER"></h1>
+
+<p data-translate="INGEST_FORM.SUBHEADER"></p>
+
+<h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
+
+<form name="newIngest" data-rc-submit="step2()" novalidate>
+<div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}
+</div>
+
+<div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.typeOfInstance)}">
+    <label class="control-label" for="typeOfInstance" data-translate="INGEST_FORM.TYPE_OF_INSTANCE"></label>
+    <select id="typeOfInstance" class="form-control" data-ng-model="ingest.typeOfInstance" name="typeOfInstance"
+            data-ng-options="item.value as ('INGEST_FORM.' + item.label | translate) for item in typeOfInstanceList"
             data-ng-change="resetForm()" data-ng-disabled="isTypeOfInstanceDisabled()"></select>
+</div>
+<div class="form-group col-md-7"
+     data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.catalogOfServices)}">
+    <label class="control-label" for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
+
+    <div data-alert data-ng-repeat="error in serviceAlerts" data-type="warning" data-close="closeServiceAlerts()">
+        {{error}}
+    </div>
+    <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6"
+            name="catalogOfServices"
+            data-ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
+            data-ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId();ingest.customRepoDeleted=false;"
+            data-ng-required="angular.isUndefined(ingest.url) || ingest.url == null">
+        <option value="" data-translate="INGEST_FORM.OPT_SERVICE_NAME">
+        <option/>
+    </select>
+    <span class="help-block help-block-text-warning" data-ng-show="ingest.customRepoDeleted">{{ "INGEST_FORM.REPO_DELETED" | translate: ingest }}</span>
+</div>
+<div class="form-group col-md-9" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.url)}">
+    <label class="control-label" for="url" data-translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
+
+    <div data-alert data-ng-repeat="error in urlErrors" data-type="warning" data-close="closeUrlAlerts()">{{error}}
+    </div>
+    <input type="url" id="url" name="url" data-ng-model="ingest.url" class="form-control"
+           data-ng-disabled="ingest.catalogOfServices != null" data-ng-blur="getRemoteSourcesByUrl();"
+           data-ng-required="!ingest.catalogOfServices"/>
+</div>
+
+<div class="form-group multiselect col-md-7" data-ng-hide="ingest.typeOfInstance === 'SOLR'"
+     data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.nameOgpRepository)}">
+    <label class="control-label" for="nameOgpRepository" data-translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
+        data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
+        class="glyphicon glyphicon-question-sign black"></span></a>
+    <select class="form-control" id="nameOgpRepository" name="nameOgpRepository"
+            data-ng-model="ingest.nameOgpRepository"
+            data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
+            data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate"
+            data-ng-required="ingest.typeOfInstance !== 'SOLR'">
+    </select>
+</div>
+<div class="clearfix"></div>
+<div data-ng-switch data-on="ingest.typeOfInstance" id="fagment">
+<div data-ng-switch-when="SOLR" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+    <div class="custom-panel">
+        <div class="custom-panel-heading collapsed" data-toggle="collapse"
+             data-target="#collapseSorlSearchCriteria">
+            <h2>
+                <span data-translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span>
+                <a data-tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a> <span
+                    class="glyphicon glyphicon-chevron-up pull-right black"></span>
+            </h2>
         </div>
-        <div class="form-group col-md-7" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.catalogOfServices)}">
-            <label class="control-label" for="catalogOfServices" data-translate="INGEST_FORM.CATALOG_OF_SERVICES"></label>
-            <div data-alert data-ng-repeat="error in serviceAlerts" data-type="warning" data-close="closeServiceAlerts()">{{error}}</div>
-            <select id="catalogOfServices" data-ng-model="ingest.catalogOfServices" class="form-control col-md-6" name="catalogOfServices"
-                    data-ng-options="item.key as item.value for item in customRepositories[ingest.typeOfInstance]"
-                    data-ng-change="cleanServiceUrl(); getRemoteSourcesByRepoId();ingest.customRepoDeleted=false;" 
-                    data-ng-required="angular.isUndefined(ingest.url) || ingest.url == null">
-                    <option value="" data-translate="INGEST_FORM.OPT_SERVICE_NAME"><option/>
-            </select>
-            <span class="help-block help-block-text-warning" data-ng-show="ingest.customRepoDeleted">{{ "INGEST_FORM.REPO_DELETED" | translate: ingest }}</span>
-        </div>
-        <div class="form-group col-md-9" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.url)}">
-            <label class="control-label" for="url" data-translate="{{'INGEST_FORM.URL_' + ingest.typeOfInstance}}"></label>
-            <div data-alert data-ng-repeat="error in urlErrors" data-type="warning" data-close="closeUrlAlerts()">{{error}}</div>
-            <input type="url" id="url" name="url" data-ng-model="ingest.url" class="form-control" 
-                data-ng-disabled="ingest.catalogOfServices != null" data-ng-blur="getRemoteSourcesByUrl();" 
-                data-ng-required="!ingest.catalogOfServices"></input>
-        </div> 
+        <div class="custom-panel-body collapse" id="collapseSorlSearchCriteria">
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.EXTENT"></label>
+                <button type="button" class="btn btn-default" data-ng-click="openMap()">
+                    <span class="glyphicon glyphicon-globe"></span>
+                </button>
 
-        <div class="form-group multiselect col-md-7" data-ng-hide="ingest.typeOfInstance === 'SOLR'"
-        	data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.nameOgpRepository)}">
-            <label class="control-label" for="nameOgpRepository" data-translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
-                data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
-                class="glyphicon glyphicon-question-sign black"></span></a>
-            <select class="form-control" id="nameOgpRepository" name="nameOgpRepository"
-                data-ng-model="ingest.nameOgpRepository"
-                data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
-                data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate"
-                data-ng-required="ingest.typeOfInstance !== 'SOLR'">
-            </select>
-        </div>
-        <div class="clearfix"></div>
-        <div data-ng-switch data-on="ingest.typeOfInstance"  id="fagment">
-            <div data-ng-switch-when="SOLR" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="custom-panel">
-                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
-                        data-target="#collapseSorlSearchCriteria">
-                        <h2>
-                            <span data-translate="INGEST_FORM.SOLR_SEARCH_CRITERIA"></span> 
-                            <a data-tooltip='{{"INGEST_FORM.SOLR_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> <span
-                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
-                        </h2>
-                    </div>
-                    <div class="custom-panel-body collapse" id="collapseSorlSearchCriteria">
-                        <div class="form-group">
-                            <label data-translate="INGEST_FORM.EXTENT"></label>
-                            <button type="button" class="btn btn-default" data-ng-click="openMap()">
-                                <span class="glyphicon glyphicon-globe"></span>
-                            </button>
+                <button data-ng-show="ingest.extent.maxy" type="button" class="btn btn-default"
+                        data-ng-click="resetBbox()">
+                    <span class="glyphicon glyphicon-remove-sign "></span>
+                </button>
 
-                            <button data-ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
-                                <span class="glyphicon glyphicon-remove-sign "></span>
-                            </button>
-
-                            <a data-tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
+                <a data-tooltip='{{ "INGEST_FORM.EXTENT_TOOLTIP" | translate }}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a>
 
 
-							<div class="clearfix"></div>
-                            <span data-ng-show="ingest.extent.maxy" class="label label-default" >{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
+                <div class="clearfix"></div>
+                            <span data-ng-show="ingest.extent.maxy" class="label label-default">{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
                                 {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
                                 {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
                                 {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
-                        </div>
+            </div>
 
-                        <div class="form-group col-md-9">
-                           <label for="themeKeyword" data-translate="INGEST_FORM.THEME_KEYWORD" ></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}' ><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> 
-                            <input class="form-control" id="themeKeyword"
-                                data-ng-model="ingest.themeKeyword" data-ng-disabled="isSolrCustomQueryFilled()"></input>
-                        </div>
+            <div class="form-group col-md-9">
+                <label for="themeKeyword" data-translate="INGEST_FORM.THEME_KEYWORD"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.THEME_KEYWORD_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <input class="form-control" id="themeKeyword"
+                       data-ng-model="ingest.themeKeyword" data-ng-disabled="isSolrCustomQueryFilled()" />
+            </div>
 
-                        <div class="form-group col-md-9">
-                            <label for="placeKeyword" data-translate="INGEST_FORM.PLACE_KEYWORD"></label> <a 
-                                data-tooltip='{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input type="text" class="form-control" id="placeKeyword"
-                                data-ng-model="ingest.placeKeyword" data-ng-disabled="isSolrCustomQueryFilled()" ></input>
-                        </div>
+            <div class="form-group col-md-9">
+                <label for="placeKeyword" data-translate="INGEST_FORM.PLACE_KEYWORD"></label> <a
+                    data-tooltip='{{"INGEST_FORM.PLACE_KEYWORD" | translate}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <input type="text" class="form-control" id="placeKeyword"
+                       data-ng-model="ingest.placeKeyword" data-ng-disabled="isSolrCustomQueryFilled()" />
+            </div>
 
-                        <div class="form-group col-md-7">
-                            <label for=topic data-translate="INGEST_FORM.TOPIC"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select class="form-control" id="topic" data-ng-model="ingest.topic" 
-                                data-ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList"
-                                data-ng-disabled="isSolrCustomQueryFilled()">
-                                <option value="" data-translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
-                            </select>
-                        </div>
-                        <div class="clearfix"></div>
+            <div class="form-group col-md-7">
+                <label for=topic data-translate="INGEST_FORM.TOPIC"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.TOPIC_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <select class="form-control" id="topic" data-ng-model="ingest.topic"
+                        data-ng-options="item as ('INGEST_FORM.TOPIC_OPT_' + item | translate ) for item in topicList"
+                        data-ng-disabled="isSolrCustomQueryFilled()">
+                    <option value="" data-translate="INGEST_FORM.TOPIC_OPT_NONE"></option>
+                </select>
+            </div>
+            <div class="clearfix"></div>
 
-                        <div class="form-group">
-                            <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <div class="row no-margin">
-                                <div class="input-group col-md-4 date">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                    data-ng-model="ingest.contentRangeFrom" data-datepicker-options="dateOptions" 
-                                    data-is-open="dtOpened['contentRangeFrom']"
-                                    data-ng-disabled="isSolrCustomQueryFilled()"  
-                                    id='contentRangeFrom' 
-                                    name="contentRangeFrom" />
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+
+                <div class="row no-margin">
+                    <div class="input-group col-md-4 date">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.contentRangeFrom" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['contentRangeFrom']"
+                               data-ng-disabled="isSolrCustomQueryFilled()"
+                               id='contentRangeFrom'
+                               name="contentRangeFrom"/>
                                     <span class="input-group-addon" data-ng-click="open('contentRangeFrom')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>
+                    </div>
 
-                                 <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
-                                <div class="input-group col-md-4 date" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.contentRangeTo)}">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.contentRangeTo" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['contentRangeTo']" data-ogp-check-after2="ingest.contentRangeFrom"
-                                        data-ng-disabled="isSolrCustomQueryFilled()"
-                                        name="contentRangeTo" id="contentRangeTo"></input>
+                                 <span
+                                         class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
+
+                    <div class="input-group col-md-4 date"
+                         data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.contentRangeTo)}">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.contentRangeTo" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['contentRangeTo']" data-ogp-check-after2="ingest.contentRangeFrom"
+                               data-ng-disabled="isSolrCustomQueryFilled()"
+                               name="contentRangeTo" id="contentRangeTo" />
                                     <span class="input-group-addon" data-ng-click="open('contentRangeTo')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-9">
-                            <label for="originator" data-translate="INGEST_FORM.ORIGINATOR"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <input class="form-control" id="originator" data-ng-model="ingest.originator" 
-                            	data-ng-disabled="isSolrCustomQueryFilled()"></input>
-                        </div>
-
-                        <div class="form-group multiselect col-md-7">
-                            <label for="dataType" data-translate="INGEST_FORM.DATA_TYPE"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select data-ng-model="ingest.dataTypes" multiple="multiple" id="dataType"
-                                class="form-control btn-block" data-ng-options="('INGEST_FORM.DATA_TYPE_OPT_' + item | translate) for item in dataTypeList" 
-                                data-placeholder="'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate" 
-                                data-ng-disabled="isSolrCustomQueryFilled()" data-multiselect-dropdown >
-                            </select>
-                        </div>
-
-                        <div class="form-group multiselect col-md-7">
-                            <label for="dataRepository" data-translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <select class="form-control" id="dataRepository" data-ng-model="ingest.dataRepositories"
-                                multiple="multiple" data-ng-options="item.key as item.value for item in solrDataRepositoryList" 
-                                data-placeholder="'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate" 
-                                data-ng-disabled="isSolrCustomQueryFilled()"
-                                data-multiselect-dropdown>
-                            </select>
-                        </div>
-                        <div class="clearfix"></div>
-
-                        <div class="form-group">
-                            <div class="col-md-12 no-left-padding">
-                                <div class="checkbox">
-                                    <label for="excludeRestricted">
-                                         <input type="checkbox" data-ng-model="ingest.excludeRestricted" id="excludeRestricted"
-                                         	data-ng-disabled="isSolrCustomQueryFilled()"></input>
-
-                                        {{"INGEST_FORM.EXCLUDE_RESTRICTED" | translate }}
-                                    </label> <a data-tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
-                                        class="glyphicon glyphicon-question-sign black"></span></a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label data-translate="INGEST_FORM.DATE_RANGE_SOLR"></label> <a
-                                data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <div class="row no-margin">
-                                <div class="input-group col-md-4 date">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.rangeSolrFrom" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['rangeSolrFrom']"
-                                        name="rangeSolrFrom" id="rangeSolrFrom"
-                                        data-ng-disabled="isSolrCustomQueryFilled()"></input>
-                                    <span class="input-group-addon" data-ng-click="open('rangeSolrFrom')">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-
-                                <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
-                                
-                                <div class="input-group col-md-4 date" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.rangeSolrTo)}">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.rangeSolrTo" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['rangeSolrTo']" data-ogp-check-after2="ingest.rangeSolrFrom"
-                                        name="rangeSolrTo" id="rangeSolrTo"
-                                        data-ng-disabled="isSolrCustomQueryFilled()"></input>
-                                    <span class="input-group-addon" data-ng-click="open('rangeSolrTo')">
-                                        <span class="glyphicon glyphicon-calendar"></span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-9">
-                            <label for="solrCustomQuery" data-translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.solrCustomQuery"
-                                id="solrCustomQuery" data-ng-change="resetOtherFieldsSolr()"></textarea>
-                        </div>
-
-                    </div>
-                </div>
-            </div> <!-- //swich solr-->
-
-            <div data-ng-switch-when="GEONETWORK" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="custom-panel">
-                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
-                        data-target="#collapseSearchCriteriaGN">
-                        <h2>
-                            {{ "INGEST_FORM.GN_SEARCH_CRITERIA" | translate}}
-                            <a data-tooltip='{{ "INGEST_FORM.GN_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> <span
-                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
-                        </h2>
-                    </div>
-                    <div class="custom-panel-body collapse" id="collapseSearchCriteriaGN">
-                        <div class="form-group col-md-9">
-                            <label for="gnTitle" data-translate="INGEST_FORM.GN_TITLE"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.GN_TITLE_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> 
-                                <input
-                                class="form-control" id="gnTitle" data-ng-model="ingest.gnTitle" ></input>
-                        </div>
-                    
-
-                        <div class="form-group col-md-9">
-                            <label for="gnKeyword" data-translate="INGEST_FORM.GN_KEYWORD"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> 
-                                <input class="form-control" id="gnKeyword" data-ng-model="ingest.gnKeyword" ></input>
-                        </div>
-
-                        <div class="form-group col-md-9">
-                            <label for="gnAbstractText" data-translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.gnAbstractText"
-                                id="gnAbstractText"></textarea>
-                        </div>
-
-                        <div class="form-group col-md-9">
-                            <label for="gnFreeText" data-translate="INGEST_FORM.GN_FREE_TEXT"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.gnFreeText"
-                                id="gnFreeText"></textarea>
-                        </div>
-
-                        <div class="clearfix"></div>
-                            <div class="form-group multiselect col-md-7">
-                                <label for="gnSources" data-translate="INGEST_FORM.GN_SOURCES"></label> <a 
-                                    data-tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
-                                    class="glyphicon glyphicon-question-sign black"></span></a> 
-                                    <select multiple="multiple" data-ng-model="ingest.gnSources"
-                                        id="gnSources" class="form-control" data-ng-options="item.key as item.value for item in gnSourcesList" 
-                                        data-placeholder="'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate" data-multiselect-dropdown>
-                                    </select>
-                            </div>
                     </div>
                 </div>
             </div>
-            <div  data-ng-switch-when="CSW" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="custom-panel">
-                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
-                        data-target="#collapseSearchCriteriaCsw">
-                        <h2>
-                            {{ "INGEST_FORM.CSW_SEARCH_CRITERIA" | translate }}
-                            <span
-                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
-                        </h2>
+
+            <div class="form-group col-md-9">
+                <label for="originator" data-translate="INGEST_FORM.ORIGINATOR"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.ORIGINATOR_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <input class="form-control" id="originator" data-ng-model="ingest.originator"
+                       data-ng-disabled="isSolrCustomQueryFilled()" />
+            </div>
+
+            <div class="form-group multiselect col-md-7">
+                <label for="dataType" data-translate="INGEST_FORM.DATA_TYPE"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.DATA_TYPE_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <select data-ui-select2 data-ng-model="ingest.dataTypes" multiple="multiple" class="form-control"
+                        data-placeholder="{{'INGEST_FORM.DATA_TYPE_PLACEHOLDER' | translate}}"
+                        data-ng-disabled="isSolrCustomQueryFilled()" id="dataType">
+                    <option value=""></option>
+                    <option data-ng-repeat="item in dataTypeList" value="{{item}}">{{('INGEST_FORM.DATA_TYPE_OPT_' +
+                        item | translate)}}
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group multiselect col-md-7">
+                <label for="dataRepository" data-translate="INGEST_FORM.DATA_REPOSITORY"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.DATA_REPOSITORY_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <select id="dataRepository" data-ui-select2 data-ng-model="ingest.dataRepositories"
+                        multiple="multiple" data-placeholder="{{'INGEST_FORM.DATA_REPOSITORY_PLACEHOLDER' | translate}}"
+                        data-ng-disabled="isSolrCustomQueryFilled()" class="form-control">
+                    <option value=""></option>
+                    <option data-ng-repeat="item in solrDataRepositoryList" value="{{item.key}}">{{item.value}}</option>
+                </select>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="form-group">
+                <div class="col-md-12 no-left-padding">
+                    <div class="checkbox">
+                        <label for="excludeRestricted">
+                            <input type="checkbox" data-ng-model="ingest.excludeRestricted" id="excludeRestricted"
+                                   data-ng-disabled="isSolrCustomQueryFilled()" />
+
+                            {{"INGEST_FORM.EXCLUDE_RESTRICTED" | translate }}
+                        </label> <a data-tooltip='{{ "INGEST_FORM.EXCLUDE_RESTRICTED_TOOLTIP" | translate }}'><span
+                            class="glyphicon glyphicon-question-sign black"></span></a>
                     </div>
-                    <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
-                        <div class="form-group">
-                            <label data-translate="INGEST_FORM.CSW_EXTENT"></label>
-                            <button type="button" class="btn btn-default" data-ng-click="openMap()">
-                                <span class="glyphicon glyphicon-globe"></span>
-                            </button> 
+                </div>
+            </div>
 
-                            <button data-ng-show="ingest.extent.maxy" type="button" class="btn btn-default" data-ng-click="resetBbox()">
-                                <span class="glyphicon glyphicon-remove-sign "></span>
-                            </button>
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.DATE_RANGE_SOLR"></label> <a
+                    data-tooltip="{{ 'INGEST_FORM.DATE_RANGE_SOLR_TOOLTOP' | translate}}"><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
 
-                            <a data-tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
-                                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <div class="row no-margin">
+                    <div class="input-group col-md-4 date">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.rangeSolrFrom" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['rangeSolrFrom']"
+                               name="rangeSolrFrom" id="rangeSolrFrom"
+                               data-ng-disabled="isSolrCustomQueryFilled()" />
+                                    <span class="input-group-addon" data-ng-click="open('rangeSolrFrom')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                    </div>
 
-                            <div class="clearfix"></div>
-                            <span data-ng-show="ingest.extent.maxy" class="label label-default" >
+                    <span class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
+
+                    <div class="input-group col-md-4 date"
+                         data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.rangeSolrTo)}">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.rangeSolrTo" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['rangeSolrTo']" data-ogp-check-after2="ingest.rangeSolrFrom"
+                               name="rangeSolrTo" id="rangeSolrTo"
+                               data-ng-disabled="isSolrCustomQueryFilled()" />
+                                    <span class="input-group-addon" data-ng-click="open('rangeSolrTo')">
+                                        <span class="glyphicon glyphicon-calendar"></span>
+                                    </span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group col-md-9">
+                <label for="solrCustomQuery" data-translate="INGEST_FORM.SOLR_CUSTOM_QUERY"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.SOLR_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.solrCustomQuery"
+                          id="solrCustomQuery" data-ng-change="resetOtherFieldsSolr()"></textarea>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- //swich solr-->
+
+<div data-ng-switch-when="GEONETWORK" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+    <div class="custom-panel">
+        <div class="custom-panel-heading collapsed" data-toggle="collapse"
+             data-target="#collapseSearchCriteriaGN">
+            <h2>
+                {{ "INGEST_FORM.GN_SEARCH_CRITERIA" | translate}}
+                <a data-tooltip='{{ "INGEST_FORM.GN_SEARCH_CRITERIA_TOOLTIP" | translate}}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a> <span
+                    class="glyphicon glyphicon-chevron-up pull-right black"></span>
+            </h2>
+        </div>
+        <div class="custom-panel-body collapse" id="collapseSearchCriteriaGN">
+            <div class="form-group col-md-9">
+                <label for="gnTitle" data-translate="INGEST_FORM.GN_TITLE"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.GN_TITLE_TOOLTIP" | translate}}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <input
+                        class="form-control" id="gnTitle" data-ng-model="ingest.gnTitle" />
+            </div>
+
+
+            <div class="form-group col-md-9">
+                <label for="gnKeyword" data-translate="INGEST_FORM.GN_KEYWORD"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.GN_KEYWORD_TOOLTIP" | translate}}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <input class="form-control" id="gnKeyword" data-ng-model="ingest.gnKeyword" />
+            </div>
+
+            <div class="form-group col-md-9">
+                <label for="gnAbstractText" data-translate="INGEST_FORM.GN_ABASTRACT_TEXT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.GN_ABASTRACT_TEXT_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.gnAbstractText"
+                          id="gnAbstractText"></textarea>
+            </div>
+
+            <div class="form-group col-md-9">
+                <label for="gnFreeText" data-translate="INGEST_FORM.GN_FREE_TEXT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.GN_FREE_TEXT_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.gnFreeText"
+                          id="gnFreeText"></textarea>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="form-group multiselect col-md-7">
+                <label for="gnSources" data-translate="INGEST_FORM.GN_SOURCES"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.GN_SOURCES_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <select id="gnSources" data-ui-select2 data-ng-model="ingest.gnSources"
+                        class="form-control" multiple="multiple"
+                        data-placeholder="{{'INGEST_FORM.GN_SOURCES_PLACEHOLDER' | translate}}">
+                    <option value=""></option>
+                    <option data-ng-repeat="item in gnSourcesList" value="{{item.key}}">{{item.value}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-ng-switch-when="CSW" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+    <div class="custom-panel">
+        <div class="custom-panel-heading collapsed" data-toggle="collapse"
+             data-target="#collapseSearchCriteriaCsw">
+            <h2>
+                {{ "INGEST_FORM.CSW_SEARCH_CRITERIA" | translate }}
+                            <span
+                                    class="glyphicon glyphicon-chevron-up pull-right black"></span>
+            </h2>
+        </div>
+        <div class="custom-panel-body collapse" id="collapseSearchCriteriaCsw">
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.CSW_EXTENT"></label>
+                <button type="button" class="btn btn-default" data-ng-click="openMap()">
+                    <span class="glyphicon glyphicon-globe"></span>
+                </button>
+
+                <button data-ng-show="ingest.extent.maxy" type="button" class="btn btn-default"
+                        data-ng-click="resetBbox()">
+                    <span class="glyphicon glyphicon-remove-sign "></span>
+                </button>
+
+                <a data-tooltip='{{ "INGEST_FORM.CSW_EXTENT_TOOLTIP" | translate }}'><span
+                        class="glyphicon glyphicon-question-sign black"></span></a>
+
+                <div class="clearfix"></div>
+                            <span data-ng-show="ingest.extent.maxy" class="label label-default">
                             	{{ "INGEST_FORM.BBOX_NORTH_LABEL" | translate }}{{ingest.extent.maxy}},
                                 {{ "INGEST_FORM.BBOX_WEST_LABEL" | translate }}{{ingest.extent.minx}},
                                 {{ "INGEST_FORM.BBOX_SOUTH_LABEL" | translate }}{{ingest.extent.miny}},
                                 {{ "INGEST_FORM.BBOX_EAST_LABEL" | translate }}{{ingest.extent.maxx}}</span>
-                        </div>
-                        
+            </div>
 
-                        <div class="form-group col-md-9">
-                            <label for="cswTitle" data-translate="INGEST_FORM.CSW_TITLE"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span>
-                            </a>
-                            <input type="text" class="form-control" id="cswTitle" data-ng-model="ingest.cswTitle"
-                            	data-ng-disabled="isCswCustomQueryFilled()"></input>
-                        </div>
 
-                        <div class="form-group col-md-9">
-                            <label for="cswSubject" data-translate="INGEST_FORM.CSW_SUBJECT"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswSubject"
-                                id="cswSubject" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
-                        </div>
-                         <div class="form-group col-md-9">
-                            <label for="cswFreeText" data-translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswFreeText"
-                                id="cswFreeText" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
-                        </div>
-                        <div class="clearfix"></div>
+            <div class="form-group col-md-9">
+                <label for="cswTitle" data-translate="INGEST_FORM.CSW_TITLE"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.CSW_TITLE_TOOLTIP" | translate}}'><span
+                    class="glyphicon glyphicon-question-sign black"></span>
+            </a>
+                <input type="text" class="form-control" id="cswTitle" data-ng-model="ingest.cswTitle"
+                       data-ng-disabled="isCswCustomQueryFilled()" />
+            </div>
 
-                        <div class="form-group">
-                            <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <div class="row no-margin">
+            <div class="form-group col-md-9">
+                <label for="cswSubject" data-translate="INGEST_FORM.CSW_SUBJECT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.CSW_SUBJECT" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.cswSubject"
+                          id="cswSubject" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
+            </div>
+            <div class="form-group col-md-9">
+                <label for="cswFreeText" data-translate="INGEST_FORM.CSW_FREE_TEXT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.CSW_FREE_TEXT_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.cswFreeText"
+                          id="cswFreeText" data-ng-disabled="isCswCustomQueryFilled()"></textarea>
+            </div>
+            <div class="clearfix"></div>
 
-                                <div class="input-group col-md-4 date">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.cswRangeFrom" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['cswRangeFrom']"
-                                        name="cswRangeFrom" id="cswRangeFrom" data-ng-disabled="isCswCustomQueryFilled()"></input>
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.DATE_RANGE_CONTENT"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.DATE_RANGE_CONTENT_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+
+                <div class="row no-margin">
+
+                    <div class="input-group col-md-4 date">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.cswRangeFrom" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['cswRangeFrom']"
+                               name="cswRangeFrom" id="cswRangeFrom"
+                               data-ng-disabled="isCswCustomQueryFilled()" />
                                     <span class="input-group-addon" data-ng-click="open('cswRangeFrom')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div> 
-                                <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
-                                <div class="input-group col-md-4 date" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.cswRangeTo)}">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.cswRangeTo" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['cswRangeTo']" data-ogp-check-after2="ingest.cswRangeFrom"
-                                        name="cswRangeTo" id="cswRangeTo" data-ng-disabled="isCswCustomQueryFilled()"></input>
+                    </div>
+                                <span
+                                        class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
+
+                    <div class="input-group col-md-4 date"
+                         data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.cswRangeTo)}">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.cswRangeTo" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['cswRangeTo']" data-ogp-check-after2="ingest.cswRangeFrom"
+                               name="cswRangeTo" id="cswRangeTo" data-ng-disabled="isCswCustomQueryFilled()" />
                                     <span class="input-group-addon" data-ng-click="open('cswRangeTo')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-9">
-                            <label for="cswCustomQuery" data-translate="INGEST_FORM.CSW_CUSTOM_QUERY"></label> <a 
-                                data-tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <textarea class="form-control" rows="3" data-ng-model="ingest.cswCustomQuery"
-                                id="cswCustomQuery" data-ng-change="resetOtherFieldsCsw()"></textarea>
-                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div data-ng-switch-when="WEBDAV" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
-                <div class="custom-panel">
-                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
-                        data-target="#collapseSearchCriteriaWebdav">
-                        <h2>
-                            {{ "INGEST_FORM.WD_SEARCH_CRITERIA" | translate}}
+
+            <div class="form-group col-md-9">
+                <label for="cswCustomQuery" data-translate="INGEST_FORM.CSW_CUSTOM_QUERY"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.CSW_CUSTOM_QUERY_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+                <textarea class="form-control" rows="3" data-ng-model="ingest.cswCustomQuery"
+                          id="cswCustomQuery" data-ng-change="resetOtherFieldsCsw()"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-ng-switch-when="WEBDAV" data-ng-animate="{enter:'animated fadeIn', leave:'animated fadeOut'}">
+    <div class="custom-panel">
+        <div class="custom-panel-heading collapsed" data-toggle="collapse"
+             data-target="#collapseSearchCriteriaWebdav">
+            <h2>
+                {{ "INGEST_FORM.WD_SEARCH_CRITERIA" | translate}}
                             <span
-                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
-                        </h2>
-                    </div>
-                    <div class="custom-panel-body collapse" id="collapseSearchCriteriaWebdav">
-                         <div class="form-group">
-                            <label data-translate="INGEST_FORM.WD_DATE_LAST_MODIFIED"></label> <a
-                                data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a>
-                            <div class="row no-margin">
-                                <div class="input-group col-md-4 date">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.webdavFromLastModified" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['webdavFromLastModified']"
-                                        name="webdavFromLastModified" id="webdavFromLastModified"></input>
+                                    class="glyphicon glyphicon-chevron-up pull-right black"></span>
+            </h2>
+        </div>
+        <div class="custom-panel-body collapse" id="collapseSearchCriteriaWebdav">
+            <div class="form-group">
+                <label data-translate="INGEST_FORM.WD_DATE_LAST_MODIFIED"></label> <a
+                    data-tooltip='{{ "INGEST_FORM.WD_DATE_LAST_MODIFIED_TOOLTIP" | translate }}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a>
+
+                <div class="row no-margin">
+                    <div class="input-group col-md-4 date">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.webdavFromLastModified" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['webdavFromLastModified']"
+                               name="webdavFromLastModified" id="webdavFromLastModified" />
                                     <span class="input-group-addon" data-ng-click="open('webdavFromLastModified')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>  
-                                <span 
-                                    class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span> 
-                                <div class="input-group col-md-4 date" data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.webdavToLastModified)}">
-                                    <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy" 
-                                        data-ng-model="ingest.webdavToLastModified" data-datepicker-options="dateOptions" 
-                                        data-is-open="dtOpened['webdavToLastModified']" data-ogp-check-after2="ingest.webdavFromLastModified"
-                                        name="webdavToLastModified" id="webdavToLastModified"></input>
+                    </div>
+                                <span
+                                        class="col-md-1 text-center" data-translate="INGEST_FORM.TO"></span>
+
+                    <div class="input-group col-md-4 date"
+                         data-ng-class="{'has-error': rc.newIngest.needsAttention(newIngest.webdavToLastModified)}">
+                        <input class="form-control" type="text" data-datepicker-popup="MM/dd/yyyy"
+                               data-ng-model="ingest.webdavToLastModified" data-datepicker-options="dateOptions"
+                               data-is-open="dtOpened['webdavToLastModified']"
+                               data-ogp-check-after2="ingest.webdavFromLastModified"
+                               name="webdavToLastModified" id="webdavToLastModified" />
                                     <span class="input-group-addon" data-ng-click="open('webdavToLastModified')">
                                         <span class="glyphicon glyphicon-calendar"></span>
                                     </span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="clearfix"></div>
-            <div class="custom-panel last">
-                    <div class="custom-panel-heading collapsed" data-toggle="collapse"
-                        data-target="#requiredFieldsSolr">
-                        <h2>
-                            {{ "INGEST_FORM.REQUIRED_FIELDS" | translate }}
-                            <a data-tooltip='{{ "INGEST_FORM.REQUIRED_FIELDS_TOOLTIP" | translate}}'><span
-                                class="glyphicon glyphicon-question-sign black"></span></a> <span
-                                class="glyphicon glyphicon-chevron-up pull-right black"></span>
-                        </h2>
-                    </div>
-                    <div class="custom-panel-body collapse" id="requiredFieldsSolr">
-                        <div class="form-group container no-left-padding">
-                            <div class="col-md-4" data-ng-repeat="field in requiredFieldList[ingest.typeOfInstance]">
-                                <div class="checkbox">
-                                    <label> 
-                                        <input type="checkbox" name="requiredFields" data-ng-model="ingest.requiredFields[field]"  ></input>
-                                        {{ "INGEST_FORM.REQUIRED_FIELD_OPT_" + field | translate}}
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        </div>
+    </div>
+</div>
+
+<div class="clearfix"></div>
+<div class="custom-panel last">
+    <div class="custom-panel-heading collapsed" data-toggle="collapse"
+         data-target="#requiredFieldsSolr">
+        <h2>
+            {{ "INGEST_FORM.REQUIRED_FIELDS" | translate }}
+            <a data-tooltip='{{ "INGEST_FORM.REQUIRED_FIELDS_TOOLTIP" | translate}}'><span
+                    class="glyphicon glyphicon-question-sign black"></span></a> <span
+                class="glyphicon glyphicon-chevron-up pull-right black"></span>
+        </h2>
+    </div>
+    <div class="custom-panel-body collapse" id="requiredFieldsSolr">
+        <div class="form-group container no-left-padding">
+            <div class="col-md-4" data-ng-repeat="field in requiredFieldList[ingest.typeOfInstance]">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" name="requiredFields"
+                               data-ng-model="ingest.requiredFields[field]" />
+                        {{ "INGEST_FORM.REQUIRED_FIELD_OPT_" + field | translate}}
+                    </label>
                 </div>
-                <!-- //Required fields panel -->
+            </div>
         </div>
-        <div class="form-group col-md-9">
-                <button type="submit" class="btn btn-primary">
-                    {{ "INGEST_FORM.SCHEDULE_INGEST_BUTTON" | translate }}
-                    <span class="glyphicon glyphicon-play"></span>
-                </button>
-        </div>
+    </div>
+</div>
+<!-- //Required fields panel -->
+</div>
+<div class="form-group col-md-9">
+    <button type="submit" class="btn btn-primary">
+        {{ "INGEST_FORM.SCHEDULE_INGEST_BUTTON" | translate }}
+        <span class="glyphicon glyphicon-play"></span>
+    </button>
+</div>
 
-       
 
-    </form>
+</form>
 
 </div>
