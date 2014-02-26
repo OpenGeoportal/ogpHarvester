@@ -10,7 +10,7 @@
 			'ogpHarvester.filters', 'ogpHarvester.services',
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl',
-			'ogpHavester.controllers.editIngestCtrl'
+			'ogpHavester.controllers.editIngestCtrl', 'ui.select2'
 		]).config(
 		['$routeProvider', '$locationProvider',
 			function($routeProvider, $locationProvider) {
@@ -30,6 +30,10 @@
 				});
 				$routeProvider.when('/newIngest/step2', {
 					templateUrl: 'resources/newIngestFormStep2.html',
+					controller: 'NewIngestCtrl'
+				});
+				$routeProvider.when('/newIngest/:back', {
+					templateUrl: 'resources/newIngestForm.html',
 					controller: 'NewIngestCtrl'
 				});
 				$routeProvider.when('/editIngest/:id', {

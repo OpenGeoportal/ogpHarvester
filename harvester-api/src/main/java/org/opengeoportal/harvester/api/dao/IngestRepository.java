@@ -44,13 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface IngestRepository extends JpaRepository<Ingest, Long> {
 
-	/**
-	 * 
-	 * @param name
-	 *            ingest name.
-	 * @return the ingest with the given name.
-	 */
-	Ingest findByName(String name);
 
 	/**
 	 * Set <code>scheduled</code> property to null for all Ingests related with

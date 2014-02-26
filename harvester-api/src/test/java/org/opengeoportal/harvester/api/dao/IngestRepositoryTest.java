@@ -97,7 +97,7 @@ public class IngestRepositoryTest {
 	@DatabaseSetup("ingestData.xml")
 	public void testUpdateIngest() {
 
-		Ingest ingest = ingestRepository.findByName("ingest2");
+		Ingest ingest = ingestRepository.findOne(2L);
 		ingest.setName("ingest2 changed");
 		Ingest ingestSaved = ingestRepository.save(ingest);
 
@@ -117,7 +117,7 @@ public class IngestRepositoryTest {
 
 		Assert.assertNotNull(ingestCreated);
 
-		Ingest ingestRetrieved = ingestRepository.findByName("ingest3");
+		Ingest ingestRetrieved = ingestRepository.findOne(ingestCreated.getId());
 
 		Assert.assertEquals(ingestCreated, ingestRetrieved);
 	}
@@ -125,7 +125,7 @@ public class IngestRepositoryTest {
 	@Test
 	@DatabaseSetup("ingestData.xml")
 	public void testUpdateIngestWithJob() {
-		Ingest ingest = ingestRepository.findByName("ingest2");
+		Ingest ingest = ingestRepository.findOne(2L);
 
 		IngestJobStatus jobStatus = new IngestJobStatus();
 		jobStatus.setStatus(IngestJobStatusValue.SUCCESSED);
@@ -157,7 +157,7 @@ public class IngestRepositoryTest {
 
 		Assert.assertNotNull(ingestUpdated);
 
-		Ingest ingestRetrieved = ingestRepository.findByName("ingest2");
+		Ingest ingestRetrieved = ingestRepository.findOne(2L);
 		Assert.assertEquals(ingestUpdated, ingestRetrieved);
 
 		List<IngestJobStatus> jobStatuses = jobStatusService.getStatusesForIngest(ingest.getId());

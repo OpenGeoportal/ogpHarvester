@@ -83,15 +83,6 @@ public interface IngestService {
 	 */
 	void delete(Long id);
 
-	/**
-	 * Find the {@link Ingest} with the name passed as parameter.
-	 * 
-	 * @param name
-	 *            the ingest name.
-	 * @return the {@link Ingest} with the name passed or <code>null</code> if
-	 *         it cannot be found.
-	 */
-	Ingest findByName(String name);
 
 	/**
 	 * Get a {@link Page} of ingests.
