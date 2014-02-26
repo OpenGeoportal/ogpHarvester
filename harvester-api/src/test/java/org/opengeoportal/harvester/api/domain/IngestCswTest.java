@@ -39,6 +39,15 @@ public class IngestCswTest {
             ex.printStackTrace();
             Assert.fail();
         }
+
+        //BBOX
+        ingestCsw = new IngestCsw();
+
+        ingestCsw.setBboxWest(-10.0);
+        ingestCsw.setBboxEast(10.0);
+        ingestCsw.setBboxNorth(5.0);
+        ingestCsw.setBboxSouth(-5.0);
+        Assert.assertEquals("INTERSECTS(ows:BoundingBox,ENVELOPE(-10.0,-5.0,10.0,5.0))", ingestCsw.getCqlConstraint());
     }
 
 
@@ -137,6 +146,32 @@ public class IngestCswTest {
             ex.printStackTrace();
             Assert.fail();
         }
+
+        //BBOX
+        ingestCsw = new IngestCsw();
+
+        ingestCsw.setTitle("Title example");
+        ingestCsw.setBboxWest(-10.0);
+        ingestCsw.setBboxEast(10.0);
+        ingestCsw.setBboxNorth(5.0);
+        ingestCsw.setBboxSouth(-5.0);
+
+        expectedFilter = new StringBuffer();
+        expectedFilter.append("<Filter xmlns=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\">");
+        expectedFilter.append("<And>");
+        expectedFilter.append("<PropertyIsEqualTo>");
+        expectedFilter.append("        <PropertyName>title</PropertyName>");
+        expectedFilter.append("        <Literal>Title example</Literal>");
+        expectedFilter.append("</PropertyIsEqualTo>");
+        expectedFilter.append("<Intersects>");
+        expectedFilter.append("        <PropertyName>BoundingBox</PropertyName>");
+        expectedFilter.append("<gml:Box srsName=\"http://www.opengis.net/gml/srs/epsg.xml#4326\"><gml:coordinates>-10.0,-5.0 10.0,5.0</gml:coordinates></gml:Box>");
+        expectedFilter.append("</Intersects>");
+        expectedFilter.append("</And>");
+        expectedFilter.append("</Filter>");
+
+        Assert.assertEquals(expectedFilter.toString(), ingestCsw.getFilterConstraint());
+
     }
 
 }

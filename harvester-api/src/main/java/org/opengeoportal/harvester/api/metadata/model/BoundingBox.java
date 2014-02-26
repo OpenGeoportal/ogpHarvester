@@ -115,7 +115,9 @@ public class BoundingBox {
 	}
 	
 	public Boolean isValid(){
-		if (isInRange(getMinX(), -180.0, 180.0) && isInRange(getMaxX(), -180.0, 180.0) &&
+        if ((getMinX() == null) || (getMaxX() == null) ||(getMinY() == null) ||(getMaxY() == null)) return false;
+
+        if (isInRange(getMinX(), -180.0, 180.0) && isInRange(getMaxX(), -180.0, 180.0) &&
 				isInRange(getMinY(), -90.0, 90.0) && isInRange(getMaxY(), -90.0, 90.0)){
 			return true;
 		} else {

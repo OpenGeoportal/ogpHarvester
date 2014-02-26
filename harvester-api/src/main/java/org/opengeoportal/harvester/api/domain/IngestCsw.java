@@ -30,6 +30,7 @@
 package org.opengeoportal.harvester.api.domain;
 
 import org.apache.commons.lang3.StringUtils;
+import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -190,6 +191,7 @@ public class IngestCsw extends Ingest {
         buildCqlQueryable(propertyCqlFilters, "title", this.title);
         buildCqlQueryable(propertyCqlFilters, "subject", this.subject);
         buildDateQueryCql(propertyCqlFilters, "modified", this.dateFrom, this.dateTo);
+        buildBBOXCql(propertyCqlFilters, "BoundingBox");
 
         if (propertyCqlFilters.size() > 0) {
             for(int i = 0; i < propertyCqlFilters.size(); i++) {
@@ -213,6 +215,7 @@ public class IngestCsw extends Ingest {
         buildPropertyFilter(propertyFilters, "title", this.title);
         buildPropertyFilter(propertyFilters, "subject", this.subject);
         buildDateQueryFilter(propertyFilters, "modified", this.dateFrom, this.dateTo);
+        buildBBOXFilter(propertyFilters, "BoundingBox");
 
         if (propertyFilters.size() > 0) {
             if (propertyFilters.size() > 1) filter.append("<And>");
@@ -279,6 +282,19 @@ public class IngestCsw extends Ingest {
 
     }
 
+    private void buildBBOXFilter(List<String> propertyFilters, String property) {
+        BoundingBox bbox = new BoundingBox(this.bboxWest, this.bboxSouth, this.bboxEast, this.bboxNorth);
+        if (bbox.isValid()) {
+            StringBuffer propertyFilter = new StringBuffer();
+
+            propertyFilter.append("<Intersects>");
+            propertyFilter.append("        <PropertyName>" + property + "</PropertyName>");
+            propertyFilter.append(bbox.generateGMLBox(4326));
+            propertyFilter.append("</Intersects>");
+            propertyFilters.add(propertyFilter.toString());
+        }
+    }
+
     private void buildCqlQueryable(List<String> propertyCqlFilters, String name, String value) {
         if (StringUtils.isEmpty(value)) return;
 
@@ -305,6 +321,13 @@ public class IngestCsw extends Ingest {
             propertyCqlFilters.add(name + " <= '" + dateFormat.format(toValue)  + "'");
         }
 
+    }
+
+    private void buildBBOXCql(List<String> propertyCqlFilters, String property) {
+        BoundingBox bbox = new BoundingBox(this.bboxWest, this.bboxSouth, this.bboxEast, this.bboxNorth);
+        if (bbox.isValid()) {
+            propertyCqlFilters.add("INTERSECTS(ows:BoundingBox,ENVELOPE(" + bbox.toString() + "))");
+        }
     }
 
 }
