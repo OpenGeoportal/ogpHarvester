@@ -588,8 +588,23 @@ public class SolrRecord {
 
 		record.setDescription(metadata.getDescription());
 		record.setName(metadata.getOwsName().toUpperCase());
-		record.setLayerId(metadata.getInstitution() + "." + metadata.getId());
-		record.setInstitution(metadata.getInstitution());
+
+        String institution = metadata.getInstitution();
+
+        if (StringUtils.isNotEmpty(metadata.getId())) {
+            String id = metadata.getId();
+            // For OGP metadata records the id already has the format: {institution}.{id} , don't add institution again
+            if (id.startsWith(institution + ".")) {
+                record.setLayerId(metadata.getId());
+            } else {
+                record.setLayerId(metadata.getInstitution() + "." + metadata.getId());
+            }
+        } else {
+            // If id is empty, use the name instead
+            record.setLayerId(metadata.getInstitution() + "." + metadata.getOwsName().toUpperCase());
+        }
+
+		record.setInstitution(institution);
 		record.setLayerDisplayName(metadata.getTitle());
 		record.setOriginator(metadata.getOriginator());
 		record.setPublisher(metadata.getPublisher());

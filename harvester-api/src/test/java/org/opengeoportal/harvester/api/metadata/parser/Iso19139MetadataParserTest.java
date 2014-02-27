@@ -42,7 +42,9 @@ public class Iso19139MetadataParserTest {
 			Assert.assertEquals("Test metadata", metadata.getTitle());
 			Assert.assertEquals("Test metadata abstract",
 					metadata.getDescription());
-			Assert.assertEquals("32320C9D-F227-4027-8396-A6257B728424",
+            Assert.assertEquals("32320C9D-F227-4027-8396-A6257B728424",
+                    metadata.getId());
+			Assert.assertEquals("SPECIES_DIST_AAO",
 					metadata.getOwsName());
 			Assert.assertEquals(AccessLevel.Public, metadata.getAccess());
 
@@ -68,7 +70,7 @@ public class Iso19139MetadataParserTest {
 			Assert.assertEquals("Publisher organisation",
 					metadata.getPublisher());
 			Assert.assertEquals(
-					"{\"wms\":[\"http://opengeoportal.org/geoserver?service=WMS&request=GetCapabilities\"]}",
+					"{\"wms\":[\"http://www.fao.org/figis/geoserver/species/ows?SERVICE=WMS\"]}",
 					metadata.getLocation());
 		} catch (Exception ex) {
 			ex.printStackTrace();

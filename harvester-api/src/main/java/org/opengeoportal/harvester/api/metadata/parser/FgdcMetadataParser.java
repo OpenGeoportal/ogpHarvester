@@ -113,6 +113,11 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 		}
 	}
 
+    @Override
+    protected void handleId() {
+
+    }
+
 	@Override
 	protected void handleLayerName() {
 		Tag tag = FgdcTag.LayerName;

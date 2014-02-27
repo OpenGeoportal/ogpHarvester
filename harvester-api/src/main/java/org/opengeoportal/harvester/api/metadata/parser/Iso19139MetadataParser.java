@@ -1,17 +1,12 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.xml.xpath.XPathConstants;
 
+import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
-import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
-import org.opengeoportal.harvester.api.metadata.model.GeometryType;
-import org.opengeoportal.harvester.api.metadata.model.PlaceKeywords;
-import org.opengeoportal.harvester.api.metadata.model.ThemeKeywords;
+import org.opengeoportal.harvester.api.metadata.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -32,7 +27,7 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
     public static enum Iso19139Tag implements Tag {
         Title("title", "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString"),
         Abstract("abstract", "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString"),
-        LayerName("fileIdentifier", "/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString"),
+        Id("fileIdentifier", "/gmd:MD_Metadata/gmd:fileIdentifier/gco:CharacterString"),
         Date("date", "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:date/gmd:CI_Date/gmd:date/gco:DateTime"),
         DataType("spatialRepresentationType", "/gmd:MD_Metadata//gmd:identificationInfo/gmd:MD_DataIdentification/gmd:spatialRepresentationType/gmd:MD_SpatialRepresentationTypeCode/@codeListValue"),
         WestBc("westBoundLongitude", "/gmd:MD_Metadata/gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox/gmd:westBoundLongitude/gco:Decimal"),
@@ -258,15 +253,41 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
 
     @Override
     protected void handleLayerName() {
+        // LayerName calculated from the location links
+        Multimap<LocationLink.LocationType, LocationLink> locationMap = getLocationResolver()
+                .resolveLocation(document);
+
+        try {
+            Collection<LocationLink> wmsLinks = locationMap.get(LocationLink.LocationType.wms);
+
+            if ((wmsLinks != null) && (!wmsLinks.isEmpty())) {
+                Iterator<LocationLink> it = wmsLinks.iterator();
+                while (it.hasNext()) {
+                    String resourceName = it.next().getResourceName();
+
+                    if (StringUtils.isNotEmpty(resourceName)) {
+                        this.metadataParserResponse.getMetadata().setOwsName(resourceName) ;
+                        break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error("handleLayerName: " + e.getMessage());
+            this.metadataParserResponse.addError("LayerName", "LayerName", e.getClass().getName(), e.getMessage());
+        }
+    }
+
+    @Override
+    protected void handleId() {
         /* Xml to parse:
          * <gmd:fileIdentifier xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gmx="http://www.isotc211.org/2005/gmx">
             <gco:CharacterString>11334f95-ceee-44d9-b2f8-cd9daf08c427</gco:CharacterString>
            </gmd:fileIdentifier>
          */
-        Tag tag = Iso19139Tag.LayerName;
+        Tag tag = Iso19139Tag.Id;
         try {
             String uuidVal = getDocumentValue(tag);
-            this.metadataParserResponse.getMetadata().setOwsName(uuidVal);
             this.metadataParserResponse.getMetadata().setId(uuidVal);
         } catch (Exception e) {
             logger.error("handleLayerName: " + e.getMessage());
@@ -373,7 +394,6 @@ public class Iso19139MetadataParser extends BaseXmlMetadataParser {
 		try {
 			dataType = getDocumentValue(tag);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

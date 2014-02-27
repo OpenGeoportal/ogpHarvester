@@ -66,6 +66,7 @@ public abstract class BaseXmlMetadataParser extends BaseMetadataParser
 
 		this.document = document;
 		this.metadataParserResponse = new MetadataParserResponse();
+        handleId();
 		handleTitle();
 		handleAbstract();
 		handleLayerName();
@@ -84,7 +85,9 @@ public abstract class BaseXmlMetadataParser extends BaseMetadataParser
 
 	protected abstract HashMap<String, String> getNamespaces();
 
-	protected abstract void handleOriginator();
+    protected abstract void handleId();
+
+    protected abstract void handleOriginator();
 
 	protected abstract void handlePublisher();
 
