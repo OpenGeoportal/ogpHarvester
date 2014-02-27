@@ -41,7 +41,6 @@ public class BadDatabaseContentsException extends RuntimeException {
 	 * 
 	 */
 	public BadDatabaseContentsException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -49,7 +48,7 @@ public class BadDatabaseContentsException extends RuntimeException {
 	 */
 	public BadDatabaseContentsException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
+
 	}
 
 	/**
@@ -57,7 +56,6 @@ public class BadDatabaseContentsException extends RuntimeException {
 	 */
 	public BadDatabaseContentsException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -66,7 +64,6 @@ public class BadDatabaseContentsException extends RuntimeException {
 	 */
 	public BadDatabaseContentsException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -41,7 +41,6 @@ public class GeonetworkException extends MetadataRepositoryException {
 	 * 
 	 */
 	public GeonetworkException() {
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -49,7 +48,6 @@ public class GeonetworkException extends MetadataRepositoryException {
 	 */
 	public GeonetworkException(String message) {
 		super(message);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -57,7 +55,6 @@ public class GeonetworkException extends MetadataRepositoryException {
 	 */
 	public GeonetworkException(Throwable cause) {
 		super(cause);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -66,7 +63,6 @@ public class GeonetworkException extends MetadataRepositoryException {
 	 */
 	public GeonetworkException(String message, Throwable cause) {
 		super(message, cause);
-		// TODO Auto-generated constructor stub
 	}
 
 }

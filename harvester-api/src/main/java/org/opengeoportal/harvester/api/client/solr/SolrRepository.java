@@ -45,7 +45,6 @@ public class SolrRepository {
 	 * 
 	 */
 	public SolrRepository() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

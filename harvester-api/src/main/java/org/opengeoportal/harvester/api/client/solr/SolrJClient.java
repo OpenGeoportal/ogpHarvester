@@ -54,13 +54,11 @@ public class SolrJClient implements SolrClient {
 			UpdateResponse updateResponse = solrServer.commit();
 			return successResponse(updateResponse);
 		} catch (SolrServerException e) {
-			// TODO Auto-generated catch block
 			logger.error("Error in Sorl commit", e);
 
 			return false;
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			logger.error("IOExcpetion when performing Solr commit operation", e);
 			return false;
 
