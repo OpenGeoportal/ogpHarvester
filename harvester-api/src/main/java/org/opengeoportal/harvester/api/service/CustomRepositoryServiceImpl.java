@@ -139,22 +139,6 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 			result = retrieveGeoNetworkSources(url);
 		} else if (repoType == InstanceType.SOLR) {
 			result = retrieveSolrInstitutions(url);
-		} else {
-			// TODO connect to url, parse response, and search remote origins.
-			// Build
-			// the response list
-			result.add(new SimpleEntry<String, String>("guid1",
-					"Remote repository 1"));
-			result.add(new SimpleEntry<String, String>("guid2",
-					"Remote repository 2"));
-			result.add(new SimpleEntry<String, String>("guid3",
-					"Remote repository 3"));
-			result.add(new SimpleEntry<String, String>("guid4",
-					"Remote repository 4"));
-			result.add(new SimpleEntry<String, String>("guid5",
-					"Remote repository 5"));
-			result.add(new SimpleEntry<String, String>("guid10",
-					"Remote repository 10"));
 		}
 
 		return result;
