@@ -38,6 +38,7 @@ import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Ingest service interface.
@@ -172,4 +173,11 @@ public interface IngestService {
 	 *         unscheduled.
 	 */
 	boolean unscheduleIngest(Long id);
+
+    /**
+     * Interrupt a running ingest.
+     * @param id ingest identifier.
+     * @return true if job could be interrupted, false otherwise.
+     */
+    boolean interruptIngest(Long id);
 }
