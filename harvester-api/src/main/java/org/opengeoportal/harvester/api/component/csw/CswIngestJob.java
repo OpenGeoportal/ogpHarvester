@@ -42,7 +42,7 @@ public class CswIngestJob extends BaseIngestJob {
 			int start = 1;
 			boolean processFinished = false;
 
-			while (!processFinished) {
+			while (!(isInterruptRequested() || processFinished)) {
 				request.setStartPosition(start + "");
 
 				GetRecordsResponse response = cswClient.getRecords(request,
