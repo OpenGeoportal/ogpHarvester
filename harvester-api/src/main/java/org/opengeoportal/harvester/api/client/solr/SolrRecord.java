@@ -613,7 +613,20 @@ public class SolrRecord {
 			record.setCenterY(bounds.getCenterY());
 
 			record.setArea(bounds.getArea());
-		}
+		} else {
+            // Set default values to 0.0 if bounds are not present or are invalid
+            record.setMinX(0.0);
+            record.setMaxX(0.0);
+            record.setMinY(0.0);
+            record.setMaxY(0.0);
+            record.setHalfHeight(0.0);
+            record.setHalfWidth(0.0);
+
+            record.setCenterX(0.0);
+            record.setCenterY(0.0);
+
+            record.setArea(0.0);
+        }
 
 		record.setContentDate(metadata.getContentDate());
 		record.setPlaceKeywords(metadata.getPlaceKeywordsAsString());
@@ -623,8 +636,11 @@ public class SolrRecord {
         record.setGeoreferenced(metadata.getGeoreferenced());
 		record.setTopicCategory(metadata.getTopic());
 
-		// TODO: Check
-		record.setAvailability("online");
+        if (StringUtils.isNotEmpty(metadata.getLocation())) {
+            record.setAvailability("online");
+        } else {
+            record.setAvailability("offline");
+        }
 
 		return record;
 	}
