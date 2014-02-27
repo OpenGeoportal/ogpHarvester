@@ -122,14 +122,44 @@
 
                 $scope.CancelExecutionCtrl = function ($scope, $modalInstance, ingestToCancel) {
                     $scope.ingestToCancel = ingestToCancel;
-                    $scope.stopButtonDisabled = true;
+                    $scope.stopButtonDisabled = false;
 
                     $scope.cancel = function () {
                         $modalInstance.dismiss('cancel');
                     };
 
                     $scope.stopIngest = function () {
-                        $scope.stopButtonDisabled = false;
+                        $scope.stopButtonDisabled = true;
+                        var id = $scope.ingestToCancel.id;
+                        Ingest.interrupt({
+                                id: id
+                            },
+                            function (data) {
+                                // success callback
+                                if (data.status === 'SUCCESS') {
+                                    $modalInstance.close();
+                                } else {
+                                    $scope.stopButtonDisabled = false;
+                                    $scope.alerts = [];
+                                    $scope.alerts.push({
+                                        type: 'danger',
+                                        msg: 'MANAGE_INGESTS.' + data.result.errorCode
+                                    });
+                                }
+
+                            },
+                            function (reason) {
+                                // error callback
+                                $scope.stopButtonDisabled = false;
+                                $scope.alerts = [];
+                                $scope.alerts.push({
+                                    type: 'danger',
+                                    msg: reason
+                                });
+                            }
+                        );
+
+
 
                     };
                 };

@@ -107,7 +107,9 @@ public class ManageIngestController {
                 .newArrayListWithCapacity(resultPage.getNumberOfElements());
         Set<Long> executingJobs = ingestService.getCurrentlyExecutingJobs();
         for (Ingest ingest : resultPage) {
-            IngestListItem ingestListItem = new IngestListItem(ingest);
+        	IngestJobStatus lastStatus = jobStatusService.findLastStatusForIngest(ingest.getId());
+        	
+            IngestListItem ingestListItem = new IngestListItem(ingest, lastStatus);
             Date nextRun = ingestService.getNextRun(ingest);
             ingestListItem.setNextRun(nextRun);
             ingestListItem

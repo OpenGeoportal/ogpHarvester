@@ -151,6 +151,7 @@
 		"LIST_HEADER_REPOS": "Repositories",
 		"VIEW_REPORT_BUTTON": "View Report",
 		"NONE": "none",
+		"USER_CANCELLED": "(Cancelled by user)",
 		"IN_PROGRESS": "In progress",
 		"CANCEL": "Cancel",
 		"UNSCHEDULE_INGEST_HEADER": "Unschedule ingest",
@@ -160,9 +161,12 @@
 		"CANCEL_UNSCHEDULE": "Cancel",
 		"STOP_INGEST_HEADER": "Cancel current execution",
 		"STOP_INGEST_HEADER_TOOLTIP": "This is the Stop Ingest dialog tooltip",
-		"STOP_INGEST_CONFIRM_TEXT": "You are about to stop the current xecution of this ingest. Are you sure you want to continue? This functionality has not been implemented yet.",
-		"CONFIRM_STOP": "Unschedule",
-		"CANCEL_STOP": "Cancel"
+		"STOP_INGEST_CONFIRM_TEXT": "You are about to discard current execution of this ingest. Records that have already been processed will be in OGP. Are you really sure you want to cancel execution?",
+		"CONFIRM_STOP": "Stop",
+		"CANCEL_STOP": "Cancel",
+        "ERROR_INTERRUPTING_INGEST": "An error has been found while stopping ingest.",
+        "EXCEPTION_INTERRUPTING_INGEST": "An exception has been thrown while stopping ingest."
+
 
 	},
 	"INGEST_DETAILS": {

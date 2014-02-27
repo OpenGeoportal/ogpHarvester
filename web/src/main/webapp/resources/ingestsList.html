@@ -17,6 +17,7 @@
 			<td>
 				<p data-ng-show="!ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></p>
 				<p data-ng-show="ingest.lastRun">{{ingest.lastRun | date:'yyyy-MM-dd'}}</p>
+				<p data-ng-if="ingest.status === 'CANCELLED'" data-translate="MANAGE_INGESTS.USER_CANCELLED"></p>
 			</td>
 			<td>
 				<div class="progress progress-striped active" data-ng-show="ingest.inProgress">

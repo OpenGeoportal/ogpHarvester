@@ -3,10 +3,6 @@
 	'use strict';
 
 	/* Services */
-
-
-	// Demonstrate how to register services
-	// In this case it is a simple value service.
 	var servicesModule = angular.module('ogpHarvester.services', ['ngResource']);
 
 	servicesModule.factory('Ingest',
@@ -27,7 +23,12 @@
 					method: 'GET',
 					url: 'rest/ingests/:id/unschedule',
 					isArray: false
-				}
+				},
+                'interrupt': {
+                    method: 'GET',
+                    url: 'rest/ingests/:id/interrupt',
+                    isArray: false
+                }
 
 			});
 		})
