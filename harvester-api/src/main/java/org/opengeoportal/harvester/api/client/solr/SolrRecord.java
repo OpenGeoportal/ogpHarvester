@@ -619,12 +619,8 @@ public class SolrRecord {
 		record.setPlaceKeywords(metadata.getPlaceKeywordsAsString());
 		record.setThemeKeywords(metadata.getThemeKeywordsAsString());
 		record.setDataType(metadata.getGeometryType().toString());
-
-		record.setAccess(metadata.getAccess().toString());
-		if (StringUtils.isNotEmpty(metadata.getWorkspaceName())) {
-			record.setWorkspaceName(metadata.getWorkspaceName().toString());
-		}
-		record.setGeoreferenced(metadata.getGeoreferenced());
+        record.setWorkspaceName(metadata.getWorkspaceName());
+        record.setGeoreferenced(metadata.getGeoreferenced());
 		record.setTopicCategory(metadata.getTopic());
 
 		// TODO: Check

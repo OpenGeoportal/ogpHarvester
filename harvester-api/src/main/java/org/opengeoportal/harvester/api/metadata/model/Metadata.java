@@ -10,26 +10,26 @@ import java.util.Set;
 
 public class Metadata {
     BoundingBox bounds;
-    String id;
-    String title;
-    String description;
-    String owsName;
-    String workspaceName;
-    String location;
-    String originator;
+    String id = "";
+    String title = "";
+    String description = "";
+    String owsName = "";
+    String workspaceName = "";
+    String location = "";
+    String originator = "";
     List<ThemeKeywords> themeKeywords;
     List<PlaceKeywords> placeKeywords;
-    String institution;
-    String fullText;
+    String institution = "";
+    String fullText = "";
     AccessLevel access;
     GeometryType geometryType;
-    private String publisher;
+    private String publisher = "";
     private Boolean georeferenced;
     private Date contentDate;
-    private String topic;
+    private String topic = "";
     private boolean restricted = false;
     /** Raw metadata as retrieved from remote source. */
-	private String originalMetadata;
+	private String originalMetadata = "";
 
     public Metadata(String layerId){
         setId(layerId);
