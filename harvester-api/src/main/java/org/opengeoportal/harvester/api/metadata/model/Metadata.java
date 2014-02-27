@@ -9,20 +9,20 @@ import java.util.List;
 import java.util.Set;
 
 public class Metadata {
-    BoundingBox bounds;
-    String id = "";
-    String title = "";
-    String description = "";
-    String owsName = "";
-    String workspaceName = "";
-    String location = "";
-    String originator = "";
-    List<ThemeKeywords> themeKeywords;
-    List<PlaceKeywords> placeKeywords;
-    String institution = "";
-    String fullText = "";
-    AccessLevel access;
-    GeometryType geometryType;
+    private BoundingBox bounds;
+    private String id = "";
+    private String title = "";
+    private String description = "";
+    private String owsName = "";
+    private String workspaceName = "";
+    private String location = "";
+    private String originator = "";
+    private List<ThemeKeywords> themeKeywords;
+    private List<PlaceKeywords> placeKeywords;
+    private String institution = "";
+    private String fullText = "";
+    private AccessLevel access;
+    private GeometryType geometryType;
     private String publisher = "";
     private Boolean georeferenced;
     private Date contentDate;
@@ -207,7 +207,7 @@ public class Metadata {
         String value = "";
 
         if (property.equals("dateOfContent")) {
-            value = this.getContentDate().toString();
+            value = ((this.getContentDate() != null)?this.getContentDate().toString():"");
         } else if (property.equals("originator")) {
             value = this.getOriginator();
         } else if (property.equals("themeKeyword")) {
@@ -216,15 +216,20 @@ public class Metadata {
             value = this.getPlaceKeywordsAsString();
         } else if (property.equals("topic")) {
             value = this.getTopic();
+        }  else if (property.equals("dataRepository")) {
+            value = this.getInstitution();
+        }  else if (property.equals("webServices")) {
+            value = this.getLocation();
         }  else if (property.equals("geographicExtent")) {
             if (this.getBounds() == null) {
                 return false;
             } else {
                 return this.getBounds().isValid();
             }
+        }  else if (property.equals("dataType")) {
+            GeometryType geometry = this.getGeometryType();
+            return (geometry != null);
         }
-
-        // TODO: dataType, dataRepository, webServices
 
         return StringUtils.isNotEmpty(value);
     }
