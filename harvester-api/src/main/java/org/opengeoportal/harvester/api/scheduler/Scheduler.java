@@ -29,55 +29,56 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.quartz.SchedulerException;
 
+import java.util.Date;
+import java.util.SortedSet;
+
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
  */
 public interface Scheduler {
-	/**
-	 * Schedule the ingest.
-	 * 
-	 * @param ingest
-	 *            the ingest.
-	 * @return <code>true</code> if ingest can be scheduled, <code>false</code>
-	 *         otherwise.
-	 */
-	boolean scheduleIngest(Ingest ingest);
+    /**
+     * Schedule the ingest.
+     *
+     * @param ingest the ingest.
+     * @return <code>true</code> if ingest can be scheduled, <code>false</code>
+     * otherwise.
+     */
+    boolean scheduleIngest(Ingest ingest);
 
-	/**
-	 * Unschedule an ingest forever. Remove the job and all its triggers from
-	 * the scheduler.
-	 * 
-	 * @param ingest
-	 *            ingest to be unscheduled.
-	 * @return <code>true</code> if the Job was found and deleted.
-	 * 
-	 * @throws SchedulerException
-	 *             if there is any problem while unscheduling the ingest.
-	 */
-	boolean unschedule(Ingest ingest) throws SchedulerException;
+    /**
+     * Unschedule an ingest forever. Remove the job and all its triggers from
+     * the scheduler.
+     *
+     * @param ingest ingest to be unscheduled.
+     * @return <code>true</code> if the Job was found and deleted.
+     * @throws SchedulerException if there is any problem while unscheduling the ingest.
+     */
+    boolean unschedule(Ingest ingest) throws SchedulerException;
 
-	/**
-	 * Return the next date an ingest will be run.
-	 * 
-	 * @param ingest
-	 *            the ingest.
-	 * @return the next date an ingest will be run.
-	 */
-	Date getNextRun(Ingest ingest);
+    /**
+     * Interrupt a running job.
+     *
+     * @param ingest the ingest to be interrupted
+     * @return true if job could be interrupted, false otherwise.
+     * @throws SchedulerException wraps any exception thrown when interrupting the job.
+     */
+    boolean interrupt(Ingest ingest) throws SchedulerException;
 
-	/**
-	 * 
-	 * @return the set of the ingest identifiers currently being executed. This
-	 *         set is sorted in natural order.
-	 */
-	SortedSet<Long> getCurrentlyExecutingJobs();
+    /**
+     * Return the next date an ingest will be run.
+     *
+     * @param ingest the ingest.
+     * @return the next date an ingest will be run.
+     */
+    Date getNextRun(Ingest ingest);
+
+    /**
+     * @return the set of the ingest identifiers currently being executed. This
+     * set is sorted in natural order.
+     */
+    SortedSet<Long> getCurrentlyExecutingJobs();
 
 }

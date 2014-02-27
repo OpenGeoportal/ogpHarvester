@@ -43,10 +43,9 @@ import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
 import org.opengeoportal.harvester.api.service.IngestService;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
+import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -55,7 +54,8 @@ import org.springframework.transaction.annotation.Transactional;
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  * 
  */
-public class IngestJob implements Job, IngestJobFactorySetter {
+@Component
+public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 
 	/**
 	 * Key used to store the ingest identifier in the JobDetailsData map.
@@ -96,13 +96,14 @@ public class IngestJob implements Job, IngestJobFactorySetter {
 
 	/** Ingest identifier in the database. */
 	private String ingestId;
+    /** Actual job to be executed. */
+    private BaseIngestJob job;
 
-	/**
+    /**
 	 * Public constructor.
 	 */
 	public IngestJob() {
-
-	}
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -113,12 +114,11 @@ public class IngestJob implements Job, IngestJobFactorySetter {
 	@Transactional
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		Ingest ingest = null;
-		Date startTimestamp = Calendar.getInstance().getTime();
+        Date startTimestamp = Calendar.getInstance().getTime();
+        Ingest ingest = null;
 		try {
-
-			ingest = findAndValidateIngest();
-			BaseIngestJob job = ingestJobFactory.newIngestJob(ingest);
+            ingest = findAndValidateIngest();
+            job = ingestJobFactory.newIngestJob(ingest);
 			job.setJobStatusService(jobStatusService);
 			job.setReportService(reportService);
 			job.setErrorService(errorService);
@@ -151,17 +151,17 @@ public class IngestJob implements Job, IngestJobFactorySetter {
 			throw new IllegalStateException(
 					"ingestId property has not been set");
 		}
-		Ingest ingest = ingestService.findById(Long.valueOf(ingestId));
-		if (ingest == null) {
+		Ingest ingestFound = ingestService.findById(Long.valueOf(ingestId));
+		if (ingestFound == null) {
 			throw new InstanceNotFoundException(
 					"Job cannot find Ingest with ingestId " + ingestId);
 		}
-		if (ingest.isScheduled() == null || !ingest.isScheduled()) {
+		if (ingestFound.isScheduled() == null || !ingestFound.isScheduled()) {
 			throw new UnscheduledIngestException("Ingest " + ingestId
 					+ " is not scheduled (its property isScheduled is "
 					+ "not true)");
 		}
-		return ingest;
+		return ingestFound;
 
 	}
 
@@ -210,4 +210,10 @@ public class IngestJob implements Job, IngestJobFactorySetter {
 		this.ingestJobFactory = ingestJobFactory;
 	}
 
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        if (job != null) {
+            job.interrupt();
+        }
+    }
 }

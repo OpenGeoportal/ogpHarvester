@@ -32,6 +32,8 @@ package org.opengeoportal.harvester.mvc.bean;
 import java.util.Date;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
+import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
 
 /**
  * @author jlrodriguez
@@ -41,9 +43,11 @@ public class IngestListItem {
 	private Ingest ingest;
 	private Date nextRun;
 	private boolean inProgress = false;
+	private IngestJobStatus status;
 
-	public IngestListItem(Ingest ingest) {
+	public IngestListItem(Ingest ingest, IngestJobStatus lastStatus) {
 		this.ingest = ingest;
+		this.status = lastStatus;
 
 	}
 
@@ -77,6 +81,14 @@ public class IngestListItem {
 
 	public void setInProgress(boolean inProgress) {
 		this.inProgress = inProgress;
+	}
+	
+	public IngestJobStatusValue getStatus() {
+		if (status != null) {
+			return status.getStatus();
+		} else {
+			return null;
+		}
 	}
 
 }

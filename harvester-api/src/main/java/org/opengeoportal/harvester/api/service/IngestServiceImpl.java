@@ -245,7 +245,7 @@ public class IngestServiceImpl implements IngestService {
 		Ingest ingest = findById(id);
 		if (ingest != null) {
 			try {
-				scheduler.unschedule(ingest);
+				unscheduled = scheduler.unschedule(ingest);
 				ingest.setScheduled(false);
 				ingest = save(ingest);
 				unscheduled = true;
@@ -259,7 +259,27 @@ public class IngestServiceImpl implements IngestService {
 			unscheduled = true;
 		}
 		return unscheduled;
-
 	}
+
+
+    @Override
+    @Transactional
+    public boolean interruptIngest(Long id) {
+        if (logger.isInfoEnabled()) {
+            logger.info("Interrupting ingest with id " + id);
+        }
+        boolean interrupted = true;
+        Ingest ingest = findById(id);
+        if (ingest != null) {
+            try {
+                interrupted = scheduler.interrupt(ingest);
+            } catch (SchedulerException se) {
+                if (logger.isErrorEnabled()) {
+                    logger.error("Cannot interrupt inget id = " + id);
+                }
+            }
+        }
+        return interrupted;
+    }
 
 }

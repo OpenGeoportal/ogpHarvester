@@ -43,7 +43,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 			logger.info("GeonetworkIngestJob: search parameters "
 					+ searchParameters.toString());
 
-			while (!processFinished) {
+			while (!(isInterruptRequested() || processFinished)) {
 				searchParameters.setFrom(start);
 				GeoNetworkSearchResponse searchResponse = gnClient
 						.search(searchParameters);

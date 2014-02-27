@@ -51,5 +51,7 @@ public enum IngestJobStatusValue {
 	/**
 	 * The execution has finished but it has failed.
 	 */
-	FAILED;
+	FAILED,
+    /** Execution has been cancelled by user. */
+    CANCELLED;
 }

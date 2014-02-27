@@ -57,6 +57,9 @@ public class WebdavIngestJob extends BaseIngestJob {
 	 *            WebDAV folder URL.
 	 */
 	private void processWebdavFolder(Sardine sardine, String url) {
+        if (isInterruptRequested()) {
+            return;
+        }
 		if (!url.endsWith("/")) {
 			url += "/";
 		}
@@ -76,6 +79,9 @@ public class WebdavIngestJob extends BaseIngestJob {
 		}
 
 		for (DavResource res : resources) {
+            if (isInterruptRequested()) {
+                return;
+            }
 			if (res.isDirectory()) {
 				// If it's not the current folder, process the files inside
 				if (!url.endsWith(res.getPath())) {

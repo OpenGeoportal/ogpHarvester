@@ -1,6 +1,5 @@
 package org.opengeoportal.harvester.api.component.ogp;
 
-import java.io.StringWriter;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +20,6 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.sardine.model.Response;
 import com.google.common.collect.Lists;
 
 /**
@@ -60,7 +58,7 @@ public class OgpIngestJob extends BaseIngestJob {
 						+ searchParams.toString());
 			}
 
-			while (!processFinished) {
+			while (!isInterruptRequested() && !processFinished) {
 				searchParams.setPage(startPage);
 				QueryResponse searchResponse = client.search(searchParams);
 				// long numFound = searchResponse.getResults().getNumFound();
@@ -107,6 +105,5 @@ public class OgpIngestJob extends BaseIngestJob {
 
             report.addError(error);
 		}
-
 	}
 }
