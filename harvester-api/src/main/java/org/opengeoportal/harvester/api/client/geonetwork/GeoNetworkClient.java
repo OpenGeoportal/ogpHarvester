@@ -101,24 +101,19 @@ public class GeoNetworkClient {
         request.clearParams();
         request.addParam("id", metadataId);
 
-        try {
-            Element md   = request.execute();
-            Element info = md.getChild("info", GEONET_NS);
 
-            if (info != null) { info.detach(); }
+        Element md   = request.execute();
+        Element info = md.getChild("info", GEONET_NS);
+
+        if (info != null) { info.detach(); }
 
 
-            Document doc = new Document(md);
+        Document doc = new Document(md);
 
-            DOMOutputter domOutputter = new DOMOutputter();
-            org.w3c.dom.Document document =  domOutputter.output(doc);
+        DOMOutputter domOutputter = new DOMOutputter();
+        org.w3c.dom.Document document =  domOutputter.output(doc);
 
-            return document;
-        } catch(Exception e) {
-            // TODO: Log error in ingest report
-
-            return null;
-        }
+        return document;
     }
 
     @SuppressWarnings("unchecked")

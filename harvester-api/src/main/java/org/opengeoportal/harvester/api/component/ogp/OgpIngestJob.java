@@ -13,9 +13,7 @@ import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
-import org.opengeoportal.harvester.api.domain.CustomRepository;
-import org.opengeoportal.harvester.api.domain.IngestOGP;
-import org.opengeoportal.harvester.api.domain.InstanceType;
+import org.opengeoportal.harvester.api.domain.*;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.OgpMetadataParser;
@@ -100,10 +98,14 @@ public class OgpIngestJob extends BaseIngestJob {
 
 			}
 		} catch (Exception e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Error getting remote records", e);
-			}
+            logger.error("Error in OGP Ingest: " + this.ingest.getName(), e);
+
 			// LOG exception
+            IngestReportError error = new IngestReportError();
+            error.setType(IngestReportErrorType.SYSTEM_ERROR);
+            error.setMessage(e.getMessage());
+
+            report.addError(error);
 		}
 
 	}

@@ -7,6 +7,8 @@ import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchRespons
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResult;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
@@ -51,23 +53,32 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
 				for (GeoNetworkSearchResult record : searchResponse
 						.getMetadataSearchResults()) {
-					Document document = gnClient.retrieveMetadata(record
-							.getId());
 
-					MetadataParser parser = parserProvider
-							.getMetadataParser(document);
-					MetadataParserResponse parserResult = parser
-							.parse(document);
+                    try {
+                        Document document = gnClient.retrieveMetadata(record
+                                .getId());
 
-					Metadata metadata = parserResult.getMetadata();
-					metadata.setInstitution(ingest.getNameOgpRepository());
+                        MetadataParser parser = parserProvider
+                                .getMetadataParser(document);
+                        MetadataParserResponse parserResult = parser
+                                .parse(document);
 
-					boolean valid = metadataValidator
-							.validate(metadata, report);
-					if (valid) {
-                        metadataList.add(metadata);
-					}
+                        Metadata metadata = parserResult.getMetadata();
+                        metadata.setInstitution(ingest.getNameOgpRepository());
 
+                        boolean valid = metadataValidator
+                                .validate(metadata, report);
+                        if (valid) {
+                            metadataList.add(metadata);
+                        }
+
+                    } catch (Exception ex) {
+                        IngestReportError error = new IngestReportError();
+                        error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
+                        error.setMessage(ex.getMessage());
+
+                        report.addError(error);
+                    }
 				}
 
                 metadataIngester.ingest(metadataList, getIngestReport());
@@ -79,8 +90,15 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 				start += searchParameters.getPageSize();
 
 			}
-		} catch (Exception ex) {
-			// TODO: Log exception
+
+		} catch (Exception e) {
+            logger.error("Error in Geonetwork Ingest: " + this.ingest.getName(), e);
+
+            IngestReportError error = new IngestReportError();
+            error.setType(IngestReportErrorType.SYSTEM_ERROR);
+            error.setMessage(e.getMessage());
+
+            report.addError(error);
 		}
 
 	}

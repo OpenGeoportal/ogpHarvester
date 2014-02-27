@@ -9,6 +9,8 @@ import org.opengeoportal.harvester.api.client.csw.request.*;
 import org.opengeoportal.harvester.api.client.csw.response.GetRecordsResponse;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
@@ -81,11 +83,14 @@ public class CswIngestJob extends BaseIngestJob {
 				start += CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
 			}
 
-		} catch (Exception ex) {
-			// TODO: Add error in report
-			if (logger.isDebugEnabled()) {
-				logger.debug("Error processing CSW record", ex);
-			}
+		} catch (Exception e) {
+            logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
+
+            IngestReportError error = new IngestReportError();
+            error.setType(IngestReportErrorType.SYSTEM_ERROR);
+            error.setMessage(e.getMessage());
+
+            report.addError(error);
 		}
 	}
 }

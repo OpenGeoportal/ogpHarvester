@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
@@ -62,8 +64,14 @@ public class WebdavIngestJob extends BaseIngestJob {
 		try {
 			resources = sardine.list(url);
 
-		} catch (IOException ex) {
-			// TODO: Add error in the ingest report
+		} catch (IOException e) {
+            logger.error("Error in Webdav Ingest " + this.ingest.getName() + " (getting resources)", e);
+
+            IngestReportError error = new IngestReportError();
+            error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
+            error.setMessage(e.getMessage());
+
+            report.addError(error);
 			return;
 		}
 
@@ -80,8 +88,14 @@ public class WebdavIngestJob extends BaseIngestJob {
 								url);
 						processWebdavFolder(sardine, absoluteHrefPath);
 
-					} catch (MalformedURLException ex) {
-						// TODO: Add error in the ingest report
+					} catch (MalformedURLException e) {
+                        logger.error("Error in Webdav Ingest: " + this.ingest.getName() + " (malformed url)", e);
+
+                        IngestReportError error = new IngestReportError();
+                        error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
+                        error.setMessage(e.getMessage());
+
+                        report.addError(error);
 					}
 				}
 			} else {
@@ -127,9 +141,14 @@ public class WebdavIngestJob extends BaseIngestJob {
 			    metadataIngester.ingest(ImmutableList.of(metadata), getIngestReport());
 			}
 
-		} catch (Exception ex1) {
-			// TODO: Add error in the ingest report
-			ex1.printStackTrace();
+		} catch (Exception e) {
+            logger.error("Error in Webdav Ingest: " + this.ingest.getName() + " (processing file:" + baseUrl + ")", e);
+
+            IngestReportError error = new IngestReportError();
+            error.setType(IngestReportErrorType.SYSTEM_ERROR);
+            error.setMessage(e.getMessage());
+
+            report.addError(error);
 		}
 	}
 
