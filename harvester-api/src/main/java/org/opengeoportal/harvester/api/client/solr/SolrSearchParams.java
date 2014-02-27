@@ -194,15 +194,23 @@ public class SolrSearchParams {
 						SolrRecord.ISO_TOPIC_CATEGORY).is(this.topicCategory));
 			}
 			if (isValidBBox()) {
+                // BBOX intersection
 				criteria = criteria
-						.and(new Criteria(SolrRecord.MINX).between(
-								this.bboxWest, this.bboxEast, true, true))
-						.and(new Criteria(SolrRecord.MAXX).between(
-								this.bboxWest, this.bboxEast, true, true))
-						.and(new Criteria(SolrRecord.MINY).between(
-								this.bboxSouth, this.bboxNorth, true, true))
-						.and(new Criteria(SolrRecord.MAXY).between(
-								this.bboxSouth, this.bboxNorth, true, true));
+                        .or(
+                                new Criteria(SolrRecord.MINX).between(
+                                        this.bboxWest, this.bboxEast, true, true)
+                                        .and(
+                                                new Criteria(SolrRecord.MINY).between(
+                                                        this.bboxSouth, this.bboxNorth, true, true)
+                                        )
+                        ).or(
+                                new Criteria(SolrRecord.MAXX).between(
+                                        this.bboxWest, this.bboxEast, true, true)
+                                        .and(
+                                                new Criteria(SolrRecord.MAXY).between(
+                                                        this.bboxSouth, this.bboxNorth, true, true)
+                                        )
+                        );
 
 			}
 			if (dateFrom != null || dateTo != null) {
