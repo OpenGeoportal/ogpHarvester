@@ -32,6 +32,7 @@ package org.opengeoportal.harvester.api.client.solr;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -132,7 +133,8 @@ public class SolrSearchParams {
 		this.bboxSouth = ingest.getBboxSouth();
 		this.bboxWest = ingest.getBboxWest();
 		this.customSolrQuery = ingest.getCustomSolrQuery();
-		this.dataRepositories = Lists.newArrayList(ingest.getDataRepositories());
+		this.dataRepositories = Lists
+				.newArrayList(ingest.getDataRepositories());
 		this.dataTypes = Lists.newArrayList(ingest.getDataTypes());
 		this.dateFrom = ingest.getDateFrom();
 		this.dateTo = ingest.getDateTo();
@@ -200,23 +202,18 @@ public class SolrSearchParams {
 						SolrRecord.ISO_TOPIC_CATEGORY).is(this.topicCategory));
 			}
 			if (isValidBBox()) {
-                // BBOX intersection
-				criteria = criteria
-                        .or(
-                                new Criteria(SolrRecord.MINX).between(
-                                        this.bboxWest, this.bboxEast, true, true)
-                                        .and(
-                                                new Criteria(SolrRecord.MINY).between(
-                                                        this.bboxSouth, this.bboxNorth, true, true)
-                                        )
-                        ).or(
-                                new Criteria(SolrRecord.MAXX).between(
-                                        this.bboxWest, this.bboxEast, true, true)
-                                        .and(
-                                                new Criteria(SolrRecord.MAXY).between(
-                                                        this.bboxSouth, this.bboxNorth, true, true)
-                                        )
-                        );
+				// BBOX intersection
+				criteria = criteria.or(
+						new Criteria(SolrRecord.MINX).between(this.bboxWest,
+								this.bboxEast, true, true).and(
+								new Criteria(SolrRecord.MINY).between(
+										this.bboxSouth, this.bboxNorth, true,
+										true))).or(
+						new Criteria(SolrRecord.MAXX).between(this.bboxWest,
+								this.bboxEast, true, true).and(
+								new Criteria(SolrRecord.MAXY).between(
+										this.bboxSouth, this.bboxNorth, true,
+										true)));
 
 			}
 			if (dateFrom != null || dateTo != null) {
@@ -267,6 +264,37 @@ public class SolrSearchParams {
 		Pageable pageRequest = new PageRequest(page, pageSize);
 		query.setPageRequest(pageRequest);
 		return new DefaultQueryParser().constructSolrQuery(query);
+	}
+
+	private void buildBoundigBoxQuery(SolrQuery query) {
+		if (isValidBBox()) {
+			String fqParam = "{!frange l=0 incl=false cache=false}$intx)";
+			query.setParam("fq", fqParam);
+
+			// product(
+			//    max(
+			//       0,
+			//       sub(
+			//           min(180,MaxX),
+			//           max(-180,MinX)
+			//       )
+			//    ),
+			//    max(
+			//       0,
+			//       sub(
+			//           min(41.902277040963,MaxY),
+			//           max(-86.30131338825,MinY)
+			//       )
+			//    )
+			// )
+			String intxTemplateString = "product(max(0,sub(min(180,%f),"
+					+ "max(-180,%f))),max(0,sub(min(41.902277040963,%f),"
+					+ "max(-86.30131338825,%f))))";
+			String intxParam = String.format(Locale.ENGLISH,
+					intxTemplateString, this.bboxEast, this.bboxWest,
+					this.bboxNorth, this.bboxSouth);
+			query.setParam("intx", intxParam);
+		}
 	}
 
 	/**
