@@ -281,9 +281,9 @@ public class SolrSearchParams {
 			//    )
 			// )
 			// @formatter:on
-			String intxTemplateString = "product(max(0,sub(min(180,%f),"
-					+ "max(-180,%f))),max(0,sub(min(41.902277040963,%f),"
-					+ "max(-86.30131338825,%f))))";
+			String intxTemplateString = "product(max(0,sub(min(%f,MaxX),"
+					+ "max(%f,MinX))),max(0,sub(min(%f,MaxY),"
+					+ "max(%f,MinY))))";
 			String intxParam = String.format(Locale.ENGLISH,
 					intxTemplateString, this.bboxEast, this.bboxWest,
 					this.bboxNorth, this.bboxSouth);
