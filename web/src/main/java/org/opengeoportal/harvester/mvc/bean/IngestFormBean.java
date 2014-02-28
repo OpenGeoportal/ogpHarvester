@@ -125,6 +125,7 @@ public class IngestFormBean {
 	private BoundingBox extent;
 	private boolean customRepoDeleted = false;
 	private String customRepoName;
+	private String serverQuery;
 
 	/**
 	 * 
@@ -675,6 +676,20 @@ public class IngestFormBean {
 
 	public void setCustomRepoName(String customRepoName) {
 		this.customRepoName = customRepoName;
+	}
+
+	/**
+	 * @return the serverQuery
+	 */
+	public String getServerQuery() {
+		return serverQuery;
+	}
+
+	/**
+	 * @param serverQuery the serverQuery to set
+	 */
+	public void setServerQuery(String serverQuery) {
+		this.serverQuery = serverQuery;
 	}
 
 }

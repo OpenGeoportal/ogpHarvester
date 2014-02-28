@@ -84,7 +84,6 @@ public interface IngestService {
 	 */
 	void delete(Long id);
 
-
 	/**
 	 * Get a {@link Page} of ingests.
 	 * 
@@ -174,10 +173,21 @@ public interface IngestService {
 	 */
 	boolean unscheduleIngest(Long id);
 
-    /**
-     * Interrupt a running ingest.
-     * @param id ingest identifier.
-     * @return true if job could be interrupted, false otherwise.
-     */
-    boolean interruptIngest(Long id);
+	/**
+	 * Interrupt a running ingest.
+	 * 
+	 * @param id
+	 *            ingest identifier.
+	 * @return true if job could be interrupted, false otherwise.
+	 */
+	boolean interruptIngest(Long id);
+
+	/**
+	 * Update ServerQuery field based on the rest of fields and save the ingest.
+	 * 
+	 * @param ingest
+	 *            the ingest to save
+	 * @return the saved ingest.
+	 */
+	Ingest saveAndUpdateServerQuery(Ingest ingest);
 }
