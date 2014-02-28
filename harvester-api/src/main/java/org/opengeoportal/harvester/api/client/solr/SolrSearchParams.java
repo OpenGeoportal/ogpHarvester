@@ -328,7 +328,7 @@ public class SolrSearchParams {
 		for (int i = 0; i < length; i++) {
 			sb.append(fieldName).append(":").append(contentSplitted[i]);
 			if (i != length - 1) {
-				sb.append(" ").append(operator.toString());
+				sb.append(" ").append(operator.toString()).append(" ");
 			}
 		}
 		return sb.toString();

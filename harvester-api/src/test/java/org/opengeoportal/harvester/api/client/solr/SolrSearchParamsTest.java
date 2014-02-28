@@ -54,7 +54,7 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&fq=DataType:LINE+ORDataType:RASTER&" +
+        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&fq=DataType:LINE+OR+DataType:RASTER&" +
                 "pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
@@ -120,6 +120,7 @@ public class SolrSearchParamsTest {
         List<DataType> dataTypes = new ArrayList<DataType>();
         dataTypes.add(DataType.LINE);
         dataTypes.add(DataType.RASTER);
+        ingest.setDataTypes(dataTypes);
         ingest.setPlaceKeyword("place1 place2");
         ingest.setThemeKeyword("theme1 theme1");
 
@@ -127,11 +128,11 @@ public class SolrSearchParamsTest {
         SolrQuery query = solrSearchParams.toSolrQuery();
 
         Assert.assertEquals("q=*:*&fq=Institution:repo1+OR+Institution:repo1&fq=ThemeKeywords:theme1+theme1&" +
-                "fq=PlaceKeywords:place1+place2&fq=Originator:originator&fq=PlaceKeywordsSynonyms:(place1+place2)+" +
-                "OR+LayerDisplayNameSynonyms:(theme1+theme1)+OR+LayerDisplayNameSynonyms:(place1+place2)+OR+" +
-                "ThemeKeywordsSynonymsLcsh:(theme1+theme1)&pf=ThemeKeywords:%27theme1+theme1%27%5E9.0&" +
-                "pf=LayerDisplayName:%27theme1+theme1%27%5E9.0&pf=PlaceKeywords:%27place1+place2%27%5E9.0&" +
-                "pf=Originator:originator&rows=40&start=0&sort=score+desc",
+                "fq=PlaceKeywords:place1+place2&fq=Originator:originator&fq=DataType:LINE+OR+DataType:RASTER&" +
+                "fq=PlaceKeywordsSynonyms:(place1+place2)+OR+LayerDisplayNameSynonyms:(theme1+theme1)+OR+" +
+                "LayerDisplayNameSynonyms:(place1+place2)+OR+ThemeKeywordsSynonymsLcsh:(theme1+theme1)&" +
+                "pf=ThemeKeywords:%27theme1+theme1%27%5E9.0&pf=LayerDisplayName:%27theme1+theme1%27%5E9.0&" +
+                "pf=PlaceKeywords:%27place1+place2%27%5E9.0&pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
     }
