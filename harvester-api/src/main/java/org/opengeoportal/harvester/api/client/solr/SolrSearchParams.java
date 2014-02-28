@@ -241,7 +241,7 @@ public class SolrSearchParams {
 			if (dataTypes != null && dataTypes.size() > 0) {
 				StringBuilder concatenatedType = new StringBuilder();
 				for (DataType dType : dataTypes) {
-					concatenatedType.append(dType.toString()).append(" ");
+					concatenatedType.append(dType.toString().replace(" ", "+")).append(" ");
 				}
 				String dataTypeCriteria = splitAndConcatenateUsingOperator(
 						Operator.OR, SolrRecord.DATA_TYPE,
@@ -315,9 +315,9 @@ public class SolrSearchParams {
 	}
 
 	/**
-	 * @param and
-	 * @param originator2
-	 * @param originator3
+	 * @param operator
+	 * @param fieldName
+	 * @param fieldContent
 	 * @return
 	 */
 	private String splitAndConcatenateUsingOperator(Operator operator,

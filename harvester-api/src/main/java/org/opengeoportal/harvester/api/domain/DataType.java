@@ -34,5 +34,21 @@ package org.opengeoportal.harvester.api.domain;
  *
  */
 public enum DataType {
-	POINT, LINE, POLYGON, RASTER, SCANNED
+	POINT, LINE, POLYGON, RASTER, SCANNED;
+
+    public String toString() {
+        if (this.equals(DataType.POINT)) {
+            return "Point";
+        } else if (this.equals(DataType.LINE)) {
+            return "Line";
+        } else if (this.equals(DataType.POLYGON)) {
+            return "Polygon";
+        } else if (this.equals(DataType.RASTER)) {
+            return "Raster";
+        } else if (this.equals(DataType.SCANNED)) {
+            return "Paper Map";
+        } else {
+            return "";
+        }
+    }
 }

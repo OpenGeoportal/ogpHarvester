@@ -54,7 +54,7 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&fq=DataType:LINE+OR+DataType:RASTER&" +
+        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&fq=DataType:Line+OR+DataType:Raster&" +
                 "pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
@@ -127,8 +127,9 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=*:*&fq=Institution:repo1+OR+Institution:repo1&fq=ThemeKeywords:theme1+theme1&" +
-                "fq=PlaceKeywords:place1+place2&fq=Originator:originator&fq=DataType:LINE+OR+DataType:RASTER&" +
+        Assert.assertEquals("q=*:*&fq=Institution:repo1+OR+Institution:repo1&" +
+                "fq=ThemeKeywords:theme1+theme1&fq=PlaceKeywords:place1+place2&" +
+                "fq=Originator:originator&fq=DataType:Line+OR+DataType:Raster&" +
                 "fq=PlaceKeywordsSynonyms:(place1+place2)+OR+LayerDisplayNameSynonyms:(theme1+theme1)+OR+" +
                 "LayerDisplayNameSynonyms:(place1+place2)+OR+ThemeKeywordsSynonymsLcsh:(theme1+theme1)&" +
                 "pf=ThemeKeywords:%27theme1+theme1%27%5E9.0&pf=LayerDisplayName:%27theme1+theme1%27%5E9.0&" +
