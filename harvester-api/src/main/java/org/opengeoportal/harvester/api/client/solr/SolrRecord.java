@@ -3,6 +3,7 @@ package org.opengeoportal.harvester.api.client.solr;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
@@ -588,23 +589,8 @@ public class SolrRecord {
 
 		record.setDescription(metadata.getDescription());
 		record.setName(metadata.getOwsName().toUpperCase());
-
-        String institution = metadata.getInstitution();
-
-        if (StringUtils.isNotEmpty(metadata.getId())) {
-            String id = metadata.getId();
-            // For OGP metadata records the id already has the format: {institution}.{id} , don't add institution again
-            if (id.startsWith(institution + ".")) {
-                record.setLayerId(metadata.getId());
-            } else {
-                record.setLayerId(metadata.getInstitution() + "." + metadata.getId());
-            }
-        } else {
-            // If id is empty, use the name instead
-            record.setLayerId(metadata.getInstitution() + "." + metadata.getOwsName().toUpperCase());
-        }
-
-		record.setInstitution(institution);
+        record.setLayerId(calculateLayerId(metadata));
+		record.setInstitution(metadata.getInstitution());
 		record.setLayerDisplayName(metadata.getTitle());
 		record.setOriginator(metadata.getOriginator());
 		record.setPublisher(metadata.getPublisher());
@@ -688,4 +674,38 @@ public class SolrRecord {
 	public void setOriginalXmlMetadata(String originalXmlMetadata) {
 		this.originalXmlMetadata = originalXmlMetadata;
 	}
+
+
+    /**
+     * Calculates the value of SolrRecord LayerId based on the related Metadata instance.
+     *
+     * @param metadata
+     * @return
+     */
+    private static String calculateLayerId(Metadata metadata) {
+        String layerId = "";
+
+        String institution = metadata.getInstitution();
+
+        // Use Metadata.Id if has a value -> {institution}.{id}
+        if (StringUtils.isNotEmpty(metadata.getId())) {
+            String id = metadata.getId();
+            // For OGP metadata records the id already has the format:
+            // {institution}.{id} , don't add institution again
+            if (id.startsWith(institution + ".")) {
+                layerId = metadata.getId();
+            } else {
+                layerId = institution + "." + metadata.getId();
+            }
+        // Otherwise use Metadata.LayerName -> {institution}.{layerName}
+        } else {
+            if (StringUtils.isNotEmpty(metadata.getOwsName())) {
+                layerId = institution + "." + metadata.getOwsName().toUpperCase();
+            } else {
+                layerId = institution + "." + UUID.randomUUID().toString();
+            }
+        }
+
+        return layerId;
+    }
 }

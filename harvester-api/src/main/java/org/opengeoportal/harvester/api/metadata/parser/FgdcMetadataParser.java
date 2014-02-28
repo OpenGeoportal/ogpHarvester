@@ -1,9 +1,6 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import javax.xml.xpath.XPathConstants;
 
@@ -120,15 +117,38 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 
 	@Override
 	protected void handleLayerName() {
-		Tag tag = FgdcTag.LayerName;
-		try {
-			this.metadataParserResponse.getMetadata().setOwsName(
-					getDocumentValue(tag));
-		} catch (Exception e) {
-			logger.error("handleLayerName: " + e.getMessage());
-			this.metadataParserResponse.addError(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
+        // LayerName calculated from the location links
+        Multimap<LocationLink.LocationType, LocationLink> locationMap = getLocationResolver()
+                .resolveLocation(document);
+
+        Tag tag = FgdcTag.LayerName;
+
+        try {
+            Collection<LocationLink> wmsLinks = locationMap.get(LocationLink.LocationType.wms);
+
+            if ((wmsLinks != null) && (!wmsLinks.isEmpty())) {
+                Iterator<LocationLink> it = wmsLinks.iterator();
+                while (it.hasNext()) {
+                    String resourceName = it.next().getResourceName();
+
+                    if (StringUtils.isNotEmpty(resourceName)) {
+                        this.metadataParserResponse.getMetadata().setOwsName(resourceName) ;
+                        break;
+                    }
+                }
+            }
+
+            // If empty, use ftName property
+            if (StringUtils.isEmpty(this.metadataParserResponse.getMetadata().getOwsName())) {
+                this.metadataParserResponse.getMetadata().setOwsName(
+                        getDocumentValue(tag));
+            }
+
+        } catch (Exception e) {
+            logger.error("handleLayerName: " + e.getMessage());
+            this.metadataParserResponse.addError(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
 	}
 
 	@Override
