@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,7 +97,9 @@ public class ManageIngestController {
 
         // Pages are zero base. We need to subtract 1 to the received page
         page = page - 1;
-        Pageable pageable = new PageRequest(page, pageSize);
+        // Sort by most recent execution
+        Sort sort =  new Sort(new Sort.Order(Sort.Direction.DESC,"lastRun"));
+        Pageable pageable = new PageRequest(page, pageSize, sort);
         Page<Ingest> resultPage = ingestService.findAll(pageable);
         PageWrapper pageDetails = new PageWrapper(resultPage);
 
