@@ -746,9 +746,10 @@ var globalExtentMaxy;
             ];
 
             $scope.topicList = [
-                "agriculture", "biology", "administrative", "boundaries", "atmospheric", "business",
-                "elevation", "environment", "geological", "health", "imagery", "military", "water",
-                "locations", "oceans", "cadastral", "cultural", "facilities", "transportation", "utilities"
+                "farming", "biota", "boundaries", "climatologyMeteorologyAtmosphere", "economy",
+                "elevation", "environment", "geoscientificinformation", "health", "imageryBaseMapsEarthCover",
+                "intelligenceMilitary", "inlandWaters",
+                "location", "oceans", "planningCadastre", "society", "structure", "transportation", "utilitiesCommunication"
             ];
 
             $scope.dataTypeList = ["POINT", "LINE", "POLYGON", "RASTER", "SCANNED"];
