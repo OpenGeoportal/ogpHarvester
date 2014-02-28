@@ -97,7 +97,7 @@ public class SolrSearchParamsTest {
 
             Assert.assertEquals("q=Institution:*+AND+" +
                     "ContentDate:[2014\\-01\\-09T23\\:00\\:00.000Z+TO+2014\\-01\\-31T23\\:00\\:00.000Z]+AND+" +
-                    "Originator:*originator*)&start=0&rows=40",
+                    "(Originator:*originator*)&start=0&rows=40",
                     unencode(query.toString()));
 
         } catch (Exception ex) {
