@@ -29,25 +29,30 @@
  */
 package org.opengeoportal.harvester.api.client.solr;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.opengeoportal.harvester.api.domain.DataType;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.opengeoportal.harvester.api.metadata.model.AccessLevel;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.SimpleQuery;
 import org.springframework.data.solr.core.query.SimpleStringCriteria;
 
-import com.google.common.collect.Collections2;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Multisets;
 
 /**
  * This class contains the fields values used to filter Solr medatada.
@@ -56,6 +61,21 @@ import com.google.common.collect.Lists;
  * 
  */
 public class SolrSearchParams {
+	/**
+	 * 
+	 */
+	private static final String PF = "pf";
+
+	/**
+	 * The default operator for parsing queries.
+	 */
+	public static enum Operator {
+		/** OR operator. */
+		OR,
+		/** AND operator. */
+		AND
+	}
+
 	/**
 	 * Number of result records requested per page.
 	 */
@@ -154,11 +174,13 @@ public class SolrSearchParams {
 	 * @return the {@link SolrQuery} built with the data page this.
 	 */
 	SolrQuery toSolrQuery() {
-		Criteria criteria = null;
+		SolrQuery solrQuery = new SolrQuery();
 
 		if (StringUtils.isNotBlank(customSolrQuery)) {
-			criteria = new SimpleStringCriteria(customSolrQuery);
+			solrQuery.setQuery(customSolrQuery);
 		} else {
+			solrQuery.setQuery("*:*");
+			// data repositories
 			if (dataRepositories != null && dataRepositories.size() > 0) {
 				Criteria institutionCriteria = null;
 				for (String institution : dataRepositories) {
@@ -175,94 +197,147 @@ public class SolrSearchParams {
 				SimpleQuery query = new SimpleQuery(institutionCriteria);
 				DefaultQueryParser parser = new DefaultQueryParser();
 				String queryString = parser.getQueryString(query);
-
-				criteria = new SimpleStringCriteria("(" + queryString + ")");
+				solrQuery.addFilterQuery(queryString);
 			} else {
-				criteria = new SimpleStringCriteria(SolrRecord.INSTITUTION
-						+ ":*");
+				solrQuery.addFilterQuery(SolrRecord.INSTITUTION + ":*");
 			}
 
+			// theme keywords
 			if (StringUtils.isNotBlank(themeKeyword)) {
-				Criteria themeCriteria = splitAndOrCriteria(themeKeyword,
-						SolrRecord.THEME_KEYWORDS);
-				if (themeCriteria != null) {
-					criteria = criteria.and(themeCriteria);
-				}
+				solrQuery.addFilterQuery(SolrRecord.THEME_KEYWORDS + ":"
+						+ themeKeyword);
+				solrQuery.add(PF, SolrRecord.THEME_KEYWORDS + ":'"
+						+ themeKeyword + "'^9.0");
+				solrQuery.add(PF, SolrRecord.LAYER_DISPLAY_NAME + ":'"
+						+ themeKeyword + "'^9.0");
 			}
 			if (StringUtils.isNotBlank(placeKeyword)) {
-				Criteria placeCriteria = splitAndOrCriteria(placeKeyword,
-						SolrRecord.PLACE_KEYWORDS);
-				if (placeCriteria != null) {
-					criteria = criteria.and(placeCriteria);
-				}
+				solrQuery.addFilterQuery(SolrRecord.PLACE_KEYWORDS + ":"
+						+ placeKeyword);
+				solrQuery.add(PF, SolrRecord.PLACE_KEYWORDS + ":'"
+						+ placeKeyword + "'^9.0");
 			}
 			if (StringUtils.isNotBlank(topicCategory)) {
-				criteria = criteria.and(new Criteria(
-						SolrRecord.ISO_TOPIC_CATEGORY).is(this.topicCategory));
+				solrQuery.addFilterQuery(SolrRecord.ISO_TOPIC_CATEGORY + ":"
+						+ this.topicCategory);
+
 			}
 
 			if (dateFrom != null || dateTo != null) {
-				criteria = criteria.and(SolrRecord.CONTENT_DATE).between(
-						dateFrom, dateTo);
+				Criteria contentDateCriteria = Criteria.where(
+						SolrRecord.CONTENT_DATE).between(dateFrom, dateTo);
+				SimpleQuery query = new SimpleQuery(contentDateCriteria);
+				DefaultQueryParser parser = new DefaultQueryParser();
+				String queryString = parser.getQueryString(query);
+				solrQuery.addFilterQuery(queryString);
+
 			}
 			if (StringUtils.isNotBlank(originator)) {
-				Criteria originatorCriteria = splitAndOrCriteria(originator,
-						SolrRecord.ORIGINATOR);
-				if (originatorCriteria != null) {
-					criteria = criteria.and(originatorCriteria);
-				}
+				String originatorCriteria = splitAndConcatenateUsingOperator(
+						Operator.AND, SolrRecord.ORIGINATOR, originator);
+				solrQuery.addFilterQuery(originatorCriteria);
+				solrQuery.add(PF, SolrRecord.ORIGINATOR + ":" + originator);
 			}
 			if (dataTypes != null && dataTypes.size() > 0) {
-				Criteria dataTypeCriteria = null;
-				for (DataType dt : dataTypes) {
-					if (dataTypeCriteria == null) {
-						dataTypeCriteria = new Criteria(SolrRecord.DATA_TYPE)
-								.is(dt.toString());
-					} else {
-						dataTypeCriteria = dataTypeCriteria.or(new Criteria(
-								SolrRecord.DATA_TYPE).is(dt.toString()));
-					}
+				StringBuilder concatenatedType = new StringBuilder();
+				for (DataType dType : dataTypes) {
+					concatenatedType.append(dType.toString()).append(" ");
 				}
-
-				if (dataTypeCriteria != null) {
-					SimpleQuery query = new SimpleQuery(dataTypeCriteria);
-					DefaultQueryParser parser = new DefaultQueryParser();
-					String queryString = parser.getQueryString(query);
-
-					criteria = criteria.and(new SimpleStringCriteria("("
-							+ queryString + ")"));
-				}
-
+				String dataTypeCriteria = splitAndConcatenateUsingOperator(
+						Operator.OR, SolrRecord.DATA_TYPE,
+						concatenatedType.toString());
+				solrQuery.add("fq", dataTypeCriteria);
 			}
 
 			if (excludeRestrictedData) {
-				criteria = criteria.and(new Criteria(SolrRecord.ACCESS).not()
-						.is(AccessLevel.Restricted.toString()));
+				solrQuery.addFilterQuery(SolrRecord.ACCESS + ":"
+						+ AccessLevel.Public);
 			}
 
 			if (fromSolrTimestamp != null || toSolrTimestamp != null) {
-				criteria = criteria.and(new Criteria(SolrRecord.TIMESTAMP));
+				Criteria solrTimestampCriteria = Criteria.where(
+						SolrRecord.TIMESTAMP).between(fromSolrTimestamp,
+						toSolrTimestamp);
+				SimpleQuery query = new SimpleQuery(solrTimestampCriteria);
+				DefaultQueryParser parser = new DefaultQueryParser();
+				String queryString = parser.getQueryString(query);
+				solrQuery.addFilterQuery(queryString);
 			}
-		}
-
-		SimpleQuery query = new SimpleQuery(criteria);
-		Pageable pageRequest = new PageRequest(page, pageSize);
-		query.setPageRequest(pageRequest);
-		SolrQuery solrQuery = new DefaultQueryParser()
-				.constructSolrQuery(query);
-
-		// Add bbox filter only if user has not specified a custom solr query.
-		if (StringUtils.isBlank(customSolrQuery)) {
+			// Add bbox filter only if user has not specified a custom solr
+			// query.
 			buildBoundigBoxQuery(solrQuery);
+
+			String synonymsFilter = generateSynonymsQuery();
+			if (StringUtils.isNotBlank(synonymsFilter)) {
+				solrQuery.addFilterQuery();
+			}
+
 		}
+
+		solrQuery.setRows(pageSize);
+		solrQuery.setStart(page * pageSize);
+		solrQuery.addSort(SortClause.desc("score"));
 
 		return solrQuery;
+	}
+
+	/**
+	 * @return
+	 */
+	private String generateSynonymsQuery() {
+		ListMultimap<String, String> fieldList = ArrayListMultimap.create();
+		if (StringUtils.isNotBlank(themeKeyword)) {
+			fieldList.put(SolrRecord.LAYER_DISPLAY_NAME_SYNONYMS, "("
+					+ themeKeyword + ")");
+			fieldList.put(SolrRecord.THEME_KEYWORDS_SYNONYMS_LCSH, "("
+					+ themeKeyword + ")");
+		}
+		if (StringUtils.isNotBlank(placeKeyword)) {
+			fieldList.put(SolrRecord.PLACE_KEYWORDS_SYNONYMS, "("
+					+ placeKeyword + ")");
+			fieldList.put(SolrRecord.LAYER_DISPLAY_NAME_SYNONYMS, "("
+					+ placeKeyword + ")");
+		}
+		StringBuilder synonymsQuery = new StringBuilder();
+		Iterator<Entry<String, String>> entryIterator = fieldList.entries()
+				.iterator();
+		while (entryIterator.hasNext()) {
+			Entry<String, String> entry = entryIterator.next();
+			synonymsQuery.append(entry.getKey()).append(":")
+					.append(entry.getValue());
+
+			if (entryIterator.hasNext()) {
+				synonymsQuery.append(" OR ");
+			}
+
+		}
+		return synonymsQuery.toString();
+	}
+
+	/**
+	 * @param and
+	 * @param originator2
+	 * @param originator3
+	 * @return
+	 */
+	private String splitAndConcatenateUsingOperator(Operator operator,
+			String fieldName, String fieldContent) {
+		String[] contentSplitted = StringUtils.split(fieldContent);
+		StringBuilder sb = new StringBuilder();
+		int length = contentSplitted.length;
+		for (int i = 0; i < length; i++) {
+			sb.append(fieldName).append(":").append(contentSplitted[i]);
+			if (i != length - 1) {
+				sb.append(" ").append(operator.toString());
+			}
+		}
+		return sb.toString();
 	}
 
 	private void buildBoundigBoxQuery(SolrQuery query) {
 		if (isValidBBox()) {
 			String fqParam = "{!frange l=0 incl=false cache=false}$intx";
-			query.setParam("fq", fqParam);
+			query.addFilterQuery(fqParam);
 			// @formatter:off
 			// product(
 			//    max(
@@ -281,9 +356,9 @@ public class SolrSearchParams {
 			//    )
 			// )
 			// @formatter:on
-			String intxTemplateString = "product(max(0,sub(min(180,%f),"
-					+ "max(-180,%f))),max(0,sub(min(41.902277040963,%f),"
-					+ "max(-86.30131338825,%f))))";
+			String intxTemplateString = "product(max(0,sub(min(%f,MaxX),"
+					+ "max(%f,MinX))),max(0,sub(min(%f,MaxY),"
+					+ "max(%f,MinY))))";
 			String intxParam = String.format(Locale.ENGLISH,
 					intxTemplateString, this.bboxEast, this.bboxWest,
 					this.bboxNorth, this.bboxSouth);
