@@ -269,7 +269,7 @@ public class SolrSearchParams {
 
 			String synonymsFilter = generateSynonymsQuery();
 			if (StringUtils.isNotBlank(synonymsFilter)) {
-				solrQuery.addFilterQuery();
+				solrQuery.addFilterQuery(synonymsFilter);
 			}
 
 		}

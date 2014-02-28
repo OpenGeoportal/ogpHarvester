@@ -21,7 +21,8 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=Institution:*+AND+(Originator:*originator*)&start=0&rows=40", unencode(query.toString()));
+        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&pf=Originator:originator&rows=40&" +
+                "start=0&sort=score+desc", unencode(query.toString()));
     }
 
     @Test
@@ -33,8 +34,9 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=Institution:*+AND+(PlaceKeywords:*place1*+OR+PlaceKeywords:*place2*)+" +
-                "AND+(Originator:*originator*)&start=0&rows=40",
+        Assert.assertEquals("q=*:*&fq=Institution:*&fq=PlaceKeywords:place1+place2&fq=Originator:originator&" +
+                "fq=PlaceKeywordsSynonyms:(place1+place2)+OR+LayerDisplayNameSynonyms:(place1+place2)&" +
+                "pf=PlaceKeywords:%27place1+place2%27%5E9.0&pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
 
@@ -52,8 +54,8 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=Institution:*+AND+(Originator:*originator*)+AND+" +
-                "(DataType:LINE+OR+DataType:RASTER)&start=0&rows=40",
+        Assert.assertEquals("q=*:*&fq=Institution:*&fq=Originator:originator&fq=DataType:LINE+ORDataType:RASTER&" +
+                "pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
     }
@@ -71,8 +73,8 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=(Institution:repo1+OR+Institution:repo1)+AND+" +
-                "(Originator:*originator*)&start=0&rows=40",
+        Assert.assertEquals("q=*:*&fq=Institution:repo1+OR+Institution:repo1&fq=Originator:originator&" +
+                "pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
     }
@@ -95,9 +97,9 @@ public class SolrSearchParamsTest {
             SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
             SolrQuery query = solrSearchParams.toSolrQuery();
 
-            Assert.assertEquals("q=Institution:*+AND+" +
-                    "ContentDate:[2014\\-01\\-09T23\\:00\\:00.000Z+TO+2014\\-01\\-31T23\\:00\\:00.000Z]+AND+" +
-                    "(Originator:*originator*)&start=0&rows=40",
+            Assert.assertEquals("q=*:*&fq=Institution:*&fq=ContentDate:" +
+                    "[2014\\-01\\-09T23\\:00\\:00.000Z+TO+2014\\-01\\-31T23\\:00\\:00.000Z]&" +
+                    "fq=Originator:originator&pf=Originator:originator&rows=40&start=0&sort=score+desc",
                     unencode(query.toString()));
 
         } catch (Exception ex) {
@@ -124,9 +126,12 @@ public class SolrSearchParamsTest {
         SolrSearchParams solrSearchParams = new SolrSearchParams(ingest);
         SolrQuery query = solrSearchParams.toSolrQuery();
 
-        Assert.assertEquals("q=(Institution:repo1+OR+Institution:repo1)+AND+" +
-                "(ThemeKeywords:*theme1*+OR+ThemeKeywords:*theme1*)+AND+" +
-                "(PlaceKeywords:*place1*+OR+PlaceKeywords:*place2*)+AND+(Originator:*originator*)&start=0&rows=40",
+        Assert.assertEquals("q=*:*&fq=Institution:repo1+OR+Institution:repo1&fq=ThemeKeywords:theme1+theme1&" +
+                "fq=PlaceKeywords:place1+place2&fq=Originator:originator&fq=PlaceKeywordsSynonyms:(place1+place2)+" +
+                "OR+LayerDisplayNameSynonyms:(theme1+theme1)+OR+LayerDisplayNameSynonyms:(place1+place2)+OR+" +
+                "ThemeKeywordsSynonymsLcsh:(theme1+theme1)&pf=ThemeKeywords:%27theme1+theme1%27%5E9.0&" +
+                "pf=LayerDisplayName:%27theme1+theme1%27%5E9.0&pf=PlaceKeywords:%27place1+place2%27%5E9.0&" +
+                "pf=Originator:originator&rows=40&start=0&sort=score+desc",
                 unencode(query.toString()));
 
     }
