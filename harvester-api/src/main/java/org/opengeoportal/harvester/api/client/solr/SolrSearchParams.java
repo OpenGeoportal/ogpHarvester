@@ -169,7 +169,13 @@ public class SolrSearchParams {
 										.is(institution));
 					}
 				}
-				criteria = institutionCriteria;
+
+
+                SimpleQuery query = new SimpleQuery(institutionCriteria);
+                DefaultQueryParser parser = new DefaultQueryParser();
+                String queryString = parser.getQueryString(query);
+
+                criteria = new SimpleStringCriteria("(" + queryString + ")");
 			} else {
 				criteria = new SimpleStringCriteria(SolrRecord.INSTITUTION
 						+ ":*");
@@ -235,7 +241,15 @@ public class SolrSearchParams {
 								SolrRecord.DATA_TYPE).is(dt.toString()));
 					}
 				}
-				criteria = criteria.and(dataTypeCriteria);
+
+                if (dataTypeCriteria != null) {
+                    SimpleQuery query = new SimpleQuery(dataTypeCriteria);
+                    DefaultQueryParser parser = new DefaultQueryParser();
+                    String queryString = parser.getQueryString(query);
+
+                    criteria = criteria.and(new SimpleStringCriteria("(" + queryString + ")"));
+                }
+
 
 			}
 
