@@ -692,7 +692,7 @@ public class SolrRecord {
             String id = metadata.getId();
             // For OGP metadata records the id already has the format:
             // {institution}.{id} , don't add institution again
-            if (id.startsWith(institution + ".")) {
+            if (id.toUpperCase().startsWith(institution.toUpperCase() + ".")) {
                 layerId = metadata.getId();
             } else {
                 layerId = institution + "." + metadata.getId();
