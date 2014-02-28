@@ -37,6 +37,7 @@
     <spring:url value="/static/css/main.css" var="mainCss"/>
     <link rel="stylesheet" href="${mainCss}">
 
+	<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
     <spring:url value="/webjars/jquery/1.10.2/jquery.js" var="jQuery"/>
     <script type="application/javascript" src="${jQuery}"></script>
     <!-- Latest compiled and minified JavaScript -->

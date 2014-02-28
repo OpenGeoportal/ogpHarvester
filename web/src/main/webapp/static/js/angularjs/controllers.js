@@ -538,11 +538,18 @@
             };
 
             $scope.openMap = function () {
+            	var bbox = $scope.ingest.extent;
+            	
                 var modalInstance = $modal.open({
                     templateUrl: 'resources/map.html',
                     controller: MapForm,
                     backdrop: 'static',
-                    keyboard: false
+                    keyboard: false,
+                    resolve: {
+                        previousBbox: function () {
+                            return bbox;
+                        }
+                    }
                 });
 
                 modalInstance.result.then(function (bbox) {
@@ -777,7 +784,7 @@
                 $scope.setBBOX = function () {
                     $log.info("Setting BBOX");
 
-                    var fromProjection = new OpenLayers.Projection("EPSG:900913"); // Transform from WGS 1984
+                    var fromProjection = new OpenLayers.Projection("EPSG:3857"); // Transform from WGS 1984
                     var toProjection = new OpenLayers.Projection("EPSG:4326"); // to Spherical Mercator Projection
 
                     var bounds = map.getExtent().transform(fromProjection, toProjection);
