@@ -48,6 +48,12 @@ public class SolrRecord {
 	public static final String MAXX = "MaxX";
 	/** MaxY field name. */
 	public static final String MAXY = "MaxY";
+
+	public static final String LAYER_DISPLAY_NAME = "LayerDisplayName";
+
+	public static final String LAYER_DISPLAY_NAME_SYNONYMS = "LayerDisplayNameSynonyms";
+	public static final String THEME_KEYWORDS_SYNONYMS_LCSH = "ThemeKeywordsSynonymsLcsh";
+	public static final String PLACE_KEYWORDS_SYNONYMS = "PlaceKeywordsSynonyms";
 	
 	private String originalXmlMetadata;
 
