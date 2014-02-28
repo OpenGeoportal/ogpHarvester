@@ -21,6 +21,7 @@
 
 
 <script>
+
     // TODO: Move to controller
     var map = new OpenLayers.Map({
         div: "bbox-map",
@@ -34,4 +35,12 @@
         center: new OpenLayers.LonLat(0, 0).transform('EPSG:4326', 'EPSG:3857'),
         zoom: 1
     });
+
+
+    // globalExtentXXX defined in controllers.js
+    if ( (globalExtentMinx) && (globalExtentMaxx) && (globalExtentMiny) && (globalExtentMaxy)) {
+        var bounds = new OpenLayers.Bounds(globalExtentMinx, globalExtentMiny, globalExtentMaxx, globalExtentMaxy).transform('EPSG:4326', 'EPSG:3857');
+
+        map.zoomToExtent(bounds);
+    }
 </script>

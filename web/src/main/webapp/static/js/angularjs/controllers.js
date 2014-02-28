@@ -1,3 +1,9 @@
+// Global extent for map popup. Check to use Angular directive for the map.
+var globalExtentMinx;
+var globalExtentMaxx;
+var globalExtentMiny;
+var globalExtentMaxy;
+
 (function () {
     'use strict';
 
@@ -539,7 +545,7 @@
 
             $scope.openMap = function () {
             	var bbox = $scope.ingest.extent;
-            	
+
                 var modalInstance = $modal.open({
                     templateUrl: 'resources/map.html',
                     controller: MapForm,
@@ -550,6 +556,13 @@
                             return bbox;
                         }
                     }
+                });
+
+                modalInstance.opened.then(function(bbox) {
+                    globalExtentMinx =  $scope.ingest.extent.minx;
+                    globalExtentMiny =  $scope.ingest.extent.miny;
+                    globalExtentMaxx =  $scope.ingest.extent.maxx;
+                    globalExtentMaxy =  $scope.ingest.extent.maxy;
                 });
 
                 modalInstance.result.then(function (bbox) {
