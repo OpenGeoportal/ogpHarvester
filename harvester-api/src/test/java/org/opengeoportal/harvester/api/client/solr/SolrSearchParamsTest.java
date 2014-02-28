@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 
 public class SolrSearchParamsTest {
@@ -86,6 +87,7 @@ public class SolrSearchParamsTest {
         ingest.setOriginator("originator");
 
         DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         try {
             String dateFromString = "10-01-2014";
@@ -98,7 +100,7 @@ public class SolrSearchParamsTest {
             SolrQuery query = solrSearchParams.toSolrQuery();
 
             Assert.assertEquals("q=*:*&fq=Institution:*&fq=ContentDate:" +
-                    "[2014\\-01\\-09T23\\:00\\:00.000Z+TO+2014\\-01\\-31T23\\:00\\:00.000Z]&" +
+                    "[2014\\-01\\-10T00\\:00\\:00.000Z+TO+2014\\-02\\-01T00\\:00\\:00.000Z]&" +
                     "fq=Originator:originator&pf=Originator:originator&rows=40&start=0&sort=score+desc",
                     unencode(query.toString()));
 
