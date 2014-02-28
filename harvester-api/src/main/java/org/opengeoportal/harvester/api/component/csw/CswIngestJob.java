@@ -88,7 +88,9 @@ public class CswIngestJob extends BaseIngestJob {
 
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.SYSTEM_ERROR);
-            error.setMessage(e.getMessage());
+            error.setField(e.getClass().getName());
+            error.setMessage(e.getClass().getName());
+            error.setMetadata(e.getMessage());
             error.setReport(report);
             getErrorService().save(error);
 

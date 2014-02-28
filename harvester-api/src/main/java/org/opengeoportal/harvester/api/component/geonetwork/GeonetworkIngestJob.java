@@ -75,7 +75,9 @@ public class GeonetworkIngestJob extends BaseIngestJob {
                     } catch (Exception ex) {
                         IngestReportError error = new IngestReportError();
                         error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
-                        error.setMessage(ex.getMessage());
+                        error.setField(ex.getClass().getName());
+                        error.setMessage(ex.getClass().getName());
+                        error.setMetadata(ex.getMessage());
                         error.setReport(report);
                         getErrorService().save(error);
 
@@ -98,7 +100,9 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.SYSTEM_ERROR);
-            error.setMessage(e.getMessage());
+            error.setField(e.getClass().getName());
+            error.setMessage(e.getClass().getName());
+            error.setMetadata(e.getMessage());
             error.setReport(report);
             getErrorService().save(error);
 
