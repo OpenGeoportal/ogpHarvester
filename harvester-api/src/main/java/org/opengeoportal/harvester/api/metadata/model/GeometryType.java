@@ -16,10 +16,30 @@ public enum GeometryType {
 		GeometryType(DataType dataType){
 			this.dataType = dataType;
 		}
-	
+
+        public String toString() {
+            if (this.equals(GeometryType.Point)) {
+                return "Point";
+            } else if (this.equals(GeometryType.Line)) {
+                return "Line";
+            } else if (this.equals(GeometryType.Polygon)) {
+                return "Polygon";
+            } else if (this.equals(GeometryType.Raster)) {
+                return "Raster";
+            } else if (this.equals(GeometryType.PaperMap)) {
+                return "Paper Map";
+            } else if (this.equals(GeometryType.ScannedMap)) {
+                return "Scanned Map";
+            } else if (this.equals(GeometryType.LibraryRecord)) {
+                return "Library Record";
+            } else if (this.equals(GeometryType.Undefined)) {
+                return "Undefined";
+            } else {
+                return "";
+            }
+        }
 		public static GeometryType parseGeometryType(String geometryString){
 			geometryString = geometryString.trim();
-			geometryString = geometryString.replace(" ", ""); //remove spaces
 			for (GeometryType geomType : GeometryType.values()){
 				if (geomType.toString().equalsIgnoreCase(geometryString)){
 					return geomType;
@@ -43,4 +63,6 @@ public enum GeometryType {
 				return false;
 			}
 		}
+
+
 }

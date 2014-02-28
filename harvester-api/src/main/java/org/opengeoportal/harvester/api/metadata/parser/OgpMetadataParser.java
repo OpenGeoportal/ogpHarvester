@@ -155,12 +155,22 @@ public class OgpMetadataParser extends BaseMetadataParser {
 			}
 
 			if (!found) {
+                // Set a default value if no found: Undefined
+                metadata.setGeometryType(GeometryType.Undefined);
+
 				response.addError("GeometryType", SolrRecord.DATA_TYPE,
 						GEOMETRY_TYPE_NOT_VALID, String.format(
 								"%s is not a valid GeometryType value",
 								geometryTypeString));
 			}
-		}
+		} else {
+            // Set a default value if no found: Undefined
+            metadata.setGeometryType(GeometryType.Undefined);
+
+            response.addError("GeometryType", SolrRecord.DATA_TYPE,
+                    GEOMETRY_TYPE_NOT_VALID,
+                    "No GeometryType value found");
+        }
 
 	}
 
