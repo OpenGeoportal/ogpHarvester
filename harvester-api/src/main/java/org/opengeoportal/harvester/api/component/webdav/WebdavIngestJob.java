@@ -73,6 +73,8 @@ public class WebdavIngestJob extends BaseIngestJob {
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
             error.setMessage(e.getMessage());
+            error.setReport(report);
+            getErrorService().save(error);
 
             report.addError(error);
 			return;
@@ -100,6 +102,8 @@ public class WebdavIngestJob extends BaseIngestJob {
                         IngestReportError error = new IngestReportError();
                         error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
                         error.setMessage(e.getMessage());
+                        error.setReport(report);
+                        getErrorService().save(error);
 
                         report.addError(error);
 					}
@@ -153,6 +157,8 @@ public class WebdavIngestJob extends BaseIngestJob {
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.SYSTEM_ERROR);
             error.setMessage(e.getMessage());
+            error.setReport(report);
+            getErrorService().save(error);
 
             report.addError(error);
 		}

@@ -76,6 +76,8 @@ public class GeonetworkIngestJob extends BaseIngestJob {
                         IngestReportError error = new IngestReportError();
                         error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
                         error.setMessage(ex.getMessage());
+                        error.setReport(report);
+                        getErrorService().save(error);
 
                         report.addError(error);
                     }
@@ -97,6 +99,8 @@ public class GeonetworkIngestJob extends BaseIngestJob {
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.SYSTEM_ERROR);
             error.setMessage(e.getMessage());
+            error.setReport(report);
+            getErrorService().save(error);
 
             report.addError(error);
 		}
