@@ -173,7 +173,7 @@ public class SolrSearchParams {
 	 * 
 	 * @return the {@link SolrQuery} built with the data page this.
 	 */
-	SolrQuery toSolrQuery() {
+	public SolrQuery toSolrQuery() {
 		SolrQuery solrQuery = new SolrQuery();
 
 		if (StringUtils.isNotBlank(customSolrQuery)) {

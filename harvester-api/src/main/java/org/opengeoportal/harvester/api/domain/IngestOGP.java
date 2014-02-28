@@ -43,6 +43,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.OrderColumn;
 
 import com.google.common.collect.Lists;
@@ -100,6 +101,9 @@ public class IngestOGP extends Ingest {
 	private Double bboxNorth;
 	@Column
 	private Double bboxSouth;
+	@Column
+	@Lob
+	private	String serverQuery;
 
 	public IngestOGP() {
 		super();
@@ -242,5 +246,19 @@ public class IngestOGP extends Ingest {
 	 */
 	public void setDataRepositories(List<String> dataRepositories) {
 		this.dataRepositories = dataRepositories;
+	}
+
+	/**
+	 * @return the serverQuery
+	 */
+	public String getServerQuery() {
+		return serverQuery;
+	}
+
+	/**
+	 * @param serverQuery the serverQuery to set
+	 */
+	public void setServerQuery(String serverQuery) {
+		this.serverQuery = serverQuery;
 	}
 }

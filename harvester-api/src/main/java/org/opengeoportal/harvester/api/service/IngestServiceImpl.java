@@ -35,9 +35,13 @@ import java.util.SortedSet;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
 import org.opengeoportal.harvester.api.dao.IngestRepository;
 import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.opengeoportal.harvester.api.scheduler.Scheduler;
@@ -78,12 +82,31 @@ public class IngestServiceImpl implements IngestService {
 		return ingestRepository.save(ingest);
 	}
 
+	public Ingest saveAndUpdateServerQuery(Ingest ingest) {
+		try {
+			if (ingest instanceof IngestOGP) {
+				IngestOGP ingestOGP = (IngestOGP) ingest;
+				SolrSearchParams params = new SolrSearchParams(ingestOGP);
+				SolrQuery query = params.toSolrQuery();
+				String queryString = query.toString();
+				if (!StringUtils
+						.equals(queryString, ingestOGP.getServerQuery())) {
+					ingestOGP.setServerQuery(queryString);
+				}
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Error generating server query parameters before saving ingest",
+					e);
+		}
+		return ingestRepository.save(ingest);
+	}
+
 	@Override
 	@Transactional
 	public void delete(Long id) {
 		ingestRepository.delete(id);
 	}
-
 
 	@Override
 	@Transactional(readOnly = true)
@@ -114,7 +137,12 @@ public class IngestServiceImpl implements IngestService {
 		}
 
 		ingest.setRepository(cRepository);
-		Ingest result = ingestRepository.save(ingest);
+		Ingest result;
+		if (ingest instanceof IngestOGP) {
+			result = saveAndUpdateServerQuery(ingest);
+		} else {
+			result = ingestRepository.save(ingest);
+		}
 
 		return result;
 	}
@@ -200,7 +228,13 @@ public class IngestServiceImpl implements IngestService {
 	@Transactional
 	public Ingest saveAndSchedule(Ingest ingest) {
 		ingest.setScheduled(true);
-		Ingest savedIngest = save(ingest);
+		Ingest savedIngest;
+		if (ingest instanceof IngestOGP) {
+			savedIngest = saveAndUpdateServerQuery(ingest);
+		} else {
+			savedIngest = save(ingest);
+		}
+
 		scheduler.scheduleIngest(savedIngest);
 		return savedIngest;
 	}
@@ -261,25 +295,24 @@ public class IngestServiceImpl implements IngestService {
 		return unscheduled;
 	}
 
-
-    @Override
-    @Transactional
-    public boolean interruptIngest(Long id) {
-        if (logger.isInfoEnabled()) {
-            logger.info("Interrupting ingest with id " + id);
-        }
-        boolean interrupted = true;
-        Ingest ingest = findById(id);
-        if (ingest != null) {
-            try {
-                interrupted = scheduler.interrupt(ingest);
-            } catch (SchedulerException se) {
-                if (logger.isErrorEnabled()) {
-                    logger.error("Cannot interrupt inget id = " + id);
-                }
-            }
-        }
-        return interrupted;
-    }
+	@Override
+	@Transactional
+	public boolean interruptIngest(Long id) {
+		if (logger.isInfoEnabled()) {
+			logger.info("Interrupting ingest with id " + id);
+		}
+		boolean interrupted = true;
+		Ingest ingest = findById(id);
+		if (ingest != null) {
+			try {
+				interrupted = scheduler.interrupt(ingest);
+			} catch (SchedulerException se) {
+				if (logger.isErrorEnabled()) {
+					logger.error("Cannot interrupt inget id = " + id);
+				}
+			}
+		}
+		return interrupted;
+	}
 
 }

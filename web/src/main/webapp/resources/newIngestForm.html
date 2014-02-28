@@ -5,6 +5,11 @@
 
 <h2 data-translate="INGEST_FORM.SOURCE_REPOSITORY"></h2>
 
+<div data-ng-show="ingest.serverQuery">
+Server Query:
+<pre>{{ingest.serverQuery}}</pre>
+</div>
+
 <form name="newIngest" data-rc-submit="step2()" novalidate>
 <div data-alert data-ng-repeat="alert in alerts" data-type="alert.type" data-close="closeAlert($index)">{{alert.msg}}
 </div>

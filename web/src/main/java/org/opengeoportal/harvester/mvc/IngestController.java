@@ -239,6 +239,7 @@ public class IngestController {
 			result.setPlaceKeyword(ingestOGP.getPlaceKeyword());
 			result.setThemeKeyword(ingestOGP.getThemeKeyword());
 			result.setTopic(ingestOGP.getTopicCategory());
+			result.setServerQuery(ingestOGP.getServerQuery());
 		} else if (ingest instanceof IngestGeonetwork) {
 			IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
 			result.setTypeOfInstance(InstanceType.GEONETWORK);
