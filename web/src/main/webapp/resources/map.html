@@ -24,12 +24,14 @@
     // TODO: Move to controller
     var map = new OpenLayers.Map({
         div: "bbox-map",
+        projection: 'EPSG:3857',
         layers: [
-            new OpenLayers.Layer.OSM("OpenStreetMap", null, {
-                transitionEffect: "resize",
-                attribution: "&copy; <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-            })
+            new OpenLayers.Layer.Google(
+                "Google Physical",
+                {type: google.maps.MapTypeId.TERRAIN}
+            )
         ],
-        center: new OpenLayers.LonLat(0, 0), zoom: 1
+        center: new OpenLayers.LonLat(0, 0).transform('EPSG:4326', 'EPSG:3857'),
+        zoom: 1
     });
 </script>
