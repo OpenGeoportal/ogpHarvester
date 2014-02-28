@@ -102,6 +102,8 @@ public class OgpIngestJob extends BaseIngestJob {
             IngestReportError error = new IngestReportError();
             error.setType(IngestReportErrorType.SYSTEM_ERROR);
             error.setMessage(e.getMessage());
+            error.setReport(report);
+            getErrorService().save(error);
 
             report.addError(error);
 		}

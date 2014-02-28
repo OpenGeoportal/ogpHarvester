@@ -172,12 +172,11 @@ public class SolrSearchParams {
 					}
 				}
 
+				SimpleQuery query = new SimpleQuery(institutionCriteria);
+				DefaultQueryParser parser = new DefaultQueryParser();
+				String queryString = parser.getQueryString(query);
 
-                SimpleQuery query = new SimpleQuery(institutionCriteria);
-                DefaultQueryParser parser = new DefaultQueryParser();
-                String queryString = parser.getQueryString(query);
-
-                criteria = new SimpleStringCriteria("(" + queryString + ")");
+				criteria = new SimpleStringCriteria("(" + queryString + ")");
 			} else {
 				criteria = new SimpleStringCriteria(SolrRecord.INSTITUTION
 						+ ":*");
@@ -201,21 +200,7 @@ public class SolrSearchParams {
 				criteria = criteria.and(new Criteria(
 						SolrRecord.ISO_TOPIC_CATEGORY).is(this.topicCategory));
 			}
-			if (isValidBBox()) {
-				// BBOX intersection
-				criteria = criteria.or(
-						new Criteria(SolrRecord.MINX).between(this.bboxWest,
-								this.bboxEast, true, true).and(
-								new Criteria(SolrRecord.MINY).between(
-										this.bboxSouth, this.bboxNorth, true,
-										true))).or(
-						new Criteria(SolrRecord.MAXX).between(this.bboxWest,
-								this.bboxEast, true, true).and(
-								new Criteria(SolrRecord.MAXY).between(
-										this.bboxSouth, this.bboxNorth, true,
-										true)));
 
-			}
 			if (dateFrom != null || dateTo != null) {
 				criteria = criteria.and(SolrRecord.CONTENT_DATE).between(
 						dateFrom, dateTo);
@@ -239,14 +224,14 @@ public class SolrSearchParams {
 					}
 				}
 
-                if (dataTypeCriteria != null) {
-                    SimpleQuery query = new SimpleQuery(dataTypeCriteria);
-                    DefaultQueryParser parser = new DefaultQueryParser();
-                    String queryString = parser.getQueryString(query);
+				if (dataTypeCriteria != null) {
+					SimpleQuery query = new SimpleQuery(dataTypeCriteria);
+					DefaultQueryParser parser = new DefaultQueryParser();
+					String queryString = parser.getQueryString(query);
 
-                    criteria = criteria.and(new SimpleStringCriteria("(" + queryString + ")"));
-                }
-
+					criteria = criteria.and(new SimpleStringCriteria("("
+							+ queryString + ")"));
+				}
 
 			}
 
@@ -263,14 +248,22 @@ public class SolrSearchParams {
 		SimpleQuery query = new SimpleQuery(criteria);
 		Pageable pageRequest = new PageRequest(page, pageSize);
 		query.setPageRequest(pageRequest);
-		return new DefaultQueryParser().constructSolrQuery(query);
+		SolrQuery solrQuery = new DefaultQueryParser()
+				.constructSolrQuery(query);
+
+		// Add bbox filter only if user has not specified a custom solr query.
+		if (StringUtils.isBlank(customSolrQuery)) {
+			buildBoundigBoxQuery(solrQuery);
+		}
+
+		return solrQuery;
 	}
 
 	private void buildBoundigBoxQuery(SolrQuery query) {
 		if (isValidBBox()) {
-			String fqParam = "{!frange l=0 incl=false cache=false}$intx)";
+			String fqParam = "{!frange l=0 incl=false cache=false}$intx";
 			query.setParam("fq", fqParam);
-
+			// @formatter:off
 			// product(
 			//    max(
 			//       0,
@@ -287,6 +280,7 @@ public class SolrSearchParams {
 			//       )
 			//    )
 			// )
+			// @formatter:on
 			String intxTemplateString = "product(max(0,sub(min(180,%f),"
 					+ "max(-180,%f))),max(0,sub(min(41.902277040963,%f),"
 					+ "max(-86.30131338825,%f))))";
