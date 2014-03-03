@@ -16,12 +16,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Latest compiled and minified CSS -->
-    <spring:url value="/webjars/bootstrap/3.0.2/css/bootstrap.css"
+    <spring:url value="/webjars/bootstrap/3.1.1/css/bootstrap.min.css"
                 var="bootstrapCss"/>
     <link rel="stylesheet" href="${bootstrapCss}">
 
     <!-- Optional theme -->
-    <spring:url value="/webjars/bootstrap/3.0.2/css/bootstrap-theme.css"
+    <spring:url value="/webjars/bootstrap/3.1.1/css/bootstrap-theme.min.css"
                 var="bootstrapTheme"/>
     <link rel="stylesheet" href="${bootstrapTheme}">
 
@@ -38,10 +38,10 @@
     <link rel="stylesheet" href="${mainCss}">
 
 	<script src="http://maps.google.com/maps/api/js?v=3&amp;sensor=false"></script>
-    <spring:url value="/webjars/jquery/1.10.2/jquery.js" var="jQuery"/>
+    <spring:url value="/webjars/jquery/1.10.2/jquery.min.js" var="jQuery"/>
     <script type="application/javascript" src="${jQuery}"></script>
     <!-- Latest compiled and minified JavaScript -->
-    <spring:url value="/webjars/bootstrap/3.0.2/js/bootstrap.min.js"
+    <spring:url value="/webjars/bootstrap/3.1.1/js/bootstrap.min.js"
                 var="bootstrapJs"/>
     <script type="application/javascript" src="${bootstrapJs}"></script>
 
@@ -109,13 +109,13 @@
     <!-- //row -->
 </div>
 <!-- //container -->
-<spring:url value="/webjars/angularjs/1.2.13/angular.js"
+<spring:url value="/webjars/angularjs/1.2.13/angular.min.js"
             var="angularjsUrl"/>
-<spring:url value="/webjars/angularjs/1.2.13/angular-animate.js"
+<spring:url value="/webjars/angularjs/1.2.13/angular-animate.min.js"
             var="angularjsAnimateUrl"/>
-<spring:url value="/webjars/angularjs/1.2.13/angular-route.js"
+<spring:url value="/webjars/angularjs/1.2.13/angular-route.min.js"
             var="angularRouteUrl"/>
-<spring:url value="/webjars/angularjs/1.2.13/angular-resource.js"
+<spring:url value="/webjars/angularjs/1.2.13/angular-resource.min.js"
             var="angularResourceUrl"/>
 <spring:url value="/static/js/angular-translate/angular-translate.js"
             var="angularTranslateUrl"/>

@@ -13,7 +13,7 @@
 <body>
 	<div ng-view></div>
 
-    <spring:url value="/webjars/openlayers/2.13.1/OpenLayers.js"
+    <spring:url value="/webjars/openlayers/2.13.1/OpenLayers.light.js"
                 var="openLayersJS" />
     <script src="${openLayersJS}"></script>
 </body>
