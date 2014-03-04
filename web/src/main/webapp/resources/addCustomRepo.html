@@ -1,0 +1,30 @@
+<div data-ng-form data-name="form.addNewNameForm">
+	<div class="modal-header">
+		<h2>
+			{{ "INGEST_FORM.ADD_NAME_OGP_REPOSITORY_HEADER" | translate}} <a
+				data-tooltip='{{ "INGEST_FORM.ADD_NAME_OGP_REPOSITORY_HEADER_TOOLTIP" | translate }}'><span
+				class="glyphicon glyphicon-question-sign black"></span></a>
+		</h2>
+	</div>
+	<div class="modal-body">
+		<div data-alert data-ng-repeat="alert in alerts"
+			data-type="alert.type" data-close="closeAlert($index)">
+			{{alert.msg}}</div>
+		<p data-translate="INGEST_FORM.ADD_NAME_OGP_REPOSITORY_TEXT"></p>
+		<div class="form-group" data-ng-class="{'has-error': showValidationMessages && !form.addNewNameForm.newOgpName.$valid}">
+			<label class="control-label" for="newOgpName"
+				data-translate="INGEST_FORM.ADD_NAME_OGP_REPO_NAME_LABEL"></label> 
+				<input class="form-control"
+				type="text" name="newOgpName" id="newOgpName"
+				data-ng-model="newName.newOgpName" required />
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary"
+			data-translate="INGEST_FORM.ADD_NAME_OGP_REPO_ADD_BUTTON"
+			data-ng-disabled="stopButtonDisabled" data-ng-click=addToOgpList()></button>
+		<button class="btn btn-default"
+			data-translate="INGEST_FORM.ADD_NAME_OGP_REPO_CANCEL_BUTTON"
+			data-ng-click="cancel()"></button>
+	</div>
+</div>

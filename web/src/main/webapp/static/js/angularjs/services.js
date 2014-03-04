@@ -74,6 +74,7 @@
 			var initBean = function() {
 				$log.info("Initiating ingest bean");
 				var bean = {
+					serverQuery: null, 
 					typeOfInstance: 'SOLR',
 					catalogOfServices: null,
 					nameOgpRepository: null,
@@ -123,6 +124,7 @@
 
 				reset: function() {
 					//ingest.typeOfInstance = 'SOLR';
+					ingest.serverQuery = null;
 					ingest.catalogOfServices = null;
 					ingest.nameOgpRepository = null;
 					ingest.url = null;
