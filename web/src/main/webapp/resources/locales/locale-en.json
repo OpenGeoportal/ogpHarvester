@@ -152,6 +152,7 @@
 	"MANAGE_INGESTS": {
 		"HEADER": "Manage Ingests",
 		"LIST_HEADER_NAME": "Name",
+		"LIST_HEADER_TYPE": "Type",
 		"LIST_HEADER_LAST": "Last Ingest",
 		"LIST_HEADER_NEXT": "Next Ingest",
 		"LIST_HEADER_REPOS": "Repositories",
@@ -171,7 +172,11 @@
 		"CONFIRM_STOP": "Stop",
 		"CANCEL_STOP": "Cancel",
         "ERROR_INTERRUPTING_INGEST": "An error has been found while stopping ingest.",
-        "EXCEPTION_INTERRUPTING_INGEST": "An exception has been thrown while stopping ingest."
+        "EXCEPTION_INTERRUPTING_INGEST": "An exception has been thrown while stopping ingest.",
+        "TOI_SOLR": "OGP",
+		"TOI_GEONETWORK": "Geonetwork",
+		"TOI_CSW": "CSW",
+		"TOI_WEBDAV": "WebDAV/WAF"
 
 
 	},
