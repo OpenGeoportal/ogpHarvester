@@ -538,6 +538,9 @@ var globalExtentMaxy;
                 $scope.solrDataRepositoryList = [];
                 $log.log("Starting ingest reset");
                 ingestMultiform.reset();
+                if ($scope.ingest.userDefinedRepo) {
+                	$scope.ingest.nameOgpRepository = $scope.ingest.userDefinedRepo.key;
+                }
                 $log.log("Ended ingest reset");
 
 
@@ -579,6 +582,64 @@ var globalExtentMaxy;
                 $scope.ingest.extent.miny = "";
                 $scope.ingest.extent.minx = "";
                 $scope.ingest.extent.maxx = "";
+            };
+            
+            /** Open a dialog that allows user add custom repositories to 
+             * OPG Name repository select.
+             */
+            $scope.openWindowCustomRepo = function () {
+            	var localIngest = $scope.ingest;
+            	var localNameOgpList = $scope.nameOgpRepositoryList;
+            	var modalInstance = $modal.open({
+                    templateUrl: 'resources/addCustomRepo.html',
+                    controller: $scope.AddCustomRepoCtrl,
+                    backdrop: 'static',
+                    keyboard: true,
+                    resolve: {
+                        ingest: function () {
+                            return localIngest;
+                        },
+                        ogpRepoList: function () {
+                        	return localNameOgpList;
+                        }
+                    }
+                });
+            };
+            
+            $scope.AddCustomRepoCtrl = function ($scope, $modalInstance, ingest, ogpRepoList) {
+            	$scope.form = {};
+            	$scope.newName = {};
+            	$scope.showValidationMessages = false;
+            	// Close the modal window
+            	$scope.cancel = function () {
+            		$modalInstance.dismiss('cancel');
+                };
+                
+                $scope.closeAlert = function (index) {
+                    $scope.alerts.splice(index, 1);
+                };
+            	
+            	$scope.addToOgpList = function () {
+            		$scope.showValidationMessages = true;
+            		var newOgpNameInput = $scope.form.addNewNameForm.newOgpName;
+            		var name = $scope.newName.newOgpName;
+            		var entry = {
+            				key: name,
+            				value: name
+            		};
+            		if (newOgpNameInput && newOgpNameInput.$valid 
+            				&& ogpRepoList ) {
+            			var exist = $.grep(ogpRepoList, function(obj) {
+            				return obj.value === name && obj.key === name; 
+            			});
+            			if (exist.length === 0) {	            				
+	            			ogpRepoList.splice(0 , 0, entry);
+            			}
+            			ingest.userDefinedRepo =  entry;
+            			ingest.nameOgpRepository = name;
+            			$modalInstance.close();	
+            		}
+            	};
             };
 
 
@@ -687,6 +748,8 @@ var globalExtentMaxy;
                 ingest.webdavFromLastModified = $filter('date')(ingest.webdavFromLastModified, format);
                 ingest.webdavToLastModified = $filter('date')(ingest.webdavToLastModified, format);
                 ingest.beginDate = $filter('date')(ingest.beginDate, format);
+                delete ingest.serverQuery;
+                delete ingest.userDefinedRepo;
                 $http.post("rest/ingests/new", ingest).success(function (data) {
                     $log.info("Schedule ingest success: " + JSON.stringify(data));
                     $location.path("/manageIngests" + encodeURI("?create=success&name=" + data.data.name));
@@ -706,6 +769,25 @@ var globalExtentMaxy;
                 function (data) {
                     if (data.status === "SUCCESS") {
                         $scope.nameOgpRepositoryList = data.result;
+                        var userDefinedRepo = $scope.ingest.userDefinedRepo;
+                        // If user has introduced a new repo add it to the list returned by server.
+                        if (userDefinedRepo) {
+                        	$scope.nameOgpRepositoryList.splice(0, 0, userDefinedRepo);
+                        }
+                        
+                        // search repo in returned list and if not exist add it.
+                        if ($scope.ingest.nameOgpRepository && $scope.ingest.nameOgpRepository !== "") {
+                        	var exist = $.grep($scope.nameOgpRepositoryList, function(obj) {
+                				return obj.value === $scope.ingest.nameOgpRepository && obj.key === $scope.ingest.nameOgpRepository; 
+                			});
+                        	if (exist.length === 0) {
+                        		$scope.nameOgpRepositoryList.splice(0, 0, {
+                        			key: $scope.ingest.nameOgpRepository, 
+                        			value: $scope.ingest.nameOgpRepository
+                        		});
+                        	}
+                        }
+                        
                         if ($scope.ingest.typeOfInstance !== 'SOLR') {
                             if ($scope.nameOgpRepositoryList
                                 && $scope.nameOgpRepositoryList.length > 0 && $scope.nameOgpRepositoryList[0] !== undefined

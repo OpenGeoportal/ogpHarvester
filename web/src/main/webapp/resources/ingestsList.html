@@ -5,6 +5,7 @@
 	<thead>
 		<tr>
 			<th>{{'MANAGE_INGESTS.LIST_HEADER_NAME' | translate}}</th>
+			<th>{{'MANAGE_INGESTS.LIST_HEADER_TYPE' | translate}}</th>		
 			<th>{{'MANAGE_INGESTS.LIST_HEADER_LAST' | translate}}</th>
 			<th>{{'MANAGE_INGESTS.LIST_HEADER_NEXT' | translate}}</th>
 			<th>{{'MANAGE_INGESTS.LIST_HEADER_REPOS' | translate}}</th>
@@ -13,7 +14,9 @@
 	</thead>
 	<tbody>
 		<tr data-ng-repeat="ingest in ingestPage.elements">
-			<td><a href="#/editIngest/{{ingest.id}}" class="ingest-name">{{ingest.name}}</a></td>
+			<td><a href="#/editIngest/{{ingest.id}}" class="ingest-name"
+				data-tooltip="{{ingest.url}}" data-tooltip-append-to-body="true">{{ingest.name}}</a></td>
+			<td data-translate="{{'MANAGE_INGESTS.TOI_'+ingest.type}}"></td>
 			<td>
 				<p data-ng-show="!ingest.lastRun" data-translate="MANAGE_INGESTS.NONE"></p>
 				<p data-ng-show="ingest.lastRun">{{ingest.lastRun | date:'yyyy-MM-dd'}}</p>

@@ -52,12 +52,19 @@ Server Query:
     <label class="control-label" for="nameOgpRepository" data-translate="INGEST_FORM.NAME_OGP_REPOSITORY"></label> <a
         data-tooltip='{{ "INGEST_FORM.NAME_OGP_REPOSITORY_TOOLTIP" | translate }}'><span
         class="glyphicon glyphicon-question-sign black"></span></a>
-    <select class="form-control" id="nameOgpRepository" name="nameOgpRepository"
-            data-ng-model="ingest.nameOgpRepository"
-            data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
-            data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate"
-            data-ng-required="ingest.typeOfInstance !== 'SOLR'">
-    </select>
+    <div class="input-group">
+	    <select class="form-control" id="nameOgpRepository" name="nameOgpRepository"
+	            data-ng-model="ingest.nameOgpRepository"
+	            data-ng-options="item.key as item.value for item in nameOgpRepositoryList"
+	            data-placeholder="'INGEST_FORM.NAME_OGP_REPOSITORY_PLACEHOLDER' | translate"
+	            data-ng-required="ingest.typeOfInstance !== 'SOLR'">
+	    </select>
+	    <span class="input-group-btn" data-ng-click="openWindowCustomRepo()">
+		    <button type="button" class="btn btn-info" data-tooltip="{{'INGEST_FORM.ADD_NAME_OGP_REPOSITORY' | translate}}">
+		  		<span class="glyphicon glyphicon-plus-sign"></span>
+			</button>
+	    </span>
+    </div>
 </div>
 <div class="clearfix"></div>
 <div data-ng-switch data-on="ingest.typeOfInstance" id="fagment">

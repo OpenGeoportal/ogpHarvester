@@ -32,8 +32,13 @@ package org.opengeoportal.harvester.mvc.bean;
 import java.util.Date;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestCsw;
+import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.IngestWebDav;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 
 /**
  * @author jlrodriguez
@@ -82,13 +87,39 @@ public class IngestListItem {
 	public void setInProgress(boolean inProgress) {
 		this.inProgress = inProgress;
 	}
-	
+
 	public IngestJobStatusValue getStatus() {
 		if (status != null) {
 			return status.getStatus();
 		} else {
 			return null;
 		}
+	}
+
+	public InstanceType getType() {
+		InstanceType type = null;
+		if (ingest instanceof IngestOGP) {
+			type = InstanceType.SOLR;
+		} else if (ingest instanceof IngestGeonetwork) {
+			type = InstanceType.GEONETWORK;
+		} else if (ingest instanceof IngestCsw) {
+			type = InstanceType.CSW;
+		} else if (ingest instanceof IngestWebDav) {
+			type = InstanceType.WEBDAV;
+		}
+		return type;
+	}
+
+	public String getUrl() {
+		String url = null;
+
+		if (ingest.getRepository() != null) {
+			url = ingest.getRepository().getUrl();
+		} else {
+			url = ingest.getUrl();
+		}
+
+		return url;
 	}
 
 }
