@@ -6,9 +6,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
-import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
@@ -22,6 +20,7 @@ import org.w3c.dom.Document;
 import com.github.sardine.DavResource;
 import com.github.sardine.Sardine;
 import com.github.sardine.SardineFactory;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Ingest Job capable of process a remote WebDAV folder.
@@ -39,7 +38,9 @@ public class WebdavIngestJob extends BaseIngestJob {
 		Sardine sardine = null;
 		try {
 			sardine = SardineFactory.begin();
-			processWebdavFolder(sardine, ingest.getUrl());
+			processWebdavFolder(sardine, ingest.getActualUrl());
+		} catch (Exception e) {
+			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
 		} finally {
 			if (sardine != null) {
 				sardine.shutdown();
@@ -57,9 +58,9 @@ public class WebdavIngestJob extends BaseIngestJob {
 	 *            WebDAV folder URL.
 	 */
 	private void processWebdavFolder(Sardine sardine, String url) {
-        if (isInterruptRequested()) {
-            return;
-        }
+		if (isInterruptRequested()) {
+			return;
+		}
 		if (!url.endsWith("/")) {
 			url += "/";
 		}
@@ -68,24 +69,17 @@ public class WebdavIngestJob extends BaseIngestJob {
 			resources = sardine.list(url);
 
 		} catch (IOException e) {
-            logger.error("Error in Webdav Ingest " + this.ingest.getName() + " (getting resources)", e);
+			logger.error("Error in Webdav Ingest " + this.ingest.getName()
+					+ " (getting resources)", e);
 
-            IngestReportError error = new IngestReportError();
-            error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
-            error.setField(e.getClass().getName());
-            error.setMessage(e.getClass().getName());
-            error.setMetadata(e.getMessage());
-            error.setReport(report);
-            getErrorService().save(error);
-
-            report.addError(error);
+			saveException(e, IngestReportErrorType.WEB_SERVICE_ERROR);
 			return;
 		}
 
 		for (DavResource res : resources) {
-            if (isInterruptRequested()) {
-                return;
-            }
+			if (isInterruptRequested()) {
+				return;
+			}
 			if (res.isDirectory()) {
 				// If it's not the current folder, process the files inside
 				if (!url.endsWith(res.getPath())) {
@@ -99,17 +93,12 @@ public class WebdavIngestJob extends BaseIngestJob {
 						processWebdavFolder(sardine, absoluteHrefPath);
 
 					} catch (MalformedURLException e) {
-                        logger.error("Error in Webdav Ingest: " + this.ingest.getName() + " (malformed url)", e);
-
-                        IngestReportError error = new IngestReportError();
-                        error.setType(IngestReportErrorType.WEB_SERVICE_ERROR);
-                        error.setField(e.getClass().getName());
-                        error.setMessage(e.getClass().getName());
-                        error.setMetadata(e.getMessage());
-                        error.setReport(report);
-                        getErrorService().save(error);
-
-                        report.addError(error);
+						logger.error(
+								"Error in Webdav Ingest: "
+										+ this.ingest.getName()
+										+ " (malformed url)", e);
+						saveException(e,
+								IngestReportErrorType.WEB_SERVICE_ERROR);
 					}
 				}
 			} else {
@@ -152,21 +141,14 @@ public class WebdavIngestJob extends BaseIngestJob {
 
 			boolean valid = metadataValidator.validate(metadata, report);
 			if (valid) {
-			    metadataIngester.ingest(ImmutableList.of(metadata), getIngestReport());
+				metadataIngester.ingest(ImmutableList.of(metadata),
+						getIngestReport());
 			}
 
 		} catch (Exception e) {
-            logger.error("Error in Webdav Ingest: " + this.ingest.getName() + " (processing file:" + baseUrl + ")", e);
-
-            IngestReportError error = new IngestReportError();
-            error.setType(IngestReportErrorType.SYSTEM_ERROR);
-            error.setField(e.getClass().getName());
-            error.setMessage(e.getClass().getName());
-            error.setMetadata(e.getMessage());
-            error.setReport(report);
-            getErrorService().save(error);
-
-            report.addError(error);
+			logger.error("Error in Webdav Ingest: " + this.ingest.getName()
+					+ " (processing file:" + baseUrl + ")", e);
+			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
 		}
 	}
 

@@ -12,7 +12,8 @@ import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
-import org.opengeoportal.harvester.api.domain.*;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.OgpMetadataParser;
@@ -36,18 +37,11 @@ public class OgpIngestJob extends BaseIngestJob {
 		try {
 			boolean processFinished = false;
 			int startPage = 0;
-			String url = ingest.getUrl();
+			String url = ingest.getActualUrl();
 			if (StringUtils.isBlank(url)) {
-				CustomRepository cRepository = ingest.getRepository();
-				if (cRepository != null
-						&& cRepository.getServiceType() == InstanceType.SOLR) {
-					url = cRepository.getUrl();
-				} else {
-					throw new SchedulerException(
-							"Ingest "
-									+ ingest.getId()
-									+ " has not a valid URL or valid SOLR repository associated");
-				}
+				throw new SchedulerException("Ingest " + ingest.getId()
+						+ " has not a valid URL or valid repository"
+						+ " associated");
 			}
 
 			SolrClient client = new SolrJClient(url);
@@ -61,29 +55,39 @@ public class OgpIngestJob extends BaseIngestJob {
 			while (!isInterruptRequested() && !processFinished) {
 				searchParams.setPage(startPage);
 				QueryResponse searchResponse = client.search(searchParams);
-				// long numFound = searchResponse.getResults().getNumFound();
+
 				List<SolrRecord> records = searchResponse
 						.getBeans(SolrRecord.class);
 				for (int i = 0; i < records.size(); i++) {
-					SolrDocument record = searchResponse.getResults().get(i);
-					SolrInputDocument inputDocument = ClientUtils
-							.toSolrInputDocument(record);
-					String xmlString = ClientUtils.toXML(inputDocument);
-					records.get(i).setOriginalXmlMetadata(xmlString);
-
+					try {
+						SolrDocument record = searchResponse.getResults()
+								.get(i);
+						SolrInputDocument inputDocument = ClientUtils
+								.toSolrInputDocument(record);
+						String xmlString = ClientUtils.toXML(inputDocument);
+						records.get(i).setOriginalXmlMetadata(xmlString);
+					} catch (Exception e) {
+						saveException(e,
+								IngestReportErrorType.WEB_SERVICE_ERROR);
+					}
 				}
 				if (records.size() > 0) {
 					OgpMetadataParser parser = new OgpMetadataParser();
 					List<Metadata> metadataList = Lists
 							.newArrayListWithCapacity(records.size());
 					for (SolrRecord record : records) {
-						MetadataParserResponse parseResult = parser
-								.parse(record);
-						Metadata metadata = parseResult.getMetadata();
-						boolean valid = metadataValidator.validate(metadata,
-								getIngestReport());
-						if (valid) {
-							metadataList.add(metadata);
+						try {
+							MetadataParserResponse parseResult = parser
+									.parse(record);
+							Metadata metadata = parseResult.getMetadata();
+							boolean valid = metadataValidator.validate(
+									metadata, getIngestReport());
+							if (valid) {
+								metadataList.add(metadata);
+							}
+						} catch (Exception e) {
+							saveException(e,
+									IngestReportErrorType.WEB_SERVICE_ERROR);
 						}
 					}
 					metadataIngester.ingest(metadataList, getIngestReport());
@@ -96,18 +100,8 @@ public class OgpIngestJob extends BaseIngestJob {
 
 			}
 		} catch (Exception e) {
-            logger.error("Error in OGP Ingest: " + this.ingest.getName(), e);
-
-			// LOG exception
-            IngestReportError error = new IngestReportError();
-            error.setType(IngestReportErrorType.SYSTEM_ERROR);
-            error.setField(e.getClass().getName());
-            error.setMessage(e.getClass().getName());
-            error.setMetadata(e.getMessage());
-            error.setReport(report);
-            getErrorService().save(error);
-
-            report.addError(error);
+			logger.error("Error in OGP Ingest: " + this.ingest.getName(), e);
+			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
 		}
 	}
 }
