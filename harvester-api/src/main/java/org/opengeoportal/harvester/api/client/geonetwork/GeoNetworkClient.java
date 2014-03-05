@@ -52,13 +52,9 @@ public class GeoNetworkClient {
 
     private XmlRequest request;
 
-    public GeoNetworkClient(String serverUrl) {
-        this.serverUrl = serverUrl;
-        this.request = new XmlRequest(serverUrl);
-    }
-
     public GeoNetworkClient(URL serverUrl) {
-        this(serverUrl.toString());
+        this.serverUrl = serverUrl.toString();
+        this.request = new XmlRequest(serverUrl);
     }
 
     /**
@@ -71,7 +67,7 @@ public class GeoNetworkClient {
 	public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
         List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
 
-        request.setAddress(serverUrl + "/srv/eng/xml.info?type=sources");
+        request.setUrl(new URL(serverUrl + "/srv/eng/xml.info?type=sources"));
 
         Element xmlResponse = request.execute();
         /* Response xml example:
@@ -97,7 +93,9 @@ public class GeoNetworkClient {
     }
 
     public org.w3c.dom.Document retrieveMetadata(int metadataId) throws Exception {
-        request.setAddress(serverUrl + "/srv/eng/xml.metadata.get");
+        //request.setAddress(serverUrl + "/srv/en/xml.metadata.get");
+        request.setUrl(new URL(serverUrl + "/srv/eng/xml.metadata.get"));
+
         request.clearParams();
         request.addParam("id", metadataId);
 
@@ -120,7 +118,7 @@ public class GeoNetworkClient {
 	public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
         GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
 
-        request.setAddress(serverUrl + "/srv/eng/xml.search");
+        request.setUrl(new URL(serverUrl + "/srv/eng/xml.search"));
 
         Element xmlResponse = request.execute(searchParams.toXml());
 

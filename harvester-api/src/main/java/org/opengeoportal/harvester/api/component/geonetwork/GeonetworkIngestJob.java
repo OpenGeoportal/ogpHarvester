@@ -18,6 +18,7 @@ import org.w3c.dom.Document;
 
 import java.io.PrintStream;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -41,7 +42,10 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 			boolean processFinished = false;
 			int start = 1;
 
-			GeoNetworkClient gnClient = new GeoNetworkClient(ingest.getActualUrl());
+            URL geonetworkURL = new URL(ingest.getActualUrl());
+
+			GeoNetworkClient gnClient = new GeoNetworkClient(geonetworkURL);
+
 			GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
 					(IngestGeonetwork) ingest);
 			logger.info("GeonetworkIngestJob: search parameters "
@@ -54,7 +58,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
 				List<Metadata> metadataList = Lists
 						.newArrayListWithCapacity(searchResponse
-								.getMetadataSearchResults().size());
+                                .getMetadataSearchResults().size());
 
 				for (GeoNetworkSearchResult record : searchResponse
 						.getMetadataSearchResults()) {
@@ -72,7 +76,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 						metadata.setInstitution(ingest.getNameOgpRepository());
 
 						boolean valid = metadataValidator.validate(metadata,
-								report);
+                                report);
 						if (valid) {
 							metadataList.add(metadata);
 						}
