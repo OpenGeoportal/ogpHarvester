@@ -1,6 +1,7 @@
 package org.opengeoportal.harvester.api.component.geonetwork;
 
-import com.google.common.collect.Lists;
+import java.net.URL;
+import java.util.List;
 
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkClient;
 import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchParams;
@@ -16,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import java.io.PrintStream;
-import java.io.StringWriter;
-import java.net.URL;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * IngestJob that read from a remote Geonetwork.
@@ -40,9 +38,9 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 	public void ingest() {
 		try {
 			boolean processFinished = false;
-			int start = 1;
+			int page = 0;
 
-            URL geonetworkURL = new URL(ingest.getActualUrl());
+			URL geonetworkURL = new URL(ingest.getActualUrl());
 
 			GeoNetworkClient gnClient = new GeoNetworkClient(geonetworkURL);
 
@@ -52,13 +50,22 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 					+ searchParameters.toString());
 
 			while (!(isInterruptRequested() || processFinished)) {
-				searchParameters.setFrom(start);
+				if (logger.isInfoEnabled()) {
+					logger.info(String
+							.format("Ingest %d: requesting page=%d,"
+									+ " pageSize=%d, from=%d, to=%d to GN",
+									ingest.getId(), page,
+									searchParameters.getPageSize(),
+									searchParameters.getFrom(),
+									searchParameters.getTo()));
+				}
+				searchParameters.setPage(page++);
 				GeoNetworkSearchResponse searchResponse = gnClient
 						.search(searchParameters);
 
 				List<Metadata> metadataList = Lists
 						.newArrayListWithCapacity(searchResponse
-                                .getMetadataSearchResults().size());
+								.getMetadataSearchResults().size());
 
 				for (GeoNetworkSearchResult record : searchResponse
 						.getMetadataSearchResults()) {
@@ -76,7 +83,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 						metadata.setInstitution(ingest.getNameOgpRepository());
 
 						boolean valid = metadataValidator.validate(metadata,
-                                report);
+								report);
 						if (valid) {
 							metadataList.add(metadata);
 						}
@@ -91,10 +98,8 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 				metadataIngester.ingest(metadataList, getIngestReport());
 
 				// --- check to see if we have to perform additional searches
-				processFinished = (start + searchParameters.getPageSize() > searchResponse
+				processFinished = (searchParameters.getFrom() + searchParameters.getPageSize() > searchResponse
 						.getTotal());
-
-				start += searchParameters.getPageSize();
 
 			}
 
