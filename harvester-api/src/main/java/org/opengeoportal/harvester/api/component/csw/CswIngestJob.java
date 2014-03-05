@@ -32,7 +32,7 @@ public class CswIngestJob extends BaseIngestJob {
 	@Override
 	public void ingest() {
 		try {
-			CswClient cswClient = new CswClient(ingest.getUrl());
+			CswClient cswClient = new CswClient(ingest.getActualUrl());
 			IngestCsw ingestCsw = (IngestCsw) ingest;
 
 			GetRecordsRequest request = cswClient.setupGetRecordsRequest(
@@ -48,33 +48,39 @@ public class CswIngestJob extends BaseIngestJob {
 				GetRecordsResponse response = cswClient.getRecords(request,
 						start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
 
-                List<Metadata> metadataList = Lists
-                        .newArrayListWithCapacity(response.getResults().size());
+				List<Metadata> metadataList = Lists
+						.newArrayListWithCapacity(response.getResults().size());
 
 				for (Element record : response.getResults()) {
-					Document doc = new Document((Element) record.clone());
+					try {
+						Document doc = new Document((Element) record.clone());
 
-					DOMOutputter domOutputter = new DOMOutputter();
-					org.w3c.dom.Document document = domOutputter.output(doc);
+						DOMOutputter domOutputter = new DOMOutputter();
+						org.w3c.dom.Document document = domOutputter
+								.output(doc);
 
-					MetadataParser parser = parserProvider
-							.getMetadataParser(document);
-					MetadataParserResponse parserResult = parser
-							.parse(document);
+						MetadataParser parser = parserProvider
+								.getMetadataParser(document);
+						MetadataParserResponse parserResult = parser
+								.parse(document);
 
-					Metadata metadata = parserResult.getMetadata();
-					metadata.setInstitution(ingest.getNameOgpRepository());
+						Metadata metadata = parserResult.getMetadata();
+						metadata.setInstitution(ingest.getNameOgpRepository());
 
-					boolean valid = metadataValidator
-							.validate(metadata, report);
-					if (valid) {
-                        metadataList.add(metadata);
+						boolean valid = metadataValidator.validate(metadata,
+								report);
+						if (valid) {
+							metadataList.add(metadata);
+						}
+					} catch (Exception e) {
+						saveException(e,
+								IngestReportErrorType.WEB_SERVICE_ERROR);
 					}
 				}
 
-                metadataIngester.ingest(metadataList, getIngestReport());
+				metadataIngester.ingest(metadataList, getIngestReport());
 
-                // --- check to see if we have to perform other searches
+				// --- check to see if we have to perform other searches
 				int recCount = response.getNumberOfRecordsMatched();
 
 				processFinished = (start
@@ -84,17 +90,8 @@ public class CswIngestJob extends BaseIngestJob {
 			}
 
 		} catch (Exception e) {
-            logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
-
-            IngestReportError error = new IngestReportError();
-            error.setType(IngestReportErrorType.SYSTEM_ERROR);
-            error.setField(e.getClass().getName());
-            error.setMessage(e.getClass().getName());
-            error.setMetadata(e.getMessage());
-            error.setReport(report);
-            getErrorService().save(error);
-
-            report.addError(error);
+			logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
+			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
 		}
 	}
 }

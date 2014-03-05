@@ -29,19 +29,22 @@
  */
 package org.opengeoportal.harvester.api.dao;
 
-import static org.junit.Assert.*;
-import ch.qos.logback.core.boolex.Matcher;
+import static org.junit.Assert.assertNotNull;
 
-import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Lists;
+import java.util.Date;
+import java.util.List;
 
-import org.hamcrest.MatcherAssert;
-import org.hibernate.Hibernate;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opengeoportal.harvester.api.domain.*;
+import org.opengeoportal.harvester.api.domain.Frequency;
+import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestJobStatus;
+import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.IngestReport;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
@@ -53,10 +56,9 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:spring/test-data-config.xml" })
@@ -117,7 +119,8 @@ public class IngestRepositoryTest {
 
 		Assert.assertNotNull(ingestCreated);
 
-		Ingest ingestRetrieved = ingestRepository.findOne(ingestCreated.getId());
+		Ingest ingestRetrieved = ingestRepository
+				.findOne(ingestCreated.getId());
 
 		Assert.assertEquals(ingestCreated, ingestRetrieved);
 	}
@@ -133,7 +136,7 @@ public class IngestRepositoryTest {
 		jobStatus.setEndTime(new Date());
 		jobStatus.setIngest(ingest);
 		jobStatus = jobStatusService.save(jobStatus);
- 
+
 		IngestReport report = new IngestReport();
 		report.setPublicRecords(100);
 		report.setRestrictedRecords(20);
@@ -152,7 +155,7 @@ public class IngestRepositoryTest {
 		reportError.setType(IngestReportErrorType.REQUIRED_FIELD_ERROR);
 		reportError.setReport(report);
 		reportError = reportErrorService.save(reportError);
-	
+
 		Ingest ingestUpdated = ingestRepository.save(ingest);
 
 		Assert.assertNotNull(ingestUpdated);
@@ -160,13 +163,15 @@ public class IngestRepositoryTest {
 		Ingest ingestRetrieved = ingestRepository.findOne(2L);
 		Assert.assertEquals(ingestUpdated, ingestRetrieved);
 
-		List<IngestJobStatus> jobStatuses = jobStatusService.getStatusesForIngest(ingest.getId());
+		List<IngestJobStatus> jobStatuses = jobStatusService
+				.getStatusesForIngest(ingest.getId());
 		Assert.assertEquals(1, jobStatuses.size());
 
 		IngestReport reportRetrieved = jobStatuses.get(0).getIngestReport();
 		Assert.assertEquals(reportRetrieved, report);
 
-		Assert.assertEquals(IngestJobStatusValue.SUCCESSED, jobStatuses.get(0).getStatus());
+		Assert.assertEquals(IngestJobStatusValue.SUCCESSED, jobStatuses.get(0)
+				.getStatus());
 		Assert.assertEquals(100, reportRetrieved.getPublicRecords());
 		Assert.assertEquals(20, reportRetrieved.getRestrictedRecords());
 	}

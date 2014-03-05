@@ -295,4 +295,24 @@ public abstract class Ingest extends AbstractPersistable<Long> {
 	public Boolean getScheduled() {
 		return scheduled;
 	}
+
+	/**
+	 * Return the actual Ingest URL. This can be the URL of the associated
+	 * {@link CustomRepository} or the one stored in {@link Ingest#url}
+	 * property.
+	 * 
+	 * @return the actual URL.
+	 */
+	public String getActualUrl() {
+		String actualUrl = null;
+
+		if (this.getRepository() != null) {
+			actualUrl = this.getRepository().getUrl();
+		} else {
+			actualUrl = this.url;
+		}
+
+		return actualUrl;
+
+	}
 }

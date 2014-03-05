@@ -143,8 +143,8 @@ public class Iso19139LocationResolver extends AbstractLocationResolver
 							logger.debug("Location type: " + locType.toString());
 						}
 					} catch (Exception e) {
-						if (logger.isWarnEnabled()) {
-							logger.warn(
+						if (logger.isDebugEnabled()) {
+							logger.debug(
 									"Unable to determine LocationType protocol",
 									e);
 						}

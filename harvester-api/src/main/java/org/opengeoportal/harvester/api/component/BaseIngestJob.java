@@ -1,9 +1,12 @@
 package org.opengeoportal.harvester.api.component;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
 import org.opengeoportal.harvester.api.domain.IngestReport;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserProvider;
 import org.opengeoportal.harvester.api.metadata.parser.XmlMetadataParserProvider;
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
@@ -206,4 +209,24 @@ public abstract class BaseIngestJob implements Runnable {
     public boolean isInterruptRequested() {
         return interruptRequest;
     }
+
+	/**
+	 * Create a new IngestError and store it
+	 * 
+	 * @param e
+	 *            Exception to be logged.
+	 * @param errorType
+	 *            type of error.
+	 */
+	protected void saveException(Exception e, IngestReportErrorType errorType) {
+		IngestReportError error = new IngestReportError();
+		error.setType(errorType);
+		e = (Exception) e.fillInStackTrace();
+		error.setField(e.getClass().getSimpleName());
+		error.setMessage(e.getClass().getName());
+		error.setMetadata(ExceptionUtils.getStackTrace(e));
+		error.setReport(report);
+		getErrorService().save(error);
+		report.addError(error);
+	}
 }

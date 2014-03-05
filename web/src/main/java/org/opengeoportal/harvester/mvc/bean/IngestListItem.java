@@ -111,15 +111,7 @@ public class IngestListItem {
 	}
 
 	public String getUrl() {
-		String url = null;
-
-		if (ingest.getRepository() != null) {
-			url = ingest.getRepository().getUrl();
-		} else {
-			url = ingest.getUrl();
-		}
-
-		return url;
+		return ingest.getActualUrl();
 	}
 
 }
