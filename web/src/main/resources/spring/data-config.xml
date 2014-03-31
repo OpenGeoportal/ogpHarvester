@@ -47,7 +47,7 @@
 	</bean>
 
 	<bean id="jdbcURL" class="java.lang.String">
-		<constructor-arg value="jdbc:postgresql://localhost:5432/ogpharvester" />
+		<constructor-arg value="${jdbc.url}" />
 	</bean>
 
 	<!-- Look up the JPA repositories -->
