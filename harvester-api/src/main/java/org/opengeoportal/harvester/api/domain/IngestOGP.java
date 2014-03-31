@@ -108,7 +108,7 @@ public class IngestOGP extends Ingest {
 	public IngestOGP() {
 		super();
 		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"extent", "themeKeyword", "placeKeyword",
+				"geographicExtent", "themeKeyword", "placeKeyword",
 				"webServices", "topic", "dateOfContent", "originator",
 				"dataType", "dataRepository" }));
 	}
