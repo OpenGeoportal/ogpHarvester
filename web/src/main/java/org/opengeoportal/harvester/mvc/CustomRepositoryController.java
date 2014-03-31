@@ -40,7 +40,7 @@ import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.GeonetworkException;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
-import org.opengeoportal.harvester.api.exception.OgpSorlException;
+import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.opengeoportal.harvester.api.service.CustomRepositoryService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.CustomRepositoryFormBean;
@@ -173,7 +173,7 @@ public class CustomRepositoryController {
 			Map<String, String> errorMap = Maps.newHashMap();
 			errorMap.put("errorCode", "ERROR_CONNECTING_TO_PREDEFINED_GEONETWORK");
 			response.setResult(errorMap);
-		} catch (OgpSorlException ose) {
+		} catch (OgpSolrException ose) {
 			response.setStatus(STATUS.FAIL);
 			Map<String, String> errorMap = Maps.newHashMap();
 			errorMap.put("errorCode", "ERROR_CONNECTING_TO_PREDEFINED_SOLR");
@@ -223,7 +223,7 @@ public class CustomRepositoryController {
 					.getRemoteRepositories(repository.getRepoType(), urlObj);
 			response.setStatus(STATUS.SUCCESS);
 			response.setResult(repositories);
-		} catch (OgpSorlException ose) {
+		} catch (OgpSolrException ose) {
 			response.setStatus(STATUS.FAIL);
 			Map<String, String> errorMap = Maps.newHashMap();
 			errorMap.put("errorCode", "ERROR_CONNECTING_TO_REMOTE_SOLR");
