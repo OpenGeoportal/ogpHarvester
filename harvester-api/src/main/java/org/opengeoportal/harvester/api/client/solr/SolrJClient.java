@@ -16,7 +16,7 @@ import org.apache.solr.client.solrj.response.TermsResponse.Term;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.opengeoportal.harvester.api.domain.IngestReport;
-import org.opengeoportal.harvester.api.exception.OgpSorlException;
+import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +184,7 @@ public class SolrJClient implements SolrClient {
 
 		} catch (SolrServerException e) {
 			logger.error("Error getting Solr institutions list", e);
-			throw new OgpSorlException("Error getting Solr institutions list",
+			throw new OgpSolrException("Error getting Solr institutions list",
 					e);
 
 		}
@@ -207,7 +207,7 @@ public class SolrJClient implements SolrClient {
 			logger.error(
 					"Error getting Solr records for this query: "
 							+ query.getQuery(), e);
-			throw new OgpSorlException(
+			throw new OgpSolrException(
 					"Error getting Solr records for this query: "
 							+ query.getQuery(), e);
 		}

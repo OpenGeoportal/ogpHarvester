@@ -45,7 +45,7 @@ import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.BadDatabaseContentsException;
 import org.opengeoportal.harvester.api.exception.GeonetworkException;
-import org.opengeoportal.harvester.api.exception.OgpSorlException;
+import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -161,7 +161,7 @@ public class CustomRepositoryServiceImpl implements CustomRepositoryService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Can not retrieve institutions from " + url, e);
 			}
-			throw new OgpSorlException("Can not retrieve institutions from "
+			throw new OgpSolrException("Can not retrieve institutions from "
 					+ url, e);
 		}
 		return result;
