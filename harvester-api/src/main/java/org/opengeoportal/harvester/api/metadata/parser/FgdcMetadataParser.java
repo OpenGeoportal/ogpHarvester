@@ -11,6 +11,7 @@ import org.opengeoportal.harvester.api.metadata.model.LocationLink;
 import org.opengeoportal.harvester.api.metadata.model.LocationLink.LocationType;
 import org.opengeoportal.harvester.api.metadata.model.PlaceKeywords;
 import org.opengeoportal.harvester.api.metadata.model.ThemeKeywords;
+import org.opengeoportal.harvester.api.metadata.model.ThemeKeywords.ThemeKeywordAuthority;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -30,6 +31,9 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	/** Location resolver. */
 	private final LocationResolver locationResolver = new FgdcLocationResolver();
+	
+	private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
+
 
 	public static enum FgdcTag implements Tag {
 		Title("title", "/metadata/idinfo/citation/citeinfo/title"), Abstract(
@@ -315,6 +319,8 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 
 		try {
 			// Theme keywords
+			//if there is an ISO topic keyword set it the value on the Metadata object
+			String isoTopic = "";
 			NodeList themeKeywordNodes = (NodeList) xPath.evaluate(
 					FgdcTag.ThemeKeywordsHeader.getXPathName(), document,
 					XPathConstants.NODESET);
@@ -337,6 +343,7 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 						String keywordValue = keywordValueNodes.item(j)
 								.getTextContent();
 						themeKeyword.addKeyword(keywordValue);
+						isoTopic = this.isoTopicResolver.getIsoTopicKeyword(keywordValue);
 					}
 
 					themeKeywordList.add(themeKeyword);
@@ -371,7 +378,11 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 					placeKeywordList.add(placeKeyword);
 				}
 			}
+			
 
+			if (!isoTopic.isEmpty()){
+				this.metadataParserResponse.getMetadata().setTopic(isoTopic);
+			}
 			this.metadataParserResponse.getMetadata().setThemeKeywords(
 					themeKeywordList);
 			this.metadataParserResponse.getMetadata().setPlaceKeywords(
@@ -381,6 +392,7 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
 		}
 	}
 
+	
 	@Override
 	protected void handleBounds() {
 		Tag tag = FgdcTag.NorthBc;

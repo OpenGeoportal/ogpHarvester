@@ -49,7 +49,8 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	public static final String ACCESS_NOT_VALID = "ACCESS_NOT_VALID";
 	public static final String BBOX_NOT_VALID = "BBOX_NOT_VALID";
 	private static final String GEOMETRY_TYPE_NOT_VALID = "GEOMETRY_TYPE_NOT_VALID";
-
+	
+	private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
 	/**
 	 * Transform the {@link SolrRecord} into a {@link MetadataParserResponse}.
 	 * 
@@ -76,7 +77,6 @@ public class OgpMetadataParser extends BaseMetadataParser {
 		metadata.setPublisher(record.getPublisher());
 		handleThemeKeywords(record, response, metadata);
 		metadata.setTitle(record.getLayerDisplayName());
-		metadata.setTopic(record.getTopicCategory());
 		metadata.setWorkspaceName(record.getWorkspaceName());
 		metadata.setOriginalMetadata(record.getOriginalXmlMetadata());
 
@@ -98,12 +98,19 @@ public class OgpMetadataParser extends BaseMetadataParser {
 				ThemeKeywords tKeywords = new ThemeKeywords();
 				tKeywords.addKeyword(keyword);
 				themeKeywordsList.add(tKeywords);
+				
+				String isoTopic = isoTopicResolver.getIsoTopicKeyword(keyword);
+				if (!isoTopic.isEmpty()){
+					metadata.setTopic(isoTopic);
+				}
 			}
 			metadata.setThemeKeywords(themeKeywordsList);
 		}
 
+
 	}
 
+	
 	/**
 	 * @param record
 	 * @param response
@@ -143,34 +150,16 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	private void handleGeometryType(SolrRecord record,
 			MetadataParserResponse response, Metadata metadata) {
 		String geometryTypeString = record.getDataType();
-		if (StringUtils.isNotBlank(geometryTypeString)) {
-			boolean found = false;
-			GeometryType[] types = GeometryType.values();
-			for (int i = 0; i < types.length && !found; i++) {
-				if (StringUtils.equalsIgnoreCase(types[i].toString(),
-						geometryTypeString)) {
-					metadata.setGeometryType(types[i]);
-					found = true;
-				}
-			}
+		GeometryType geom = GeometryType.parseGeometryType(geometryTypeString);
 
-			if (!found) {
-                // Set a default value if no found: Undefined
-                metadata.setGeometryType(GeometryType.Undefined);
-
-				response.addError("GeometryType", SolrRecord.DATA_TYPE,
-						GEOMETRY_TYPE_NOT_VALID, String.format(
-								"%s is not a valid GeometryType value",
-								geometryTypeString));
-			}
-		} else {
-            // Set a default value if no found: Undefined
-            metadata.setGeometryType(GeometryType.Undefined);
-
-            response.addError("GeometryType", SolrRecord.DATA_TYPE,
-                    GEOMETRY_TYPE_NOT_VALID,
-                    "No GeometryType value found");
-        }
+		if (geom.equals(GeometryType.Undefined)){
+			response.addError("GeometryType", SolrRecord.DATA_TYPE,
+					GEOMETRY_TYPE_NOT_VALID, String.format(
+							"%s is not a valid GeometryType value",
+							geometryTypeString));
+		}
+		
+		metadata.setGeometryType(geom);
 
 	}
 
