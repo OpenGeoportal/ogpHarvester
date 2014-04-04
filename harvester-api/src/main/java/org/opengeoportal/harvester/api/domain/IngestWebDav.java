@@ -57,7 +57,7 @@ public class IngestWebDav extends Ingest {
 		super();
 		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
 				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
-				"dateOfContent", "originator", "dataType", "dataRepository" }));
+				"dateOfContent", "originator", "dataType", "webServices" }));
 	}
 
 	public Date getDateFrom() {
