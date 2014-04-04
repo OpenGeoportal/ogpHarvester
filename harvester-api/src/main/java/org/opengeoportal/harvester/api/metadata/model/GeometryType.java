@@ -38,8 +38,13 @@ public enum GeometryType {
                 return "";
             }
         }
+        
 		public static GeometryType parseGeometryType(String geometryString){
 			geometryString = geometryString.trim();
+			//legacy case
+			if (geometryString.equalsIgnoreCase("Paper Map")){
+				return GeometryType.ScannedMap;
+			}
 			for (GeometryType geomType : GeometryType.values()){
 				if (geomType.toString().equalsIgnoreCase(geometryString)){
 					return geomType;

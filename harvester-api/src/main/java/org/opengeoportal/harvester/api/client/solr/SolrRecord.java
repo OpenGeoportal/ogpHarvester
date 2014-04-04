@@ -115,8 +115,8 @@ public class SolrRecord {
 	private Date contentDate;
 	@Field("FgdcText")
 	private String fgdcText;
-	@Field("ThemeKeywordsSynonymsIso")
-	private String topicCategory;
+	//@Field("ThemeKeywordsSynonymsIso")
+	//private String topicCategory;
 
 	/**
 	 * @return the layerId
@@ -566,7 +566,7 @@ public class SolrRecord {
 				+ this.maxY);
 		map.put("Originator", this.originator);
 		map.put("Publisher", this.publisher);
-		map.put("TopicCatetory", this.topicCategory);
+		//map.put("TopicCategory", this.topicCategory);
 		return map;
 	}
 
@@ -641,7 +641,7 @@ public class SolrRecord {
 		record.setDataType(metadata.getGeometryType().toString());
         record.setWorkspaceName(metadata.getWorkspaceName());
         record.setGeoreferenced(metadata.getGeoreferenced());
-		record.setTopicCategory(metadata.getTopic());
+		//record.setTopicCategory(metadata.getTopic());
 
         if (StringUtils.isNotEmpty(metadata.getLocation())) {
             record.setAvailability("online");
@@ -655,17 +655,17 @@ public class SolrRecord {
 	/**
 	 * @return the topicCategory
 	 */
-	public String getTopicCategory() {
+	/*public String getTopicCategory() {
 		return topicCategory;
-	}
+	}*/
 
 	/**
 	 * @param topicCategory
 	 *            the topicCategory to set
 	 */
-	public void setTopicCategory(String topicCategory) {
+	/*public void setTopicCategory(String topicCategory) {
 		this.topicCategory = topicCategory;
-	}
+	}*/
 
 	/**
 	 * @return the originalXmlMetadata
