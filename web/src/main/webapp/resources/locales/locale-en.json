@@ -25,7 +25,7 @@
 		"ADD_NAME_OGP_REPO_CANCEL_BUTTON": "Cancel",
 		"ADD_NAME_OGP_REPO_NAME_LABEL": "Name:",
 		"SOLR_SEARCH_CRITERIA": "Search criteria (optional)",
-		"SOLR_SEARCH_CRITERIA_TOOLTIP": "Please add the content of the tooltip for Sorl Search Criteria",
+		"SOLR_SEARCH_CRITERIA_TOOLTIP": "Please add the content of the tooltip for Solr Search Criteria",
 		"EXTENT": "Geographic Extent:",
 		"EXTENT_TOOLTIP": "Please add the content of the extent tooltip",
 		"THEME_KEYWORD": "Theme Keyword:",
@@ -74,12 +74,12 @@
 		"EXCLUDE_RESTRICTED_TOOLTIP": "Please add the content of Exclude Restricted tooltip",
 		"DATE_RANGE_SOLR": "Filter records by Solr timestamp:",
 		"DATE_RANGE_SOLR_TOOLTIP": "Please add the content of Date Range Solr tooltip",
-		"SOLR_CUSTOM_QUERY": "Custom Sorl Query:",
+		"SOLR_CUSTOM_QUERY": "Custom Solr Query:",
 		"SOLR_CUSTOM_QUERY_TOOLTIP": "Please add the content of the Custom SOLR Query Tooltip",
 
 		"REQUIRED_FIELDS": "OGP Required Fields (optional)",
 		"REQUIRED_FIELDS_TOOLTIP": "Please add the content of Required Fields tooltip",
-		"REQUIRED_FIELD_OPT_extent": "Geographic Extent",
+		"REQUIRED_FIELD_OPT_geographicExtent": "Geographic Extent",
 		"REQUIRED_FIELD_OPT_topic": "Topic",
 		"REQUIRED_FIELD_OPT_dataType": "Data Type",
 		"REQUIRED_FIELD_OPT_themeKeyword": "Theme Keyword",
@@ -143,9 +143,9 @@
         "ERROR_CONNECTING_TO_REMOTE_SOLR": "Cannot retrieve remote sources from this URL. Please check the URL.",
         "ERROR_RETRIEVING_REMOTE_SOURCES": "An internal error occurred while retrieving sources from the remote server. Please check the URL.",
         "ERROR_CONNECTING_TO_REMOTE_GEONETWORK": "Cannot retrieve remote sources from this URL. Please check the URL.",
-        "ERROR_CONNECTING_TO_PREDEFINED_GEONETWORK": "Cannot retrieve remote sources from the remote server. Please, contact with the admin.",
-        "ERROR_CONNECTING_TO_PREDEFINED_SOLR": "Cannot retrieve remote sources from the remote server. Please, contact with the admin.",
-        "ERROR_RETRIEVING_PREDEFINED_REMOTE_SOURCES": "An internal error occurred while retriving sources from the remote server. Please, contact with the admin."
+        "ERROR_CONNECTING_TO_PREDEFINED_GEONETWORK": "Cannot retrieve remote sources from the remote server. Please contact the admin.",
+        "ERROR_CONNECTING_TO_PREDEFINED_SOLR": "Cannot retrieve remote sources from the remote server. Please contact the admin.",
+        "ERROR_RETRIEVING_PREDEFINED_REMOTE_SOURCES": "An internal error occurred while retrieving sources from the remote server. Please contact the admin."
 
 	},
 
@@ -168,7 +168,7 @@
 		"CANCEL_UNSCHEDULE": "Cancel",
 		"STOP_INGEST_HEADER": "Cancel current execution",
 		"STOP_INGEST_HEADER_TOOLTIP": "This is the Stop Ingest dialog tooltip",
-		"STOP_INGEST_CONFIRM_TEXT": "You are about to discard current execution of this ingest. Records that have already been processed will be in OGP. Are you really sure you want to cancel execution?",
+		"STOP_INGEST_CONFIRM_TEXT": "You are about to discard current execution of this ingest. Records that have already been processed will be in OGP. Are you sure you want to cancel execution?",
 		"CONFIRM_STOP": "Stop",
 		"CANCEL_STOP": "Cancel",
         "ERROR_INTERRUPTING_INGEST": "An error has been found while stopping ingest.",
@@ -270,7 +270,7 @@
 	},
     "MAP": {
         "HEADER": "Geographic Extent",
-        "HEADER_TOOLTIP": "Select the geographic extent for the serch filter",
+        "HEADER_TOOLTIP": "Select the geographic extent for the search filter",
         "SELECT_EXTENT": "Select Current Geographic Extent",
         "SELECT_CANCEL": "Cancel"
     }

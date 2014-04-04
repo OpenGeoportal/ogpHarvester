@@ -79,10 +79,15 @@ public class BaseMetadataParser {
 
 	protected String buildLocationJsonFromLocationLinks(
 			Multimap<LocationType, LocationLink> linksMultimap) {
+		//dont' return an empty object
+		if (linksMultimap.isEmpty()){
+			return "";
+		}
+		
 		StringBuilder sb = new StringBuilder("{");
-
-		for (Iterator<LocationType> keyIterator = linksMultimap.keySet()
-				.iterator(); keyIterator.hasNext();) {
+		Iterator<LocationType> keyIterator = linksMultimap.keySet()
+				.iterator();
+		while (keyIterator.hasNext()) {
 			LocationType type = keyIterator.next();
 			boolean isArray = type.getIsArray();
 			sb.append("\"").append(type.toString()).append("\":");
@@ -114,5 +119,6 @@ public class BaseMetadataParser {
 		sb.append("}");
 
 		return sb.toString();
+
 	}
 }

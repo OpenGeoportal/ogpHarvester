@@ -107,7 +107,7 @@
 
 		<div class="form-group col-md-9">
 			<label for="customCswQuery"><spring:message
-					code="ingestExternalRecords.form.custoCswQuery" /></label> <a href="#"
+					code="ingestExternalRecords.form.customCswQuery" /></label> <a href="#"
 				data-toggle="tooltip"
 				title='<spring:message code="ingestExternalRecords.tooltip.customCswQuery"/>'><span
 				class="glyphicon glyphicon-question-sign black"></span></a>

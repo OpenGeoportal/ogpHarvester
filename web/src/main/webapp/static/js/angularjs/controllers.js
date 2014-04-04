@@ -836,18 +836,18 @@ var globalExtentMaxy;
 
             $scope.dataTypeList = ["POINT", "LINE", "POLYGON", "RASTER", "SCANNED"];
 
-
+    		
             $scope.requiredFieldList = {
-                SOLR: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+                SOLR: ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
                     "placeKeyword", "originator", "webServices"
                 ],
-                GEONETWORK: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+                GEONETWORK: ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "webServices",
                     "placeKeyword", "originator"
                 ],
-                CSW: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+                CSW: ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "webServices",
                     "placeKeyword", "originator"
                 ],
-                WEBDAV: ["extent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository",
+                WEBDAV: ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "webServices",
                     "placeKeyword", "originator"
                 ]
             };
