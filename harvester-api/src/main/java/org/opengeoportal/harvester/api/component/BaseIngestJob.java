@@ -12,9 +12,11 @@ import org.opengeoportal.harvester.api.metadata.parser.XmlMetadataParserProvider
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
+import org.opengeoportal.harvester.api.service.IngestReportWarningsService;
 
 import java.util.Calendar;
 import java.util.UUID;
+
 
 /**
  * Base class for ingest jobs.
@@ -64,6 +66,9 @@ public abstract class BaseIngestJob implements Runnable {
     private IngestReportService reportService;
 
     private IngestReportErrorService errorService;
+    
+    private IngestReportWarningsService warningService;
+
     /**
      * If <code>true</code>, job must be interrupted when possible.
      */
@@ -90,7 +95,7 @@ public abstract class BaseIngestJob implements Runnable {
         this.jobId = jobId;
         this.ingest = ingest;
         this.metadataIngester = metadataIngester;
-        this.metadataValidator = new MetadataValidator(ingest, errorService);
+        this.metadataValidator = new MetadataValidator(ingest, errorService, warningService);
         this.jobStatus = new IngestJobStatus();
         jobStatus.setStatus(IngestJobStatusValue.NOT_STARTED_YET);
         jobStatus.setJobExecutionIdentifier(jobId);
@@ -193,6 +198,21 @@ public abstract class BaseIngestJob implements Runnable {
     public void setErrorService(IngestReportErrorService errorService) {
         this.errorService = errorService;
     }
+    
+    /**
+     * @return the warningService
+     */
+    public IngestReportWarningsService getWarningService() {
+        return warningService;
+    }
+
+    /**
+     * @param warningService the warningService to set
+     */
+    public void setWarningService(IngestReportWarningsService warningService) {
+        this.warningService = warningService;
+    }
+    
 
     /**
      * Set a flag that indicates job must be interrupted.
@@ -211,7 +231,7 @@ public abstract class BaseIngestJob implements Runnable {
     }
 
 	/**
-	 * Create a new IngestError and store it
+	 * Create a new IngestError and store it; always for system errors
 	 * 
 	 * @param e
 	 *            Exception to be logged.
@@ -222,8 +242,9 @@ public abstract class BaseIngestJob implements Runnable {
 		IngestReportError error = new IngestReportError();
 		error.setType(errorType);
 		e = (Exception) e.fillInStackTrace();
-		error.setField(e.getClass().getSimpleName());
-		error.setMessage(e.getClass().getName());
+		//error.setField(e.getClass().getSimpleName());
+		error.setField("error");
+		error.setMessage(e.getLocalizedMessage());
 		error.setMetadata(ExceptionUtils.getStackTrace(e));
 		error.setReport(report);
 		getErrorService().save(error);

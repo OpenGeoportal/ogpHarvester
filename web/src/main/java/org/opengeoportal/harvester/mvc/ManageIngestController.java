@@ -31,13 +31,16 @@ package org.opengeoportal.harvester.mvc;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.opengeoportal.harvester.api.domain.IngestReportWarningType;
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
+import org.opengeoportal.harvester.api.service.IngestReportWarningsService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.mvc.bean.IngestListItem;
 import org.opengeoportal.harvester.mvc.bean.JsonResponse;
@@ -58,6 +61,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.AbstractMap.SimpleEntry;
@@ -74,6 +78,8 @@ public class ManageIngestController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     IngestReportErrorService errorService;
+    @Resource
+    IngestReportWarningsService warningService;
     @Resource
     private IngestService ingestService;
     @Resource
@@ -196,11 +202,31 @@ public class ManageIngestController {
         passed.put("rasterRecords", report.getRasterRecords());
         ingestMap.put("passed", passed);
 
-        Map<String, Object> warning = new HashMap<String, Object>();
+       /* Map<String, Object> warning = new HashMap<String, Object>();
         warning.put("unrequiredFields", report.getUnrequiredFieldWarnings());
         warning.put("webserviceWarnings", report.getWebServiceWarnings());
         ingestMap.put("warning", warning);
+        */
+        
+        // Summarize error count by category
+        Map<String, Object> warningsMap = new HashMap<String, Object>();
+        
+        Map<IngestReportWarningType, Long> unrequiredFieldMap = warningService.getCountWarningTypesByReportId(
+                reportId);
+        
+        warningsMap.put("unrequiredFields", unrequiredFieldMap.get(IngestReportWarningType.UNREQUIRED_FIELD_WARNING));
+        
+        
+        // Detail of required field errors
+        List<SimpleEntry<String, Long>> unrequiredFieldSubcat = handleDetailWarningCount(
+                reportId);
+        warningsMap.put("unrequiredFieldsList", unrequiredFieldSubcat);
+        
+        
+        ingestMap.put("warning", warningsMap);
 
+        
+        
         Map<IngestReportErrorType, Long> errorMap = errorService
                 .getCountErrorTypesByReportId(reportId);
         // Summarize error count by category
@@ -247,15 +273,38 @@ public class ManageIngestController {
      */
     private List<SimpleEntry<String, Long>> handleDetailErrorCount(
             Long reportId, IngestReportErrorType errorType) {
-        List<SimpleEntry<String, Long>> errorSubcateroryList = Lists
+        List<SimpleEntry<String, Long>> errorSubcategoryList = Lists
                 .newArrayList();
         Map<String, Long> errorMap = errorService.getCountErrorsByReportId(
                 reportId, errorType);
         for (Entry<String, Long> entry : errorMap.entrySet()) {
-            errorSubcateroryList.add(new SimpleEntry<String, Long>(entry
+            errorSubcategoryList.add(new SimpleEntry<String, Long>(entry
                     .getKey(), entry.getValue()));
         }
-        return errorSubcateroryList;
+        return errorSubcategoryList;
+    }
+    
+    /**
+     * Return a list of SimpleEntry with the subcategory of the error as key and
+     * the count of that subcategory for the ingest report passed as parameter.
+     *
+     * @param reportId  the ingest report identifier.
+     * @param errorType the main category of errors.
+     * @return a list of SimpleEntry with the subcategory of the error as key
+     * and the count of that subcategory for the ingest report passed as
+     * parameter.
+     */
+    private List<SimpleEntry<String, Long>> handleDetailWarningCount(
+            Long reportId) {
+        List<SimpleEntry<String, Long>> warningSubcategoryList = Lists
+                .newArrayList();
+        Map<String, Long> warningMap = warningService.getCountWarningsByReportId(
+                reportId);
+        for (Entry<String, Long> entry : warningMap.entrySet()) {
+            warningSubcategoryList.add(new SimpleEntry<String, Long>(entry
+                    .getKey(), entry.getValue()));
+        }
+        return warningSubcategoryList;
     }
 
     @RequestMapping("/rest/ingests/{id}/metadata/{reportId}")

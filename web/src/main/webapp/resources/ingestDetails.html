@@ -33,25 +33,23 @@
 			data-target="#warningRecordsPanelBody">
 			<span class="glyphicon glyphicon-exclamation-sign sign warning-sign"></span>
 			<strong class="bold" data-translate="INGEST_DETAILS.WARNING_HEADER"></strong>
-			{{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarnig}} <a
+			{{'INGEST_DETAILS.RECORD_COUNT' | translate:totalWarning}} <a
 				data-tooltip="{{'INGEST_DETAILS.WARNING_TOOLTIP' | translate }}"><span
 				class="glyphicon glyphicon-question-sign sign black"></span></a> <span
 				class="glyphicon glyphicon-chevron-up pull-right black"></span>
 		</div>
 		<div class="custom-panel-body collapse" id="warningRecordsPanelBody">
-			<ul>
-				<li class="odd"><span
-					data-translate="INGEST_DETAILS.UNREQUIRED_FIELDS"
-					data-translate-values="{ count: '{{ingestDetails.warning.unrequiredFields}}' }"></span>
-					<a
-					data-tooltip="{{'INGEST_DETAILS.UNREQUIRED_FIELD_TOOLTIP' | translate }}"><span
-						class="glyphicon glyphicon-question-sign sign black"></span></a></li>
-				<li><span data-translate="INGEST_DETAILS.WEB_SERVICE_WARNINGS"
-					data-translate-values="{ count: '{{ingestDetails.warning.webserviceWarnings}}' }"></span>
-					<a
-					data-tooltip="{{'INGEST_DETAILS.WEB_SERVICES_WARNINGS_TOOLTIP' | translate }}"><span
-						class="glyphicon glyphicon-question-sign sign black"></span></a></li>
-			</ul>
+
+								<ul>
+									<li
+										data-ng-repeat="fieldWarning in ingestDetails.warning.unrequiredFieldsList">
+										<span
+										id="fw-{{fieldWarning.key}}"
+										data-translate="{{ 'INGEST_DETAILS.WARNING_FIELD_'+fieldWarning.key }}"
+										data-translate-values="{{fieldWarning}}"></span>
+									</li>
+								</ul>
+
 		</div>
 	</div>
 	<div class="custom-panel">
@@ -98,7 +96,8 @@
 						</div>
 					</li>
 
-					<li>
+<!-- currently commented out, since there is no web service checker, aside from verifying the field exists in "required fields" -->
+					<!--  <li>
 						<div class="custom-panel">
 							<div class="failed-main-check">
 								<input name="allWebservice" type="checkbox"
@@ -125,7 +124,7 @@
 								</ul>
 							</div>
 						</div>
-					</li>
+					</li> -->
 
 					<li>
 						<div class="custom-panel">

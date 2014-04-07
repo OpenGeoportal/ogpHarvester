@@ -42,6 +42,7 @@ import org.opengeoportal.harvester.api.exception.UnscheduledIngestException;
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
+import org.opengeoportal.harvester.api.service.IngestReportWarningsService;
 import org.opengeoportal.harvester.api.service.IngestService;
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,12 @@ public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 	 */
 	@Autowired
 	private IngestReportErrorService errorService;
+	
+	/**
+	 * The warning service.
+	 */
+	@Autowired
+	private IngestReportWarningsService warningService;
 
 	/**
 	 * Factory that can create {@link IngestJob} instances based on an
@@ -122,6 +129,8 @@ public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 			job.setJobStatusService(jobStatusService);
 			job.setReportService(reportService);
 			job.setErrorService(errorService);
+			job.setWarningService(warningService);
+
 			UUID jobUuid = UUID.randomUUID();
 			job.init(jobUuid, ingest, metadataIngester);
 			ingestService.save(ingest);
