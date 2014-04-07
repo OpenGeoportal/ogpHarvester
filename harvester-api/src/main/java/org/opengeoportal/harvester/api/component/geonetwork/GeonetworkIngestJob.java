@@ -90,7 +90,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
 					} catch (Exception ex) {
 						saveException(ex,
-								IngestReportErrorType.WEB_SERVICE_ERROR);
+								IngestReportErrorType.SYSTEM_ERROR);
 
 					}
 				}

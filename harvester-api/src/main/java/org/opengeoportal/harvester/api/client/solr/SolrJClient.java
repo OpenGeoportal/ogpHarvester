@@ -16,6 +16,8 @@ import org.apache.solr.client.solrj.response.TermsResponse.Term;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrException;
 import org.opengeoportal.harvester.api.domain.IngestReport;
+import org.opengeoportal.harvester.api.domain.IngestReportError;
+import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +56,7 @@ public class SolrJClient implements SolrClient {
 			UpdateResponse updateResponse = solrServer.commit();
 			return successResponse(updateResponse);
 		} catch (SolrServerException e) {
-			logger.error("Error in Sorl commit", e);
+			logger.error("Error in Solr commit", e);
 
 			return false;
 
@@ -141,22 +143,38 @@ public class SolrJClient implements SolrClient {
 		int status = 0;
 		boolean result = false;
 		UpdateResponse updateResponse = null;
+		String errMessage = "";
+
 		try {
 			logger.debug("Begin adding solr record batch");
 			updateResponse = solrServer.addBeans(records);
 			result = true;
 			logger.debug("Status code: " + updateResponse.getStatus());
 		} catch (IOException e) {
-			logger.error("IO Exception trying to add a bean collection", e);
+			errMessage = "IO Exception trying to add a bean collection to Solr.";
+			logger.error(errMessage, e);
+
 		} catch (SolrServerException e) {
-			logger.error("SolrServer Exception trying to add a bean collection", e);
+			errMessage = "SolrServer Exception trying to add a bean collection";
+			logger.error(errMessage, e);
 		} catch (SolrException e) {
-			logger.error("SolrException: ", e);
+			errMessage = "SolrException: ";
+			logger.error(errMessage, e);
 		} catch (Exception e) {
-			logger.error("Unknown Exception trying to add Bean", e);
+			errMessage = "Unknown Exception trying to add Bean to Solr.";
+			logger.error(errMessage, e);
 		}
-		logger.info("committing add to Solr");
-		commit();
+		
+		if (!result){
+			IngestReportError ire = new IngestReportError();
+			ire.setType(IngestReportErrorType.SYSTEM_ERROR);
+			ire.setMessage(errMessage);
+			report.addError(ire);
+		} else {
+			logger.info("committing add to Solr");
+			commit();
+		}
+		
 		return result;
 
 	}

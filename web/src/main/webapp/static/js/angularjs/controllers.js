@@ -190,12 +190,18 @@ var globalExtentMaxy;
         .controller('IngestDetailsCtrl', ['$scope', '$routeParams', 'Ingest', '$log',
             function ($scope, $routeParams, Ingest, $log) {
                 var isSelectedAll = function ($event, elementList) {
-                    var allSelected = elementList !== undefined;
+                    var allSelected = typeof elementList !== "undefined";
+                    if (allSelected){
+                    	if (elementList.length === 0){
+                    		allSelected = false;
+                    	}
+                    }
                     for (var i = 0; allSelected && (i < elementList.length); i++) {
                         if (!elementList[i].isChecked) {
                             allSelected = false;
                         }
                     }
+
                     return allSelected;
                 };
 
@@ -203,7 +209,7 @@ var globalExtentMaxy;
 
                 var selectAll = function ($event, elementList) {
                     var checkbox = $event.target;
-                    if (elementList !== undefined) {
+                    if (typeof elementList !== "undefined") {
                         for (var i = 0; i < elementList.length; i++) {
                             elementList[i].isChecked = checkbox.checked;
                         }
@@ -215,9 +221,9 @@ var globalExtentMaxy;
                 var anySelected = function (listOfList) {
                     var mergedList = [];
                     var oneSelected = false;
-                    if (listOfList !== undefined) {
+                    if (typeof listOfList !== "undefined") {
                         for (var i = 0; i < listOfList.length; i++) {
-                            if (listOfList[i] !== undefined) {
+                            if (typeof listOfList[i] !== "undefined") {
                                 $.merge(mergedList, listOfList[i]);
                             }
                         }
@@ -291,24 +297,53 @@ var globalExtentMaxy;
                         $scope.totalPassed = {
                             count: resp.passed.restrictedRecords + resp.passed.publicRecords
                         };
-                        $scope.totalWarnig = {
-                            count: resp.warning.unrequiredFields + resp.warning.webserviceWarnings
+
+                        $scope.totalWarning = {
+                            count: resp.warning.unrequiredFields
                         };
+                        
                         $scope.totalFailed = {
                             count: resp.error.requiredFields + resp.error.webServiceErrors + resp.error.systemErrors
                         };
-                        $scope.ingestDetails.error.allRequired = false;
-                        $scope.ingestDetails.error.allWebservice = false;
-                        $scope.ingestDetails.error.allSystem = false;
+                     
+                        var allRequired = false;
+                        angular.forEach($scope.ingestDetails.error.requiredFieldsList, function (requiredField, key) {
+                        	if (key > 0){
+                        		allRequired = true;
+                        	}
+                        });
+                        
+                        var allWeb = false;
+                        angular.forEach($scope.ingestDetails.error.webServiceErrors, function (wserr, key) {
+                        	if (key > 0){
+                        		allWeb = true;
+                        	}
+                        });
+                        
+                        var allSys = false;
+                        angular.forEach($scope.ingestDetails.error.systemErrors, function (syserr, key) {
+                        	if (key > 0){
+                        		allSys = true;
+                        	}
+                        });
+                        
+                        $scope.ingestDetails.error.allRequired = allRequired;
+                        $scope.ingestDetails.error.allWeb = allWeb;
+                        $scope.ingestDetails.error.allSystem = allSys;
 
                         $scope.$watch('ingestDetails.error.allRequired', function (value) {
                             angular.forEach($scope.ingestDetails.error.requiredFieldsList, function (requiredField, key) {
+
                                 requiredField.isChecked = value;
                             });
                         });
+                        
+                       
+                        
                         angular.forEach($scope.ingestDetails.requiredFieldsList, function (requiredField, key) {
                             $scope.$watch();
                         });
+
                     }
                 });
             }

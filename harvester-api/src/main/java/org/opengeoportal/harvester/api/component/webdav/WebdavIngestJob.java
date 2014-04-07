@@ -72,7 +72,7 @@ public class WebdavIngestJob extends BaseIngestJob {
 			logger.error("Error in Webdav Ingest " + this.ingest.getName()
 					+ " (getting resources)", e);
 
-			saveException(e, IngestReportErrorType.WEB_SERVICE_ERROR);
+			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
 			return;
 		}
 
@@ -98,7 +98,7 @@ public class WebdavIngestJob extends BaseIngestJob {
 										+ this.ingest.getName()
 										+ " (malformed url)", e);
 						saveException(e,
-								IngestReportErrorType.WEB_SERVICE_ERROR);
+								IngestReportErrorType.SYSTEM_ERROR);
 					}
 				}
 			} else {

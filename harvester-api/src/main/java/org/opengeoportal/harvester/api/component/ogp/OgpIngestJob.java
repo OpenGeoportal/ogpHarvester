@@ -68,7 +68,7 @@ public class OgpIngestJob extends BaseIngestJob {
 						records.get(i).setOriginalXmlMetadata(xmlString);
 					} catch (Exception e) {
 						saveException(e,
-								IngestReportErrorType.WEB_SERVICE_ERROR);
+								IngestReportErrorType.SYSTEM_ERROR);
 					}
 				}
 				if (records.size() > 0) {
@@ -87,7 +87,7 @@ public class OgpIngestJob extends BaseIngestJob {
 							}
 						} catch (Exception e) {
 							saveException(e,
-									IngestReportErrorType.WEB_SERVICE_ERROR);
+									IngestReportErrorType.SYSTEM_ERROR);
 						}
 					}
 					metadataIngester.ingest(metadataList, getIngestReport());
