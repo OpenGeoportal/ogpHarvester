@@ -132,6 +132,8 @@
 
 <spring:url value="/static/js/angularjs/ogpHarvester.js"
             var="ogpHarvesterUrl"/>
+<spring:url value="/static/js/angularjs/interceptors.js"
+            var="interceptorsUrl"/>
 <spring:url value="/static/js/angularjs/services.js" var="servicesUrl"/>
 <spring:url value="/static/js/angularjs/controllers.js"
             var="controllersUrl"/>
@@ -156,6 +158,7 @@
 <script type="text/javascript" src="${uiUtilsUrl}"></script>
 <script type="text/javascript" src="${angularUiSelect2Url}"></script>
 <script type="text/javascript" src="${ogpHarvesterUrl}"></script>
+<script type="text/javascript" src="${interceptorsUrl}"></script>
 <script type="text/javascript" src="${servicesUrl}"></script>
 <script type="text/javascript" src="${controllersUrl}"></script>
 <script type="text/javascript" src="${adminControllerUrl}"></script>
