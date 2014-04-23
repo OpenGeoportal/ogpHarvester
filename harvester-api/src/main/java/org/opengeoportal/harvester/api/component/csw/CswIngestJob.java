@@ -22,76 +22,82 @@ import java.util.List;
 /**
  * Class that do the ingest retrieving the medatada from a remote CSW server and
  * storing it in the local server.
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class CswIngestJob extends BaseIngestJob {
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Override
-	public void ingest() {
-		try {
-			CswClient cswClient = new CswClient(ingest.getActualUrl());
-			IngestCsw ingestCsw = (IngestCsw) ingest;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-			GetRecordsRequest request = cswClient.setupGetRecordsRequest(
-					ingestCsw.getCqlConstraint(),
-					ingestCsw.getFilterConstraint());
+    @Override
+    public void ingest() {
+        try {
+            CswClient cswClient = new CswClient(ingest.getActualUrl());
+            IngestCsw ingestCsw = (IngestCsw) ingest;
 
-			int start = 1;
-			boolean processFinished = false;
+            GetRecordsRequest request = cswClient.setupGetRecordsRequest(
+                    ingestCsw.getCqlConstraint(),
+                    ingestCsw.getFilterConstraint());
 
-			while (!(isInterruptRequested() || processFinished)) {
-				request.setStartPosition(start + "");
+            int start = 1;
+            boolean processFinished = false;
+            long failedRecordsCount = 0;
 
-				GetRecordsResponse response = cswClient.getRecords(request,
-						start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
+            while (!(isInterruptRequested() || processFinished)) {
+                request.setStartPosition(start + "");
 
-				List<Metadata> metadataList = Lists
-						.newArrayListWithCapacity(response.getResults().size());
+                GetRecordsResponse response = cswClient.getRecords(request,
+                        start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
 
-				for (Element record : response.getResults()) {
-					try {
-						Document doc = new Document((Element) record.clone());
+                List<Metadata> metadataList = Lists
+                        .newArrayListWithCapacity(response.getResults().size());
 
-						DOMOutputter domOutputter = new DOMOutputter();
-						org.w3c.dom.Document document = domOutputter
-								.output(doc);
+                for (Element record : response.getResults()) {
+                    try {
+                        Document doc = new Document((Element) record.clone());
 
-						MetadataParser parser = parserProvider
-								.getMetadataParser(document);
-						MetadataParserResponse parserResult = parser
-								.parse(document);
+                        DOMOutputter domOutputter = new DOMOutputter();
+                        org.w3c.dom.Document document = domOutputter
+                                .output(doc);
 
-						Metadata metadata = parserResult.getMetadata();
-						metadata.setInstitution(ingest.getNameOgpRepository());
+                        MetadataParser parser = parserProvider
+                                .getMetadataParser(document);
+                        MetadataParserResponse parserResult = parser
+                                .parse(document);
 
-						boolean valid = metadataValidator.validate(metadata,
-								report);
-						if (valid) {
-							metadataList.add(metadata);
-						}
-					} catch (Exception e) {
-						saveException(e,
-								IngestReportErrorType.WEB_SERVICE_ERROR);
-					}
-				}
+                        Metadata metadata = parserResult.getMetadata();
+                        metadata.setInstitution(ingest.getNameOgpRepository());
 
-				metadataIngester.ingest(metadataList, getIngestReport());
+                        boolean valid = metadataValidator.validate(metadata,
+                                report);
+                        if (valid) {
+                            metadataList.add(metadata);
+                        } else {
+                            failedRecordsCount++;
+                        }
+                    } catch (Exception e) {
+                        failedRecordsCount++;
+                        saveException(e,
+                                IngestReportErrorType.WEB_SERVICE_ERROR);
+                    }
+                }
 
-				// --- check to see if we have to perform other searches
-				int recCount = response.getNumberOfRecordsMatched();
+                report.setFailedRecordsCount(failedRecordsCount);
+                metadataIngester.ingest(metadataList, report);
 
-				processFinished = (start
-						+ CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE > recCount);
+                // --- check to see if we have to perform other searches
+                int recCount = response.getNumberOfRecordsMatched();
 
-				start += CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
-			}
+                processFinished = (start
+                        + CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE > recCount);
 
-		} catch (Exception e) {
-			logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
-			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
-		}
-	}
+                start += CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
+            }
+
+        } catch (Exception e) {
+            logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
+            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+        }
+    }
 }

@@ -17,7 +17,6 @@ import org.opengeoportal.harvester.api.service.IngestReportWarningsService;
 import java.util.Calendar;
 import java.util.UUID;
 
-
 /**
  * Base class for ingest jobs.
  *
@@ -25,6 +24,7 @@ import java.util.UUID;
  * @author <a href="mailto:jose.garcia@geocat.net">Jose García</a>.
  */
 public abstract class BaseIngestJob implements Runnable {
+
     /**
      * The ingest to be performed.
      */
@@ -66,7 +66,7 @@ public abstract class BaseIngestJob implements Runnable {
     private IngestReportService reportService;
 
     private IngestReportErrorService errorService;
-    
+
     private IngestReportWarningsService warningService;
 
     /**
@@ -86,12 +86,12 @@ public abstract class BaseIngestJob implements Runnable {
     /**
      * Prepare the IngestJob to be run.
      *
-     * @param jobId            job identifier.
-     * @param ingest           ingest to be executed.
+     * @param jobId job identifier.
+     * @param ingest ingest to be executed.
      * @param metadataIngester the ingester in charge to store the metadata.
      */
     public void init(UUID jobId, Ingest ingest,
-                     MetadataIngester metadataIngester) {
+            MetadataIngester metadataIngester) {
         this.jobId = jobId;
         this.ingest = ingest;
         this.metadataIngester = metadataIngester;
@@ -153,6 +153,7 @@ public abstract class BaseIngestJob implements Runnable {
     /**
      * Method to be implemented by the child implementations and do the actual
      * ingest work.
+     *
      * @return true if job has been interrupted, false otherwise.
      */
     protected abstract void ingest();
@@ -198,7 +199,7 @@ public abstract class BaseIngestJob implements Runnable {
     public void setErrorService(IngestReportErrorService errorService) {
         this.errorService = errorService;
     }
-    
+
     /**
      * @return the warningService
      */
@@ -212,7 +213,6 @@ public abstract class BaseIngestJob implements Runnable {
     public void setWarningService(IngestReportWarningsService warningService) {
         this.warningService = warningService;
     }
-    
 
     /**
      * Set a flag that indicates job must be interrupted.
@@ -230,24 +230,22 @@ public abstract class BaseIngestJob implements Runnable {
         return interruptRequest;
     }
 
-	/**
-	 * Create a new IngestError and store it; always for system errors
-	 * 
-	 * @param e
-	 *            Exception to be logged.
-	 * @param errorType
-	 *            type of error.
-	 */
-	protected void saveException(Exception e, IngestReportErrorType errorType) {
-		IngestReportError error = new IngestReportError();
-		error.setType(errorType);
-		e = (Exception) e.fillInStackTrace();
-		//error.setField(e.getClass().getSimpleName());
-		error.setField("error");
-		error.setMessage(e.getLocalizedMessage());
-		error.setMetadata(ExceptionUtils.getStackTrace(e));
-		error.setReport(report);
-		getErrorService().save(error);
-		report.addError(error);
-	}
+    /**
+     * Create a new IngestError and store it; always for system errors
+     *
+     * @param e Exception to be logged.
+     * @param errorType type of error.
+     */
+    protected void saveException(Exception e, IngestReportErrorType errorType) {
+        IngestReportError error = new IngestReportError();
+        error.setType(errorType);
+        e = (Exception) e.fillInStackTrace();
+        //error.setField(e.getClass().getSimpleName());
+        error.setField("error");
+        error.setMessage(e.getLocalizedMessage());
+        error.setMetadata(ExceptionUtils.getStackTrace(e));
+        error.setReport(report);
+        getErrorService().save(error);
+        report.addError(error);
+    }
 }

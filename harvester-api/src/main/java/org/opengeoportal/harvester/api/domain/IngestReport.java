@@ -42,109 +42,121 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class IngestReport extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = 2909056496657495298L;
 
-	@Column
-	private long restrictedRecords;
+    private static final long serialVersionUID = 2909056496657495298L;
 
-	@Column
-	private long publicRecords;
+    @Column
+    private long restrictedRecords;
 
-	@Column
-	private long vectorRecords;
+    @Column
+    private long publicRecords;
 
-	@Column
-	private long rasterRecords;
+    @Column
+    private long vectorRecords;
 
-	@Column
-	private long unrequiredFieldWarnings;
+    @Column
+    private long rasterRecords;
 
-	@Column
-	private long webServiceWarnings;
+    @Column
+    private long unrequiredFieldWarnings;
 
-	@OneToOne
-	private IngestJobStatus jobStatus;
+    @Column
+    private long webServiceWarnings;
 
-	@OneToMany
-	@JoinColumn(name = "report_id")
-	private List<IngestReportError> errors = new ArrayList<IngestReportError>();
+    @Column(nullable = false)
+    private long failedRecordsCount;
 
-	public long getRestrictedRecords() {
-		return restrictedRecords;
-	}
+    @OneToOne
+    private IngestJobStatus jobStatus;
 
-	public void setRestrictedRecords(long restrictedRecords) {
-		this.restrictedRecords = restrictedRecords;
-	}
+    @OneToMany
+    @JoinColumn(name = "report_id")
+    private List<IngestReportError> errors = new ArrayList<IngestReportError>();
 
-	public long getPublicRecords() {
-		return publicRecords;
-	}
+    public long getRestrictedRecords() {
+        return restrictedRecords;
+    }
 
-	public void setPublicRecords(long publicRecords) {
-		this.publicRecords = publicRecords;
-	}
+    public void setRestrictedRecords(long restrictedRecords) {
+        this.restrictedRecords = restrictedRecords;
+    }
 
-	public long getVectorRecords() {
-		return vectorRecords;
-	}
+    public long getPublicRecords() {
+        return publicRecords;
+    }
 
-	public void setVectorRecords(long vectorRecords) {
-		this.vectorRecords = vectorRecords;
-	}
+    public void setPublicRecords(long publicRecords) {
+        this.publicRecords = publicRecords;
+    }
 
-	public long getRasterRecords() {
-		return rasterRecords;
-	}
+    public long getVectorRecords() {
+        return vectorRecords;
+    }
 
-	public void setRasterRecords(long rasterRecords) {
-		this.rasterRecords = rasterRecords;
-	}
+    public void setVectorRecords(long vectorRecords) {
+        this.vectorRecords = vectorRecords;
+    }
 
-	public long getUnrequiredFieldWarnings() {
-		return unrequiredFieldWarnings;
-	}
+    public long getRasterRecords() {
+        return rasterRecords;
+    }
 
-	public void setUnrequiredFieldWarnings(long unrequiredFieldWarnings) {
-		this.unrequiredFieldWarnings = unrequiredFieldWarnings;
-	}
+    public void setRasterRecords(long rasterRecords) {
+        this.rasterRecords = rasterRecords;
+    }
 
-	public void increaseUnrequiredFieldWarnings() {
-		this.unrequiredFieldWarnings++;
-	}
+    public long getUnrequiredFieldWarnings() {
+        return unrequiredFieldWarnings;
+    }
 
-	public long getWebServiceWarnings() {
-		return webServiceWarnings;
-	}
+    public void setUnrequiredFieldWarnings(long unrequiredFieldWarnings) {
+        this.unrequiredFieldWarnings = unrequiredFieldWarnings;
+    }
 
-	public void setWebServiceWarnings(long webServiceWarnings) {
-		this.webServiceWarnings = webServiceWarnings;
-	}
+    public void increaseUnrequiredFieldWarnings() {
+        this.unrequiredFieldWarnings++;
+    }
 
-	public List<IngestReportError> getErrors() {
-		return errors;
-	}
+    public long getWebServiceWarnings() {
+        return webServiceWarnings;
+    }
 
-	public void setErrors(List<IngestReportError> errors) {
-		this.errors = errors;
-	}
+    public void setWebServiceWarnings(long webServiceWarnings) {
+        this.webServiceWarnings = webServiceWarnings;
+    }
 
-	public void addError(IngestReportError error) {
-		errors.add(error);
-	}
+    public List<IngestReportError> getErrors() {
+        return errors;
+    }
 
-	/**
-	 * @return the jobStatus
-	 */
-	public IngestJobStatus getJobStatus() {
-		return jobStatus;
-	}
+    public void setErrors(List<IngestReportError> errors) {
+        this.errors = errors;
+    }
 
-	/**
-	 * @param jobStatus the jobStatus to set
-	 */
-	public void setJobStatus(IngestJobStatus jobStatus) {
-		this.jobStatus = jobStatus;
-	}
+    public void addError(IngestReportError error) {
+        errors.add(error);
+    }
+
+    /**
+     * @return the jobStatus
+     */
+    public IngestJobStatus getJobStatus() {
+        return jobStatus;
+    }
+
+    /**
+     * @param jobStatus the jobStatus to set
+     */
+    public void setJobStatus(IngestJobStatus jobStatus) {
+        this.jobStatus = jobStatus;
+    }
+
+    public long getFailedRecordsCount() {
+        return failedRecordsCount;
+    }
+
+    public void setFailedRecordsCount(long failedRecordsCount) {
+        this.failedRecordsCount = failedRecordsCount;
+    }
 
 }
