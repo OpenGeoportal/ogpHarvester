@@ -237,6 +237,7 @@ public class ManageIngestController {
                 errorMap.get(IngestReportErrorType.WEB_SERVICE_ERROR));
         errorsMap.put("systemErrors",
                 errorMap.get(IngestReportErrorType.SYSTEM_ERROR));
+        errorsMap.put("failedrecordscount", report.getFailedRecordsCount());
 
         // Detail of required field errors
         List<SimpleEntry<String, Long>> requiredFieldSubcat = handleDetailErrorCount(

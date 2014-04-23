@@ -303,7 +303,7 @@ var globalExtentMaxy;
                         };
                         
                         $scope.totalFailed = {
-                            count: resp.error.requiredFields + resp.error.webServiceErrors + resp.error.systemErrors
+                            count: resp.error.failedrecordscount
                         };
                      
                         var allRequired = false;

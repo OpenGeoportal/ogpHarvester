@@ -21,93 +21,100 @@ import com.google.common.collect.Lists;
 
 /**
  * IngestJob that read from a remote Geonetwork.
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class GeonetworkIngestJob extends BaseIngestJob {
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.component.BaseIngestJob#ingest()
-	 */
-	@Override
-	public void ingest() {
-		try {
-			boolean processFinished = false;
-			int page = 0;
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-			URL geonetworkURL = new URL(ingest.getActualUrl());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.component.BaseIngestJob#ingest()
+     */
+    @Override
+    public void ingest() {
+        try {
+            boolean processFinished = false;
+            int page = 0;
+            long failedRecordsCount = 0;
 
-			GeoNetworkClient gnClient = new GeoNetworkClient(geonetworkURL);
+            URL geonetworkURL = new URL(ingest.getActualUrl());
 
-			GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
-					(IngestGeonetwork) ingest);
-			logger.info("GeonetworkIngestJob: search parameters "
-					+ searchParameters.toString());
+            GeoNetworkClient gnClient = new GeoNetworkClient(geonetworkURL);
 
-			while (!(isInterruptRequested() || processFinished)) {
-				if (logger.isInfoEnabled()) {
-					logger.info(String
-							.format("Ingest %d: requesting page=%d,"
-									+ " pageSize=%d, from=%d, to=%d to GN",
-									ingest.getId(), page,
-									searchParameters.getPageSize(),
-									searchParameters.getFrom(),
-									searchParameters.getTo()));
-				}
-				searchParameters.setPage(page++);
-				GeoNetworkSearchResponse searchResponse = gnClient
-						.search(searchParameters);
+            GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
+                    (IngestGeonetwork) ingest);
+            logger.info("GeonetworkIngestJob: search parameters "
+                    + searchParameters.toString());
 
-				List<Metadata> metadataList = Lists
-						.newArrayListWithCapacity(searchResponse
-								.getMetadataSearchResults().size());
+            while (!(isInterruptRequested() || processFinished)) {
+                if (logger.isInfoEnabled()) {
+                    logger.info(String
+                            .format("Ingest %d: requesting page=%d,"
+                                    + " pageSize=%d, from=%d, to=%d to GN",
+                                    ingest.getId(), page,
+                                    searchParameters.getPageSize(),
+                                    searchParameters.getFrom(),
+                                    searchParameters.getTo()));
+                }
+                searchParameters.setPage(page++);
+                GeoNetworkSearchResponse searchResponse = gnClient
+                        .search(searchParameters);
 
-				for (GeoNetworkSearchResult record : searchResponse
-						.getMetadataSearchResults()) {
+                List<Metadata> metadataList = Lists
+                        .newArrayListWithCapacity(searchResponse
+                                .getMetadataSearchResults().size());
 
-					try {
-						Document document = gnClient.retrieveMetadata(record
-								.getId());
+                for (GeoNetworkSearchResult record : searchResponse
+                        .getMetadataSearchResults()) {
 
-						MetadataParser parser = parserProvider
-								.getMetadataParser(document);
-						MetadataParserResponse parserResult = parser
-								.parse(document);
+                    try {
+                        Document document = gnClient.retrieveMetadata(record
+                                .getId());
 
-						Metadata metadata = parserResult.getMetadata();
-						metadata.setInstitution(ingest.getNameOgpRepository());
+                        MetadataParser parser = parserProvider
+                                .getMetadataParser(document);
+                        MetadataParserResponse parserResult = parser
+                                .parse(document);
 
-						boolean valid = metadataValidator.validate(metadata,
-								report);
-						if (valid) {
-							metadataList.add(metadata);
-						}
+                        Metadata metadata = parserResult.getMetadata();
+                        metadata.setInstitution(ingest.getNameOgpRepository());
 
-					} catch (Exception ex) {
-						saveException(ex,
-								IngestReportErrorType.SYSTEM_ERROR);
+                        boolean valid = metadataValidator.validate(metadata,
+                                report);
+                        if (valid) {
+                            metadataList.add(metadata);
+                        } else {
+                            failedRecordsCount++;
+                        }
 
-					}
-				}
+                    } catch (Exception ex) {
+                        failedRecordsCount++;
+                        saveException(ex,
+                                IngestReportErrorType.SYSTEM_ERROR);
 
-				metadataIngester.ingest(metadataList, getIngestReport());
+                    }
+                }
+                report.setFailedRecordsCount(failedRecordsCount);
+                metadataIngester.ingest(metadataList, report);
 
-				// --- check to see if we have to perform additional searches
-				processFinished = (searchParameters.getFrom() + searchParameters.getPageSize() > searchResponse
-						.getTotal());
+                // --- check to see if we have to perform additional searches
+                processFinished = (searchParameters.getFrom() + searchParameters.getPageSize() > searchResponse
+                        .getTotal());
 
-			}
+            }
 
-		} catch (Exception e) {
-			logger.error(
-					"Error in Geonetwork Ingest: " + this.ingest.getName(), e);
-			saveException(e, IngestReportErrorType.SYSTEM_ERROR);
-		}
+        } catch (Exception e) {
+            logger.error(
+                    "Error in Geonetwork Ingest: " + this.ingest.getName(), e);
+            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+        }
 
-	}
+    }
 }
