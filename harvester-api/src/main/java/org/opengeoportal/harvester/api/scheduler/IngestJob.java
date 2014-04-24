@@ -39,6 +39,7 @@ import org.opengeoportal.harvester.api.component.MetadataIngester;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.exception.InstanceNotFoundException;
 import org.opengeoportal.harvester.api.exception.UnscheduledIngestException;
+import org.opengeoportal.harvester.api.service.ExceptionTranslator;
 import org.opengeoportal.harvester.api.service.IngestJobStatusService;
 import org.opengeoportal.harvester.api.service.IngestReportErrorService;
 import org.opengeoportal.harvester.api.service.IngestReportService;
@@ -100,6 +101,9 @@ public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 	 */
 	@Autowired
 	private MetadataIngester metadataIngester;
+        
+        @Autowired
+        private ExceptionTranslator exceptionTranslator;
 
 	/** Ingest identifier in the database. */
 	private String ingestId;
@@ -130,6 +134,7 @@ public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 			job.setReportService(reportService);
 			job.setErrorService(errorService);
 			job.setWarningService(warningService);
+                        job.setExceptionTranslatorService(exceptionTranslator);
 
 			UUID jobUuid = UUID.randomUUID();
 			job.init(jobUuid, ingest, metadataIngester);

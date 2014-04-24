@@ -73,9 +73,9 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
                 for (GeoNetworkSearchResult record : searchResponse
                         .getMetadataSearchResults()) {
-
+                    Document document = null;
                     try {
-                        Document document = gnClient.retrieveMetadata(record
+                        document = gnClient.retrieveMetadata(record
                                 .getId());
 
                         MetadataParser parser = parserProvider
@@ -97,7 +97,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
                     } catch (Exception ex) {
                         failedRecordsCount++;
                         saveException(ex,
-                                IngestReportErrorType.SYSTEM_ERROR);
+                                IngestReportErrorType.SYSTEM_ERROR, document);
 
                     }
                 }

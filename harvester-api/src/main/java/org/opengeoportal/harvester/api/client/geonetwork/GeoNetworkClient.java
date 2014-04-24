@@ -1,5 +1,5 @@
 /*
- * IngestFormBean.java
+ * GeoNetworkClient.java
  *
  * Copyright (C) 2013
  *
@@ -44,13 +44,16 @@ import java.util.List;
  *
  */
 public class GeoNetworkClient {
+
     private static final Namespace GEONET_NS = Namespace.getNamespace("geonet",
-    		"http://www.fao.org/geonetwork");
+            "http://www.fao.org/geonetwork");
 
-    /** GeoNetwork server url. **/
-    private String serverUrl;
+    /**
+     * GeoNetwork server url. *
+     */
+    private final String serverUrl;
 
-    private XmlRequest request;
+    private final XmlRequest request;
 
     public GeoNetworkClient(URL serverUrl) {
         this.serverUrl = serverUrl.toString();
@@ -64,28 +67,28 @@ public class GeoNetworkClient {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-	public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
+    public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
         List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
 
         request.setUrl(new URL(serverUrl + "/srv/eng/xml.info?type=sources"));
 
         Element xmlResponse = request.execute();
         /* Response xml example:
-            <info>
-                <sources>
-                    <source>
-                        <uuid>321d0c64-24ae-460d-89fc-e425c8857331</uuid>
-                        <name>SOURCE 1</name>
-                    </source>
-                    <source>
-                        <uuid>f6014c39-7f47-472f-915b-920d334f4780</uuid>
-                        <name>SOURCE 1</name>
-                    </source>
-                </sources>
-            </info>
+         <info>
+         <sources>
+         <source>
+         <uuid>321d0c64-24ae-460d-89fc-e425c8857331</uuid>
+         <name>SOURCE 1</name>
+         </source>
+         <source>
+         <uuid>f6014c39-7f47-472f-915b-920d334f4780</uuid>
+         <name>SOURCE 1</name>
+         </source>
+         </sources>
+         </info>
          */
 
-        for(Element source: (List<Element>) xmlResponse.getChild("sources").getChildren()) {
+        for (Element source : (List<Element>) xmlResponse.getChild("sources").getChildren()) {
             sources.add(new AbstractMap.SimpleEntry<String, String>(source.getChildText("uuid"), source.getChildText("name")));
         }
 
@@ -93,29 +96,28 @@ public class GeoNetworkClient {
     }
 
     public org.w3c.dom.Document retrieveMetadata(int metadataId) throws Exception {
-        //request.setAddress(serverUrl + "/srv/en/xml.metadata.get");
         request.setUrl(new URL(serverUrl + "/srv/eng/xml.metadata.get"));
 
         request.clearParams();
         request.addParam("id", metadataId);
 
-
-        Element md   = request.execute();
+        Element md = request.execute();
         Element info = md.getChild("info", GEONET_NS);
 
-        if (info != null) { info.detach(); }
-
+        if (info != null) {
+            info.detach();
+        }
 
         Document doc = new Document(md);
 
         DOMOutputter domOutputter = new DOMOutputter();
-        org.w3c.dom.Document document =  domOutputter.output(doc);
+        org.w3c.dom.Document document = domOutputter.output(doc);
 
         return document;
     }
 
     @SuppressWarnings("unchecked")
-	public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
+    public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
         GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
 
         request.setUrl(new URL(serverUrl + "/srv/eng/xml.search"));
@@ -125,7 +127,7 @@ public class GeoNetworkClient {
         response.setTotal(Integer.parseInt(xmlResponse.getChild("summary").getAttribute("count").getValue()));
 
         List<Element> records = xmlResponse.getChildren("metadata");
-        for(Element record : records) {
+        for (Element record : records) {
             Element info = record.getChild("info", GEONET_NS);
 
             if (info == null) {

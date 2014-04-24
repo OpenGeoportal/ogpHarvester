@@ -90,7 +90,7 @@ public class WebdavIngestJob extends BaseIngestJob {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Processing webdav folder resource: "
                                 + res.toString());
-                    }
+                    } 
                     try {
                         String absoluteHrefPath = getResourceAbsoluteUrl(res,
                                 url);
@@ -133,11 +133,12 @@ public class WebdavIngestJob extends BaseIngestJob {
      */
     private long processFile(DavResource res, String baseUrl) {
         long failedRecordsCount = 0;
+        Document document = null;
         try {
             // Retrieve file content
             String absoluteHrefPath = getResourceAbsoluteUrl(res, baseUrl);
 
-            Document document = XmlUtil.load(absoluteHrefPath);
+            document = XmlUtil.load(absoluteHrefPath);
             MetadataParser parser = parserProvider.getMetadataParser(document);
             MetadataParserResponse parserResult = parser.parse(document);
 
@@ -156,7 +157,7 @@ public class WebdavIngestJob extends BaseIngestJob {
             failedRecordsCount++;
             logger.error("Error in Webdav Ingest: " + this.ingest.getName()
                     + " (processing file:" + baseUrl + ")", e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+            saveException(e, IngestReportErrorType.SYSTEM_ERROR, document);
         }
         return failedRecordsCount;
     }

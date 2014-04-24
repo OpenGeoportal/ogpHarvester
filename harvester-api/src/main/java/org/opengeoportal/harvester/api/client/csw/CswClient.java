@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import org.opengeoportal.harvester.api.exception.CswClientException;
 
 
 public class CswClient {
@@ -54,8 +55,7 @@ public class CswClient {
 
         } catch(Exception e) {
             logger.warn("Raised exception when searching : "+ e);
-            //throw new OperationAbortedEx("Raised exception when searching: " + e.getMessage(), e);
-            throw new Exception("Raised exception when searching: " + e.getMessage(), e);
+            throw new CswClientException("Raised exception when searching: " + e.getMessage(), e);
         }
     }
 

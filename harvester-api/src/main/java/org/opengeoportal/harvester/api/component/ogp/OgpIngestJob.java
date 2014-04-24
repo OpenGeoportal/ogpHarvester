@@ -4,9 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.util.ClientUtils;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrInputDocument;
 import org.opengeoportal.harvester.api.client.solr.SolrClient;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
@@ -86,7 +83,7 @@ public class OgpIngestJob extends BaseIngestJob {
                         } catch (Exception e) {
                             failedRecordsCount++;
                             saveException(e,
-                                    IngestReportErrorType.SYSTEM_ERROR);
+                                    IngestReportErrorType.SYSTEM_ERROR, record);
                         }
                     }
                     currentReport.setFailedRecordsCount(failedRecordsCount);

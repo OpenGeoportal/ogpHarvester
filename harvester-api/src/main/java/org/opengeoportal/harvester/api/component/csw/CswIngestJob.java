@@ -18,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import org.jdom.JDOMException;
+import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
 
 /**
  * Class that do the ingest retrieving the medatada from a remote CSW server and
@@ -54,11 +56,12 @@ public class CswIngestJob extends BaseIngestJob {
                         .newArrayListWithCapacity(response.getResults().size());
 
                 for (Element record : response.getResults()) {
+                    org.w3c.dom.Document document = null;
                     try {
                         Document doc = new Document((Element) record.clone());
 
                         DOMOutputter domOutputter = new DOMOutputter();
-                        org.w3c.dom.Document document = domOutputter
+                        document = domOutputter
                                 .output(doc);
 
                         MetadataParser parser = parserProvider
@@ -76,10 +79,19 @@ public class CswIngestJob extends BaseIngestJob {
                         } else {
                             failedRecordsCount++;
                         }
-                    } catch (Exception e) {
+                    } catch (JDOMException e) {
                         failedRecordsCount++;
                         saveException(e,
-                                IngestReportErrorType.WEB_SERVICE_ERROR);
+                                IngestReportErrorType.WEB_SERVICE_ERROR, document);
+                    } catch (UnsupportedMetadataType e) {
+                        failedRecordsCount++;
+                        saveException(e,
+                                IngestReportErrorType.WEB_SERVICE_ERROR, document);
+                    }
+                    catch (Exception e) {
+                        failedRecordsCount++;
+                        saveException(e,
+                                IngestReportErrorType.SYSTEM_ERROR, document);
                     }
                 }
 
