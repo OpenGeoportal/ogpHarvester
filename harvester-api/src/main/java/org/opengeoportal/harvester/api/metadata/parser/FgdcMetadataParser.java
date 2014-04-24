@@ -21,106 +21,111 @@ import com.google.common.collect.Multimap;
 
 /**
  * Metadata parser capable of process FGDC metadata.
- * 
+ *
  * @author <a href="mailto:jose.garcia@geocat.net">José García</a>.
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class FgdcMetadataParser extends BaseXmlMetadataParser {
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
-	/** Location resolver. */
-	private final LocationResolver locationResolver = new FgdcLocationResolver();
-	
-	private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
 
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    /**
+     * Location resolver.
+     */
+    private final LocationResolver locationResolver = new FgdcLocationResolver();
 
-	public static enum FgdcTag implements Tag {
-		Title("title", "/metadata/idinfo/citation/citeinfo/title"), Abstract(
-				"abstract", "/metadata/idinfo/descript/abstract"), LayerName(
-				"ftname", "/metadata/idinfo/citation/citeinfo/ftname"), Publisher(
-				"publish", "/metadata/idinfo/citation/citeinfo/pubinfo/publish"), Originator(
-				"origin", "/metadata/idinfo/citation/citeinfo/origin"), WestBc(
-				"westbc", "/metadata/idinfo/spdom/bounding/westbc"), EastBc(
-				"eastbc", "/metadata/idinfo/spdom/bounding/eastbc"), NorthBc(
-				"northbc", "/metadata/idinfo/spdom/bounding/northbc"), SouthBc(
-				"southbc", "/metadata/idinfo/spdom/bounding/southbc"), Access(
-				"accconst", "/metadata/idinfo/accconst"),
-		// Keywords
-		PlaceKeywordsHeader("place", "/metadata/idinfo/keywords/place"), ThemeKeywordsHeader(
-				"theme", "/metadata/idinfo/keywords/theme"), PlaceKeywordsThesaurus(
-				"placekt", "/metadata/idinfo/keywords/place/placekt"), ThemeKeywordsThesaurus(
-				"themekt", "/metadata/idinfo/keywords/theme/placekt"), PlaceKeywords(
-				"placekey", "placekey"), // relative xpath
-		ThemeKeywords("themekey", "themekey"), // relative xpath
-		// Data type
-		DataType_Srccitea("srccitea", "/metadata/spdoinfo/srccitea"), // TODO:
-																		// Verify
-																		// xpath
-		DataType_Direct("direct", "/metadata/spdoinfo/direct"), DataType_Sdtstype(
-				"sdtstype", "/metadata/spdoinfo/ptvctinf/sdtsterm/sdtstype"), Date_Caldate(
-				"caldate", "/metadata/idinfo/timeperd/timeinfo/sngdate/caldate"), Date_Begdate(
-				"begdate",
-				"/metadata/idinfo/timeperd/timeinfo/rngdates/begdate"), Date_DateStamp(
-				"dateStamp", "/metadata/idinfo/timeperd/timeinfo/dateStamp"); // TODO:
-																				// Verify
-																				// xpath;
+    private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
 
-		private final String tagName;
-		private final String xPath; // XML xpath
+    public static enum FgdcTag implements Tag {
 
-		FgdcTag(String tagName, String xPath) {
-			this.tagName = tagName;
-			this.xPath = xPath;
-		}
+        Title("title", "/metadata/idinfo/citation/citeinfo/title"), Abstract(
+                "abstract", "/metadata/idinfo/descript/abstract"), LayerName(
+                        "ftname", "/metadata/idinfo/citation/citeinfo/ftname"), Publisher(
+                        "publish", "/metadata/idinfo/citation/citeinfo/pubinfo/publish"), Originator(
+                        "origin", "/metadata/idinfo/citation/citeinfo/origin"), WestBc(
+                        "westbc", "/metadata/idinfo/spdom/bounding/westbc"), EastBc(
+                        "eastbc", "/metadata/idinfo/spdom/bounding/eastbc"), NorthBc(
+                        "northbc", "/metadata/idinfo/spdom/bounding/northbc"), SouthBc(
+                        "southbc", "/metadata/idinfo/spdom/bounding/southbc"), Access(
+                        "accconst", "/metadata/idinfo/accconst"),
+        // Keywords
+        PlaceKeywordsHeader("place", "/metadata/idinfo/keywords/place"), ThemeKeywordsHeader(
+                "theme", "/metadata/idinfo/keywords/theme"), PlaceKeywordsThesaurus(
+                        "placekt", "/metadata/idinfo/keywords/place/placekt"), ThemeKeywordsThesaurus(
+                        "themekt", "/metadata/idinfo/keywords/theme/placekt"), PlaceKeywords(
+                        "placekey", "placekey"), // relative xpath
+        ThemeKeywords("themekey", "themekey"), // relative xpath
+        // Data type
+        DataType_Srccitea("srccitea", "/metadata/spdoinfo/srccitea"), // TODO:
+        // Verify
+        // xpath
+        DataType_Direct("direct", "/metadata/spdoinfo/direct"), DataType_Sdtstype(
+                "sdtstype", "/metadata/spdoinfo/ptvctinf/sdtsterm/sdtstype"), Date_Caldate(
+                        "caldate", "/metadata/idinfo/timeperd/timeinfo/sngdate/caldate"), Date_Begdate(
+                        "begdate",
+                        "/metadata/idinfo/timeperd/timeinfo/rngdates/begdate"), Date_DateStamp(
+                        "dateStamp", "/metadata/idinfo/timeperd/timeinfo/dateStamp"); // TODO:
+        // Verify
+        // xpath;
 
-		public String getTagName() {
-			return tagName;
-		}
+        private final String tagName;
+        private final String xPath; // XML xpath
 
-		public String getXPathName() {
-			return xPath;
-		}
-	}
+        FgdcTag(String tagName, String xPath) {
+            this.tagName = tagName;
+            this.xPath = xPath;
+        }
 
-	@Override
-	protected HashMap<String, String> getNamespaces() {
-		return new HashMap<String, String>();
-	}
+        public String getTagName() {
+            return tagName;
+        }
 
-	@Override
-	protected void handleOriginator() {
-		Tag tag = FgdcTag.Originator;
-		try {
-			this.metadataParserResponse.getMetadata().setOriginator(
-					getDocumentValue(tag));
-		} catch (Exception e) {
-			logger.error("handleOriginator: " + e.getMessage());
-			this.metadataParserResponse.addWarning(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+        public String getXPathName() {
+            return xPath;
+        }
+    }
 
-	@Override
-	protected void handlePublisher() {
-		Tag tag = FgdcTag.Publisher;
-		try {
-			this.metadataParserResponse.getMetadata().setPublisher(
-					getDocumentValue(tag));
-		} catch (Exception e) {
-			logger.error("handlePublisher: " + e.getMessage());
-			this.metadataParserResponse.addWarning(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+    @Override
+    protected HashMap<String, String> getNamespaces() {
+        return new HashMap<String, String>();
+    }
+
+    @Override
+    protected void handleOriginator() {
+        Tag tag = FgdcTag.Originator;
+        try {
+            this.metadataParserResponse.getMetadata().setOriginator(
+                    getDocumentValue(tag));
+        } catch (Exception e) {
+            logger.error("handleOriginator: " + e.getMessage());
+            this.metadataParserResponse.addWarning(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
+
+    @Override
+    protected void handlePublisher() {
+        Tag tag = FgdcTag.Publisher;
+        try {
+            this.metadataParserResponse.getMetadata().setPublisher(
+                    getDocumentValue(tag));
+        } catch (Exception e) {
+            logger.error("handlePublisher: " + e.getMessage());
+            this.metadataParserResponse.addWarning(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
 
     @Override
     protected void handleId() {
 
     }
 
-	@Override
-	protected void handleLayerName() {
+    @Override
+    protected void handleLayerName() {
         // LayerName calculated from the location links
         Multimap<LocationLink.LocationType, LocationLink> locationMap = getLocationResolver()
                 .resolveLocation(document);
@@ -136,7 +141,7 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
                     String resourceName = it.next().getResourceName();
 
                     if (StringUtils.isNotEmpty(resourceName)) {
-                        this.metadataParserResponse.getMetadata().setOwsName(resourceName) ;
+                        this.metadataParserResponse.getMetadata().setOwsName(resourceName);
                         break;
                     }
                 }
@@ -153,300 +158,298 @@ public class FgdcMetadataParser extends BaseXmlMetadataParser {
             this.metadataParserResponse.addError(tag.toString(),
                     tag.getTagName(), e.getClass().getName(), e.getMessage());
         }
-	}
+    }
 
-	@Override
-	protected void handleAbstract() {
-		Tag tag = FgdcTag.Abstract;
-		try {
-			this.metadataParserResponse.getMetadata().setDescription(
-					getDocumentValue(tag));
-		} catch (Exception e) {
-			logger.error("handleAbstract: " + e.getMessage());
-			this.metadataParserResponse.addWarning(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+    @Override
+    protected void handleAbstract() {
+        Tag tag = FgdcTag.Abstract;
+        try {
+            this.metadataParserResponse.getMetadata().setDescription(
+                    getDocumentValue(tag));
+        } catch (Exception e) {
+            logger.error("handleAbstract: " + e.getMessage());
+            this.metadataParserResponse.addWarning(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
 
-	@Override
-	protected void handleTitle() {
-		Tag tag = FgdcTag.Title;
-		try {
-			this.metadataParserResponse.getMetadata().setTitle(
-					getDocumentValue(tag));
-		} catch (Exception e) {
-			logger.error("handleTitle: " + e.getMessage());
-			this.metadataParserResponse.addWarning(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+    @Override
+    protected void handleTitle() {
+        Tag tag = FgdcTag.Title;
+        try {
+            this.metadataParserResponse.getMetadata().setTitle(
+                    getDocumentValue(tag));
+        } catch (Exception e) {
+            logger.error("handleTitle: " + e.getMessage());
+            this.metadataParserResponse.addWarning(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
 
-	@Override
-	protected void handleDate() {
-		String dateString = null;
-		Date dateValue = null;
-		try {
-			dateString = getDocumentValue(FgdcTag.Date_Caldate);
-		} catch (Exception e) {
-			dateString = null;
-		}
+    @Override
+    protected void handleDate() {
+        String dateString = null;
+        Date dateValue = null;
+        try {
+            dateString = getDocumentValue(FgdcTag.Date_Caldate);
+        } catch (Exception e) {
+            dateString = null;
+        }
 
-		if (StringUtils.isEmpty(dateString)) {
-			try {
-				dateString = getDocumentValue(FgdcTag.Date_Begdate);
-			} catch (Exception e) {
-				dateString = null;
-			}
-		}
+        if (StringUtils.isEmpty(dateString)) {
+            try {
+                dateString = getDocumentValue(FgdcTag.Date_Begdate);
+            } catch (Exception e) {
+                dateString = null;
+            }
+        }
 
-		if (StringUtils.isEmpty(dateString)) {
-			try {
-				dateString = getDocumentValue(FgdcTag.Date_DateStamp);
-			} catch (Exception e) {
-				logger.warn("No valid Content Date could be found in the document.");
-				this.metadataParserResponse.getMetadata().setContentDate(null);
-				return;
-			}
-		}
+        if (StringUtils.isEmpty(dateString)) {
+            try {
+                dateString = getDocumentValue(FgdcTag.Date_DateStamp);
+            } catch (Exception e) {
+                logger.warn("No valid Content Date could be found in the document.");
+                this.metadataParserResponse.getMetadata().setContentDate(null);
+                return;
+            }
+        }
 
-		try {
-			logger.debug("DATE VALUE#######:" + dateString);
-			dateValue = processDateString(dateString);
-			this.metadataParserResponse.getMetadata().setContentDate(dateValue);
-		} catch (Exception e) {
-			try {
-				dateString = dateString.substring(0, 3);
-				int dateValueInt = Integer.parseInt(dateString);
-				dateString = Integer.toString(dateValueInt);
-				if (dateString.length() == 4) {
-					this.metadataParserResponse.getMetadata().setContentDate(
-							processDateString(dateString));
-				}
-			} catch (Exception e1) {
-				logger.warn("No valid Content Date could be found in the document.");
-				this.metadataParserResponse.getMetadata().setContentDate(null);
-			}
-		}
-	}
+        try {
+            logger.debug("DATE VALUE#######:" + dateString);
+            dateValue = processDateString(dateString);
+            this.metadataParserResponse.getMetadata().setContentDate(dateValue);
+        } catch (Exception e) {
+            try {
+                dateString = dateString.substring(0, 3);
+                int dateValueInt = Integer.parseInt(dateString);
+                dateString = Integer.toString(dateValueInt);
+                if (dateString.length() == 4) {
+                    this.metadataParserResponse.getMetadata().setContentDate(
+                            processDateString(dateString));
+                }
+            } catch (Exception e1) {
+                logger.warn("No valid Content Date could be found in the document.");
+                this.metadataParserResponse.getMetadata().setContentDate(null);
+            }
+        }
+    }
 
-	@Override
-	protected void handleDataType() {
-		String direct = null; // raster?
-		String sdtsType = null; // vector type
-		String srcCiteA = null; // scanned map
+    @Override
+    protected void handleDataType() {
+        String direct = null; // raster?
+        String sdtsType = null; // vector type
+        String srcCiteA = null; // scanned map
 
-		try {
-			srcCiteA = getDocumentValue(FgdcTag.DataType_Srccitea);
-			if (srcCiteA.equalsIgnoreCase("Paper Map")) {
-				this.metadataParserResponse.getMetadata().setGeometryType(
-						GeometryType.ScannedMap);
-				return;
-			}
-		} catch (Exception e) {
-			// just continue to next block
-		}
+        try {
+            srcCiteA = getDocumentValue(FgdcTag.DataType_Srccitea);
+            if (srcCiteA.equalsIgnoreCase("Paper Map")) {
+                this.metadataParserResponse.getMetadata().setGeometryType(
+                        GeometryType.ScannedMap);
+                return;
+            }
+        } catch (Exception e) {
+            // just continue to next block
+        }
 
-		try {
-			direct = getDocumentValue(FgdcTag.DataType_Direct);
-			if (direct.equalsIgnoreCase("raster")) {
-				this.metadataParserResponse.getMetadata().setGeometryType(
-						GeometryType.Raster);
-				return;
-			}
-		} catch (Exception e) {
-			// again, move to the next block
-		}
+        try {
+            direct = getDocumentValue(FgdcTag.DataType_Direct);
+            if (direct.equalsIgnoreCase("raster")) {
+                this.metadataParserResponse.getMetadata().setGeometryType(
+                        GeometryType.Raster);
+                return;
+            }
+        } catch (Exception e) {
+            // again, move to the next block
+        }
 
-		try {
-			sdtsType = getDocumentValue(FgdcTag.DataType_Sdtstype);
-			GeometryType solrType;
-			if (sdtsType.equals("G-polygon") || sdtsType.contains("olygon")
-					|| sdtsType.contains("chain")) {
-				solrType = GeometryType.Polygon;
+        try {
+            sdtsType = getDocumentValue(FgdcTag.DataType_Sdtstype);
+            GeometryType solrType;
+            if (sdtsType.equals("G-polygon") || sdtsType.contains("olygon")
+                    || sdtsType.contains("chain")) {
+                solrType = GeometryType.Polygon;
 
-			} else if (sdtsType.equals("Composite")
-					|| sdtsType.contains("omposite")
-					|| sdtsType.equals("Entity point")) {
-				solrType = GeometryType.Point;
+            } else if (sdtsType.equals("Composite")
+                    || sdtsType.contains("omposite")
+                    || sdtsType.equals("Entity point")) {
+                solrType = GeometryType.Point;
 
-			} else if (sdtsType.equals("String")) {
-				solrType = GeometryType.Line;
+            } else if (sdtsType.equals("String")) {
+                solrType = GeometryType.Line;
 
-			} else {
-				solrType = GeometryType.Undefined;
-			}
-			this.metadataParserResponse.getMetadata().setGeometryType(solrType);
-		} catch (Exception e) {
-			logger.error("null geometry type");
-			GeometryType solrType = GeometryType.Undefined;
-			this.metadataParserResponse.getMetadata().setGeometryType(solrType);
-			// we should make a note if the geometry type is undefined
-		}
-	}
+            } else {
+                solrType = GeometryType.Undefined;
+            }
+            this.metadataParserResponse.getMetadata().setGeometryType(solrType);
+        } catch (Exception e) {
+            logger.error("null geometry type");
+            GeometryType solrType = GeometryType.Undefined;
+            this.metadataParserResponse.getMetadata().setGeometryType(solrType);
+            // we should make a note if the geometry type is undefined
+        }
+    }
 
-	@Override
-	protected void handleAccess() {
-		Tag tag = FgdcTag.Access;
-		try {
-			String accessValueMd = "";
-			try {
-				accessValueMd = getDocumentValue(tag);
-			} catch (Exception e) {
-				AccessLevel nullAccess = null;
-				this.metadataParserResponse.getMetadata().setAccessLevel(
-						nullAccess);
-				return;
-			}
+    @Override
+    protected void handleAccess() {
+        Tag tag = FgdcTag.Access;
+        try {
+            String accessValueMd = "";
+            try {
+                accessValueMd = getDocumentValue(tag);
+            } catch (Exception e) {
+                AccessLevel nullAccess = null;
+                this.metadataParserResponse.getMetadata().setAccessLevel(
+                        nullAccess);
+                return;
+            }
 
-			AccessLevel accessValue = AccessLevel.Public;
-			accessValueMd = accessValueMd.toLowerCase();
-			if (accessValueMd.startsWith("restricted")) {
-				accessValue = AccessLevel.Restricted;
-			}
-			this.metadataParserResponse.getMetadata().setAccessLevel(
-					accessValue);
-		} catch (Exception e) {
-			logger.error("handleAccess: " + e.getMessage());
-			this.metadataParserResponse.addError(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+            AccessLevel accessValue = AccessLevel.Public;
+            accessValueMd = accessValueMd.toLowerCase();
+            if (accessValueMd.startsWith("restricted")) {
+                accessValue = AccessLevel.Restricted;
+            }
+            this.metadataParserResponse.getMetadata().setAccessLevel(
+                    accessValue);
+        } catch (Exception e) {
+            logger.error("handleAccess: " + e.getMessage());
+            this.metadataParserResponse.addError(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
 
-	@Override
-	protected void handleKeywords() {
-		List<ThemeKeywords> themeKeywordList = new ArrayList<ThemeKeywords>();
-		List<PlaceKeywords> placeKeywordList = new ArrayList<PlaceKeywords>();
+    @Override
+    protected void handleKeywords() {
+        List<ThemeKeywords> themeKeywordList = new ArrayList<ThemeKeywords>();
+        List<PlaceKeywords> placeKeywordList = new ArrayList<PlaceKeywords>();
 
-		try {
+        try {
 			// Theme keywords
-			//if there is an ISO topic keyword set it the value on the Metadata object
-			String isoTopic = "";
-			NodeList themeKeywordNodes = (NodeList) xPath.evaluate(
-					FgdcTag.ThemeKeywordsHeader.getXPathName(), document,
-					XPathConstants.NODESET);
+            //if there is an ISO topic keyword set it the value on the Metadata object
+            String isoTopic = "";
+            NodeList themeKeywordNodes = (NodeList) xPath.evaluate(
+                    FgdcTag.ThemeKeywordsHeader.getXPathName(), document,
+                    XPathConstants.NODESET);
 
-			for (int i = 0; i < themeKeywordNodes.getLength(); i++) {
-				Node keyword = themeKeywordNodes.item(i);
+            for (int i = 0; i < themeKeywordNodes.getLength(); i++) {
+                Node keyword = themeKeywordNodes.item(i);
 
-				NodeList keywordValueNodes = (NodeList) xPath.evaluate(
-						FgdcTag.ThemeKeywords.getXPathName(), keyword,
-						XPathConstants.NODESET);
-				if (keywordValueNodes.getLength() > 0) {
-					String keywordThesaurus = (String) xPath.evaluate(
-							FgdcTag.ThemeKeywordsThesaurus.getXPathName(),
-							keyword, XPathConstants.STRING);
+                NodeList keywordValueNodes = (NodeList) xPath.evaluate(
+                        FgdcTag.ThemeKeywords.getXPathName(), keyword,
+                        XPathConstants.NODESET);
+                if (keywordValueNodes.getLength() > 0) {
+                    String keywordThesaurus = (String) xPath.evaluate(
+                            FgdcTag.ThemeKeywordsThesaurus.getXPathName(),
+                            keyword, XPathConstants.STRING);
 
-					ThemeKeywords themeKeyword = new ThemeKeywords();
-					themeKeyword.setThesaurus(keywordThesaurus);
+                    ThemeKeywords themeKeyword = new ThemeKeywords();
+                    themeKeyword.setThesaurus(keywordThesaurus);
 
-					for (int j = 0; j < keywordValueNodes.getLength(); j++) {
-						String keywordValue = keywordValueNodes.item(j)
-								.getTextContent();
-						themeKeyword.addKeyword(keywordValue);
-						isoTopic = this.isoTopicResolver.getIsoTopicKeyword(keywordValue);
-					}
+                    for (int j = 0; j < keywordValueNodes.getLength(); j++) {
+                        String keywordValue = keywordValueNodes.item(j)
+                                .getTextContent();
+                        themeKeyword.addKeyword(keywordValue);
+                        isoTopic = this.isoTopicResolver.getIsoTopicKeyword(keywordValue);
+                    }
 
-					themeKeywordList.add(themeKeyword);
-				}
-			}
+                    themeKeywordList.add(themeKeyword);
+                }
+            }
 
-			// place keywords
-			NodeList placeKeywordNodes = (NodeList) xPath.evaluate(
-					FgdcTag.PlaceKeywordsHeader.getXPathName(), document,
-					XPathConstants.NODESET);
+            // place keywords
+            NodeList placeKeywordNodes = (NodeList) xPath.evaluate(
+                    FgdcTag.PlaceKeywordsHeader.getXPathName(), document,
+                    XPathConstants.NODESET);
 
-			for (int i = 0; i < placeKeywordNodes.getLength(); i++) {
-				Node keyword = placeKeywordNodes.item(i);
+            for (int i = 0; i < placeKeywordNodes.getLength(); i++) {
+                Node keyword = placeKeywordNodes.item(i);
 
-				NodeList keywordValueNodes = (NodeList) xPath.evaluate(
-						FgdcTag.PlaceKeywords.getXPathName(), keyword,
-						XPathConstants.NODESET);
-				if (keywordValueNodes.getLength() > 0) {
-					String keywordThesaurus = (String) xPath.evaluate(
-							FgdcTag.PlaceKeywordsThesaurus.getXPathName(),
-							keyword, XPathConstants.STRING);
+                NodeList keywordValueNodes = (NodeList) xPath.evaluate(
+                        FgdcTag.PlaceKeywords.getXPathName(), keyword,
+                        XPathConstants.NODESET);
+                if (keywordValueNodes.getLength() > 0) {
+                    String keywordThesaurus = (String) xPath.evaluate(
+                            FgdcTag.PlaceKeywordsThesaurus.getXPathName(),
+                            keyword, XPathConstants.STRING);
 
-					PlaceKeywords placeKeyword = new PlaceKeywords();
-					placeKeyword.setThesaurus(keywordThesaurus);
+                    PlaceKeywords placeKeyword = new PlaceKeywords();
+                    placeKeyword.setThesaurus(keywordThesaurus);
 
-					for (int j = 0; j < keywordValueNodes.getLength(); j++) {
-						String keywordValue = keywordValueNodes.item(j)
-								.getTextContent();
-						placeKeyword.addKeyword(keywordValue);
-					}
+                    for (int j = 0; j < keywordValueNodes.getLength(); j++) {
+                        String keywordValue = keywordValueNodes.item(j)
+                                .getTextContent();
+                        placeKeyword.addKeyword(keywordValue);
+                    }
 
-					placeKeywordList.add(placeKeyword);
-				}
-			}
-			
+                    placeKeywordList.add(placeKeyword);
+                }
+            }
 
-			if (!isoTopic.isEmpty()){
-				this.metadataParserResponse.getMetadata().setTopic(isoTopic);
-			}
-			this.metadataParserResponse.getMetadata().setThemeKeywords(
-					themeKeywordList);
-			this.metadataParserResponse.getMetadata().setPlaceKeywords(
-					placeKeywordList);
-		} catch (Exception e) {
-			logger.error("handleKeywords: " + e.getMessage());
-		}
-	}
+            if (!isoTopic.isEmpty()) {
+                this.metadataParserResponse.getMetadata().setTopic(isoTopic);
+            }
+            this.metadataParserResponse.getMetadata().setThemeKeywords(
+                    themeKeywordList);
+            this.metadataParserResponse.getMetadata().setPlaceKeywords(
+                    placeKeywordList);
+        } catch (Exception e) {
+            logger.error("handleKeywords: " + e.getMessage());
+        }
+    }
 
-	
-	@Override
-	protected void handleBounds() {
-		Tag tag = FgdcTag.NorthBc;
-		try {
-			String maxY = getDocumentValue(tag);
-			tag = FgdcTag.EastBc;
-			String maxX = getDocumentValue(tag);
-			tag = FgdcTag.SouthBc;
-			String minY = getDocumentValue(tag);
-			tag = FgdcTag.WestBc;
-			String minX = getDocumentValue(tag);
-			// should validate bounds here
-			if (validateBounds(minX, minY, maxX, maxY)) {
-				this.metadataParserResponse.getMetadata().setBounds(minX, minY,
-						maxX, maxY);
-			} else {
-				throw new Exception("Invalid Bounds: " + minX + "," + minY
-						+ "," + maxX + "," + maxY);
-			}
-		} catch (Exception e) {
-			logger.error("handleBounds: " + e.getMessage());
-			this.metadataParserResponse.addWarning(tag.toString(),
-					tag.getTagName(), e.getClass().getName(), e.getMessage());
-		}
-	}
+    @Override
+    protected void handleBounds() {
+        Tag tag = FgdcTag.NorthBc;
+        try {
+            String maxY = getDocumentValue(tag);
+            tag = FgdcTag.EastBc;
+            String maxX = getDocumentValue(tag);
+            tag = FgdcTag.SouthBc;
+            String minY = getDocumentValue(tag);
+            tag = FgdcTag.WestBc;
+            String minX = getDocumentValue(tag);
+            // should validate bounds here
+            if (validateBounds(minX, minY, maxX, maxY)) {
+                this.metadataParserResponse.getMetadata().setBounds(minX, minY,
+                        maxX, maxY);
+            } else {
+                throw new Exception("Invalid Bounds: " + minX + "," + minY
+                        + "," + maxX + "," + maxY);
+            }
+        } catch (Exception e) {
+            logger.error("handleBounds: " + e.getMessage());
+            this.metadataParserResponse.addWarning(tag.toString(),
+                    tag.getTagName(), e.getClass().getName(), e.getMessage());
+        }
+    }
 
-	@Override
-	protected void handleFullText() {
-		String fullText = getFullText();
-		this.metadataParserResponse.getMetadata().setFullText(fullText);
-		this.metadataParserResponse.getMetadata().setOriginalMetadata(fullText);
-	}
+    @Override
+    protected void handleFullText() {
+        String fullText = getFullText();
+        this.metadataParserResponse.getMetadata().setFullText(fullText);
+        this.metadataParserResponse.getMetadata().setOriginalMetadata(fullText);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser
-	 * #handleLocation()
-	 */
-	@Override
-	protected void handleLocation() {
-		Multimap<LocationType, LocationLink> locationMap = locationResolver
-				.resolveLocation(document);
-		String locationJson = buildLocationJsonFromLocationLinks(locationMap);
-		this.metadataParserResponse.getMetadata().setLocation(locationJson);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser
+     * #handleLocation()
+     */
+    @Override
+    protected void handleLocation() {
+        Multimap<LocationType, LocationLink> locationMap = locationResolver
+                .resolveLocation(document);
+        String locationJson = buildLocationJsonFromLocationLinks(locationMap);
+        this.metadataParserResponse.getMetadata().setLocation(locationJson);
 
-	}
+    }
 
-	/* (non-Javadoc)
-	 * @see org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser#getLocationResolver()
-	 */
-	@Override
-	protected LocationResolver getLocationResolver() {
-		return this.locationResolver;
-	}
+    /* (non-Javadoc)
+     * @see org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser#getLocationResolver()
+     */
+    @Override
+    protected LocationResolver getLocationResolver() {
+        return this.locationResolver;
+    }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 public class Metadata {
+
     private BoundingBox bounds;
     private String id = "";
     private String title = "";
@@ -28,17 +29,20 @@ public class Metadata {
     private Date contentDate;
     private String topic = "";
     private boolean restricted = false;
-    /** Raw metadata as retrieved from remote source. */
-	private String originalMetadata = "";
+    /**
+     * Raw metadata as retrieved from remote source.
+     */
+    private String originalMetadata = "";
 
-    public Metadata(String layerId){
-        setId(layerId);
-        themeKeywords = new ArrayList<ThemeKeywords>();
-        placeKeywords = new ArrayList<PlaceKeywords>();
-        georeferenced = Boolean.FALSE;
+    public Metadata(String layerId) {
+        this.id = layerId;
+        this.themeKeywords = new ArrayList<ThemeKeywords>();
+        this.placeKeywords = new ArrayList<PlaceKeywords>();
+        this.georeferenced = Boolean.FALSE;
 
     }
-    public Metadata(){
+
+    public Metadata() {
         this(null);
     }
 
@@ -57,17 +61,19 @@ public class Metadata {
     public AccessLevel getAccess() {
         return access;
     }
+
     public void setAccessLevel(AccessLevel access) {
         this.access = access;
     }
 
-    public void setAccessLevel(String accessString){
+    public void setAccessLevel(String accessString) {
         this.access = AccessLevel.parseString(accessString);
     }
 
     public BoundingBox getBounds() {
         return bounds;
     }
+
     public void setBounds(BoundingBox bounds) {
         this.bounds = bounds;
     }
@@ -75,7 +81,7 @@ public class Metadata {
     public void setBounds(String minX, String minY, String maxX, String maxY) {
         this.bounds = new BoundingBox(minX, minY, maxX, maxY);
     }
-    
+
     public void setBounds(Double minX, Double minY, Double maxX, Double maxY) {
         this.bounds = new BoundingBox(minX, minY, maxX, maxY);
     }
@@ -83,57 +89,75 @@ public class Metadata {
     public String getId() {
         return id;
     }
+
     public void setId(String id) {
         this.id = id;
     }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
+
     public String getOwsName() {
         return owsName;
     }
+
     public void setOwsName(String owsName) {
         this.owsName = owsName;
     }
+
     public String getWorkspaceName() {
         return workspaceName;
     }
+
     public void setWorkspaceName(String workspaceName) {
         this.workspaceName = workspaceName;
     }
+
     public String getLocation() {
         return location;
     }
+
     public void setLocation(String location) {
         this.location = location;
     }
+
     public String getOriginator() {
         return originator;
     }
+
     public void setOriginator(String originator) {
         this.originator = originator;
     }
+
     public List<ThemeKeywords> getThemeKeywords() {
         return themeKeywords;
     }
+
     public void setThemeKeywords(List<ThemeKeywords> themeKeywords) {
         this.themeKeywords = themeKeywords;
     }
+
     public List<PlaceKeywords> getPlaceKeywords() {
         return placeKeywords;
     }
+
     public void setPlaceKeywords(List<PlaceKeywords> placeKeywords) {
         this.placeKeywords = placeKeywords;
     }
+
     public String getInstitution() {
         return institution;
     }
@@ -149,6 +173,7 @@ public class Metadata {
     public String getFullText() {
         return fullText;
     }
+
     public void setFullText(String fullText) {
         this.fullText = fullText;
     }
@@ -157,7 +182,7 @@ public class Metadata {
         return publisher;
     }
 
-    public void setPublisher(String publisher){
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
@@ -165,7 +190,7 @@ public class Metadata {
         return georeferenced;
     }
 
-    public void setGeoreferenced(Boolean georeferenced){
+    public void setGeoreferenced(Boolean georeferenced) {
         this.georeferenced = georeferenced;
     }
 
@@ -173,7 +198,7 @@ public class Metadata {
         return contentDate;
     }
 
-    public void setContentDate(Date contentDate){
+    public void setContentDate(Date contentDate) {
         this.contentDate = contentDate;
     }
 
@@ -185,29 +210,27 @@ public class Metadata {
         this.topic = topic;
     }
 
-
-    public String getThemeKeywordsAsString(){
+    public String getThemeKeywordsAsString() {
         Set<String> allKeywords = new HashSet<String>();
-        for (ThemeKeywords themeKeyword: this.themeKeywords){
+        for (ThemeKeywords themeKeyword : this.themeKeywords) {
             allKeywords.addAll(themeKeyword.getKeywords());
         }
         return combine(allKeywords.toArray(new String[allKeywords.size()]), " ");
     }
 
-    public String getPlaceKeywordsAsString(){
+    public String getPlaceKeywordsAsString() {
         Set<String> allKeywords = new HashSet<String>();
-        for (PlaceKeywords placeKeyword: this.placeKeywords){
+        for (PlaceKeywords placeKeyword : this.placeKeywords) {
             allKeywords.addAll(placeKeyword.getKeywords());
         }
         return combine(allKeywords.toArray(new String[allKeywords.size()]), " ");
     }
 
-
     public boolean hasValueForProperty(String property) {
         String value = "";
 
         if (property.equals("dateOfContent")) {
-            value = ((this.getContentDate() != null)?this.getContentDate().toString():"");
+            value = ((this.getContentDate() != null) ? this.getContentDate().toString() : "");
         } else if (property.equals("originator")) {
             value = this.getOriginator();
         } else if (property.equals("themeKeyword")) {
@@ -216,17 +239,17 @@ public class Metadata {
             value = this.getPlaceKeywordsAsString();
         } else if (property.equals("topic")) {
             value = this.getTopic();
-        }  else if (property.equals("dataRepository")) {
+        } else if (property.equals("dataRepository")) {
             value = this.getInstitution();
-        }  else if (property.equals("webServices")) {
+        } else if (property.equals("webServices")) {
             value = this.getLocation();
-        }  else if (property.equals("geographicExtent")) {
+        } else if (property.equals("geographicExtent")) {
             if (this.getBounds() == null) {
                 return false;
             } else {
                 return this.getBounds().isValid();
             }
-        }  else if (property.equals("dataType")) {
+        } else if (property.equals("dataType")) {
             GeometryType geometry = this.getGeometryType();
             return (geometry != null);
         }
@@ -234,39 +257,44 @@ public class Metadata {
         return StringUtils.isNotEmpty(value);
     }
 
-    private String combine(String[] s, String glue)
-    {
-        int k=s.length;
-        if (k==0)
+    private String combine(String[] s, String glue) {
+        int k = s.length;
+        if (k == 0) {
             return null;
-        StringBuilder out=new StringBuilder();
+        }
+        StringBuilder out = new StringBuilder();
         out.append(s[0]);
-        for (int x=1;x<k;++x)
+        for (int x = 1; x < k; ++x) {
             out.append(glue).append(s[x]);
+        }
         return out.toString();
     }
-	/**
-	 * @return the originalMetadata
-	 */
-	public String getOriginalMetadata() {
-		return originalMetadata;
-	}
-	/**
-	 * @param originalMetadata the originalMetadata to set
-	 */
-	public void setOriginalMetadata(String originalMetadata) {
-		this.originalMetadata = originalMetadata;
-	}
-	/**
-	 * @return the restricted
-	 */
-	public boolean isRestricted() {
-		return restricted;
-	}
-	/**
-	 * @param restricted the restricted to set
-	 */
-	public void setRestricted(boolean restricted) {
-		this.restricted = restricted;
-	}
+
+    /**
+     * @return the originalMetadata.
+     */
+    public String getOriginalMetadata() {
+        return originalMetadata;
+    }
+
+    /**
+     * @param originalMetadata the originalMetadata to set.
+     */
+    public void setOriginalMetadata(String originalMetadata) {
+        this.originalMetadata = originalMetadata;
+    }
+
+    /**
+     * @return the restricted.
+     */
+    public boolean isRestricted() {
+        return restricted;
+    }
+
+    /**
+     * @param restricted the restricted to set.
+     */
+    public void setRestricted(boolean restricted) {
+        this.restricted = restricted;
+    }
 }

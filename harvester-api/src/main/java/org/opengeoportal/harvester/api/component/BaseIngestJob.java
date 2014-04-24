@@ -16,6 +16,9 @@ import org.opengeoportal.harvester.api.service.IngestReportWarningsService;
 
 import java.util.Calendar;
 import java.util.UUID;
+import org.opengeoportal.harvester.api.client.solr.SolrRecord;
+import org.opengeoportal.harvester.api.service.ExceptionTranslator;
+import org.w3c.dom.Document;
 
 /**
  * Base class for ingest jobs.
@@ -68,6 +71,7 @@ public abstract class BaseIngestJob implements Runnable {
     private IngestReportErrorService errorService;
 
     private IngestReportWarningsService warningService;
+    private ExceptionTranslator exceptionTranslatorService;
 
     /**
      * If <code>true</code>, job must be interrupted when possible.
@@ -214,6 +218,14 @@ public abstract class BaseIngestJob implements Runnable {
         this.warningService = warningService;
     }
 
+    public ExceptionTranslator getExceptionTranslatorService() {
+        return exceptionTranslatorService;
+    }
+
+    public void setExceptionTranslatorService(ExceptionTranslator exceptionTranslatorService) {
+        this.exceptionTranslatorService = exceptionTranslatorService;
+    }
+
     /**
      * Set a flag that indicates job must be interrupted.
      */
@@ -236,14 +248,22 @@ public abstract class BaseIngestJob implements Runnable {
      * @param e Exception to be logged.
      * @param errorType type of error.
      */
+    protected void saveException(Exception e, IngestReportErrorType errorType, Document document) {
+        IngestReportError error = exceptionTranslatorService.translateException(e, errorType, document);
+        error.setReport(report);
+        getErrorService().save(error);
+        report.addError(error);
+    }
+
+    protected void saveException(Exception e, IngestReportErrorType errorType, SolrRecord record) {
+        IngestReportError error = exceptionTranslatorService.translateException(e, errorType, record);
+        error.setReport(report);
+        getErrorService().save(error);
+        report.addError(error);
+    }
+
     protected void saveException(Exception e, IngestReportErrorType errorType) {
-        IngestReportError error = new IngestReportError();
-        error.setType(errorType);
-        e = (Exception) e.fillInStackTrace();
-        //error.setField(e.getClass().getSimpleName());
-        error.setField("error");
-        error.setMessage(e.getLocalizedMessage());
-        error.setMetadata(ExceptionUtils.getStackTrace(e));
+        IngestReportError error = exceptionTranslatorService.translateException(e, errorType);
         error.setReport(report);
         getErrorService().save(error);
         report.addError(error);

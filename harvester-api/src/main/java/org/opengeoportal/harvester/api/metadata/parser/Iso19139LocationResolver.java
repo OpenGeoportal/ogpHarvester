@@ -67,7 +67,7 @@ public class Iso19139LocationResolver extends AbstractLocationResolver
 			linksMultimap.put(browseLink.getLocationType(), browseLink);
 		} catch (Exception e) {
 			if (logger.isDebugEnabled()) {
-				logger.debug("Error parsing location browse link", e);
+				logger.debug("Error parsing location browse link");
 			}
 		}
 		if (logger.isDebugEnabled()) {
@@ -145,8 +145,7 @@ public class Iso19139LocationResolver extends AbstractLocationResolver
 					} catch (Exception e) {
 						if (logger.isDebugEnabled()) {
 							logger.debug(
-									"Unable to determine LocationType protocol",
-									e);
+									"Unable to determine LocationType protocol: " + e.getMessage());
 						}
 					}
 				} else if (nodeName.toLowerCase().contains("linkage")) {

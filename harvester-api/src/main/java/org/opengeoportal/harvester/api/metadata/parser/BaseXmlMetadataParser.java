@@ -1,6 +1,5 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import java.io.StringWriter;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,17 +8,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -32,177 +22,166 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.google.common.collect.Multimap;
+import org.opengeoportal.harvester.api.util.XmlUtil;
 
 public abstract class BaseXmlMetadataParser extends BaseMetadataParser
-		implements MetadataParser {
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        implements MetadataParser {
 
-	/** Medadata XML document. */
-	protected Document document;
+    /**
+     * Logger.
+     */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	protected XPath xPath;
+    /**
+     * Medadata XML document.
+     */
+    protected Document document;
 
-	protected MetadataParserResponse metadataParserResponse;
+    protected XPath xPath;
 
-	public interface Tag {
-		String getTagName();
+    protected MetadataParserResponse metadataParserResponse;
 
-		String getXPathName();
-	};
+    public interface Tag {
 
-	@Override
-	public MetadataParserResponse parse(Document document) {
-		if (document == null) {
-			logger.error("document is null");
-		}
+        String getTagName();
 
-		XPathFactory factory = XPathFactory.newInstance();
-		xPath = factory.newXPath();
+        String getXPathName();
+    };
 
-		HashMap<String, String> prefMap = getNamespaces();
-		SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
-		xPath.setNamespaceContext(namespaces);
+    @Override
+    public MetadataParserResponse parse(Document document) {
+        if (document == null) {
+            logger.error("document is null");
+        }
 
-		this.document = document;
-		this.metadataParserResponse = new MetadataParserResponse();
+        XPathFactory factory = XPathFactory.newInstance();
+        xPath = factory.newXPath();
+
+        HashMap<String, String> prefMap = getNamespaces();
+        SimpleNamespaceContext namespaces = new SimpleNamespaceContext(prefMap);
+        xPath.setNamespaceContext(namespaces);
+
+        this.document = document;
+        this.metadataParserResponse = new MetadataParserResponse();
         handleId();
-		handleTitle();
-		handleAbstract();
-		handleLayerName();
-		handlePublisher();
-		handleOriginator();
-		handleBounds();
-		handleKeywords();
-		handleAccess();
-		handleDataType();
-		handleFullText();
-		handleDate();
-		handleLocation();
-		metadataParserResponse.setMetadataParsed(true);
-		return metadataParserResponse;
-	}
+        handleTitle();
+        handleAbstract();
+        handleLayerName();
+        handlePublisher();
+        handleOriginator();
+        handleBounds();
+        handleKeywords();
+        handleAccess();
+        handleDataType();
+        handleFullText();
+        handleDate();
+        handleLocation();
+        metadataParserResponse.setMetadataParsed(true);
+        return metadataParserResponse;
+    }
 
-	protected abstract HashMap<String, String> getNamespaces();
+    protected abstract HashMap<String, String> getNamespaces();
 
     protected abstract void handleId();
 
     protected abstract void handleOriginator();
 
-	protected abstract void handlePublisher();
+    protected abstract void handlePublisher();
 
-	protected abstract void handleLayerName();
+    protected abstract void handleLayerName();
 
-	protected abstract void handleAbstract();
+    protected abstract void handleAbstract();
 
-	protected abstract void handleTitle();
+    protected abstract void handleTitle();
 
-	protected abstract void handleDate();
+    protected abstract void handleDate();
 
-	protected abstract void handleDataType();
+    protected abstract void handleDataType();
 
-	protected abstract void handleAccess();
+    protected abstract void handleAccess();
 
-	protected abstract void handleKeywords();
+    protected abstract void handleKeywords();
 
-	protected abstract void handleBounds();
+    protected abstract void handleBounds();
 
-	protected abstract void handleFullText();
+    protected abstract void handleFullText();
 
-	protected abstract LocationResolver getLocationResolver();
+    protected abstract LocationResolver getLocationResolver();
 
-	public String getDocumentValue(Tag tag) throws Exception {
-		return (String) xPath.evaluate(tag.getXPathName(), document,
-				XPathConstants.STRING);
-	}
+    public String getDocumentValue(Tag tag) throws Exception {
+        return (String) xPath.evaluate(tag.getXPathName(), document,
+                XPathConstants.STRING);
+    }
 
-	protected String getFullText() {
-		try {
-			Source xmlSource = new DOMSource(document);
-			StringWriter stringWriter = new StringWriter();
-			StreamResult streamResult = new StreamResult(stringWriter);
+    protected String getFullText() {
+        return XmlUtil.getFullText(document);
+    }
 
-			TransformerFactory transformerFactory = TransformerFactory
-					.newInstance();
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.transform(xmlSource, streamResult);
-			String fileContents = stringWriter.toString();
+    protected Date processDateString(String passedDate) throws ParseException {
+        // can't do anything if there's no value passed
+        if ((passedDate == null) || (passedDate.equalsIgnoreCase("unknown"))) {
+            return null;
+        }
+        List<String> formatsList = new ArrayList<String>();
+        // add likely formats in order of likelihood
 
-			return fileContents;
+        formatsList.add("yyyyMMdd");
+        formatsList.add("yyyyMM");
+        formatsList.add("MM/yyyy");
+        formatsList.add("MM/dd/yyyy");
+        formatsList.add("MM/dd/yy");
+        formatsList.add("MM-dd-yyyy");
+        formatsList.add("MMMM yyyy");
+        formatsList.add("MMM yyyy");
+        formatsList.add("dd MMMM yyyy");
+        formatsList.add("dd MMM yyyy");
+        formatsList.add("yyyy");
 
-		} catch (TransformerConfigurationException e) {
-			logger.error("transformer configuration error", e);
-		} catch (TransformerException e) {
-			logger.error("transformer error", e);
-		} catch (Exception e) {
-			logger.error("Problem processing full text: " + e.getMessage());
-		}
-		return null;
-	}
+        String[] parsePatterns = formatsList.toArray(new String[formatsList
+                .size()]);
+        // String returnYear = null;
 
-	protected Date processDateString(String passedDate) throws ParseException {
-		// can't do anything if there's no value passed
-		if ((passedDate == null) || (passedDate.equalsIgnoreCase("unknown"))) {
-			return null;
-		}
-		List<String> formatsList = new ArrayList<String>();
-		// add likely formats in order of likelihood
+        passedDate = passedDate.trim();
+        Date date = DateUtils.parseDate(passedDate, parsePatterns);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        logger.debug("Document date: " + passedDate + ", Parsed date: "
+                + calendar.get(Calendar.YEAR));
+        // returnYear = Integer.toString(calendar.get(Calendar.YEAR));
 
-		formatsList.add("yyyyMMdd");
-		formatsList.add("yyyyMM");
-		formatsList.add("MM/yyyy");
-		formatsList.add("MM/dd/yyyy");
-		formatsList.add("MM/dd/yy");
-		formatsList.add("MM-dd-yyyy");
-		formatsList.add("MMMM yyyy");
-		formatsList.add("MMM yyyy");
-		formatsList.add("dd MMMM yyyy");
-		formatsList.add("dd MMM yyyy");
-		formatsList.add("yyyy");
+        return date;
+    }
 
-		String[] parsePatterns = formatsList.toArray(new String[formatsList
-				.size()]);
-		// String returnYear = null;
+    protected void handleLocation() {
+        Multimap<LocationType, LocationLink> locationMap = getLocationResolver()
+                .resolveLocation(document);
+        String locationJson = buildLocationJsonFromLocationLinks(locationMap);
+        this.metadataParserResponse.getMetadata().setLocation(locationJson);
 
-		passedDate = passedDate.trim();
-		Date date = DateUtils.parseDate(passedDate, parsePatterns);
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		logger.debug("Document date: " + passedDate + ", Parsed date: "
-				+ calendar.get(Calendar.YEAR));
-		// returnYear = Integer.toString(calendar.get(Calendar.YEAR));
+    }
 
-		return date;
-	}
+    private class SimpleNamespaceContext implements NamespaceContext {
 
-	protected void handleLocation() {
-		Multimap<LocationType, LocationLink> locationMap = getLocationResolver()
-				.resolveLocation(document);
-		String locationJson = buildLocationJsonFromLocationLinks(locationMap);
-		this.metadataParserResponse.getMetadata().setLocation(locationJson);
+        private final Map<String, String> PREF_MAP = new HashMap<String, String>();
 
-	}
+        public SimpleNamespaceContext(final Map<String, String> prefMap) {
+            PREF_MAP.putAll(prefMap);
+        }
 
-	private class SimpleNamespaceContext implements NamespaceContext {
+        @Override
+        public String getNamespaceURI(String prefix) {
+            return PREF_MAP.get(prefix);
+        }
 
-		private final Map<String, String> PREF_MAP = new HashMap<String, String>();
+        @Override
+        public String getPrefix(String uri) {
+            throw new UnsupportedOperationException();
+        }
 
-		public SimpleNamespaceContext(final Map<String, String> prefMap) {
-			PREF_MAP.putAll(prefMap);
-		}
+        @Override
+        public Iterator getPrefixes(String uri) {
+            throw new UnsupportedOperationException();
+        }
 
-		public String getNamespaceURI(String prefix) {
-			return PREF_MAP.get(prefix);
-		}
-
-		public String getPrefix(String uri) {
-			throw new UnsupportedOperationException();
-		}
-
-		public Iterator getPrefixes(String uri) {
-			throw new UnsupportedOperationException();
-		}
-
-	}
+    }
 }
