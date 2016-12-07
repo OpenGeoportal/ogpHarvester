@@ -265,7 +265,7 @@ public class SolrSearchParams {
 			}
 			// Add bbox filter only if user has not specified a custom solr
 			// query.
-			buildBoundigBoxQuery(solrQuery);
+			buildBoundingBoxQuery(solrQuery);
 
 			String synonymsFilter = generateSynonymsQuery();
 			if (StringUtils.isNotBlank(synonymsFilter)) {
@@ -334,7 +334,7 @@ public class SolrSearchParams {
 		return sb.toString();
 	}
 
-	private void buildBoundigBoxQuery(SolrQuery query) {
+	private void buildBoundingBoxQuery(SolrQuery query) {
 		if (isValidBBox()) {
 			String fqParam = "{!frange l=0 incl=false cache=false}$intx";
 			query.addFilterQuery(fqParam);

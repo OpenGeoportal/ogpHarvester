@@ -8,24 +8,24 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.opengeoportal.harvester.api.domain.IngestReport;
 
 public interface SolrClient {
-	public HttpSolrServer getSolrServer();
+	HttpSolrServer getSolrServer();
 
-	public Boolean commit();
+	Boolean commit();
 
-	public String delete(String[] layerIds) throws Exception;
+	String delete(String[] layerIds) throws Exception;
 
-	public Boolean verifyIngest(String layerId) throws Exception;
+	Boolean verifyIngest(String layerId) throws Exception;
 
-	public int add(SolrRecord solrRecord);
+	int add(SolrRecord solrRecord);
 
 	/**
 	 * Query the server for the institutions with metadata.
 	 * 
 	 * @return the list of institutions with metadata indexed in the server.
 	 */
-	public List<String> getInstitutions();
+	List<String> getInstitutions();
 	
-	public QueryResponse search(SolrSearchParams params);
+	QueryResponse search(SolrSearchParams params);
 
 	/**
 	 * @param records

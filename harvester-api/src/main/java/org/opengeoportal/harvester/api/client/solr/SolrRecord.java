@@ -67,8 +67,6 @@ public class SolrRecord {
 	private String externalLayerId;
 	@Field("Institution")
 	private String institution;
-	@Field("InstitutionSort")
-	private String institutionSort;
 	@Field("Access")
 	private String access;
 	@Field("DataType")
@@ -115,8 +113,7 @@ public class SolrRecord {
 	private Date contentDate;
 	@Field("FgdcText")
 	private String fgdcText;
-	//@Field("ThemeKeywordsSynonymsIso")
-	//private String topicCategory;
+
 
 	/**
 	 * @return the layerId
@@ -191,21 +188,6 @@ public class SolrRecord {
 	 */
 	public void setInstitution(String institution) {
 		this.institution = institution;
-	}
-
-	/**
-	 * @return the institutionSort
-	 */
-	public String getInstitutionSort() {
-		return institutionSort;
-	}
-
-	/**
-	 * @param institutionSort
-	 *            the institutionSort to set
-	 */
-	public void setInstitutionSort(String institutionSort) {
-		this.institutionSort = institutionSort;
 	}
 
 	/**
@@ -641,8 +623,8 @@ public class SolrRecord {
 		record.setDataType(metadata.getGeometryType().toString());
         record.setWorkspaceName(metadata.getWorkspaceName());
         record.setGeoreferenced(metadata.getGeoreferenced());
-		//record.setTopicCategory(metadata.getTopic());
-
+		record.setCollectionId(metadata.getCollectionId());
+		record.setExternalLayerId(metadata.getExternalId());
         if (StringUtils.isNotEmpty(metadata.getLocation())) {
             record.setAvailability("online");
         } else {

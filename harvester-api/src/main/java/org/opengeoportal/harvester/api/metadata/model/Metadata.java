@@ -29,6 +29,8 @@ public class Metadata {
     private Date contentDate;
     private String topic = "";
     private boolean restricted = false;
+    private String externalId = "";
+    private String collectionId = "";
     /**
      * Raw metadata as retrieved from remote source.
      */
@@ -208,6 +210,22 @@ public class Metadata {
 
     public void setTopic(String topic) {
         this.topic = topic;
+    }
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
+
+    public String getCollectionId() {
+        return collectionId;
+    }
+
+    public void setCollectionId(String collectionId) {
+        this.collectionId = collectionId;
     }
 
     public String getThemeKeywordsAsString() {
