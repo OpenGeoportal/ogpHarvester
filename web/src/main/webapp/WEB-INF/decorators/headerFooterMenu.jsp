@@ -69,8 +69,10 @@
             <div class="well sidebar-nav">
                 <ul class="nav nav-list">
                     <spring:url value="/uploadMetadata" var="uploadMetadataURL"/>
+                    <spring:url value="/uploadData" var="uploadDataURL"/>
                     <spring:url value="/ingest" var="ingestExternalURL"/>
                     <spring:url value="/manageIngests/" var="manageIngestsURL"/>
+                    <spring:url value="/manageLayers/" var="manageLayersURL"/>
                     <spring:url value="/editMetadata" var="editMetadataURL"/>
                     <spring:url value="/deleteRecords" var="deleteRecordsURL"/>
                     <spring:url value="/admin" var="adminURL"/>
@@ -80,12 +82,18 @@
                             data-ng-class="getClass('/uploadMetadata')"> <spring:message
                             code="sidebar.uploadMetadata"/>
                     </a></li>
+                   <li><a href="${baseUrl}#/uploadData"
+                           data-ng-class="getClass('/uploadData')"><spring:message
+                            code="sidebar.uploadData"/></a></li>
                     <li><a href="${baseUrl}#/newIngest"
                            data-ng-class="getClass('/newIngest')"><spring:message
                             code="sidebar.ingestExternal"/></a></li>
                     <li><a href="${baseUrl}#/manageIngests"
                            data-ng-class="getClass('/manageIngests')"><spring:message
                             code="sidebar.manageIngests"/></a></li>
+                    <li><a href="${baseUrl}#/manageLayers"
+                           data-ng-class="getClass('/manageLayers')"><spring:message
+                            code="sidebar.manageLayers"/></a></li>
                     <li class="disabled"><a
                             data-ng-class="getClass('/editMetadata')"><spring:message
                             code="sidebar.editMetadata"/></a></li>
