@@ -1,25 +1,32 @@
 <div class="col-md-9 right-column layer-list" data-ng-controller="ManageLayersCtrl">
     <h1 data-translate="MANAGE_LAYERS.HEADER"></h1>
-    <div class="loading col-md-1 col-md-offset-5" data-ng-hide="layerPage"></div>
     <table class="table layer-list">
         <thead>
         <tr>
             <th>{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
             <th>{{'MANAGE_LAYERS.LIST_HEADER_TITLE' | translate}}</th>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_TYPE' | translate}}</th>
             <th></th>
         </tr>
         </thead>
     <tbody>
-    HELLO WORLD
+    <tr ng-repeat="dataset in jsonresult.data">
+	    <td >
+	      {{dataset[1]}}
+	    </td>
+	    <td >
+          {{dataset[2]}}
+        </td>
+        <td >
+          
+        </td>
+    </tr>
     </tbody>
     </table>
-    <div data-pagination data-total-items="layerPage.pageDetails.totalElements"
-         data-page="layerPage.pageDetails.number"
-         data-items-per-page="layerPage.pageDetails.size"
+    <div data-pagination data-total-items="jsonresult.totalElements"
+         data-page="jsonresult.curretPage"
+         data-items-per-page="jsonresult.showingElements"
          data-boundary-links="true"
          data-previous-text="&lsaquo;" data-next-text="&rsaquo;" data-first-text="&laquo;" data-last-text="&raquo;"
-         data-on-select-page="selectPage(page)"
 
          data-max-size="8" ></div>
 </div>

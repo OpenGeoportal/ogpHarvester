@@ -11,12 +11,10 @@
 			});
 		}
 	])
-		.controller('ManageLayersCtrl', ['$scope', 'remoteRepositories', 'predefinedRepositories',
-			'$modal', '$log', '$translate',
-
-			function ManageIngestsCtrl($scope, remoteRepositories, predefinedRepositories, $modal, $log, $translate) {
-
-
-			}
-		]);
+		.controller('ManageLayersCtrl', function($scope, $http) {
+			  $http.get('http://localhost:8083/datasets')
+		       .then(function(res){
+		          $scope.jsonresult = res.data;                
+		        });
+		});
 })();
