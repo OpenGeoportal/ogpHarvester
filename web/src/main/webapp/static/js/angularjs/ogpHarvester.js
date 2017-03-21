@@ -20,6 +20,12 @@
 					templateUrl: 'resources/ingestsList.html',
 					controller: 'ManageIngestsCtrl'
 				});
+
+				$routeProvider.when('/manageLayers', {
+					templateUrl: 'resources/layerList.html',
+					controller: 'ManageLayersCtrl'
+				});
+
 				$routeProvider.when('/manageIngests/view/:id', {
 					templateUrl: 'resources/ingestDetails.html',
 					controller: 'IngestDetailsCtrl'

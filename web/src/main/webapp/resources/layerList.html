@@ -1,0 +1,25 @@
+<div data-ng-controller="ManageLayersCtrl" class="col-md-9 right-column layer-list">
+    <h1 data-translate="MANAGE_LAYERS.HEADER"></h1>
+    <div class="loading col-md-1 col-md-offset-5" data-ng-hide="layerPage"></div>
+    <table class="table layer-list">
+        <thead>
+        <tr>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_TITLE' | translate}}</th>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_TYPE' | translate}}</th>
+            <th></th>
+        </tr>
+        </thead>
+    <tbody>
+    HELLO WORLD
+    </tbody>
+    </table>
+    <div data-pagination data-total-items="layerPage.pageDetails.totalElements"
+         data-page="layerPage.pageDetails.number"
+         data-items-per-page="layerPage.pageDetails.size"
+         data-boundary-links="true"
+         data-previous-text="&lsaquo;" data-next-text="&rsaquo;" data-first-text="&laquo;" data-last-text="&raquo;"
+         data-on-select-page="selectPage(page)"
+
+         data-max-size="8" ></div>
+</div>
