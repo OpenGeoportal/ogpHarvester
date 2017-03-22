@@ -246,8 +246,12 @@
 		"HEADER": "Manage Layers",
 		"LIST_HEADER_NAME": "Name",
 		"LIST_HEADER_TITLE": "Title",
-		"LIST_HEADER_TYPE": "Type"
-	},
+		"LIST_HEADER_TYPE": "Type",
+		"LIST_HEADER_DELETE": "Delete",
+		"LIST_HEADER_UPDATE": "Update",
+		"LIST_HEADER_INFO": "Details",
+		"UPDATE_LAYER": "Update Data"
+   },
 	"ADMIN": {
 		"HEADER": "Admin Page",
 		"SUBHEADER": "Use this form to register either existing or new repositories.",

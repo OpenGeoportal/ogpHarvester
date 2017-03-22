@@ -149,6 +149,8 @@
             var="adminControllerUrl"/>
 <spring:url value="/static/js/angularjs/manageLayersController.js"
             var="manageLayersUrl"/>
+<spring:url value="/static/js/angularjs/CORSInterceptor.js"
+            var="CORSInterceptorUrl"/>
 <spring:url value="/static/js/angularjs/editIngestController.js"
             var="editIngestControllerUrl"/>
 <spring:url value="/static/js/angularjs/filters.js" var="filtersUrl"/>
@@ -173,6 +175,7 @@
 <script type="text/javascript" src="${controllersUrl}"></script>
 <script type="text/javascript" src="${adminControllerUrl}"></script>
 <script type="text/javascript" src="${manageLayersUrl}"></script>
+<script type="text/javascript" src="${CORSInterceptorUrl}"></script>
 <script type="text/javascript" src="${editIngestControllerUrl}"></script>
 <script type="text/javascript" src="${filtersUrl}"></script>
 <script type="text/javascript" src="${directivesUrl}"></script>

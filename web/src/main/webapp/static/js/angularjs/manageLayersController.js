@@ -16,5 +16,9 @@
 		       .then(function(res){
 		          $scope.jsonresult = res.data;                
 		        });
+			  
+			  $scope.layerDetails = function() {				  
+				  ngDialog.open("http://localhost:8083/workspaces/db/datasets/cb_2015_01_bg_500k");		  
+			  };
 		});
 })();

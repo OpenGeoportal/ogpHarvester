@@ -3,21 +3,29 @@
     <table class="table layer-list">
         <thead>
         <tr>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_DELETE' | translate}}</th>
             <th>{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
             <th>{{'MANAGE_LAYERS.LIST_HEADER_TITLE' | translate}}</th>
-            <th></th>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_INFO' | translate}}</th>
+            <th>{{'MANAGE_LAYERS.LIST_HEADER_UPDATE' | translate}}</th>
         </tr>
         </thead>
     <tbody>
     <tr ng-repeat="dataset in jsonresult.data">
-	    <td >
+        <td>
+          <span class="glyphicon glyphicon-remove-sign"></span>
+        </td>
+	    <td>
 	      {{dataset[1]}}
 	    </td>
-	    <td >
+	    <td>
           {{dataset[2]}}
         </td>
-        <td >
-          
+        <td>
+          <button ng-click="layerDetails()"><span class="glyphicon glyphicon-info-sign"></span></button>
+        </td>
+        <td>          
+           <span class="glyphicon glyphicon-pencil"></span> 
         </td>
     </tr>
     </tbody>
