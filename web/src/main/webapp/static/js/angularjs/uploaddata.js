@@ -22,13 +22,23 @@
 		            });
 
 		        	file.upload.then(function (response) {
-		            	$scope.downloads.push({'workspace': $scope.workspace, 'dataset': $scope.dataset, 'fileName':  $scope.zipFile.name, 'fileSize':  $scope.zipFile.size, 'done':false})
+		            	$scope.downloads.push({'workspace': $scope.workspace, 'dataset': $scope.dataset, 'fileName':  $scope.zipFile.name, 'fileSize':  $scope.bytesConverter($scope.zipFile.size, 2), 'done':false})
 		            }, function (response) {
 		                if (response.status > 0)
 		                    $scope.errorMsg = response.status + ': ' + response.data;
 		            });
 		        }   
 		    }
+			
+			$scope.bytesConverter = function(bytes, precision) {
+					if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+					if (typeof precision === 'undefined') precision = 1;
+					var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+						number = Math.floor(Math.log(bytes) / Math.log(1024));
+					return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+			};
+			
+			
 		}]);
 
 })();
