@@ -56,6 +56,7 @@
         <spring:url value="/static/js/bootstrap-multiselect.js"
                     var="multiselectJS"/>
         <script type="text/javascript" src="${multiselectJS}"></script>--%>
+
     <decorator:head/>
 </head>
 <body>
@@ -176,5 +177,9 @@
 <script type="text/javascript" src="${editIngestControllerUrl}"></script>
 <script type="text/javascript" src="${filtersUrl}"></script>
 <script type="text/javascript" src="${directivesUrl}"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-smart-table/2.1.8/smart-table.js"></script>
+
+
 </body>
 </html>

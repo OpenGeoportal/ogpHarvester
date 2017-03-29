@@ -10,7 +10,7 @@
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl',
 			'ogpHavester.controllers.manageLayersCtrl', 'ogpHavester.controllers.editIngestCtrl',
-			'ui.select2', 'ogpHavester.interceptors'
+			'ui.select2', 'ogpHavester.interceptors', 'smart-table'
 		]).config(
 		['$routeProvider', '$locationProvider',
 			function($routeProvider, $locationProvider) {
