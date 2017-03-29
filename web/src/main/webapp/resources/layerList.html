@@ -1,6 +1,55 @@
-<div class="col-md-9 right-column layer-list" data-ng-controller="ManageLayersCtrl">
+<div class="col-md-9 right-column table-striped" data-ng-controller="ManageLayersCtrl">
     <h1 data-translate="MANAGE_LAYERS.HEADER"></h1>
-    <table class="table layer-list">
+    <!--<table class="table layer-list">-->
+
+        <table st-table="jsonresult.data" class="table table-striped">
+<!--
+    <table st-table="displayedCollection" st-safe-src="jsonresult.data" class="table table-striped">
+-->
+        <thead>
+            <tr>
+                <th>
+                    <input st-search="title" placeholder="search for title" class="input-sm form-control"
+                           type="search"/>
+                </th>
+                <th colspan="3">
+                    <input st-search placeholder="global search" class="input-sm form-control" type="search"/>
+                </th>
+            </tr>
+            <tr>
+                <th st-sort="name">{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
+                <th st-sort="title">{{'MANAGE_LAYERS.LIST_HEADER_TITLE' | translate}}</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!--
+            <tr ng-repeat="row in displayedCollection">
+                <td>
+                    {{row[1]}}
+                </td>
+                <td>
+                    {{row[2]}}
+                </td>
+                <td>
+                    <button ng-click="layerDetails()"><span class="glyphicon glyphicon-info-sign"></span></button>
+                </td>
+            </tr> -->
+            <tr ng-repeat="row in jsonresult.data">
+                <td>{{row[0]}}:{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+            </tr>
+            </tbody><!--
+            <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+                </td>
+            </tr>s
+            </tfoot> -->
+    </table>
+<!--
+
+    <table class="table table-striped">
         <thead>
         <tr>
             <th>{{'MANAGE_LAYERS.LIST_HEADER_DELETE' | translate}}</th>
@@ -30,6 +79,7 @@
     </tr>
     </tbody>
     </table>
+
     <div data-pagination data-total-items="jsonresult.totalElements"
          data-page="jsonresult.curretPage"
          data-items-per-page="jsonresult.showingElements"
@@ -37,4 +87,6 @@
          data-previous-text="&lsaquo;" data-next-text="&rsaquo;" data-first-text="&laquo;" data-last-text="&raquo;"
 
          data-max-size="8" ></div>
+    -->
+
 </div>
