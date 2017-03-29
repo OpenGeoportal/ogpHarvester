@@ -69,10 +69,8 @@
             <div class="well sidebar-nav">
                 <ul class="nav nav-list">
                     <spring:url value="/uploadMetadata" var="uploadMetadataURL"/>
-                    <spring:url value="/uploadData" var="uploadDataURL"/>
                     <spring:url value="/ingest" var="ingestExternalURL"/>
                     <spring:url value="/manageIngests/" var="manageIngestsURL"/>
-                    <spring:url value="/manageLayers/" var="manageLayersURL"/>
                     <spring:url value="/editMetadata" var="editMetadataURL"/>
                     <spring:url value="/deleteRecords" var="deleteRecordsURL"/>
                     <spring:url value="/admin" var="adminURL"/>
@@ -129,6 +127,8 @@
             var="angularTranslateUrl"/>
 <spring:url value="/static/js/angular-rcsubmit/rc-form.js"
             var="rcFormUrl"/>
+<spring:url value="/static/js/angular-ng-file-upload/ng-file-upload.min.js"
+            var="ngFileUrl"/>
 <spring:url
         value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
         var="angularTranslateLoaderStaticFilesUrl"/>
@@ -149,6 +149,8 @@
             var="adminControllerUrl"/>
 <spring:url value="/static/js/angularjs/manageLayersController.js"
             var="manageLayersUrl"/>
+<spring:url value="/static/js/angularjs/uploaddata.js"
+            var="uploaddataUrl"/>
 <spring:url value="/static/js/angularjs/editIngestController.js"
             var="editIngestControllerUrl"/>
 <spring:url value="/static/js/angularjs/filters.js" var="filtersUrl"/>
@@ -164,6 +166,7 @@
 <script type="text/javascript" src="${angularTranslateUrl}"></script>
 <script type="text/javascript" src="${angularTranslateLoaderStaticFilesUrl}"></script>
 <script type="text/javascript" src="${rcFormUrl}"></script>
+<script type="text/javascript" src="${ngFileUrl}"></script>
 <script type="text/javascript" src="${angularUiBootstrapUrl}"></script>
 <script type="text/javascript" src="${uiUtilsUrl}"></script>
 <script type="text/javascript" src="${angularUiSelect2Url}"></script>
@@ -173,6 +176,7 @@
 <script type="text/javascript" src="${controllersUrl}"></script>
 <script type="text/javascript" src="${adminControllerUrl}"></script>
 <script type="text/javascript" src="${manageLayersUrl}"></script>
+<script type="text/javascript" src="${uploaddataUrl}"></script>
 <script type="text/javascript" src="${editIngestControllerUrl}"></script>
 <script type="text/javascript" src="${filtersUrl}"></script>
 <script type="text/javascript" src="${directivesUrl}"></script>

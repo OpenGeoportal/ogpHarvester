@@ -10,7 +10,7 @@
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl',
 			'ogpHavester.controllers.manageLayersCtrl', 'ogpHavester.controllers.editIngestCtrl',
-			'ui.select2', 'ogpHavester.interceptors'
+			'ogpHavester.controllers.uploadDataCtrl', 'ui.select2', 'ogpHavester.interceptors', 'ngFileUpload'
 		]).config(
 		['$routeProvider', '$locationProvider',
 			function($routeProvider, $locationProvider) {
@@ -23,6 +23,11 @@
 				$routeProvider.when('/manageLayers', {
 					templateUrl: 'resources/layerList.html',
 					controller: 'ManageLayersCtrl'
+				});
+				
+				$routeProvider.when('/uploadData', {
+					templateUrl: 'resources/uploaddata.html',
+					controller: 'UploadDataCtrl'
 				});
 
 				$routeProvider.when('/manageIngests/view/:id', {

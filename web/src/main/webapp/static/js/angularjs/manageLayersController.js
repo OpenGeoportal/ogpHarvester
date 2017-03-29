@@ -12,13 +12,13 @@
 		}
 	])
 		.controller('ManageLayersCtrl', function($scope, $http) {
-			  $http.get('http://localhost:8084/datasets')
+			  $http.get('http://localhost:8083/datasets')
 		       .then(function(res){
 		          $scope.jsonresult = res.data;                
 		        });
 			  
 			  $scope.layerDetails = function() {				  
-				  ngDialog.open("http://localhost:8084/workspaces/db/datasets/cb_2015_01_bg_500k");		  
+				  ngDialog.open("http://localhost:8083/workspaces/db/datasets/cb_2015_01_bg_500k");		  
 			  };
 		});
 })();
