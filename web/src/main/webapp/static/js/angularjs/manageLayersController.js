@@ -27,11 +27,14 @@
 
 		.controller('ManageLayersCtrl', function($scope, $http) {
 
-            $scope.itemsByPage=5;
+            //$scope.itemsByPage=5;
+            $scope.jsonresult = [];
+            $scope.displayedCollection = [].concat($scope.jsonresult);
+
 
             $http({
                 method : "GET",
-                url : "http://localhost:8083/workspaces/sf/datasets",
+                url : "http://localhost:8083/workspaces/sf/datasets?page=1&pageSize=10",
                 isArray: true
             }).then(function mySucces(response) {
                 $scope.jsonresult = response.data;
@@ -39,12 +42,18 @@
                 $scope.jsonresult = response.statusText;
             });
 
+            $scope.getters={
+                name: function (value) {
+                    //this will sort by the length of the first name string
+                    return value[0].length;
+                }
+            }
 
-/*
-			  $scope.layerDetails = function() {
-				  ngDialog.open("http://localhost:8083/workspaces/db/datasets/cb_2015_01_bg_500k");
-			  };
-*/
+            /*
+                          $scope.layerDetails = function() {
+                              ngDialog.open("http://localhost:8083/workspaces/db/datasets/cb_2015_01_bg_500k");
+                          };
+            */
 
 
 
