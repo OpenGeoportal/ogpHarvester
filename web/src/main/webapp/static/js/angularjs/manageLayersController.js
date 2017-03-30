@@ -13,7 +13,7 @@
 		}
 	])
 
-		.controller('ManageLayersCtrl', function($scope, $http) {
+		.controller('ManageLayersCtrl', function($scope, $http, $modal) {
 
             $scope.itemsByPage = 5;
             $scope.itemsByPage = 7;
@@ -32,9 +32,27 @@
                 $scope.jsonresult = response.statusText;
             });
 
+            $scope.layerDetails = function (titlename) {
+                var modalInstance = $modal.open({
+                    templateUrl: 'resources/popup.html',/*
+                    controller: 'PopupCtrl',
+                    resolve: {
+                        titlename2: function () {
+                            return titlename;
+                        }
+                    }*/
+                })
+            }
 
 
+		})
 
+        .controller('PopUpCtrl', function ($scope, $modal, titlename2) {
+            $scope.title1 = titlename2;
+            $scope.close = function () {
+                $modalInstance.dismiss('cancel');
+            }
+        })
 
-		});
+    ;
 })();
