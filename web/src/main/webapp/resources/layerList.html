@@ -1,9 +1,5 @@
 <div class="col-md-9 right-column table-striped" data-ng-controller="ManageLayersCtrl">
     <h1 data-translate="MANAGE_LAYERS.HEADER"></h1>
-    <!--<table class="table layer-list">-->
-<!--
-        <table st-table="jsonresult.data" class="table table-striped">
--->
     <table st-table="displayedCollection" st-safe-src="jsonresult.data" class="table table-striped">
 
         <thead>
@@ -17,76 +13,32 @@
                 </th>
             </tr>
             <tr>
-                <th st-sort="displayedCollection[0][0]">{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
-                <th st-sort="displayedCollection[0][2]" st-sort-default="reverse">{{'MANAGE_LAYERS.LIST_HEADER_TITLE' |
+                <th st-sort="name">{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
+                <th st-sort="title">{{'MANAGE_LAYERS.LIST_HEADER_TITLE' |
                     translate}}</th>
+                <th st-sort="type">{{'MANAGE_LAYERS.LIST_HEADER_TYPE' | translate}}</th>
             </tr>
             </thead>
             <tbody>
-            <!--
             <tr ng-repeat="row in displayedCollection">
-                <td>
-                    {{row[1]}}
-                </td>
-                <td>
-                    {{row[2]}}
-                </td>
-                <td>
-                    <button ng-click="layerDetails()"><span class="glyphicon glyphicon-info-sign"></span></button>
-                </td>
-            </tr> -->
-            <tr ng-repeat="row in displayedCollection[0]">
-                <td>{{row[0]}}:{{row[1]}}</td>
-                <td>{{row[2]}}</td>
+                <td><a ng-href ng-click="layerDetails('title')">{{row.name}}</a></td>
+                <td>{{row.title}}</td>
+                <td>{{row.geometry}}</td>
+            </tr>
+            </tbody>
+            <tbody ng-if="!jsonresult.data">
+            <tr>
+                <td colspan="3">Loading ...</td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-                <td colspan="5" class="text-center">
-                    <div st-pagination="" st-items-by-page="itemsByPage" st-displayed-pages="7"></div>
+                <td colspan="3" class="text-center">
+                    <div st-pagination="" st-items-by-page="itemsByPage" st-template="resources/pagination.html"></div>
                 </td>
             </tr>
             </tfoot>
     </table>
-<!--
 
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_DELETE' | translate}}</th>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_NAME' | translate}}</th>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_TITLE' | translate}}</th>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_INFO' | translate}}</th>
-            <th>{{'MANAGE_LAYERS.LIST_HEADER_UPDATE' | translate}}</th>
-        </tr>
-        </thead>
-    <tbody>
-    <tr ng-repeat="dataset in jsonresult.data">
-        <td>
-          <span class="glyphicon glyphicon-remove-sign"></span>
-        </td>
-	    <td>
-	      {{dataset[1]}}
-	    </td>
-	    <td>
-          {{dataset[2]}}
-        </td>
-        <td>
-          <button ng-click="layerDetails()"><span class="glyphicon glyphicon-info-sign"></span></button>
-        </td>
-        <td>          
-           <span class="glyphicon glyphicon-pencil"></span> 
-        </td>
-    </tr>
-    </tbody>
-    </table>
-!-->
-<!--
-    <div data-pagination data-total-items="jsonresult.totalElements"
-         data-page="jsonresult.curretPage"
-         data-items-per-page="5"
-         data-boundary-links="true"
-         data-previous-text="&lsaquo;" data-next-text="&rsaquo;" data-first-text="&laquo;" data-last-text="&raquo;"
-
-         data-max-size="8" ></div> -->
+    <st-pagination collection="commits" mid-range="2" edge-range="2"></st-pagination>
 </div>
