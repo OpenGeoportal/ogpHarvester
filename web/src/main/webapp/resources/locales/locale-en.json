@@ -254,7 +254,9 @@
    },
    "UPLOAD_DATA": {
         "HEADER": "Upload Data",
-        "QUEUE": "Upload Queue"
+        "QUEUE": "Upload Queue",
+        "WORKSPACE":  "Workspace",
+        "LAYER":  "Layer"
     },
    "ADMIN": {
 		"HEADER": "Admin Page",
