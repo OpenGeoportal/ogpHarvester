@@ -10,7 +10,7 @@
 			controller: 'UploadDataCtrl'
 		});
 	}
-	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', function ($scope, Upload, $http, $q, $cookies, $interval)  {
+	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', function ($scope, Upload, $http, $q, $cookies, $interval, $translate)  {
 		
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
@@ -29,7 +29,7 @@
 				}
 				
 				if(download.ticket > 10) {
-					download.status = 'File sent';
+					download.status = $translate("UPLOAD_DATA.FILE_SENT");
 					download.statusColor = 'black';
 					download.zipFile = '';
 					download.ticket=-1;
@@ -42,9 +42,9 @@
 			$scope.errFiles = errFiles;
 			angular.forEach(files, function(file) {
 				if(file.name.substr(file.name.length - 4, file.name.length)==='.zip') {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : 'Ready', 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.READY"), 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
 				} else {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : 'Not a zip file', 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.NOT_A_ZIP_FILE"), 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
 				}
 			});
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
@@ -56,19 +56,19 @@
 			
 			angular.forEach($scope.downloads, function(download) {
 				if(!download.locked && download.valid && download.workspace==='') {
-					download.status = 'Workspace name required';
+					download.status = $translate("UPLOAD_DATA.WORKSPACE_NAME_REQUIRED");
 					download.statusColor = 'red';
 					validSet = false
 				} else if(!download.locked && download.valid && download.dataset==='') {
-					download.status = 'Dataset name required';
+					download.status = $translate("UPLOAD_DATA.DATASET_NAME_REQUIRED");
 					download.statusColor = 'red';
 					validSet = false
 				} else if(!download.locked && !download.valid) {
-					download.status = 'Not allowed';
+					download.status = $translate("UPLOAD_DATA.NOT_ALLOWED");
 					download.statusColor = 'red';
 					validSet = false
 				} else if(!download.locked) {
-					download.status = 'Ready';
+					download.status = $translate("UPLOAD_DATA.READY");
 					download.statusColor = 'green';
 				}
 			});			
@@ -76,7 +76,7 @@
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
-						download.status = 'Sending...';
+						download.status = $translate("UPLOAD_DATA.SENDING");;
 						download.statusColor = 'blue';
 						download.locked = true;
 					}
@@ -88,7 +88,7 @@
 
 		$scope.expandWorkspace = function(workspace) {
 			if(workspace!=null && workspace!='') {
-				if ( window.confirm('Rename all workspaces with ' + workspace + ' ?') ) {
+				if ( window.confirm($translate("UPLOAD_DATA.RENAME_ALL_WORKSPACES_WITH") + ' ' + workspace + '?') ) {
 					angular.forEach($scope.downloads, function(download) {
 						if(!download.locked) {
 							download.workspace = workspace;
@@ -100,7 +100,7 @@
 		}
 
 		$scope.remove = function(array, index){
-			if(window.confirm('Remove the file?')) {
+			if(window.confirm($translate("UPLOAD_DATA.REMOVE_THE_FILE"))) {
 				array.splice(index, 1);
 				$cookies['downloads'] = JSON.stringify(array);
 			}
