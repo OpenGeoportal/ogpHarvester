@@ -1,22 +1,27 @@
 <div class="col-md-9 right-column layer-list"
 	data-ng-controller="UploadDataCtrl">
 
-
-	<table class="table layer-list" ng-show="downloads.length">
+<h2 data-translate="UPLOAD_DATA.HEADER" class="ng-scope">My Repositories</h2><br/>
+	<table class="table table-striped" ng-show="downloads.length">
 	<thead>
 	    <tr>
-	       <th>Layer</th>
-	       <th>File Name</th>
-	       <th>Size</th>
-	       <th>Status</th>
+	       <th data-translate="UPLOAD_DATA.WORKSPACE"></th>
+	       <th data-translate="UPLOAD_DATA.LAYER"></th>
+	       <th data-translate="UPLOAD_DATA.FILE_NAME"></th>
+	       <th data-translate="UPLOAD_DATA.SIZE"></th>
+	       <th data-translate="UPLOAD_DATA.STATUS"></th>
+	       <th data-translate="UPLOAD_DATA.CLEAN"></th>
 	    </tr>
 	    </thead>
 	    <tbody>
 		<tr ng-repeat="download in downloads">
-			<td>{{download.workspace}}/{{download.dataset}}</td>
+			<td><input type="text" ng-model="download.workspace" size="20" ng-Show="download.valid" ng-dblclick="expandWorkspace(download.workspace)" ng-readonly="download.locked"></td>
+			<td><input type="text" ng-model="download.dataset" size="20" ng-Show="download.valid" required ng-readonly="download.locked"></td>
 			<td>{{download.fileName}}</td>
 			<td>{{download.fileSize}}</td>
-			<td><b style="color: green;">Uploading...</b></td>
+			<td><b style="color: {{download.statusColor}}; ">{{download.status}}</b></td>
+			<td style ="padding-right: 3%;"><button class="close" ng-click="remove(downloads, $index)" ng-Show="!download.locked">×</button>
+			<button class="close" ng-click="clean(downloads, $index)" ng-Show="download.ticket<0">-</button></td>
 		</tr>
 		</tbody>
 	</table>
@@ -25,24 +30,14 @@
 
 	<form name="downloadFrm" ng-submit="uploadFiles">
 	
+	
+	
 	<fieldset>
-      <legend>New file</legend>
-        Workspace name:
-      <input type="text" name="workspace" ng-model="workspace" size="127" required>
-     <i ng-show="downloadFrm.workspace.$error.required">*required</i>
-      <br>Layer name:
-      <input type="text" name="dataset" ng-model="dataset" size="127" required>
-      <i ng-show="downloadFrm.dataset.$error.required">*required</i>
-      <br>File:
-		 <input type="file" ngf-select ng-model="zipFile" name="zipFile" required ngf-model-invalid="errorFile">
-      <i ng-show="downloadFrm.zipFile.$error.required">*required</i><br>
-      <br>
-      <button ng-disabled="!downloadFrm.$valid" 
-              ng-click="uploadFiles(zipFile)" class="btn btn-primary" >Send to server</button>
-      
-      <span ng-show="zipFile.result">Sent to server queue</span>
-      <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
-		</fieldset>
+      <button ngf-select="uploadFiles($files, $invalidFiles)" multiple class="btn btn-primary" data-translate="UPLOAD_DATA.ADD_FILES" ></button>
+      <button ng-click="sendFiles()" class="btn btn-primary" data-translate="UPLOAD_DATA.LOAD_TO_SERVER" ng-show="downloads.length"></button>
+ 	</fieldset>
+ 	
+ 	
 	</form>
 	
 	

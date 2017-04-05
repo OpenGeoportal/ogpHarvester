@@ -10,7 +10,7 @@
 			'ogpHarvester.services', 'ogpHarvester.directives',
 			'ogpHarvester.controllers', 'ogpHavester.controllers.adminCtrl',
 			'ogpHavester.controllers.manageLayersCtrl', 'ogpHavester.controllers.editIngestCtrl',
-			'ogpHavester.controllers.uploadDataCtrl', 'ui.select2', 'ogpHavester.interceptors', 'ngFileUpload' , 'smart-table'
+			'ogpHavester.controllers.uploadDataCtrl', 'ui.select2', 'ogpHavester.interceptors', 'ngFileUpload' , 'smart-table', 'ngCookies'
 		]).config(
 		['$routeProvider', '$locationProvider',
 			function($routeProvider, $locationProvider) {

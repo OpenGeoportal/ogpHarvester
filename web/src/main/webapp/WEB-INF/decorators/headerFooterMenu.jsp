@@ -130,6 +130,8 @@
             var="rcFormUrl"/>
 <spring:url value="/static/js/angular-ng-file-upload/ng-file-upload.min.js"
             var="ngFileUrl"/>
+<spring:url value="/static/js/angular-ng-cookies/angular-cookies.js"
+            var="ngCookiesUrl"/>
 <spring:url
         value="/static/js/angular-translate-loader-static-files/angular-translate-loader-static-files.js"
         var="angularTranslateLoaderStaticFilesUrl"/>
@@ -168,6 +170,7 @@
 <script type="text/javascript" src="${angularTranslateLoaderStaticFilesUrl}"></script>
 <script type="text/javascript" src="${rcFormUrl}"></script>
 <script type="text/javascript" src="${ngFileUrl}"></script>
+<script type="text/javascript" src="${ngCookiesUrl}"></script>
 <script type="text/javascript" src="${angularUiBootstrapUrl}"></script>
 <script type="text/javascript" src="${uiUtilsUrl}"></script>
 <script type="text/javascript" src="${angularUiSelect2Url}"></script>
