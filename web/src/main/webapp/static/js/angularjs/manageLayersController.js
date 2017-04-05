@@ -15,15 +15,14 @@
 
 		.controller('ManageLayersCtrl', function($scope, $http, $modal) {
 
-            $scope.itemsByPage = 5;
-            $scope.itemsByPage = 7;
+            $scope.itemsByPage = 12;
             $scope.jsonresult = [];
             $scope.displayedCollection = [].concat($scope.jsonresult);
 
 
             $http({
                 method : "GET",
-                url : "http://localhost:8083/workspaces/sf/datasets?page=1&pageSize=600",
+                url : "http://localhost:8083/allDatasets",
                 isArray: true
             }).then(function mySucces(response) {
                 $scope.jsonresult = response.data;
