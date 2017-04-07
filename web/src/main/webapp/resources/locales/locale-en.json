@@ -270,12 +270,14 @@
         "DATASET_NAME_REQUIRED": "Dataset name required",
         "NOT_ALLOWED": "Not allowed",
         "SENDING": "Sending...",
-        "RENAME_ALL_WORKSPACES_WITH": "Rename all workspaces with",
+        "RENAME_ALL_WORKSPACES_WITH": "Rename all workspaces with {{name}}?",
         "REMOVE_THE_FILE": "Remove the file"
    },
    "ADMIN": {
 		"HEADER": "Admin Page",
-		"SUBHEADER": "Use this form to register either existing or new repositories.",
+		"SUBHEADER": "Use this form to:",
+	    "SUBHEADER_1": "- register either existing or new repositories",
+		"SUBHEADER_2": "- manage a list of gesoserver workspaces",
 		"MY_REPOS_HEADER": "My Repositories",
 		"NEW_CUSTOM_REPO_HEADER": "Register Custom Repository",
 		"NEW_CUSTOM_REPO_HEADER_TOOLTIP": "Add the Register Custom Repository tooltip",
@@ -307,8 +309,11 @@
 		"EXISTING_REPO_ADDED": "The repository {{name}} has been successfully added to My Repositories.",
 		"ERROR_REPO_ALREADY_ADDED": "A repository with {{rejectedValue}} and selected type already exist. Please select another name.",
 		"DELETE_REPO_WITH_INGESTS": "This repository has scheduled ingests. If you continue these ingests will be unscheduled.",
-		"DELETE_REPO_WITH_INGESTS_TITLE": "Repository with scheduled ingests"
-	},
+		"DELETE_REPO_WITH_INGESTS_TITLE": "Repository with scheduled ingests",
+		"MY_WORKSPACES_HEADER": "Default Workspaces",
+	    "ADD_WORKSPACE": "Add Workspace",
+	    "WORKSPACE": "Workspace"
+    },
     "MAP": {
         "HEADER": "Geographic Extent",
         "HEADER_TOOLTIP": "Select the geographic extent for the search filter",
