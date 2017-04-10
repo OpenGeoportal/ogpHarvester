@@ -10,7 +10,7 @@
 			controller: 'UploadDataCtrl'
 		});
 	}
-	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', function ($scope, Upload, $http, $q, $cookies, $interval, $translate)  {
+	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
@@ -76,7 +76,7 @@
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
-						
+
 						Upload.upload({
 							url: 'http://localhost:8083/workspaces/'+download.workspace+'/datasets/'+download.dataset,
 							data: {file: download.zipFile}
@@ -88,8 +88,8 @@
 							var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
 							console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
 						});
-						
-						
+
+
 						download.status = $translate("UPLOAD_DATA.SENDING");;
 						download.statusColor = 'blue';
 						download.locked = true;
@@ -102,9 +102,9 @@
 
 		$scope.expandWorkspace = function(workspace) {
 			if(workspace!=null && workspace!='') {
-				if ( window.confirm($translate("UPLOAD_DATA.RENAME_ALL_WORKSPACES_WITH", {
-						name : workspace
-					})) ) {
+				if ($scope.downloads.length>1 && window.confirm($translate("UPLOAD_DATA.RENAME_ALL_WORKSPACES_WITH", {
+					name : workspace
+				})) ) {
 					angular.forEach($scope.downloads, function(download) {
 						if(!download.locked) {
 							download.workspace = workspace;
@@ -133,7 +133,25 @@
 			var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
 			number = Math.floor(Math.log(bytes) / Math.log(1024));
 			return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+		};		
+
+		$scope.getDefaultWorkspaces = function() {
+
+
+			defaultWorkspaces.getWorkspaces().then(function(response) {
+
+				$scope.workspaceList = response.data;
+			},
+			function(errorMessage) {
+				$scope.alerts.push({
+					type: 'danger',
+					msg: errorMessage
+				});
+				$scope.error;
+			});
 		};
+
+		$scope.getDefaultWorkspaces();	
 	}]);
 
 })();

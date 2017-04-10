@@ -271,7 +271,12 @@
         "NOT_ALLOWED": "Not allowed",
         "SENDING": "Sending...",
         "RENAME_ALL_WORKSPACES_WITH": "Rename all workspaces with {{name}}?",
-        "REMOVE_THE_FILE": "Remove the file"
+        "REMOVE_THE_FILE": "Remove the file",
+        "SELECT_WORKSPACE": "Select the workspace name",
+        "APPLY_TO_CURRENT": "Apply to the current",
+        "APPLY_TO_ALL": "Apply to all",
+        "DISMISS_MODAL": "Close",
+        "NO_WORKSPACE_SELECTED": "No workspace selected"
    },
    "ADMIN": {
 		"HEADER": "Admin Page",
