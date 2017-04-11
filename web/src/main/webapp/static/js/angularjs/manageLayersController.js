@@ -34,13 +34,22 @@
 
 
             $scope.layerDetails = function (row_name) {
-                    //console.log("the name of this layers is: " + row_name);
+                var res = row_name.split(":");
+                $scope.ws=res[0];
+                $scope.ds= res[1];
                 var modalInstance = $modal.open({
                     templateUrl: 'resources/popup.html',
                     controller: 'PopupCtrl',
                     resolve: {
-                        titlename2: function () {
-                            return row_name;
+                        jsonresp:function(){
+                            return $http({
+                                method : "GET",
+                                url : "http://localhost:8083/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
+                                isArray: true
+                            }).success(function (response) {
+                            }).error(function(response){
+                                $scope.details = response.statusText;
+                            });
                         }
                     }
                 });
@@ -50,12 +59,13 @@
 
 		})
 
-    .controller('PopupCtrl', ['$scope','$modalInstance', 'titlename2', function ($scope, $modalInstance, titlename2) {
-        $scope.title1 = titlename2;
-        /*
+    .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
+        $scope.details = jsonresp.data;
+        $scope.layerTitle=jsonresp.data.title;
+
         $scope.close = function () {
-            $modalInstance.dismiss('cancel');
-        };*/
+            $modalInstance.dismiss('close');
+        };
 
     }]);
 
