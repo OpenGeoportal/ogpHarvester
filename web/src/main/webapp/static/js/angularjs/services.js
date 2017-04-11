@@ -276,4 +276,33 @@
 
 		}
 	]);
+	
+	
+	servicesModule.service('defaultWorkspaces', ['$http', '$q',
+		function($http, $q) {
+			
+			// Public interface
+			return {
+				getWorkspaces: function() {
+					
+					return $http.get('/rest/defaultWorkspaces/getdefaultworkspaces', {
+						// manage response
+					});
+				},
+				save: function(workspaceName) {
+					return $http.post('rest/defaultWorkspaces/addworkspace/'+workspaceName);
+				},
+				remove: function(workspaceName) {
+					return $http.post('rest/defaultWorkspaces/removeworkspace/'+workspaceName);
+				}
+			};
+		}
+	]);
+	
+	
+	
+	
+	
+	
+	
 })();

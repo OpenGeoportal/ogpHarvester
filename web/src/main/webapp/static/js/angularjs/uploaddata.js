@@ -10,8 +10,8 @@
 			controller: 'UploadDataCtrl'
 		});
 	}
-	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', function ($scope, Upload, $http, $q, $cookies, $interval, $translate)  {
-		
+	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal)  {
+
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
 
@@ -21,13 +21,13 @@
 			$scope.downloads = [];
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
 		}
-		
+
 		$scope.refreshView = $interval(function(){
 			angular.forEach($scope.downloads, function(download) {	
 				if(download.locked && download.ticket>=0) {
 					download.ticket = download.ticket + 1;	
 				}
-				
+
 				if(download.ticket > 10) {
 					download.status = $translate("UPLOAD_DATA.FILE_SENT");
 					download.statusColor = 'black';
@@ -36,7 +36,7 @@
 				}
 			});
 		},1000);
-		
+
 		$scope.uploadFiles = function(files, errFiles) {
 			$scope.files = files;
 			$scope.errFiles = errFiles;
@@ -51,9 +51,9 @@
 		}
 
 		$scope.sendFiles = function() {
-			
+
 			var validSet = true;
-			
+
 			angular.forEach($scope.downloads, function(download) {
 				if(!download.locked && download.valid && download.workspace==='') {
 					download.status = $translate("UPLOAD_DATA.WORKSPACE_NAME_REQUIRED");
@@ -72,23 +72,39 @@
 					download.statusColor = 'green';
 				}
 			});			
-			
+
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
+
+						Upload.upload({
+							url: 'http://localhost:8083/workspaces/'+download.workspace+'/datasets/'+download.dataset,
+							data: {file: download.zipFile}
+						}).then(function (resp) {
+							console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+						}, function (resp) {
+							console.log('Error status: ' + resp.status);
+						}, function (evt) {
+							var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+							console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+						});
+
+
 						download.status = $translate("UPLOAD_DATA.SENDING");;
 						download.statusColor = 'blue';
 						download.locked = true;
 					}
 				});
 			}
-			
+
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
 		}
 
 		$scope.expandWorkspace = function(workspace) {
 			if(workspace!=null && workspace!='') {
-				if ( window.confirm($translate("UPLOAD_DATA.RENAME_ALL_WORKSPACES_WITH") + ' ' + workspace + '?') ) {
+				if ($scope.downloads.length>1 && window.confirm($translate("UPLOAD_DATA.RENAME_ALL_WORKSPACES_WITH", {
+					name : workspace
+				})) ) {
 					angular.forEach($scope.downloads, function(download) {
 						if(!download.locked) {
 							download.workspace = workspace;
@@ -105,7 +121,7 @@
 				$cookies['downloads'] = JSON.stringify(array);
 			}
 		}
-		
+
 		$scope.clean = function(array, index){
 			array.splice(index, 1);
 			$cookies['downloads'] = JSON.stringify(array);
@@ -117,9 +133,25 @@
 			var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
 			number = Math.floor(Math.log(bytes) / Math.log(1024));
 			return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
+		};		
+
+		$scope.getDefaultWorkspaces = function() {
+
+
+			defaultWorkspaces.getWorkspaces().then(function(response) {
+
+				$scope.workspaceList = response.data;
+			},
+			function(errorMessage) {
+				$scope.alerts.push({
+					type: 'danger',
+					msg: errorMessage
+				});
+				$scope.error;
+			});
 		};
 
-
+		$scope.getDefaultWorkspaces();	
 	}]);
 
 })();
