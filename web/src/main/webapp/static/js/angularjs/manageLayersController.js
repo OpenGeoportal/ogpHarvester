@@ -22,7 +22,8 @@
 
             $http({
                 method : "GET",
-                url : "http://localhost:8083/allDatasets",
+                //url : "http://localhost:8083/allDatasets",
+                url : "http://localhost:8083/workspaces/topp/datasets",
                 isArray: true
             }).then(function mySucces(response) {
                 $scope.jsonresult = response.data;
@@ -31,27 +32,34 @@
                 $scope.jsonresult = response.statusText;
             });
 
-            $scope.layerDetails = function (titlename) {
+
+            $scope.layerDetails = function (row_name) {
+                    //console.log("the name of this layers is: " + row_name);
                 var modalInstance = $modal.open({
-                    templateUrl: 'resources/popup.html',/*
+                    templateUrl: 'resources/popup.html',
                     controller: 'PopupCtrl',
                     resolve: {
                         titlename2: function () {
-                            return titlename;
+                            return row_name;
                         }
-                    }*/
-                })
+                    }
+                });
             }
+
 
 
 		})
 
-        .controller('PopUpCtrl', function ($scope, $modal, titlename2) {
-            $scope.title1 = titlename2;
-            $scope.close = function () {
-                $modalInstance.dismiss('cancel');
-            }
-        })
+    .controller('PopupCtrl', ['$scope','$modalInstance', 'titlename2', function ($scope, $modalInstance, titlename2) {
+        $scope.title1 = titlename2;
+        /*
+        $scope.close = function () {
+            $modalInstance.dismiss('cancel');
+        };*/
 
-    ;
+    }]);
+
+
+
+
 })();

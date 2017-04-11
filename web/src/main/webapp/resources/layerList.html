@@ -21,7 +21,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="row in displayedCollection">
-                <td><a ng-href ng-click="layerDetails('title')">{{row.name}}</a></td>
+                <td><a ng-href ng-click="layerDetails(row.name);">{{row.name}}</a></td>
                 <td>{{row.title}}</td>
                 <td>{{row.geometry}}</td>
             </tr>
