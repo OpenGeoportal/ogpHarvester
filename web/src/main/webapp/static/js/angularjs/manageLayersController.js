@@ -28,17 +28,6 @@
                 $scope.ds= res[1];
                 switch(action) {
                     case $translate("MANAGE_LAYERS.DOWNLOAD"):
-                        /*
-                        $http({
-                            method : "GET",
-                            url : "http://localhost:8083/workspaces/"+
-                            $scope.ws + "/datasets/" + $scope.ds + "/download",
-                        }).then(function mySuccess(response) {
-                            $scope.jsonresult = response.data;
-                        }, function myError(response) {
-                            $scope.jsonresult = response.statusText;
-                        });
-                        */
                         console.log("download " + "http://localhost:8083/workspaces/"+
                             $scope.ws + "/datasets/" + $scope.ds + "/download");
 
@@ -56,7 +45,7 @@
             $http({
                 method : "GET",
                 //url : "http://localhost:8083/allDatasets",
-                url : "http://localhost:8083/workspaces/topp/datasets",
+                url : "http://localhost:8083/workspaces/db/datasets?pageSize=200",
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;

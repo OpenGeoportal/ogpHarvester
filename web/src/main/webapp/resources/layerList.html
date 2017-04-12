@@ -17,6 +17,7 @@
                 <th st-sort="title">{{'MANAGE_LAYERS.LIST_HEADER_TITLE' |
                     translate}}</th>
                 <th st-sort="type">{{'MANAGE_LAYERS.LIST_HEADER_TYPE' | translate}}</th>
+                <th>{{'MANAGE_LAYERS.LIST_HEADER_ACTIONS' | translate}}</th>
             </tr>
             </thead>
             <tbody>
@@ -34,13 +35,13 @@
             </tbody>
             <tbody ng-if="!jsonresult.data">
             <tr>
-                <td colspan="3">Loading ...</td>
+                <td colspan="4">Loading ...</td>
             </tr>
             </tbody>
 
             <tfoot>
             <tr>
-                <td colspan="3" class="text-center">
+                <td colspan="4" class="text-center">
                     <div st-pagination="" st-items-by-page="itemsByPage" st-template="resources/pagination.html"></div>
                 </td>
             </tr>

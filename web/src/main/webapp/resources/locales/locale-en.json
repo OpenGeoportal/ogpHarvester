@@ -247,6 +247,7 @@
 		"LIST_HEADER_NAME": "Name",
 		"LIST_HEADER_TITLE": "Title",
 		"LIST_HEADER_TYPE": "Type",
+		"LIST_HEADER_ACTIONS": "Actions",
 		"LIST_HEADER_DELETE": "Delete",
 		"LIST_HEADER_UPDATE": "Update",
 		"LIST_HEADER_INFO": "Details",
