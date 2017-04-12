@@ -37,7 +37,12 @@
                 var res = row_name.split(":");
                 $scope.ws=res[0];
                 $scope.ds= res[1];
-                var modalInstance = $modal.open({
+                var splash = $modal.open({
+                    animation: true,
+                    templateUrl: 'resources/splash.html',
+                    scope: $scope,
+                });
+                    var modalInstance = $modal.open({
                     templateUrl: 'resources/popup.html',
                     controller: 'PopupCtrl',
                     resolve: {
@@ -47,7 +52,9 @@
                                 url : "http://localhost:8083/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
                                 isArray: true
                             }).success(function (response) {
+                                splash.close();
                             }).error(function(response){
+                                splash.close();
                                 $scope.details = response.statusText;
                             });
                         }
