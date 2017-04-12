@@ -10,7 +10,23 @@
     <h3 class="modal-title">{{layerTitle}}</h3>
 </div>
 <div class="modal-body">
+<!--
 <p><pre>{{details | json}}</pre></p>
+-->
+    <table class="table table-striped">
+        <tr><td>Typename:</td><td>{{details.typename}}</td></tr>
+        <tr><td>Workspace:</td><td>{{details.workspace}}</td></tr>
+        <tr><td>Name:</td><td>{{details.name}}</td></tr>
+        <tr><td>Title:</td><td>{{details.title}}</td></tr>
+        <tr><td>Description:</td><td>{{details.description}}</td></tr>
+        <tr><td>Keywords:</td><td>{{details.keywords}}</td></tr>
+        <tr><td>Geometry:</td><td>{{details.geometry}}</td></tr>
+        <tr><td>CRS:</td><td>{{details.crs}}</td></tr>
+        <tr><td>WFS endpoint:</td><td><a href="{{details.WFS}}">{{details.WFS}}</a></td></tr>
+        <tr><td>WMS endpoint:</td><td><a href="{{details.WFS}}">{{details.WMS}}</a></td></tr>
+        <tr><td>File Size (bytes):</td><td>{{details.size}}</td></tr>
+        <tr><td>Is Cached?</td><td>{{details.cached}}</td></tr>
+    </table>
 </div>
 <div class="modal-footer">
     <button class="btn btn-warning" type="button"
