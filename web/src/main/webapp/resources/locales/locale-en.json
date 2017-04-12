@@ -276,7 +276,8 @@
         "APPLY_TO_CURRENT": "Apply to the current",
         "APPLY_TO_ALL": "Apply to all",
         "DISMISS_MODAL": "Close",
-        "NO_WORKSPACE_SELECTED": "No workspace selected"
+        "NO_WORKSPACE_SELECTED": "No workspace selected",
+        "UPLOADING": "Uploading..."
    },
    "ADMIN": {
 		"HEADER": "Admin Page",

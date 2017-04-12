@@ -83,6 +83,9 @@
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
+						
+						download.status = $translate("UPLOAD_DATA.UPLOADING");
+						download.statusColor = 'blue';
 
 						Upload.upload({
 							url: 'http://localhost:8083/workspaces/'+download.workspace+'/datasets/'+download.dataset,
