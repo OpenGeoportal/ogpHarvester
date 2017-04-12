@@ -27,17 +27,16 @@
 				if(download.locked && download.ticket>=0) {
 					$http({
 		                method : "GET",
-		                url : "http://localhost:8083/workspaces/topp/datasets"
+		                url : "http://localhost:8083/checkUploadStatus/"+download.ticket
 		            }).then(function mySucces(response) {
 		                if(response.status=='200') {
 			                download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
 							download.zipFile = '';
 							download.ticket=-1;
-		                } else {
-		                	download.status = response.data;
 		                }
 		            }, function myError(response) {
+		            	download.statusColor = 'red';
 		            	download.status = response.data;
 		            });
 				}				
@@ -77,15 +76,17 @@
 				} else if(!download.locked) {
 					download.status = $translate("UPLOAD_DATA.READY");
 					download.statusColor = 'green';
-				}
+				} 
 			});			
 
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
 						
-						download.status = $translate("UPLOAD_DATA.UPLOADING");
-						download.statusColor = 'blue';
+						if(!download.locked) {
+							download.status = $translate("UPLOAD_DATA.UPLOADING");
+							download.statusColor = 'blue';
+						}
 
 						Upload.upload({
 							url: 'http://localhost:8083/workspaces/'+download.workspace+'/datasets/'+download.dataset,
@@ -99,7 +100,7 @@
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
 							if(resp.status=='500') {
-								download.status = resp.data.message;
+								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
 								download.statusColor = 'red';
 								download.locked = false;
 							} else {

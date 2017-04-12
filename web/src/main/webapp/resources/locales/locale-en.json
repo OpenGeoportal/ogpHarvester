@@ -283,7 +283,8 @@
         "APPLY_TO_ALL": "Apply to all",
         "DISMISS_MODAL": "Close",
         "NO_WORKSPACE_SELECTED": "No workspace selected",
-        "UPLOADING": "Uploading..."
+        "UPLOADING": "Uploading...",
+        "GENERIC_ERROR": "Server error"
    },
    "ADMIN": {
 		"HEADER": "Admin Page",
