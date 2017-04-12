@@ -22,8 +22,8 @@
 
             $http({
                 method : "GET",
-                //url : "http://localhost:8083/allDatasets",
-                url : "http://localhost:8083/workspaces/topp/datasets",
+                url : "http://localhost:8083/allDatasets",
+                //url : "http://localhost:8083/workspaces/topp/datasets",
                 isArray: true
             }).then(function mySucces(response) {
                 $scope.jsonresult = response.data;
@@ -40,6 +40,8 @@
                 var splash = $modal.open({
                     animation: true,
                     templateUrl: 'resources/splash.html',
+                    keyboard: false,
+                    backdrop: 'static',
                     scope: $scope,
                 });
                     var modalInstance = $modal.open({
