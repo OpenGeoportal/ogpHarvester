@@ -15,13 +15,16 @@
 	    </thead>
 	    <tbody>
 		<tr ng-repeat="download in downloads">
-			<td>
+			<td ng-show="workspaceList.length>0">
 			<select ng-model="download.workspace" ng-Show="download.valid" ng-disabled="download.locked" ng-change="expandWorkspace(download.workspace)">
 			<option ng-repeat="ws in workspaceList" value="{{ws.worksp}}">
 		    {{ws.worksp}}
-		    </div>
 			</option>
+			</select>
 			</td>		
+			<td ng-show="workspaceList.length<1">
+      <input type="text" ng-model="download.workspace" size="20" ng-Show="download.valid" ng-dblclick="expandWorkspace(download.workspace)" ng-readonly="download.locked">
+      </td>   
 			<td><input type="text" ng-model="download.dataset" size="20" ng-Show="download.valid" required ng-readonly="download.locked"></td>
 			<td>{{download.fileName}}</td>
 			<td>{{download.fileSize}}</td>

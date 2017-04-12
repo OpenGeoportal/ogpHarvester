@@ -25,15 +25,22 @@
 		$scope.refreshView = $interval(function(){
 			angular.forEach($scope.downloads, function(download) {	
 				if(download.locked && download.ticket>=0) {
-					download.ticket = download.ticket + 1;	
-				}
-
-				if(download.ticket > 10) {
-					download.status = $translate("UPLOAD_DATA.FILE_SENT");
-					download.statusColor = 'black';
-					download.zipFile = '';
-					download.ticket=-1;
-				}
+					$http({
+		                method : "GET",
+		                url : "http://localhost:8083/workspaces/topp/datasets"
+		            }).then(function mySucces(response) {
+		                if(response.status=='200') {
+			                download.status = $translate("UPLOAD_DATA.FILE_SENT");
+							download.statusColor = 'black';
+							download.zipFile = '';
+							download.ticket=-1;
+		                } else {
+		                	download.status = response.data;
+		                }
+		            }, function myError(response) {
+		            	download.status = response.data;
+		            });
+				}				
 			});
 		},1000);
 
@@ -82,17 +89,23 @@
 							data: {file: download.zipFile}
 						}).then(function (resp) {
 							console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+							download.status = $translate("UPLOAD_DATA.SENDING");
+							download.ticket = resp.data.split('*')[0];
+							download.statusColor = 'blue';
+							download.locked = true;
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
-						}, function (evt) {
-							var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-							console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+							if(resp.status=='500') {
+								download.status = resp.data.message;
+								download.statusColor = 'red';
+								download.locked = false;
+							} else {
+								download.status = resp.data;
+								download.statusColor = 'red';
+								download.locked = false;
+							}
 						});
 
-
-						download.status = $translate("UPLOAD_DATA.SENDING");;
-						download.statusColor = 'blue';
-						download.locked = true;
 					}
 				});
 			}
