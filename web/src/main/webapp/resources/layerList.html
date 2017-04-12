@@ -24,6 +24,12 @@
                 <td><a ng-href ng-click="layerDetails(row.name);">{{row.name}}</a></td>
                 <td>{{row.title}}</td>
                 <td>{{row.geometry}}</td>
+                <td>
+                    <select ng-model="ddlActions"
+                            ng-options="action as action for action in actions"
+                            ng-change="GetValue(ddlActions,row.name);">
+                    </select>
+                </td>
             </tr>
             </tbody>
             <tbody ng-if="!jsonresult.data">
