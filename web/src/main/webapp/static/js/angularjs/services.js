@@ -298,11 +298,12 @@
 			};
 		}
 	]);
-	
-	
-	
-	
-	
-	
-	
+
+    servicesModule.factory('DataIngest',
+        function() {
+            return {
+                baseUrl : 'http://localhost:8083'
+            };
+        });
+
 })();

@@ -13,7 +13,10 @@
 		}
 	])
 
-		.controller('ManageLayersCtrl', function($scope, $http, $translate, $modal) {
+		.controller('ManageLayersCtrl',['$scope', '$http', '$translate', '$modal', 'DataIngest',
+            function($scope, $http, $translate, $modal, DataIngest) {
+
+		    console.log(DataIngest.baseUrl);
 
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
@@ -41,11 +44,10 @@
             $http({
                 method : "GET",
                 //url : "http://localhost:8083/allDatasets",
-                url : "http://localhost:8083/workspaces/db/datasets",
+                url : DataIngest.baseUrl + "/workspaces/db/datasets",
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;
-                //$scope.dispPages = Math.round(response.data.totalElements/$scope.itemsByPage + 0.5);
             }, function myError(response) {
                 $scope.jsonresult = response.statusText;
             });
@@ -68,7 +70,7 @@
                         jsonresp:function(){
                             return $http({
                                 method : "GET",
-                                url : "http://localhost:8083/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
+                                url : DataIngest.baseUrl + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
                                 isArray: true
                             }).success(function (response) {
                                 splash.close();
@@ -172,7 +174,7 @@
 
 
 
-		})
+		}])
 
 
     .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
