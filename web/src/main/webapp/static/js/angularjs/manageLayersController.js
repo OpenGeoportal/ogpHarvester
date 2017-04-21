@@ -15,9 +15,6 @@
 
 		.controller('ManageLayersCtrl',['$scope', '$http', '$translate', '$modal', 'DataIngest',
             function($scope, $http, $translate, $modal, DataIngest) {
-
-		    console.log(DataIngest.baseUrl);
-
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
             $scope.displayedCollection = [].concat($scope.jsonresult);
@@ -25,16 +22,17 @@
                 $translate("MANAGE_LAYERS.DELETE")];
 
             $scope.GetValue = function (action, row_name) {
-                //console.log(action + " " + row_name);
-                var res = row_name.split(":");
+                 var res = row_name.split(":");
                 $scope.ws=res[0];
                 $scope.ds= res[1];
                 switch(action) {
                     case $translate("MANAGE_LAYERS.DOWNLOAD"):
                         console.log("download " + "http://localhost:8083/workspaces/"+
                             $scope.ws + "/datasets/" + $scope.ds + "/download");
+                        break;
                     case $translate("MANAGE_LAYERS.UPDATE"):
                             //TODO: move this to the upload tab ?
+                        break;
                     case $translate("MANAGE_LAYERS.DELETE"):
                         confirmDlg();
                         }
@@ -133,7 +131,7 @@
                     $('#ezAlerts-message').html(defaults.messageText);
 
                     var keyb = "false", backd = "static";
-                    //var calbackParam = "";
+                    var calbackParam = "";
 
                     var btnhtml = '<button id="ezok-btn" class="btn btn-primary">' + defaults.noButtonText + '</button>';
 
@@ -142,16 +140,13 @@
                     }
                     $('#ezAlerts-footer').html(btnhtml).on('click', 'button', function (e) {
                         if (e.target.id === 'ezok-btn') {//false
-                            //calbackParam = false;
+                            calbackParam = false;
                             //console.log("cancel");
                             $('#ezAlerts').modal('hide');
                         } else if (e.target.id === 'ezclose-btn') {//true
-                            //calbackParam = true;
-                            //console.log("ok");
+                            calbackParam = true;
                             $('#ezAlerts').modal('hide');
                         }
-                        //$('#ezAlerts').modal('hide');
-                        //console.log(calbackParam);
                     });
 
                     $('#ezAlerts').modal({
@@ -161,6 +156,20 @@
                     }).on('hidden.bs.modal', function (e) {
                         $('#ezAlerts').remove();
                         deferredObject.resolve(calbackParam);
+                        deferredObject.then(function(calbackParam){
+                            if(calbackParam) {
+                                $http({
+                                    method : "DELETE",
+                                    url : DataIngest.baseUrl + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds
+                                }).then(function mySuccess(response) {
+                                    console.log(response.data);
+                                }, function myError(response) {
+                                    console.log(response.statusText);
+                                });
+
+                            }
+                        });
+
                     }).on('shown.bs.modal', function (e) {
                         if ($('#prompt').length > 0) {
                             $('#prompt').focus();
@@ -170,11 +179,12 @@
 
                 _show();
                 return deferredObject.promise();
+
             }
 
 
 
-		}])
+                }])
 
 
     .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
