@@ -264,9 +264,11 @@
         "QUEUE": "Upload Queue",
         "WORKSPACE":  "Workspace",
         "LAYER":  "Layer",
+        "STORE":  "Store",
         "FILE_NAME":  "File Name",
         "SIZE": "Size",
         "STATUS": "Status",
+        "SRS": "Forced SRS*",
         "CLEAN": "Clean",
         "ADD_FILES": "Add Files",
         "LOAD_TO_SERVER": "Load to server",
@@ -285,7 +287,8 @@
         "DISMISS_MODAL": "Close",
         "NO_WORKSPACE_SELECTED": "No workspace selected",
         "UPLOADING": "Uploading...",
-        "GENERIC_ERROR": "Server error"
+        "GENERIC_ERROR": "Server error",        
+        "CUSTOM": "{{custom}}"
    },
    "ADMIN": {
 		"HEADER": "Admin Page",
@@ -325,8 +328,8 @@
 		"DELETE_REPO_WITH_INGESTS": "This repository has scheduled ingests. If you continue these ingests will be unscheduled.",
 		"DELETE_REPO_WITH_INGESTS_TITLE": "Repository with scheduled ingests",
 		"MY_WORKSPACES_HEADER": "Default Workspaces",
-	    "ADD_WORKSPACE": "Add Workspace",
-	    "WORKSPACE": "Workspace"
+	  "ADD_WORKSPACE": "Add Workspace",
+	  "WORKSPACE": "Workspace"
     },
     "MAP": {
         "HEADER": "Geographic Extent",

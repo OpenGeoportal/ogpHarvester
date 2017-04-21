@@ -7,6 +7,8 @@
 	    <tr>
 	       <th data-translate="UPLOAD_DATA.WORKSPACE"></th>
 	       <th data-translate="UPLOAD_DATA.LAYER"></th>
+	       <th data-translate="UPLOAD_DATA.STORE"></th>
+	       <th data-translate="UPLOAD_DATA.SRS"></th>
 	       <th data-translate="UPLOAD_DATA.FILE_NAME"></th>
 	       <th data-translate="UPLOAD_DATA.SIZE"></th>
 	       <th data-translate="UPLOAD_DATA.STATUS"></th>
@@ -23,9 +25,11 @@
 			</select>
 			</td>		
 			<td ng-show="workspaceList.length<1">
-      <input type="text" ng-model="download.workspace" size="20" ng-Show="download.valid" ng-dblclick="expandWorkspace(download.workspace)" ng-readonly="download.locked">
+      <input type="text" ng-model="download.workspace" size="15" ng-Show="download.valid" ng-dblclick="expandWorkspace(download.workspace)" ng-readonly="download.locked">
       </td>   
-			<td><input type="text" ng-model="download.dataset" size="20" ng-Show="download.valid" required ng-readonly="download.locked"></td>
+			<td><span ng-Show="download.valid">{{download.dataset}}</span></td>
+			<td><input type="text" ng-model="download.datastore" size="12" ng-Show="download.valid" required ng-readonly="download.locked"></td>
+			<td><input type="number" ng-model="download.srs" size="8" ng-Show="download.valid" ng-readonly="download.locked"></td>
 			<td>{{download.fileName}}</td>
 			<td>{{download.fileSize}}</td>
 			<td><b style="color: {{download.statusColor}}; ">{{download.status}}</b></td>
@@ -34,6 +38,7 @@
 		</tr>
 		</tbody>
 	</table>
+	<p ng-show="downloads.length">* Optional parameter</p>
 	
 	<form name="downloadFrm" ng-submit="uploadFiles">
 	

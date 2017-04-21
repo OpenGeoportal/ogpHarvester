@@ -14,6 +14,12 @@
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
+		
+		var dataIngestURL;
+		
+		$http.get('static/angularProperties.properties').then(function (response) {
+	        dataIngestURL = response.data.dataingestUrl;
+	     });
 
 		if($cookies['downloads']!=null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);
@@ -27,17 +33,21 @@
 				if(download.locked && download.ticket>=0) {
 					$http({
 		                method : "GET",
-		                url : "http://localhost:8083/checkUploadStatus/"+download.ticket
+		                url : dataIngestURL+"/checkUploadStatus/"+download.ticket
 		            }).then(function mySucces(response) {
 		                if(response.status=='200') {
 			                download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
 							download.zipFile = '';
 							download.ticket=-1;
+							$cookies['downloads'] = JSON.stringify($scope.downloads);
 		                }
 		            }, function myError(response) {
 		            	download.statusColor = 'red';
-		            	download.status = response.data;
+		            	download.status = $translate("UPLOAD_DATA.CUSTOM", {
+							custom : response.data
+						});
+		            	$cookies['downloads'] = JSON.stringify($scope.downloads);
 		            });
 				}				
 			});
@@ -48,9 +58,9 @@
 			$scope.errFiles = errFiles;
 			angular.forEach(files, function(file) {
 				if(file.name.substr(file.name.length - 4, file.name.length)==='.zip') {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.READY"), 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.READY"), 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
 				} else {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.NOT_A_ZIP_FILE"), 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.NOT_A_ZIP_FILE"), 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
 				}
 			});
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
@@ -86,10 +96,32 @@
 						if(!download.locked) {
 							download.status = $translate("UPLOAD_DATA.UPLOADING");
 							download.statusColor = 'blue';
+							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}
+						
+						var optionalParams = '';
+						
+						if(download.datastore!=download.dataset) {
+							optionalParams = "store=" + download.datastore;
+						}
+						
+						if(download.srs>'') {
+							
+							if(optionalParams>'') {
+								optionalParams = optionalParams + "&"
+							}							
+							
+							optionalParams = optionalParams + "forcedSRS=" + download.srs;
+						}
+	
+						if(optionalParams>'') {
+							optionalParams = '?'+optionalParams;
+						}
+						
+						console.log(dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams);
 
 						Upload.upload({
-							url: 'http://localhost:8083/workspaces/'+download.workspace+'/datasets/'+download.dataset,
+							url: dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams,
 							data: {file: download.zipFile}
 						}).then(function (resp) {
 							console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
@@ -97,24 +129,27 @@
 							download.ticket = resp.data.split('*')[0];
 							download.statusColor = 'blue';
 							download.locked = true;
+							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
 							if(resp.status=='500') {
 								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
 								download.statusColor = 'red';
 								download.locked = false;
+								$cookies['downloads'] = JSON.stringify($scope.downloads);
 							} else {
-								download.status = resp.data;
+								download.status = $translate("UPLOAD_DATA.CUSTOM", {
+									custom : resp.data
+								});
 								download.statusColor = 'red';
 								download.locked = false;
+								$cookies['downloads'] = JSON.stringify($scope.downloads);
 							}
 						});
-
 					}
 				});
 			}
-
-			$cookies['downloads'] = JSON.stringify($scope.downloads);
+			
 		}
 
 		$scope.expandWorkspace = function(workspace) {
