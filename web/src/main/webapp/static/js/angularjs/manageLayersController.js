@@ -13,8 +13,8 @@
 		}
 	])
 
-		.controller('ManageLayersCtrl',['$scope', '$http', '$translate', '$modal', 'DataIngest',
-            function($scope, $http, $translate, $modal, DataIngest) {
+        .controller('ManageLayersCtrl', ['$scope', '$http', '$translate', '$modal', 'DataIngest', '$route',
+            function ($scope, $http, $translate, $modal, DataIngest, $route) {
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
             $scope.displayedCollection = [].concat($scope.jsonresult);
@@ -60,6 +60,15 @@
                     keyboard: false,
                     backdrop: 'static',
                     scope: $scope,
+                    controller: 'SplashCtrl',
+                    resolve: {
+                        msg: function () {
+                            return $translate('SPLASH.DETAILS');
+                        },
+                        layer_title: function (){
+                            return $scope.ws + ":" + $scope.ds;
+                        }
+                    },
                 });
                     var modalInstance = $modal.open({
                     templateUrl: 'resources/popup.html',
@@ -158,13 +167,35 @@
                         deferredObject.resolve(calbackParam);
                         deferredObject.then(function(calbackParam){
                             if(calbackParam) {
+                                var message = "helloworld";
+                                var splash = $modal.open({
+                                    animation: true,
+                                    templateUrl: 'resources/splash.html',
+                                    keyboard: false,
+                                    backdrop: 'static',
+                                    scope: $scope,
+                                    controller: 'SplashCtrl',
+                                    resolve: {
+                                        msg: function () {
+                                            return $translate('SPLASH.DELETE');
+                                        },
+                                        layer_title: function (){
+                                            return $scope.ws + ":" + $scope.ds;
+                                        }
+                                    },
+
+                                });
                                 $http({
                                     method : "DELETE",
                                     url : DataIngest.baseUrl + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds
                                 }).then(function mySuccess(response) {
-                                    console.log(response.data);
+                                    console.log(response.status + ": OK. Successfully deleted '" +
+                                        $scope.ws + ":" + $scope.ds + "'");
+                                    $route.reload();
+                                    splash.close();
                                 }, function myError(response) {
                                     console.log(response.statusText);
+                                    splash.close();
                                 });
 
                             }
@@ -186,6 +217,12 @@
 
                 }])
 
+        .controller('SplashCtrl', ['$scope', '$modalInstance', 'msg', 'layer_title',
+            function ($scope, $modalInstance, msg, layer_title) {
+            $scope.msg = msg;
+            $scope.layer_title = layer_title;
+
+        }])
 
     .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
         $scope.details = jsonresp.data;
@@ -196,8 +233,6 @@
         };
 
     }]);
-
-
 
 
 

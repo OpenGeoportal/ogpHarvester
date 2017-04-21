@@ -10,13 +10,23 @@
             font-size:      22px;
             vertical-align: middle;
         }
+        .layer_title
+        {
+            font-family:    Arial, Helvetica, sans-serif;
+            font-size:      22px;
+            vertical-align: middle;
+            color: blue;
+        }
     </style>
 </head>
 <body>
 <br>
 <br>
 <div class="my_text" style="text-align:center;">
-    {{'SPLASH.MESSAGE' | translate}}
+    {{msg}}
+</div>
+<div class="layer_title" style="text-align:center;">
+    {{layer_title}}
 </div>
 <div style="text-align:center;">
     <img src="../static/img/spinner.gif" height="300" width="400">
