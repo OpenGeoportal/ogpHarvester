@@ -10,17 +10,19 @@
 			controller: 'UploadDataCtrl'
 		});
 	}
-	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal)  {
+	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', 'DataIngest', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal, DataIngest)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
 		
+		var myDataPromise = DataIngest.baseUrl();
 		var dataIngestURL;
-		
-		$http.get('static/angularProperties.properties').then(function (response) {
-	        dataIngestURL = response.data.dataingestUrl;
-	     });
+	    myDataPromise.then(function(result) {  
 
+	       // this is only run after getData() resolves
+	    	dataIngestURL = result;
+	    });
+		
 		if($cookies['downloads']!=null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);
 		} else {
