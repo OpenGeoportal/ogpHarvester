@@ -299,22 +299,4 @@
 	}
 	]);
 
-	servicesModule.factory('DataIngest', ['$http', function($http) {
-		
-		var baseUrl = function() {
-
-	        // Angular $http() and then() both return promises themselves 
-	        return $http({method:"GET", url:"rest/dataIngest/endPoint"}).then(function(result){
-
-	            // What we return here is the data that will be accessible 
-	            // to us after the promise resolves
-	            return JSON.parse(result.data);
-	        });
-	    };
-
-
-	    return { baseUrl: baseUrl };		
-	}
-	]);
-
 })();

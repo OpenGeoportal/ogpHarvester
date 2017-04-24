@@ -161,6 +161,8 @@
             var="directivesUrl"/>
 <spring:url value="/static/js/angular-ui-select2/select2.js" var="angularUiSelect2Url" />
 <spring:url value="/webjars/momentjs/2.4.0/min/moment.min.js" var="momentjsUrl"/>
+<spring:url value="/static/js/env.js" var="env"/>
+<script type="text/javascript" src="${env}"></script>
 <script type="text/javascript" src="${momentjsUrl}"></script>
 <script type="text/javascript" src="${angularjsUrl}"></script>
 <!--<script src="${angularjsAnimateUrl}"></script>-->
@@ -184,6 +186,7 @@
 <script type="text/javascript" src="${editIngestControllerUrl}"></script>
 <script type="text/javascript" src="${filtersUrl}"></script>
 <script type="text/javascript" src="${directivesUrl}"></script>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-smart-table/2.1.8/smart-table.js"></script>
 

@@ -1,27 +1,26 @@
 (function() {
 	'use strict';
 
-	angular.module('ogpHavester.controllers.uploadDataCtrl', ['ogpHarvester.services', 'ngRoute', 'ui.bootstrap', 'pascalprecht.translate', 'ngFileUpload', 'ngCookies'])
+	var upMod = angular.module('ogpHavester.controllers.uploadDataCtrl', ['ogpHarvester.services', 'ngRoute', 'ui.bootstrap', 'pascalprecht.translate', 'ngFileUpload', 'ngCookies'])
 
-	.config(['$routeProvider',
-		function config($routeProvider) {
+	upMod.config(['$routeProvider',
+		function config($routeProvider, DataIngest) {
 		$routeProvider.when('/uploadData', {
 			template: 'resources/uploaddata.html',
 			controller: 'UploadDataCtrl'
 		});
 	}
-	]).controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', 'DataIngest', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal, DataIngest)  {
+	]);
+	
+	
+	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', '__env', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal, __env)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
 		
-		var myDataPromise = DataIngest.baseUrl();
-		var dataIngestURL;
-	    myDataPromise.then(function(result) {  
-
-	       // this is only run after getData() resolves
-	    	dataIngestURL = result;
-	    });
+		
+		var dataIngestURL = __env.dataIngestAPIUrl;
+		console.log('ext '+dataIngestURL);
 		
 		if($cookies['downloads']!=null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);

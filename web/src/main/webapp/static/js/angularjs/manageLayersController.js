@@ -13,8 +13,10 @@
 		}
 	])
 
-        .controller('ManageLayersCtrl', ['$scope', '$http', '$translate', '$modal', 'DataIngest', '$route',
-            function ($scope, $http, $translate, $modal, DataIngest, $route) {
+        .controller('ManageLayersCtrl', ['$scope', '$http', '$translate', '$modal', '$route', '__env',
+            function ($scope, $http, $translate, $modal, $route, __env) {
+        	
+        	var dataIngestURL = __env.dataIngestAPIUrl;
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
             $scope.displayedCollection = [].concat($scope.jsonresult);
@@ -42,7 +44,7 @@
             $http({
                 method : "GET",
                 //url : "http://localhost:8083/allDatasets",
-                url : DataIngest.baseUrl + "/workspaces/db/datasets",
+                url : dataIngestURL + "/workspaces/db/datasets",
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;
@@ -77,7 +79,7 @@
                         jsonresp:function(){
                             return $http({
                                 method : "GET",
-                                url : DataIngest.baseUrl + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
+                                url : dataIngestURL + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
                                 isArray: true
                             }).success(function (response) {
                                 splash.close();
@@ -187,7 +189,7 @@
                                 });
                                 $http({
                                     method : "DELETE",
-                                    url : DataIngest.baseUrl + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds
+                                    url : dataIngestURL + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds
                                 }).then(function mySuccess(response) {
                                     console.log(response.status + ": OK. Successfully deleted '" +
                                         $scope.ws + ":" + $scope.ds + "'");

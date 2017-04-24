@@ -3,6 +3,13 @@
  */
 (function() {
 	'use strict';
+	
+	var env = {};
+
+	// Import variables if present (from env.js)
+	if(window){  
+	  Object.assign(env, window.__env);
+	}
 
 	angular.module(
 		'ogpHarvester', ['ngRoute', 'pascalprecht.translate', 'ngResource', 'rcForm', 'ui.bootstrap',
@@ -83,4 +90,7 @@
 			pickTime: false
 		}
 	});
+	
+	// Register environment in AngularJS as constant
+	angular.module('ogpHarvester').constant('__env', env);
 })();
