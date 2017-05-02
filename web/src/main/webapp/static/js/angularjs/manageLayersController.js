@@ -20,7 +20,7 @@
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
             $scope.displayedCollection = [].concat($scope.jsonresult);
-            $scope.actions = [$translate("MANAGE_LAYERS.DOWNLOAD"), $translate("MANAGE_LAYERS.UPDATE"),
+            $scope.actions = [$translate("MANAGE_LAYERS.DOWNLOAD"),
                 $translate("MANAGE_LAYERS.DELETE")];
 
             $scope.GetValue = function (action, row_name) {
@@ -32,10 +32,7 @@
                         console.log("download " + "http://localhost:8083/workspaces/"+
                             $scope.ws + "/datasets/" + $scope.ds + "/download");
                         break;
-                    case $translate("MANAGE_LAYERS.UPDATE"):
-                            //TODO: move this to the upload tab ?
-                        break;
-                    case $translate("MANAGE_LAYERS.DELETE"):
+                     case $translate("MANAGE_LAYERS.DELETE"):
                         confirmDlg();
                         }
 
