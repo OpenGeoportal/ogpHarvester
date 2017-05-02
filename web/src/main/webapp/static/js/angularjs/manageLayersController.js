@@ -13,9 +13,9 @@
 		}
 	])
 
-        .controller('ManageLayersCtrl', ['$scope', '$http', '$translate', '$modal', '$route', '__env',
-            function ($scope, $http, $translate, $modal, $route, __env) {
-        	
+        .controller('ManageLayersCtrl', ['$scope', '$http', '$translate', '$modal', '$route', '$window', '__env',
+            function ($scope, $http, $translate, $modal, $route, $window, __env) {
+
         	var dataIngestURL = __env.dataIngestAPIUrl;
             $scope.itemsByPage = 12;
             $scope.jsonresult = [];
@@ -29,19 +29,41 @@
                 $scope.ds= res[1];
                 switch(action) {
                     case $translate("MANAGE_LAYERS.DOWNLOAD"):
-                        console.log("download " + "http://localhost:8083/workspaces/"+
+                        /*
+                        download(dataIngestURL + "/workspaces/" +
                             $scope.ws + "/datasets/" + $scope.ds + "/download");
+                            */
+
+                        var newWindow = $modal.open({
+                            templateUrl: 'resources/splash.html',
+                            scope: $scope,
+                            controller: 'downloadWindowCtrl',
+                            resolve: {
+                                url: function () {
+                                    return dataIngestURL + "/workspaces/" +
+                                        $scope.ws + "/datasets/" + $scope.ds + "/download";
+                                },
+                                layer_title: function (){
+                                    return $scope.ws + ":" + $scope.ds;
+                                },
+                                msg: function () {
+                                    return $translate('SPLASH.DOWNLOAD');
+                                }
+                            },
+                        });
+
                         break;
                      case $translate("MANAGE_LAYERS.DELETE"):
                         confirmDlg();
                         }
-
-            };
+                    this.ddlActions = '';
+            }
+            ;
 
             $http({
                 method : "GET",
                 //url : "http://localhost:8083/allDatasets",
-                url : dataIngestURL + "/workspaces/db/datasets",
+                url : dataIngestURL + "/workspaces/db/datasets",//TODO: remove this from production
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;
@@ -87,6 +109,12 @@
                         }
                     }
                 });
+            }
+
+
+            function download(url){
+                console.log("url");
+                $window.open('resources/splash.html', '_blank');
             }
 
 
@@ -222,6 +250,50 @@
             $scope.layer_title = layer_title;
 
         }])
+
+        .controller('downloadWindowCtrl', ['$scope', '$interval', '$modalInstance', '$http', '$window', 'url', 'layer_title', 'msg',
+            function ($scope, $interval, $modalInstance, $http, $window, url, layer_title, msg) {
+                $scope.url = url;
+                $scope.layer_title = layer_title;
+                $scope.msg = msg;
+
+                $scope.refreshView = $interval(function(){
+                            $http({
+                                method : "GET",
+                                url : url
+                            }).then(function mySucces(response) {
+                                console.log(response);
+                                if(response.status=='202') {
+                                    /*
+                                     download.status = $translate("UPLOAD_DATA.FILE_SENT");
+                                     download.statusColor = 'black';
+                                     download.zipFile = '';
+                                     download.ticket=-1;
+                                     $cookies['downloads'] = JSON.stringify($scope.downloads);
+                                     */
+                                    //TODO: wait
+                                } else if(response.status=='404') {
+                                    //TODO: abort
+                                } else if(response.status=='200') {
+                                    console.log("get file");
+                                    $interval.cancel($scope.refreshView);
+                                    window.open(url, '_blank');
+                                    $modalInstance.dismiss();
+                                }else {
+                                    //TODO: check if its a file
+                                }
+                            }, function myError(response) {
+                                console.log("error");
+                                //TODO: manage this
+                            });
+
+                },1000);
+
+
+
+            }])
+
+
 
     .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
         $scope.details = jsonresp.data;
