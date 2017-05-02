@@ -5,6 +5,7 @@
 	<table class="table table-striped" ng-show="downloads.length">
 	<thead>
 	    <tr>
+	       <th data-translate="UPLOAD_DATA.UPDATE"></th>
 	       <th data-translate="UPLOAD_DATA.WORKSPACE"></th>
 	       <th data-translate="UPLOAD_DATA.LAYER"></th>
 	       <th data-translate="UPLOAD_DATA.STORE"></th>
@@ -17,6 +18,7 @@
 	    </thead>
 	    <tbody>
 		<tr ng-repeat="download in downloads">
+		    <td><span ng-Show="download.valid"><input type="checkbox" ng-model="download.isnew" value="true" ng-readonly="download.locked" /></span></td>
 			<td ng-show="workspaceList.length>0">
 			<select ng-model="download.workspace" ng-Show="download.valid" ng-disabled="download.locked" ng-change="expandWorkspace(download.workspace)">
 			<option ng-repeat="ws in workspaceList" value="{{ws.worksp}}">

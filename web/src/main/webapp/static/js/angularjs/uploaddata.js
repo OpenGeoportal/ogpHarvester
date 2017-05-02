@@ -59,9 +59,9 @@
 			$scope.errFiles = errFiles;
 			angular.forEach(files, function(file) {
 				if(file.name.substr(file.name.length - 4, file.name.length)==='.zip') {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.READY"), 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'isnew': '', 'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.READY"), 'statusColor' : 'green', 'valid' : true, 'locked' : false, 'ticket' : 0})
 				} else {
-					$scope.downloads.push({'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.NOT_A_ZIP_FILE"), 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
+					$scope.downloads.push({'isnew': '', 'workspace': '', 'dataset': file.name.substr(0, file.name.length - 4), 'datastore': file.name.substr(0, file.name.length - 4), 'srs': '', 'fileName':  file.name, 'fileSize':  $scope.bytesConverter(file.size, 2), 'zipFile': file, 'status' : $translate("UPLOAD_DATA.NOT_A_ZIP_FILE"), 'statusColor' : 'red', 'valid' : false, 'locked' : false, 'ticket' : 0})
 				}
 			});
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
@@ -119,11 +119,16 @@
 							optionalParams = '?'+optionalParams;
 						}
 						
-						console.log(dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams);
-
+						var method = 'PUT';
+						if(download.isnew) {
+							method = 'POST';
+						}
+						
+						
 						Upload.upload({
 							url: dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams,
-							data: {file: download.zipFile}
+							data: {file: download.zipFile},
+							method: method
 						}).then(function (resp) {
 							console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
 							download.status = $translate("UPLOAD_DATA.SENDING");
@@ -139,8 +144,9 @@
 								download.locked = false;
 								$cookies['downloads'] = JSON.stringify($scope.downloads);
 							} else {
+								var msg = resp.data.replace("PUT", "UPDATE");
 								download.status = $translate("UPLOAD_DATA.CUSTOM", {
-									custom : resp.data
+									custom : msg
 								});
 								download.statusColor = 'red';
 								download.locked = false;

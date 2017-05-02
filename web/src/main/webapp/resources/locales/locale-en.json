@@ -261,8 +261,9 @@
 		"DELETE": "Please wait while we delete the dataset..."
 	},
    "UPLOAD_DATA": {
-        "HEADER": "Upload Data",
-        "QUEUE": "Upload Queue",
+        "HEADER": "Upload/Update Data",
+        "QUEUE": "Upload/Update Queue",
+        "UPDATE":  "New Layer",
         "WORKSPACE":  "Workspace",
         "LAYER":  "Layer",
         "STORE":  "Store",
