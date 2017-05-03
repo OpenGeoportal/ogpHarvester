@@ -29,11 +29,6 @@
                 $scope.ds= res[1];
                 switch(action) {
                     case $translate("MANAGE_LAYERS.DOWNLOAD"):
-                        /*
-                        download(dataIngestURL + "/workspaces/" +
-                            $scope.ws + "/datasets/" + $scope.ds + "/download");
-                            */
-
                         var newWindow = $modal.open({
                             templateUrl: 'resources/splash.html',
                             scope: $scope,
@@ -62,8 +57,8 @@
 
             $http({
                 method : "GET",
+                url : "http://localhost:8083/allDatasetsMockup",//TODO: remove this from production
                 //url : "http://localhost:8083/allDatasets",
-                url : dataIngestURL + "/workspaces/db/datasets",//TODO: remove this from production
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;
