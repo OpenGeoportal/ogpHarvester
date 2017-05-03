@@ -253,7 +253,8 @@
 		"LIST_HEADER_INFO": "Details",
 		"DOWNLOAD": "Download",
 		"UPDATE": "Update",
-		"DELETE": "Delete"
+		"DELETE": "Delete",
+		"SERVER_ERROR": "Data Ingest Server Error"
    },
 	"SPLASH":{
 		"HEADER": "Waiting",

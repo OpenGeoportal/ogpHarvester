@@ -251,8 +251,9 @@
 
         }])
 
-        .controller('downloadWindowCtrl', ['$scope', '$interval', '$modalInstance', '$http', '$window', 'url', 'layer_title', 'msg',
-            function ($scope, $interval, $modalInstance, $http, $window, url, layer_title, msg) {
+        .controller('downloadWindowCtrl', ['$scope', '$interval', '$modalInstance', '$modal', '$http',
+            '$window', '$translate', 'url', 'layer_title', 'msg',
+            function ($scope, $interval, $modalInstance, $modal, $http, $window, $translate, url, layer_title, msg) {
                 $scope.url = url;
                 $scope.layer_title = layer_title;
                 $scope.msg = msg;
@@ -262,38 +263,51 @@
                                 method : "GET",
                                 url : url
                             }).then(function mySucces(response) {
-                                console.log(response);
                                 if(response.status=='202') {
-                                    /*
-                                     download.status = $translate("UPLOAD_DATA.FILE_SENT");
-                                     download.statusColor = 'black';
-                                     download.zipFile = '';
-                                     download.ticket=-1;
-                                     $cookies['downloads'] = JSON.stringify($scope.downloads);
-                                     */
-                                    //TODO: wait
-                                } else if(response.status=='404') {
-                                    //TODO: abort
+                                    console.log(response.data);// Accepted: wait
                                 } else if(response.status=='200') {
-                                    console.log("get file");
                                     $interval.cancel($scope.refreshView);
                                     window.open(url, '_blank');
                                     $modalInstance.dismiss();
                                 }else {
-                                    //TODO: check if its a file
+                                    console.log(response);
                                 }
                             }, function myError(response) {
-                                console.log("error");
-                                //TODO: manage this
+                                $interval.cancel($scope.refreshView);
+                                /*
+                                if(response.status=='404') {
+                                    console.error(response.data);// Not Found
+                                }*/
+                                console.error(response.data);
+                                $modalInstance.dismiss();
+
+                                var modalError = $modal.open({
+                                    templateUrl: 'resources/errorPopup.html',
+                                    controller: 'ErrorPopupCtrl',
+                                    resolve: {
+                                        title: function(){
+                                            return $translate("MANAGE_LAYERS.SERVER_ERROR");
+                                        },
+                                        text: function (){
+                                            return response.data;
+                                        }
+                                    },
+                                });
+
                             });
 
                 },1000);
-
-
-
             }])
 
 
+    .controller('ErrorPopupCtrl', ['$scope','$modalInstance', 'title', 'text', function ($scope, $modalInstance,
+                                                                                         title, text) {
+        $scope.title = title;
+        $scope.text=text;
+        $scope.close = function () {
+            $modalInstance.dismiss('close');
+        };
+    }])
 
     .controller('PopupCtrl', ['$scope','$modalInstance', 'jsonresp', function ($scope, $modalInstance, jsonresp) {
         $scope.details = jsonresp.data;
