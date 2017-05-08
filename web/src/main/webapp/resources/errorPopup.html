@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style type="text/css">
+        .modal p {
+            word-wrap: break-word;
+        }
+        .modal-title {
+            color: darkred;
+            background-color: lightpink;
+        }
+    </style>
+</head>
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body">
+{{text}}
+</div>
+<br>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button"
+            ng-click="close()">Close</button>
+</div>
+</html>
