@@ -10,17 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Assert;
+import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.FgdcMetadataParser;
-import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.util.XmlUtil;
-import org.opengeoportal.harvester.mvc.exception.InvalidParameterValue;
-import org.opengeoportal.harvester.mvc.exception.ItemNotFoundException;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -35,6 +33,9 @@ import com.google.common.io.Files;
 public class UploadMetadataController {
     
     private static final String XML_EXTENSION = ".xml";
+    
+    @Value("#{localSolr['localSolr.url']}")
+    private String localSolrUrl;
 
     @RequestMapping(value = "/rest/uploadMetadata/add", method = RequestMethod.POST)
     @ResponseBody
@@ -80,6 +81,10 @@ public class UploadMetadataController {
 
                 Metadata metadata = parsedMetadata.getMetadata();
                 SolrRecord solrRecord = SolrRecord.build(metadata);
+                
+                SolrJClient solrClient = new SolrJClient(localSolrUrl);
+                
+                solrClient.add(solrRecord);
 
             }
 
