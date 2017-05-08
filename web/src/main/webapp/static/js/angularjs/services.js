@@ -298,5 +298,33 @@
 		};
 	}
 	]);
+	
+	
+	servicesModule.service('uploadMetadata', ['$http', '$q', 'Upload', '$translate',
+		function($http, $q, Upload, $translate) {
+
+		// Public interface
+		return {
+			add: function(download) {
+				
+				Upload.upload({
+					url: 'rest/uploadMetadata/add',
+					data: {file: download.zipFile},
+					method: 'POST'
+				}).then(function (resp) {
+					console.log('OK');
+					
+				}, function (resp) {
+					console.log('Error status: ' + resp.data);
+					download.status = $translate("UPLOAD_DATA.CUSTOM", {
+						custom : download.status + " - " + resp.data
+					});
+					
+				});
+
+			}
+		};
+	}
+	]);
 
 })();

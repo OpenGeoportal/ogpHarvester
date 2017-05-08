@@ -13,7 +13,7 @@
 	]);
 	
 	
-	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', '$modal', '__env', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, $modal, __env)  {
+	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
@@ -37,11 +37,11 @@
 		                url : dataIngestURL+"/checkUploadStatus/"+download.ticket
 		            }).then(function mySucces(response) {
 		                if(response.status=='200') {
+		                	download.ticket=-1;
 			                download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
-							download.zipFile = '';
-							download.ticket=-1;
-							$cookies['downloads'] = JSON.stringify($scope.downloads);
+							uploadMetadata.add(download);
+							$cookies['downloads'] = JSON.stringify($scope.downloads);							
 		                }
 		            }, function myError(response) {
 		            	download.statusColor = 'red';
@@ -195,7 +195,6 @@
 		};		
 
 		$scope.getDefaultWorkspaces = function() {
-
 
 			defaultWorkspaces.getWorkspaces().then(function(response) {
 
