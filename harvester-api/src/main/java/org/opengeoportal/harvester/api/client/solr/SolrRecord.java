@@ -14,10 +14,6 @@ import org.opengeoportal.harvester.api.metadata.model.Metadata;
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  * 
  */
-/**
- * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
- */
 public class SolrRecord {
 	/** Name Theme Keywords field. */
 	public static final String THEME_KEYWORDS = "ThemeKeywords";
