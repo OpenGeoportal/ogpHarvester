@@ -18,9 +18,9 @@
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
 		
+		$scope.requiredFieldList = ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository", "placeKeyword", "originator", "webServices"];
 		
 		var dataIngestURL = __env.dataIngestAPIUrl;
-		console.log('ext '+dataIngestURL);
 		
 		if($cookies['downloads']!=null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);

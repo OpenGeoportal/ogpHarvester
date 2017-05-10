@@ -2,6 +2,7 @@ package org.opengeoportal.harvester.mvc;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,9 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
+import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
+import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
+import org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.FgdcMetadataParser;
+import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
+import org.opengeoportal.harvester.api.metadata.parser.MetadataType;
 import org.opengeoportal.harvester.api.util.XmlUtil;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
@@ -31,9 +38,9 @@ import com.google.common.io.Files;
 
 @Controller
 public class UploadMetadataController {
-    
+
     private static final String XML_EXTENSION = ".xml";
-    
+
     @Value("#{localSolr['localSolr.url']}")
     private String localSolrUrl;
 
@@ -44,47 +51,31 @@ public class UploadMetadataController {
 
         try {
             File zipFile = FileConversionUtils.multipartToFile(file);
-            
+
             final String packageName = zipFile.getName();
-            
+
             File unzippedFile = uncompressFile(zipFile);
 
             if(unzippedFile != null) { 
-                System.out.println("+++++++++++++++++++++++++ " + zipFile.getName());
-                
+
                 final File[] metadataFiles = unzippedFile.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(final File dir, final String name) {
                         return (name.toLowerCase().endsWith(XML_EXTENSION));
                     }
                 });
-                
+
                 if(metadataFiles.length==0) {
                     return "No metadata.";
                 }
-                
+
                 if(metadataFiles.length>1) {
                     printOutputMessage(response, HttpServletResponse.SC_BAD_REQUEST,
                             "The archive contains more than one metadata file.");
-                        return "The archive contains more than one metadata file.";
+                    return "The archive contains more than one metadata file.";
                 }
-                
-                File metadataFile = metadataFiles[0];
-                
-                FileInputStream in = new FileInputStream(metadataFile);
-                
-                Document doc = XmlUtil.load(in);
-                
-//                Iso19139MetadataParser parser = new Iso19139MetadataParser();
-                FgdcMetadataParser parser = new FgdcMetadataParser(); 
-                MetadataParserResponse parsedMetadata = parser.parse(doc);
 
-                Metadata metadata = parsedMetadata.getMetadata();
-                SolrRecord solrRecord = SolrRecord.build(metadata);
-                
-                SolrJClient solrClient = new SolrJClient(localSolrUrl);
-                
-                solrClient.add(solrRecord);
+                saveMetadata(metadataFiles[0]);
 
             }
 
@@ -100,6 +91,46 @@ public class UploadMetadataController {
         }
 
         return "";
+    }
+
+
+    private void saveMetadata(final File metadataFile)
+            throws FileNotFoundException, Exception, UnsupportedMetadataType {
+
+        FileInputStream in = new FileInputStream(metadataFile);
+
+        Document doc = XmlUtil.load(in);
+
+        MetadataType metadataType = XmlUtil.getMetadataType(doc);
+
+        BaseXmlMetadataParser parser;
+
+        if(metadataType.equals(MetadataType.ISO_19139)) {
+            parser = new Iso19139MetadataParser();
+        } else  if(metadataType.equals(MetadataType.FGDC)) { 
+            parser = new FgdcMetadataParser(); 
+        } else {
+            throw new UnsupportedMetadataType();
+        }
+
+        MetadataParserResponse parsedMetadata = parser.parse(doc);
+
+        Metadata metadata = parsedMetadata.getMetadata();
+        SolrRecord solrRecord = SolrRecord.build(metadata);
+
+        SolrJClient solrClient = new SolrJClient(localSolrUrl);
+
+        solrClient.add(solrRecord);
+        
+        
+//        IngestOGP ingest = new IngestOGP();
+//        
+//        ingest.addRequiredField("");
+//        
+//        SolrSearchParams solrSearch = new SolrSearchParams(ingest); 
+        
+        
+        
     }
 
 
@@ -130,7 +161,7 @@ public class UploadMetadataController {
 
 
     }
-    
+
     /**
      * Prints the output message.
      *
@@ -140,7 +171,7 @@ public class UploadMetadataController {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private void printOutputMessage(final HttpServletResponse response,
-                                    final int code, final String message) throws IOException {
+            final int code, final String message) throws IOException {
         response.setStatus(code);
         final PrintWriter out = response.getWriter();
         response.setContentType("text/html");
