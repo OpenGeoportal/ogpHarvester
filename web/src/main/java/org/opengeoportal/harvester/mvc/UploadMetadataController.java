@@ -6,15 +6,21 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
+import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
-import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
-import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.CustomRepository;
+import org.opengeoportal.harvester.api.domain.Frequency;
+import org.opengeoportal.harvester.api.domain.Ingest;
+import org.opengeoportal.harvester.api.domain.IngestFileUpload;
+import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser;
@@ -22,6 +28,7 @@ import org.opengeoportal.harvester.api.metadata.parser.FgdcMetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataType;
+import org.opengeoportal.harvester.api.service.IngestService;
 import org.opengeoportal.harvester.api.util.XmlUtil;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
@@ -34,6 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
+import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 @Controller
@@ -43,6 +51,9 @@ public class UploadMetadataController {
 
     @Value("#{localSolr['localSolr.url']}")
     private String localSolrUrl;
+    
+    @Resource
+    private IngestService ingestService;
 
     @RequestMapping(value = "/rest/uploadMetadata/add", method = RequestMethod.POST)
     @ResponseBody
@@ -75,7 +86,7 @@ public class UploadMetadataController {
                     return "The archive contains more than one metadata file.";
                 }
 
-                saveMetadata(metadataFiles[0]);
+                addMetadataIngest(metadataFiles[0]);
 
             }
 
@@ -91,6 +102,47 @@ public class UploadMetadataController {
         }
 
         return "";
+    }
+    
+    private Map<String, Object> addMetadataIngest(final File metadataFile)
+            throws FileNotFoundException, Exception, UnsupportedMetadataType {
+        
+        Ingest ingest = new IngestFileUpload();
+        
+        
+        ingest.setBeginDate(new Date(System.currentTimeMillis()));
+        ingest.setName(metadataFile.getName()+System.currentTimeMillis());
+        ingest.setNameOgpRepository(""); // In the OGP Harvester it's not active
+        ingest.setFrequency(Frequency.ONCE);
+        ingest.setScheduled(true);
+//        if (!usesCustomRepo) {
+//            ingest.setUrl(ingestFormBean.getUrl());
+//            ingest.setRepository(null);
+//        }
+
+        // remove old required fields and add the new ones
+//        ingest.getRequiredFields().clear();
+//        for (Entry<String, Boolean> requiredField : ingestFormBean
+//                .getRequiredFields().entrySet()) {
+//            if (requiredField.getValue()) {
+//                ingest.addRequiredField(requiredField.getKey());
+//            }
+//        }
+        ingest.setUrl("holaaaaaaa");
+        
+        ((IngestFileUpload) ingest).setFile(metadataFile);        
+        
+        ingest = ingestService.saveAndSchedule(ingest, -99999L, InstanceType.FILE);
+        
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("success", true);
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("id", ingest.getId());
+        data.put("name", ingest.getName());
+        result.put("data", data);
+
+        return result;
+        
     }
 
 
@@ -121,13 +173,7 @@ public class UploadMetadataController {
         SolrJClient solrClient = new SolrJClient(localSolrUrl);
 
         solrClient.add(solrRecord);
-        
-        
-//        IngestOGP ingest = new IngestOGP();
-//        
-//        ingest.addRequiredField("");
-//        
-//        SolrSearchParams solrSearch = new SolrSearchParams(ingest); 
+
         
         
         

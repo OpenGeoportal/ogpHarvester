@@ -34,5 +34,5 @@ package org.opengeoportal.harvester.api.domain;
  * 
  */
 public enum InstanceType {
-	SOLR, GEONETWORK, CSW, WEBDAV
+	SOLR, GEONETWORK, CSW, WEBDAV, FILE
 }

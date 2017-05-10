@@ -8,6 +8,7 @@
 		"TOI_GN": "Geonetwork",
 		"TOI_CSW": "CSW",
 		"TOI_WEBDAV": "WebDAV /WAF",
+		"TOI_FILE": "File Upload",
 		"CATALOG_OF_SERVICES": "Catalog of Services:",
 		"OPT_SERVICE_NAME": "Service Name",
 		"URL_SOLR": "Custom OGP Instance Url:",
@@ -176,7 +177,8 @@
         "TOI_SOLR": "OGP",
 		"TOI_GEONETWORK": "Geonetwork",
 		"TOI_CSW": "CSW",
-		"TOI_WEBDAV": "WebDAV/WAF"
+		"TOI_WEBDAV": "WebDAV/WAF",
+		"TOI_FILE": "File Upload"
 
 
 	},
@@ -323,6 +325,7 @@
 		"TOI_GEONETWORK": "Geonetwork",
 		"TOI_CSW": "CSW",
 		"TOI_WEBDAV": "WebDAV /WAF",
+		"TOI_FILE": "File Upload",
 		"NEW_CUSTOM_REPO_CREATE": "Add Institution",
 		"NEW_CUSTOM_REPO_CANCEL": "Cancel",
 		"TABLE_TYPE": "Type",

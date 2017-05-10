@@ -33,6 +33,7 @@ import java.util.Date;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
+import org.opengeoportal.harvester.api.domain.IngestFileUpload;
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.opengeoportal.harvester.api.domain.IngestJobStatusValue;
@@ -106,7 +107,9 @@ public class IngestListItem {
 			type = InstanceType.CSW;
 		} else if (ingest instanceof IngestWebDav) {
 			type = InstanceType.WEBDAV;
-		}
+		} else if (ingest instanceof IngestFileUpload) {
+            type = InstanceType.FILE;
+        }
 		return type;
 	}
 

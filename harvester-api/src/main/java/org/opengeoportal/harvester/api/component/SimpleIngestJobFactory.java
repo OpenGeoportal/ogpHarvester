@@ -30,11 +30,13 @@
 package org.opengeoportal.harvester.api.component;
 
 import org.opengeoportal.harvester.api.component.csw.CswIngestJob;
+import org.opengeoportal.harvester.api.component.file.SingleFileIngestJob;
 import org.opengeoportal.harvester.api.component.geonetwork.GeonetworkIngestJob;
 import org.opengeoportal.harvester.api.component.ogp.OgpIngestJob;
 import org.opengeoportal.harvester.api.component.webdav.WebdavIngestJob;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
+import org.opengeoportal.harvester.api.domain.IngestFileUpload;
 import org.opengeoportal.harvester.api.domain.IngestGeonetwork;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
 import org.opengeoportal.harvester.api.domain.IngestWebDav;
@@ -75,7 +77,9 @@ public class SimpleIngestJobFactory implements IngestJobFactory {
 			newInstance = new OgpIngestJob();
 		} else if (ingest instanceof IngestWebDav) {
 			newInstance = new WebdavIngestJob();
-		} else {
+		} else if (ingest instanceof IngestFileUpload) {
+            newInstance = new SingleFileIngestJob();
+        }else {
 			throw new IllegalArgumentException(
 					"Cannot find a suitable Job class " + "for processing a "
 							+ ingest.getClass().getName() + "class");
