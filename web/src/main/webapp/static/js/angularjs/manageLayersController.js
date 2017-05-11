@@ -107,10 +107,7 @@
             }
 
 
-            function download(url){
-                console.log("url");
-                $window.open('resources/splash.html', '_blank');
-            }
+
 
 
             function confirmDlg (options) {
@@ -246,6 +243,7 @@
 
         }])
 
+
         .controller('downloadWindowCtrl', ['$scope', '$interval', '$modalInstance', '$modal', '$http',
             '$window', '$translate', 'url', 'layer_title', 'msg',
             function ($scope, $interval, $modalInstance, $modal, $http, $window, $translate, url, layer_title, msg) {
@@ -264,16 +262,16 @@
                                     $interval.cancel($scope.refreshView);
                                     window.open(url, '_blank');
                                     $modalInstance.dismiss();
+
+                                    //TODO: Download metadata asynchronously
+                                    downloadMetadata($scope, $http, $scope.ws, $scope.ds);
+
                                 }else {
                                     console.log(response);
                                 }
                             }, function myError(response) {
                                 $interval.cancel($scope.refreshView);
-                                /*
-                                if(response.status=='404') {
-                                    console.error(response.data);// Not Found
-                                }*/
-                                console.error(response.data);
+                                 console.error(response.data);
                                 $modalInstance.dismiss();
 
                                 var modalError = $modal.open({
@@ -314,6 +312,28 @@
 
     }]);
 
+    function downloadMetadata($scope, $http, workspace, dataset){
+        console.log(workspace + ":" + dataset);
 
+        var downloadMetadataUrl="/rest/workspaces/{workspace}/datasets/{dataset}/downloadMetadata/";
+        downloadMetadataUrl = downloadMetadataUrl.replace("{workspace}", workspace);
+        downloadMetadataUrl = downloadMetadataUrl.replace("{dataset}", dataset);
+
+        console.log(downloadMetadataUrl);
+
+        $http({
+            method : "GET",
+            url : downloadMetadataUrl,
+            isArray: true
+        }).then(function mySuccess(response) {
+            $scope.jsonresult = response.data;
+        }, function myError(response) {
+            $scope.jsonresult = response.statusText;
+        });
+
+
+
+        //$window.open('resources/splash.html', '_blank');
+    }
 
 })();
