@@ -264,7 +264,7 @@
                                     $modalInstance.dismiss();
 
                                     //TODO: Download metadata asynchronously
-                                    downloadMetadata($scope, $http, $scope.ws, $scope.ds);
+                                    //downloadMetadata($scope, $http, $scope.ws, $scope.ds);
 
                                 }else {
                                     console.log(response);

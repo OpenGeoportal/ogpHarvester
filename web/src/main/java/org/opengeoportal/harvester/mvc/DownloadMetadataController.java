@@ -38,6 +38,14 @@ public class DownloadMetadataController {
     @Value("#{localSolr['localSolr.url']}")
     private String localSolrUrl;
 
+    /**
+     * Downloads metadata from solr.
+     *
+     * @param workspace dataset workspace
+     * @param dataset dataset name
+     * @param response http response
+     * @throws Exception
+     */
     @RequestMapping(value = "/rest/workspaces/{workspace}/datasets/{dataset}/downloadMetadata/", method =
             RequestMethod.GET)
     @ResponseBody
@@ -45,9 +53,6 @@ public class DownloadMetadataController {
             @PathVariable(value = "workspace") final String workspace,
             @PathVariable(value = "dataset") final String dataset,
             final HttpServletResponse response) throws Exception {
-
-        File file = null;
-        StreamResult in;
 
         try {
             createXmlFileFromTypeName(workspace, dataset);
