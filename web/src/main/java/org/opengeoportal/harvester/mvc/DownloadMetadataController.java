@@ -1,10 +1,11 @@
-package org.opengeoportal.harvester.mvc.utils;
+package org.opengeoportal.harvester.mvc;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.opengeoportal.harvester.api.client.solr.SolrClient;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
+import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,25 +50,25 @@ public class DownloadMetadataController {
         StreamResult in;
 
         try {
-            createXmlFileFromTypeName("cite", "SDE2.MATWN_3764_B6N44_1852_P5");
+            createXmlFileFromTypeName(workspace, dataset);
 
         } catch (final Exception ex) {
              ex.printStackTrace();
-            return;
+            throw ex;
         }
     }
 
-
     private void createXmlFileFromTypeName(String WorkspaceName, String Name)
             throws SolrServerException, ParserConfigurationException, IOException, SAXException,
-            TransformerException {
+            TransformerException, SolrServerException, OgpSolrException {
 
         SolrClient solrClient = new SolrJClient(localSolrUrl);
-        QueryResponse qr = solrClient.searchForDataset(WorkspaceName, Name);
+        QueryResponse qr = solrClient.searchForDataset("cite",
+                "SDE2.MATWN_3764_B6N44_1852_P5"); // TODO: Update this to Production
         SolrDocumentList docs = qr.getResults();
         String str = docs.get(0).getFieldValue("FgdcText").toString();
 
-        //Fix until we find a better solution
+        //Fix, until we find a better solution for reading the contents of the solr doc
         StringBuilder sb = new StringBuilder(str);
         sb.deleteCharAt(0);
         sb.deleteCharAt(str.length()-2);
@@ -75,7 +76,7 @@ public class DownloadMetadataController {
 
         System.out.println(str);
 
-        // Just in case, check that the xml is correct
+        // Just in case, check that the xml is correct: remove from Production?
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(new InputSource(new StringReader(str)));
@@ -85,8 +86,9 @@ public class DownloadMetadataController {
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(doc);
 
-        StreamResult result =  new StreamResult(new File("/tmp/my-file.xml"));
+        String strPath = System.getProperty("java.io.tmpdir");
+
+        StreamResult result = new StreamResult(new File(strPath + "/" + Name + ".xml"));
         transformer.transform(source, result);
     }
-
 }

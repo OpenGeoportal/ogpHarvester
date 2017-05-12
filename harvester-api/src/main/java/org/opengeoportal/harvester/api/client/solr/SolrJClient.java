@@ -232,7 +232,8 @@ public class SolrJClient implements SolrClient {
 	}
 
 	@Override
-	public QueryResponse searchForDataset(String WorkspaceName, String Name) {
+	public QueryResponse searchForDataset(String WorkspaceName, String Name) throws
+			SolrServerException, OgpSolrException {
 
 		SolrQuery query = new SolrQuery();
 		query.setQuery("Name" + ":" + Name);
@@ -243,13 +244,14 @@ public class SolrJClient implements SolrClient {
 		QueryResponse response = null;
 		try {
 			response = solrServer.query(query);
-			if (response.getResults().getNumFound() != 1) throw new Exception("SearchForDataset query must" +
+			if (response.getResults().getNumFound() != 1) throw new
+					OgpSolrException("SearchForDataset query must" +
 					" return exactly one result; instead it returned: " +
 					Long.toString(response.getResults().getNumFound()));
 		} catch (SolrServerException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
+		} catch (OgpSolrException e) {
+			throw e;
 		}
 		return response;
 

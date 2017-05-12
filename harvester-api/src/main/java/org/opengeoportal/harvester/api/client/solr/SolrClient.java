@@ -1,8 +1,10 @@
 package org.opengeoportal.harvester.api.client.solr;
 
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.opengeoportal.harvester.api.domain.IngestReport;
+import org.opengeoportal.harvester.api.exception.OgpSolrException;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,7 +36,8 @@ public interface SolrClient {
 	 * @param WorkspaceName dataset name
 	 * @return result of the query
 	 */
-	QueryResponse searchForDataset(String WorkspaceName, String Name);
+	QueryResponse searchForDataset(String WorkspaceName, String Name) throws SolrServerException,
+			OgpSolrException;
 	/**
 	 * @param records
 	 * @param report 
