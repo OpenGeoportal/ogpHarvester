@@ -1,11 +1,6 @@
 package org.opengeoportal.harvester.api.client.solr;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.apache.http.HttpStatus;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -22,7 +17,11 @@ import org.opengeoportal.harvester.api.exception.OgpSolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Class for retrieve info from a remote Solr instance.
@@ -231,4 +230,32 @@ public class SolrJClient implements SolrClient {
 		}
 		return response;
 	}
+
+	@Override
+	public QueryResponse searchForDataset(String WorkspaceName, String Name) throws
+			SolrServerException, OgpSolrException {
+
+		SolrQuery query = new SolrQuery();
+		query.setQuery("Name" + ":" + Name);
+		//TODO: filter also by the workspace
+		query.addField("FgdcText");
+		query.setRows(1);
+
+		QueryResponse response = null;
+		try {
+			response = solrServer.query(query);
+			if (response.getResults().getNumFound() != 1) throw new
+					OgpSolrException("SearchForDataset query must" +
+					" return exactly one result; instead it returned: " +
+					Long.toString(response.getResults().getNumFound()));
+		} catch (SolrServerException e) {
+			throw e;
+		} catch (OgpSolrException e) {
+			throw e;
+		}
+		return response;
+
+	}
+
+
 }
