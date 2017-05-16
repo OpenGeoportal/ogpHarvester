@@ -16,6 +16,12 @@
 		location="classpath:/spring/localSolr.properties" />
 	<context:property-placeholder location="classpath:/spring/localSolr.properties" />
 
+    <util:properties id="dataIngest"
+        location="classpath:/spring/dataIngest.properties" />
+    <context:property-placeholder location="classpath:/spring/dataIngest.properties" />
+
+
+
 	<bean class="org.opengeoportal.harvester.api.component.SolrMetadataIngester"
 		name="metadataIngester" c:solrUrl="${localSolr.url}" />
 </beans>

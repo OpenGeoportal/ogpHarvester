@@ -83,8 +83,9 @@ public class SingleFileIngestJob extends BaseIngestJob {
                     String workspace = currentJob.getWorkspace();
                     String dataSet = currentJob.getDataset();
                     String wms = currentJob.getWmsEndPoint();
-                    String wcs = currentJob.getWcsEndPoint();
+                    String wfs = currentJob.getWfsEndPoint();
                            
+                    // values for shapefile binding
                     metadata.setWorkspaceName(workspace);
                     metadata.setOwsName(dataSet);
                    
@@ -98,13 +99,13 @@ public class SingleFileIngestJob extends BaseIngestJob {
                         JSONParser jsonParser = new JSONParser();
                         request = (JSONObject) jsonParser.parse(json);
                         request.put("wms", wms);
-                        request.put("wcs", wcs);
+                        request.put("wfs", wfs);
                         
                         currentLocation = request.toString();
                     } else {
                         JSONObject request = new JSONObject();
                         request.put("wms", wms);
-                        request.put("wcs", wcs);
+                        request.put("wfs", wfs);
                         
                         currentLocation = request.toString();                        
                     }

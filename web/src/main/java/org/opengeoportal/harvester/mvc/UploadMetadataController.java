@@ -6,8 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -36,9 +38,11 @@ import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataType;
 import org.opengeoportal.harvester.api.service.IngestService;
+import org.opengeoportal.harvester.api.util.JSONReader;
 import org.opengeoportal.harvester.api.util.UploadFileJob;
 import org.opengeoportal.harvester.api.util.UploadJobQueue;
 import org.opengeoportal.harvester.api.util.XmlUtil;
+import org.opengeoportal.harvester.mvc.exception.PropertyNotSetException;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
 import org.slf4j.Logger;
@@ -64,8 +68,8 @@ public class UploadMetadataController {
 
     @Value("#{localSolr['localSolr.url']}")
     private String localSolrUrl;
-    
-    @Value("#{dataIngest.url}")
+
+    @Value("#{dataIngest['dataIngest.url']}")
     private String dataIngestUrl;
 
     @Resource
@@ -73,7 +77,7 @@ public class UploadMetadataController {
 
     @RequestMapping(value = "/rest/uploadMetadata/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addMetadata(@RequestParam("workspace") String workspace, @RequestParam("dataset") String dataset, @RequestPart("file") MultipartFile file, final HttpServletRequest request,
+    public String addMetadata(@RequestParam("workspace") String workspace, @RequestParam("dataset") String dataset, @RequestParam("requiredFields") String requiredFields, @RequestPart("file") MultipartFile file, final HttpServletRequest request,
             final HttpServletResponse response) {
 
         try {
@@ -101,11 +105,27 @@ public class UploadMetadataController {
                             "The archive contains more than one metadata file.");
                     return "The archive contains more than one metadata file.";
                 }
-                countSolr();
-                saveMetadata(workspace, dataset, metadataFiles[0]);
-                countSolr();
+                
+                String[] requiredFieldsArray = null;
+                
+                if(requiredFields!=null && requiredFields.length()>0) {
+                    
+                    requiredFieldsArray = requiredFields.split(",");                    
+                }                
+
+                checkMetadata(metadataFiles[0], requiredFieldsArray);
+                addMetadataIngest(workspace, dataset, metadataFiles[0]);
+
             }
 
+        } catch (PropertyNotSetException e) {
+            try {
+                printOutputMessage(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Missing required field in metadata: " + e.getProperty());
+                return "Missing required field in metadata: " + e.getProperty();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -123,52 +143,61 @@ public class UploadMetadataController {
     private boolean addMetadataIngest(String workspace, String dataset, final File metadataFile)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {        
 
-            // MANAGE THE UPLOAD JOB QUEUE HERE
-            UploadFileJob job = new UploadFileJob();
-            job.setWorkspace(workspace);
-            job.setDataset(dataset);
-            job.setFile(metadataFile);
+        // MANAGE THE UPLOAD JOB QUEUE HERE
+        UploadFileJob job = new UploadFileJob();
+        job.setWorkspace(workspace);
+        job.setDataset(dataset);
+        job.setFile(metadataFile);
 
-            UploadJobQueue.addNewJob(job);
+        // Get the values for WMS and WFS from data-ingest (from uploded shapefile)
+        try {
+            JSONObject json = JSONReader.readJsonFromUrl(dataIngestUrl+"/workspaces/"+workspace+"/datasets/"+dataset+"/");
 
-            // Check if the ingest process is already created
-            String name = "UPLOADED FILES METADATA INGESTER";
-            Ingest ingest = ingestService.findByName(name);
+            String wms = (String) json.get("WMS");
+            String wfs = (String) json.get("WFS");
 
-            // START THE PROCESS
-            try {
-                if(ingest==null) { 
-                    // Create the ingest process
-                    ingest = new IngestFileUpload(); 
-                    ingest.setName(name);
-                    ingest.setNameOgpRepository("");
-                    ingest.setFrequency(Frequency.EVERY5MINUTES);
-                    ingest.setScheduled(true);
-                    ingest.setUrl("LOCAL");
-                    ingest.setBeginDate(new Date(System.currentTimeMillis()));
-                    ingest = ingestService.saveAndSchedule(ingest);
-                }    
-            } catch(Exception e) {
-                logger.error(e.getMessage());
-                return false;
-            }       
-        
+            job.setWmsEndPoint(wms);
+            job.setWfsEndPoint(wfs);
+        } catch (Exception e) {
+            logger.error("Unable to load WMS and WFS from Data-Ingest");
+        }
+
+        UploadJobQueue.addNewJob(job);
+
+        // Check if the ingest process is already created
+        String name = "UPLOADED FILES METADATA INGESTER";
+        Ingest ingest = ingestService.findByName(name);
+
+        // START THE PROCESS
+        try {
+            if(ingest==null) { 
+                // Create the ingest process
+                ingest = new IngestFileUpload(); 
+                ingest.setName(name);
+                ingest.setNameOgpRepository("");
+                ingest.setFrequency(Frequency.EVERY5MINUTES);
+                ingest.setScheduled(true);
+                ingest.setUrl("LOCAL");
+                ingest.setBeginDate(new Date(System.currentTimeMillis()));
+                ingest = ingestService.saveAndSchedule(ingest);
+            }    
+        } catch(Exception e) {
+            logger.error(e.getMessage());
+            return false;
+        }       
+
 
         return true;        
     }
-
-
-    private void saveMetadata(String workspace, String dataset, final File metadataFile)
+    
+    private void checkMetadata(File metadataFile, String[] requiredFields)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {
 
         FileInputStream in = new FileInputStream(metadataFile);
 
-        Document doc = XmlUtil.load(in);     
-        
+        Document doc = XmlUtil.load(in);        
 
-        MetadataType metadataType = XmlUtil.getMetadataType(doc);
-        
-        
+        MetadataType metadataType = XmlUtil.getMetadataType(doc);        
 
         BaseXmlMetadataParser parser;
 
@@ -184,49 +213,15 @@ public class UploadMetadataController {
 
         Metadata metadata = parsedMetadata.getMetadata();
         
-        // to make metadata coupled with the shape file layer
-        metadata.setWorkspaceName(workspace);
-        metadata.setOwsName(dataset);
-       
-        String wms = "http://wms";
-        String wcs = "http://wcs";
-               
-        metadata.setWorkspaceName(workspace);
-        metadata.setOwsName(dataset);
-       
-        String currentLocation = metadata.getLocation();
-        if(currentLocation!= null && currentLocation.contains("{") && currentLocation.contains("}")) {
-            // Prepare JSON Object for the request
-            JSONObject request = null;
-            
-            String json = "";
-            
-            JSONParser jsonParser = new JSONParser();
-            
-            request = (JSONObject) jsonParser.parse(json);
-            request.put("wms", wms);
-            request.put("wcs", wcs);
-            
-            currentLocation = request.toString();
-        } else {
-            JSONObject request = new JSONObject();
-            request.put("wms", wms);
-            request.put("wcs", wcs);
-            
-            currentLocation = request.toString();                        
+        if(requiredFields!=null) {
+            for (String property : requiredFields) {
+                if(!metadata.hasValueForProperty(property)) {
+                    throw new PropertyNotSetException(property);
+                }
+            }     
         }
-        
-        metadata.setLocation(currentLocation);
-        
-        System.out.println(metadata.toString());
-        
-        SolrRecord solrRecord = SolrRecord.build(metadata);
 
-        SolrJClient solrClient = new SolrJClient(localSolrUrl);
-
-        solrClient.add(solrRecord);  
-        
-   }
+    }   
 
     private File uncompressFile(File packageFile) throws Exception {
 
@@ -272,6 +267,8 @@ public class UploadMetadataController {
         response.flushBuffer();
     }
 
+    
+    /* TODO: REMOVE FOLLOWING METHODS BEFORE PRODUCTION */
     private void countSolr() throws SolrServerException {
         Integer start = 0;
         SolrJClient solrClient = new SolrJClient(localSolrUrl);
@@ -291,5 +288,72 @@ public class UploadMetadataController {
         }
 
         System.out.println("SOLR: " + counter);
+    }
+    
+    private void immediateSaveMetadata(String workspace, String dataset, final File metadataFile)
+            throws FileNotFoundException, Exception, UnsupportedMetadataType {
+
+        FileInputStream in = new FileInputStream(metadataFile);
+
+        Document doc = XmlUtil.load(in);        
+
+        MetadataType metadataType = XmlUtil.getMetadataType(doc);        
+
+        BaseXmlMetadataParser parser;
+
+        if(metadataType.equals(MetadataType.ISO_19139)) {
+            parser = new Iso19139MetadataParser();
+        } else  if(metadataType.equals(MetadataType.FGDC)) { 
+            parser = new FgdcMetadataParser(); 
+        } else {
+            throw new UnsupportedMetadataType();
+        }
+
+        MetadataParserResponse parsedMetadata = parser.parse(doc);
+
+        Metadata metadata = parsedMetadata.getMetadata();
+
+        // to make metadata coupled with the shape file layer
+        metadata.setWorkspaceName(workspace);
+        metadata.setOwsName(dataset);
+
+        // location
+        // Get the values from data-ingest
+        JSONObject json = JSONReader.readJsonFromUrl(dataIngestUrl+"/workspaces/"+workspace+"/datasets/"+dataset+"/");
+
+        String wms = (String) json.get("WMS");
+        String wfs = (String) json.get("WFS");
+
+        // get the current value for location from metadata
+        String currentLocation = metadata.getLocation();
+        if(currentLocation!= null && currentLocation.contains("{") && currentLocation.contains("}")) {
+            // Prepare JSON Object for the request
+            JSONObject request = null;
+
+            String jsonS = "";
+
+            JSONParser jsonParser = new JSONParser();
+
+            request = (JSONObject) jsonParser.parse(jsonS);
+            request.put("wms", wms);
+            request.put("wfs", wfs);
+
+            currentLocation = request.toString();
+        } else {
+            JSONObject request = new JSONObject();
+            request.put("wms", wms);
+            request.put("wfs", wfs);
+
+            currentLocation = request.toString();                        
+        }
+
+        metadata.setLocation(currentLocation);
+
+        SolrRecord solrRecord = SolrRecord.build(metadata);
+
+        SolrJClient solrClient = new SolrJClient(localSolrUrl);
+
+        solrClient.add(solrRecord);  
+
     }
 }

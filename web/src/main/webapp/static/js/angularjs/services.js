@@ -305,14 +305,14 @@
 
 		// Public interface
 		return {
-			add: function(download) {
+			add: function(download, requiredFields) {
 				
 				Upload.upload({
 					url: 'rest/uploadMetadata/add',
-					data: {workspace: download.workspace, dataset: download.dataset, file: download.zipFile},
+					data: {workspace: download.workspace, dataset: download.dataset, requiredFields : requiredFields, file: download.zipFile},
 					method: 'POST'
 				}).then(function (resp) {
-					console.log('OK');
+					
 					
 				}, function (resp) {
 					console.log('Error status: ' + resp.data);

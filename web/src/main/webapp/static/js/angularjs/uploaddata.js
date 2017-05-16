@@ -11,45 +11,60 @@
 		});
 	}
 	]);
-	
-	
-	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env)  {
+
+
+	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', '$filter', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env, $filter)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
-		
-		$scope.requiredFieldList = ["geographicExtent", "topic", "dataType", "themeKeyword", "dateOfContent", "dataRepository", "placeKeyword", "originator", "webServices"];
-		
+
+		$scope.requiredFieldList = {"geographicExtent": false, 
+			"topic" : false, "dataType" : false, "themeKeyword" : false, "dateOfContent": false, 
+			"dataRepository": false, "placeKeyword" : false, "originator" : false, "webServices" : false};
+
 		var dataIngestURL = __env.dataIngestAPIUrl;
-		
+
 		if($cookies['downloads']!=null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);
 		} else {
 			$scope.downloads = [];
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
 		}
-
+		
 		$scope.refreshView = $interval(function(){
 			angular.forEach($scope.downloads, function(download) {	
 				if(download.locked && download.ticket>=0) {
 					$http({
-		                method : "GET",
-		                url : dataIngestURL+"/checkUploadStatus/"+download.ticket
-		            }).then(function mySucces(response) {
-		                if(response.status=='200') {
-		                	download.ticket=-1;
-			                download.status = $translate("UPLOAD_DATA.FILE_SENT");
+						method : "GET",
+						url : dataIngestURL+"/checkUploadStatus/"+download.ticket
+					}).then(function mySucces(response) {
+						if(response.status=='200') {
+							
+							var requiredFieldsStr = '';
+
+							angular.forEach($scope.requiredFieldList, function(value, key) {
+								if(value) {
+									if(requiredFieldsStr==="") {
+										requiredFieldsStr = key;
+									} else {
+										requiredFieldsStr = requiredFieldsStr + "," + key;
+									}
+								}
+							}, requiredFieldsStr);
+							
+							download.ticket=-1;
+							download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
-							uploadMetadata.add(download);
+							uploadMetadata.add(download, requiredFieldsStr);
 							$cookies['downloads'] = JSON.stringify($scope.downloads);							
-		                }
-		            }, function myError(response) {
-		            	download.statusColor = 'red';
-		            	download.status = $translate("UPLOAD_DATA.CUSTOM", {
+						}
+					}, function myError(response) {
+						download.statusColor = 'red';
+						download.status = $translate("UPLOAD_DATA.CUSTOM", {
 							custom : response.data
 						});
-		            	$cookies['downloads'] = JSON.stringify($scope.downloads);
-		            });
+						$cookies['downloads'] = JSON.stringify($scope.downloads);
+					});
 				}				
 			});
 		},1000);
@@ -93,38 +108,38 @@
 			if(validSet) {
 				angular.forEach($scope.downloads, function(download) {
 					if(download.valid && !download.locked) {
-						
+
 						if(!download.locked) {
 							download.status = $translate("UPLOAD_DATA.UPLOADING");
 							download.statusColor = 'blue';
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}
-						
+
 						var optionalParams = '';
-						
+
 						if(download.datastore!=download.dataset) {
 							optionalParams = "store=" + download.datastore;
 						}
-						
+
 						if(download.srs>'') {
-							
+
 							if(optionalParams>'') {
 								optionalParams = optionalParams + "&"
 							}							
-							
+
 							optionalParams = optionalParams + "forcedSRS=" + download.srs;
 						}
-	
+
 						if(optionalParams>'') {
 							optionalParams = '?'+optionalParams;
 						}
-						
+
 						var method = 'PUT';
 						if(download.isnew) {
 							method = 'POST';
 						}
-						
-						
+
+
 						Upload.upload({
 							url: dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams,
 							data: {file: download.zipFile},
@@ -156,7 +171,7 @@
 					}
 				});
 			}
-			
+
 		}
 
 		$scope.expandWorkspace = function(workspace) {

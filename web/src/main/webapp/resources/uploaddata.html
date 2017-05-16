@@ -3,9 +3,13 @@
 
 	<h2 data-translate="UPLOAD_DATA.HEADER" class="ng-scope"></h2>
 	<br /> 
+	
+	
+	   <form name="downloadFrm" ng-submit="uploadFiles">
+	
 	<div class="custom-panel last" 
         ng-show="downloads.length">
-    <div class="custom-panel-heading collapsed" data-toggle="collapse"
+    <div class="custom-panel-heading" 
          data-target="#requiredFieldsSolr">
         <h2>
             {{ "UPLOAD_DATA.REQUIRED_FIELDS" | translate }}
@@ -17,10 +21,10 @@
     </div>
 	<div class="custom-panel-body" id="requiredFieldsSolr">
 		<div class="form-group container no-left-padding">
-			<div class="col-md-4" ng-repeat="field in requiredFieldList">
+			<div class="col-md-4" ng-repeat="(field, enabled) in requiredFieldList">
 				<div class="checkbox">
 					<label> 
-					<input type="checkbox" name="requiredFields" ng-model="requiredFields[field]" /> 
+					<input type="checkbox" ng-model="requiredFieldList[field]" /> 
 						{{"UPLOAD_DATA.REQUIRED_FIELD_OPT_" + field | translate}}
 					</label>
 				</div>
@@ -82,7 +86,7 @@
 	</table>
 	<p ng-show="downloads.length">* Optional parameter</p>
 
-	<form name="downloadFrm" ng-submit="uploadFiles">
+
 	
 		<fieldset>
 			<button ngf-select="uploadFiles($files, $invalidFiles)" multiple
@@ -92,9 +96,12 @@
 				ng-show="downloads.length"></button>
 		</fieldset>
 
-	</form>
+	
 
 	<br />
-
+	
+	</form>
 
 </div>
+
+

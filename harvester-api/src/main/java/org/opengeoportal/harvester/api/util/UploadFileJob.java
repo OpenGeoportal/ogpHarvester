@@ -7,7 +7,7 @@ public class UploadFileJob {
     private String workspace;
     private String dataset;
     private String wmsEndPoint;
-    private String wcsEndPoint;
+    private String wfsEndPoint;
     private File file;
     private long assigned = 0;
     private boolean completed = false;
@@ -55,18 +55,18 @@ public class UploadFileJob {
     public void setWmsEndPoint(String wmsEndPoint) {
         this.wmsEndPoint = wmsEndPoint;
     }
-    public String getWcsEndPoint() {
-        return wcsEndPoint;
+    public String getWfsEndPoint() {
+        return wfsEndPoint;
     }
-    public void setWcsEndPoint(String wcsEndPoint) {
-        this.wcsEndPoint = wcsEndPoint;
+    public void setWfsEndPoint(String wfsEndPoint) {
+        this.wfsEndPoint = wfsEndPoint;
     }
     
     @Override
     public String toString() {
         return "UploadFileJob [workspace=" + workspace + ", dataset=" + dataset
-                + ", wmsEndPoint=" + wmsEndPoint + ", wcsEndPoint="
-                + wcsEndPoint + ", file=" + file + ", assigned=" + assigned
+                + ", wmsEndPoint=" + wmsEndPoint + ", wfsEndPoint="
+                + wfsEndPoint + ", file=" + file + ", assigned=" + assigned
                 + ", completed=" + completed + "]";
     }
     
