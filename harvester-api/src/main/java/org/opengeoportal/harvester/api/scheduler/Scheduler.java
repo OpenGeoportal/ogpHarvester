@@ -47,6 +47,15 @@ public interface Scheduler {
      * otherwise.
      */
     boolean scheduleIngest(Ingest ingest);
+    
+    /**
+     * Schedule an immediate ingest.
+     *
+     * @param ingest the ingest.
+     * @return <code>true</code> if ingest can be scheduled, <code>false</code>
+     * otherwise.
+     */
+    boolean scheduleAnImmediateIngest(Ingest ingest);
 
     /**
      * Unschedule an ingest forever. Remove the job and all its triggers from

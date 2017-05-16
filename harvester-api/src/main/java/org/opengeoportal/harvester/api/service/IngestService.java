@@ -30,6 +30,7 @@
 package org.opengeoportal.harvester.api.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.SortedSet;
 
 import org.opengeoportal.harvester.api.domain.CustomRepository;
@@ -145,6 +146,15 @@ public interface IngestService {
 	 * @return the saved ingest.
 	 */
 	Ingest saveAndSchedule(Ingest ingest);
+	
+	/**
+     * Save the ingest and schedule an immediate execution of it.
+     * 
+     * @param ingest
+     *            the ingest
+     * @return the saved ingest.
+     */
+    void runNow(Ingest ingest);
 
 	/**
 	 * Return the date of the ingest next run.
@@ -190,4 +200,11 @@ public interface IngestService {
 	 * @return the saved ingest.
 	 */
 	Ingest saveAndUpdateServerQuery(Ingest ingest);
+	
+	/**
+	 * Give the ingest with a given name
+	 * @param name
+	 * @return
+	 */
+	public Ingest findByName(String name);
 }

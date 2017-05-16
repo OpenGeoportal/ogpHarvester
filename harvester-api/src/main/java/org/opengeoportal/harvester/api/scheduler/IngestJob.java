@@ -125,6 +125,7 @@ public class IngestJob implements InterruptableJob, IngestJobFactorySetter {
 	@Transactional
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
+	    
         Date startTimestamp = Calendar.getInstance().getTime();
         Ingest ingest = null;
 		try {

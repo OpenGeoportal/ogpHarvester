@@ -30,9 +30,13 @@
 package org.opengeoportal.harvester.api.scheduler;
 
 import com.google.common.collect.Sets;
+
+import ch.qos.logback.core.net.SyslogOutputStream;
+
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.quartz.*;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +62,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  */
 @Service
 public class IngestScheduler implements
-        org.opengeoportal.harvester.api.scheduler.Scheduler {
+org.opengeoportal.harvester.api.scheduler.Scheduler {
     /**
      *
      */
@@ -122,6 +126,84 @@ public class IngestScheduler implements
 
         return scheduled;
 
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * org.opengeoportal.harvester.api.scheduler.Scheduler#scheduleIngest(org
+     * .opengeoportal.harvester.api.domain.Ingest)
+     */
+    @Override
+    @Transactional
+    public boolean scheduleAnImmediateIngest(Ingest ingest) {
+
+        boolean scheduled = true;
+        TransactionStatus transactionStatus = null;
+        try {
+            transactionStatus = this.transactionManager
+                    .getTransaction(new DefaultTransactionDefinition());
+
+            //Create the Job and the trigger
+            JobDetail job = createJobDetail(ingest);            
+            Trigger trigger = createTrigger(ingest.getId(), new Date(System.currentTimeMillis()+10000), ingest.getFrequency(), job);
+            
+            if(schedulerFactoryBean.getScheduler().checkExists(job.getKey())) {
+                schedulerFactoryBean.getScheduler().deleteJob(job.getKey());               
+            }
+            
+            schedulerFactoryBean.getScheduler().scheduleJob(job, trigger);              
+            
+            printLogInfos(job, true);
+
+        } catch (SchedulerException se) {
+            if (logger.isWarnEnabled()) {
+                logger.warn("Cannot scheduled the ingest " + ingest.getId(), se);
+            }
+            scheduled = false;
+            rollbackTransaction(transactionStatus, se);
+
+        }
+
+        if (transactionStatus != null) {
+            this.transactionManager.commit(transactionStatus);
+        }
+
+        return scheduled;
+
+    }
+
+    private void printLogInfos(JobDetail job, boolean debug) throws SchedulerException {
+        if(debug) {
+            System.out.println("JOB KEY --- " + job.getKey().getGroup() + job.getKey().getName());
+            for (String groupName : schedulerFactoryBean.getScheduler().getJobGroupNames()) {
+
+                for (JobKey jobKey : schedulerFactoryBean.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+
+                    String jobName = jobKey.getName();
+                    String jobGroup = jobKey.getGroup();
+
+                    //get job's trigger
+                    List<Trigger> triggers = (List<Trigger>) schedulerFactoryBean.getScheduler().getTriggersOfJob(jobKey);
+
+                    if(!triggers.isEmpty()) {
+                        Date nextFireTime = triggers.get(0).getNextFireTime();
+
+                        String triggerName = triggers.get(0).getJobKey().getName();
+                        String triggerGroup = triggers.get(0).getJobKey().getGroup();
+
+                        System.out.println("[jobName] : " + jobName + " [groupName] : "
+                                + jobGroup + " - " + "[triggerName] : " + triggerName + " [triggerrGroupName] : "
+                                + triggerGroup + " - " + nextFireTime);
+                    } else {
+                        System.out.println("[jobName] : " + jobName + " [groupName] : "
+                                + jobGroup);
+                    }
+
+                }
+            }
+        }
     }
 
     private void rollbackTransaction(TransactionStatus transactionStatus, SchedulerException se) {
@@ -201,28 +283,32 @@ public class IngestScheduler implements
      * @return a trigger.s
      */
     private Trigger createTrigger(Long ingestId, Date startDate,
-                                  Frequency frequency, JobDetail jobDetail) {
+            Frequency frequency, JobDetail jobDetail) {
         TriggerBuilder<Trigger> triggerBuilder = newTrigger();
         triggerBuilder.withIdentity(generateTriggerIdentity(ingestId))
-                .forJob(jobDetail).startAt(startDate);
+        .forJob(jobDetail).startAt(startDate);
         switch (frequency) {
-            case ONCE:
-                // no schedule needed
-                break;
-            case DAILY:
-                triggerBuilder.withSchedule(calendarIntervalSchedule()
-                        .withIntervalInDays(1));
-                break;
-            case WEEKLY:
-                triggerBuilder.withSchedule(calendarIntervalSchedule()
-                        .withIntervalInWeeks(1));
-                break;
-            case MONTHLY:
-                triggerBuilder.withSchedule(calendarIntervalSchedule()
-                        .withIntervalInMonths(1));
-                break;
-            default:
-                break;
+        case ONCE:
+            // no schedule needed
+            break;
+        case DAILY:
+            triggerBuilder.withSchedule(calendarIntervalSchedule()
+                    .withIntervalInDays(1));
+            break;
+        case WEEKLY:
+            triggerBuilder.withSchedule(calendarIntervalSchedule()
+                    .withIntervalInWeeks(1));
+            break;
+        case MONTHLY:
+            triggerBuilder.withSchedule(calendarIntervalSchedule()
+                    .withIntervalInMonths(1));
+            break;
+        case EVERY5MINUTES:
+            triggerBuilder.withSchedule(calendarIntervalSchedule()
+                    .withIntervalInMinutes(5));
+            break;
+        default:
+            break;
         }
         return triggerBuilder.build();
     }
@@ -248,6 +334,25 @@ public class IngestScheduler implements
         jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
                 ingest.getId().toString());
         jdFactory.afterPropertiesSet();
+        return jdFactory.getObject();
+    }
+
+    /**
+     * Create a {@link JobDetail} based on the ingest passed as parameter.
+     *
+     * @param ingest the ingest to be scheduled.
+     * @param isDurable for durabilty
+     * @return a JobDetail base on the ingest passed.
+     */
+    private JobDetail createImmediateJobDetail(Ingest ingest) {
+        JobDetailFactoryBean jdFactory = new JobDetailFactoryBean();
+        jdFactory.setName(generateJobName(ingest));
+        jdFactory.setDurability(true);
+        jdFactory.setJobClass(IngestJob.class);
+        jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
+                ingest.getId().toString());
+        jdFactory.afterPropertiesSet();
+
         return jdFactory.getObject();
     }
 

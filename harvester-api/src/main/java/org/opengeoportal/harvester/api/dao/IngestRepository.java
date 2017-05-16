@@ -77,4 +77,14 @@ public interface IngestRepository extends JpaRepository<Ingest, Long> {
 	 * @return return the list of scheduled ingests for a given repository.
 	 */
 	List<Ingest> findByRepositoryIdAndScheduledTrue(Long repositoryId);
+	
+	   /**
+     * 
+     * @param name
+     *            the ingest name.
+     * @return return the ingest for a given name.
+     */
+    Ingest findByName(String name);
+	
+	
 }

@@ -54,10 +54,7 @@ import com.google.common.collect.Lists;
 public class IngestFileUpload extends Ingest {
 
     private static final long serialVersionUID = -1449174289137331639L;
-
-	@Column
-	private File file;
-
+    
 	public IngestFileUpload() {
 		super();
 		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
@@ -65,14 +62,4 @@ public class IngestFileUpload extends Ingest {
 				"webServices", "topic", "dateOfContent", "originator",
 				"dataType", "dataRepository" }));
 	}
-
-    public File getFile() {
-        return file;
-    }
-
-    public void setFile(File file) {
-        this.file = file;
-    }
-	
-	
 }

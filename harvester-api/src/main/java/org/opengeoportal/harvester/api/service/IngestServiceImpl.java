@@ -238,6 +238,20 @@ public class IngestServiceImpl implements IngestService {
 		scheduler.scheduleIngest(savedIngest);
 		return savedIngest;
 	}
+	
+	/*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.IngestService#saveAndSchedule
+     * (org.opengeoportal.harvester.api.domain.Ingest)
+     */
+    @Override
+    @Transactional
+    public void runNow(Ingest ingest) {
+        scheduler.scheduleIngest(ingest);
+
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -313,6 +327,13 @@ public class IngestServiceImpl implements IngestService {
 			}
 		}
 		return interrupted;
+	}
+	
+	@Override
+	@Transactional
+	public Ingest findByName(String name) {
+	    
+	    return ingestRepository.findByName(name);
 	}
 
 }

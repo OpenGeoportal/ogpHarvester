@@ -309,7 +309,7 @@
 				
 				Upload.upload({
 					url: 'rest/uploadMetadata/add',
-					data: {file: download.zipFile},
+					data: {workspace: download.workspace, dataset: download.dataset, file: download.zipFile},
 					method: 'POST'
 				}).then(function (resp) {
 					console.log('OK');

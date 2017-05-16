@@ -6,21 +6,28 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest.METHOD;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.opengeoportal.harvester.api.client.solr.SolrJClient;
 import org.opengeoportal.harvester.api.client.solr.SolrRecord;
-import org.opengeoportal.harvester.api.domain.CustomRepository;
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
 import org.opengeoportal.harvester.api.domain.IngestFileUpload;
-import org.opengeoportal.harvester.api.domain.InstanceType;
 import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.BaseXmlMetadataParser;
@@ -29,19 +36,23 @@ import org.opengeoportal.harvester.api.metadata.parser.Iso19139MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataType;
 import org.opengeoportal.harvester.api.service.IngestService;
+import org.opengeoportal.harvester.api.util.UploadFileJob;
+import org.opengeoportal.harvester.api.util.UploadJobQueue;
 import org.opengeoportal.harvester.api.util.XmlUtil;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
-import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 
 @Controller
@@ -49,15 +60,20 @@ public class UploadMetadataController {
 
     private static final String XML_EXTENSION = ".xml";
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Value("#{localSolr['localSolr.url']}")
     private String localSolrUrl;
     
+    @Value("#{dataIngest.url}")
+    private String dataIngestUrl;
+
     @Resource
     private IngestService ingestService;
 
     @RequestMapping(value = "/rest/uploadMetadata/add", method = RequestMethod.POST)
     @ResponseBody
-    public String addMetadata(@RequestPart("file") MultipartFile file, final HttpServletRequest request,
+    public String addMetadata(@RequestParam("workspace") String workspace, @RequestParam("dataset") String dataset, @RequestPart("file") MultipartFile file, final HttpServletRequest request,
             final HttpServletResponse response) {
 
         try {
@@ -85,9 +101,9 @@ public class UploadMetadataController {
                             "The archive contains more than one metadata file.");
                     return "The archive contains more than one metadata file.";
                 }
-
-                addMetadataIngest(metadataFiles[0]);
-
+                countSolr();
+                saveMetadata(workspace, dataset, metadataFiles[0]);
+                countSolr();
             }
 
         } catch (IllegalStateException e) {
@@ -103,57 +119,56 @@ public class UploadMetadataController {
 
         return "";
     }
-    
-    private Map<String, Object> addMetadataIngest(final File metadataFile)
-            throws FileNotFoundException, Exception, UnsupportedMetadataType {
-        
-        Ingest ingest = new IngestFileUpload();
-        
-        
-        ingest.setBeginDate(new Date(System.currentTimeMillis()));
-        ingest.setName(metadataFile.getName()+System.currentTimeMillis());
-        ingest.setNameOgpRepository(""); // In the OGP Harvester it's not active
-        ingest.setFrequency(Frequency.ONCE);
-        ingest.setScheduled(true);
-//        if (!usesCustomRepo) {
-//            ingest.setUrl(ingestFormBean.getUrl());
-//            ingest.setRepository(null);
-//        }
 
-        // remove old required fields and add the new ones
-//        ingest.getRequiredFields().clear();
-//        for (Entry<String, Boolean> requiredField : ingestFormBean
-//                .getRequiredFields().entrySet()) {
-//            if (requiredField.getValue()) {
-//                ingest.addRequiredField(requiredField.getKey());
-//            }
-//        }
-        ingest.setUrl("holaaaaaaa");
-        
-        ((IngestFileUpload) ingest).setFile(metadataFile);        
-        
-        ingest = ingestService.saveAndSchedule(ingest, -99999L, InstanceType.FILE);
-        
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("success", true);
-        Map<String, Object> data = Maps.newHashMap();
-        data.put("id", ingest.getId());
-        data.put("name", ingest.getName());
-        result.put("data", data);
+    private boolean addMetadataIngest(String workspace, String dataset, final File metadataFile)
+            throws FileNotFoundException, Exception, UnsupportedMetadataType {        
 
-        return result;
+            // MANAGE THE UPLOAD JOB QUEUE HERE
+            UploadFileJob job = new UploadFileJob();
+            job.setWorkspace(workspace);
+            job.setDataset(dataset);
+            job.setFile(metadataFile);
+
+            UploadJobQueue.addNewJob(job);
+
+            // Check if the ingest process is already created
+            String name = "UPLOADED FILES METADATA INGESTER";
+            Ingest ingest = ingestService.findByName(name);
+
+            // START THE PROCESS
+            try {
+                if(ingest==null) { 
+                    // Create the ingest process
+                    ingest = new IngestFileUpload(); 
+                    ingest.setName(name);
+                    ingest.setNameOgpRepository("");
+                    ingest.setFrequency(Frequency.EVERY5MINUTES);
+                    ingest.setScheduled(true);
+                    ingest.setUrl("LOCAL");
+                    ingest.setBeginDate(new Date(System.currentTimeMillis()));
+                    ingest = ingestService.saveAndSchedule(ingest);
+                }    
+            } catch(Exception e) {
+                logger.error(e.getMessage());
+                return false;
+            }       
         
+
+        return true;        
     }
 
 
-    private void saveMetadata(final File metadataFile)
+    private void saveMetadata(String workspace, String dataset, final File metadataFile)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {
 
         FileInputStream in = new FileInputStream(metadataFile);
 
-        Document doc = XmlUtil.load(in);
+        Document doc = XmlUtil.load(in);     
+        
 
         MetadataType metadataType = XmlUtil.getMetadataType(doc);
+        
+        
 
         BaseXmlMetadataParser parser;
 
@@ -168,20 +183,52 @@ public class UploadMetadataController {
         MetadataParserResponse parsedMetadata = parser.parse(doc);
 
         Metadata metadata = parsedMetadata.getMetadata();
+        
+        // to make metadata coupled with the shape file layer
+        metadata.setWorkspaceName(workspace);
+        metadata.setOwsName(dataset);
+       
+        String wms = "http://wms";
+        String wcs = "http://wcs";
+               
+        metadata.setWorkspaceName(workspace);
+        metadata.setOwsName(dataset);
+       
+        String currentLocation = metadata.getLocation();
+        if(currentLocation!= null && currentLocation.contains("{") && currentLocation.contains("}")) {
+            // Prepare JSON Object for the request
+            JSONObject request = null;
+            
+            String json = "";
+            
+            JSONParser jsonParser = new JSONParser();
+            
+            request = (JSONObject) jsonParser.parse(json);
+            request.put("wms", wms);
+            request.put("wcs", wcs);
+            
+            currentLocation = request.toString();
+        } else {
+            JSONObject request = new JSONObject();
+            request.put("wms", wms);
+            request.put("wcs", wcs);
+            
+            currentLocation = request.toString();                        
+        }
+        
+        metadata.setLocation(currentLocation);
+        
+        System.out.println(metadata.toString());
+        
         SolrRecord solrRecord = SolrRecord.build(metadata);
 
         SolrJClient solrClient = new SolrJClient(localSolrUrl);
 
-        solrClient.add(solrRecord);
-
+        solrClient.add(solrRecord);  
         
-        
-        
-    }
-
+   }
 
     private File uncompressFile(File packageFile) throws Exception {
-
 
         try {
             File unzipDir = Files.createTempDir();
@@ -225,6 +272,24 @@ public class UploadMetadataController {
         response.flushBuffer();
     }
 
+    private void countSolr() throws SolrServerException {
+        Integer start = 0;
+        SolrJClient solrClient = new SolrJClient(localSolrUrl);
+        HttpSolrServer server = solrClient.getSolrServer();
+        long counter = 0;
+        SolrQuery query = new SolrQuery();
+        query.setQuery("*:*");
+        query.setRows(Integer.MAX_VALUE);
+        QueryResponse rsp;
+        rsp = server.query(query, METHOD.POST);
+        SolrDocumentList docs = rsp.getResults();
+        for (SolrDocument doc : docs) {
+            Collection<String> fieldNames = doc.getFieldNames();
+            for (String s: fieldNames) {
+                counter++;
+            }
+        }
 
-
+        System.out.println("SOLR: " + counter);
+    }
 }
