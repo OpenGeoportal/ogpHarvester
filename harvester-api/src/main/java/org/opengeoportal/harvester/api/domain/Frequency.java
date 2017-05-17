@@ -34,6 +34,6 @@ package org.opengeoportal.harvester.api.domain;
  *
  */
 public enum Frequency {
-	ONCE, DAILY, WEEKLY, MONTHLY, EVERY5MINUTES
+	ONCE, DAILY, WEEKLY, MONTHLY, EVERYXMINUTES
 
 }

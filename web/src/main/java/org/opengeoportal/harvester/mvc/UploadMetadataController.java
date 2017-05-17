@@ -126,6 +126,14 @@ public class UploadMetadataController {
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
+        } catch (UnsupportedMetadataType e) {
+            try {
+                printOutputMessage(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Metatdata format is not supported");
+                return "Metatdata format is not supported";
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -175,7 +183,7 @@ public class UploadMetadataController {
                 ingest = new IngestFileUpload(); 
                 ingest.setName(name);
                 ingest.setNameOgpRepository("");
-                ingest.setFrequency(Frequency.EVERY5MINUTES);
+                ingest.setFrequency(Frequency.EVERYXMINUTES);
                 ingest.setScheduled(true);
                 ingest.setUrl("LOCAL");
                 ingest.setBeginDate(new Date(System.currentTimeMillis()));

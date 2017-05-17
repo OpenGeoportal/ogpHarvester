@@ -13,7 +13,7 @@
 	]);
 
 
-	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', '$filter', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env, $filter)  {
+	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', '$filter', '$route', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env, $filter, $route)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
@@ -55,6 +55,7 @@
 							download.ticket=-1;
 							download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
+							$route.reload();
 							uploadMetadata.add(download, requiredFieldsStr);
 							$cookies['downloads'] = JSON.stringify($scope.downloads);							
 						}

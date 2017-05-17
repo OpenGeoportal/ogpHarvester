@@ -303,9 +303,9 @@ org.opengeoportal.harvester.api.scheduler.Scheduler {
             triggerBuilder.withSchedule(calendarIntervalSchedule()
                     .withIntervalInMonths(1));
             break;
-        case EVERY5MINUTES:
+        case EVERYXMINUTES:
             triggerBuilder.withSchedule(calendarIntervalSchedule()
-                    .withIntervalInMinutes(5));
+                    .withIntervalInMinutes(1));
             break;
         default:
             break;
