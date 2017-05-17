@@ -16,8 +16,15 @@ public class UploadJobQueue {
     }
     
     public static void addNewJob(UploadFileJob job) {        
-        synchronized (list) {          
-        
+        synchronized (list) {     
+            // REMOVE A RANDOM COMPLETE JOB
+            for (UploadFileJob uploadFileJob : list) {
+                if(uploadFileJob.isCompleted()) {
+                    list.remove(uploadFileJob);
+                    break;
+                }
+            }
+            // ADD A NEW ONE
             list.add(job);
         }
         for (UploadFileJob uploadFileJob : list) {
