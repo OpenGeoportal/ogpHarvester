@@ -112,7 +112,14 @@ public class SingleFileIngestJob extends BaseIngestJob {
                     
                     metadata.setLocation(currentLocation);
 
-                    metadataList.add(metadata);    
+                    boolean valid = metadataValidator.validate(metadata,
+                            report);
+                    
+                    if (valid) {
+                        metadataList.add(metadata);
+                    } else {
+                        failedRecordsCount++;
+                    }  
 
 
                 } catch (Exception ex) {
