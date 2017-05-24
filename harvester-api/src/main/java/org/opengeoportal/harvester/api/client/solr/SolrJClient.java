@@ -231,31 +231,4 @@ public class SolrJClient implements SolrClient {
 		return response;
 	}
 
-	@Override
-	public QueryResponse searchForDataset(String WorkspaceName, String Name) throws
-			SolrServerException, OgpSolrException {
-
-		SolrQuery query = new SolrQuery();
-		query.setQuery("Name" + ":" + Name);
-		//TODO: filter also by the workspace
-		query.addField("FgdcText");
-		query.setRows(1);
-
-		QueryResponse response = null;
-		try {
-			response = solrServer.query(query);
-			if (response.getResults().getNumFound() != 1) throw new
-					OgpSolrException("SearchForDataset query must" +
-					" return exactly one result; instead it returned: " +
-					Long.toString(response.getResults().getNumFound()));
-		} catch (SolrServerException e) {
-			throw e;
-		} catch (OgpSolrException e) {
-			throw e;
-		}
-		return response;
-
-	}
-
-
 }
