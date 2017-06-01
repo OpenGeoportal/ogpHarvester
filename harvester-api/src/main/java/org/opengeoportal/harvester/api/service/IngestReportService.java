@@ -34,26 +34,26 @@ import org.opengeoportal.harvester.api.domain.IngestReport;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public interface IngestReportService {
-	/**
-	 * Save an {@link IngestReport}.
-	 * 
-	 * @param report
-	 *            the report.
-	 * @return the saved report.
-	 */
-	IngestReport save(IngestReport report);
+    /**
+     * Find the IngestReport associated to an {@link IngestJobStatus}.
+     * 
+     * @param id
+     *            the job status identifier.
+     * @return the ingest report or <code>null</code> if an associated report
+     *         cannot be found.
+     */
+    IngestReport findReportByJobStatusId(Long id);
 
-	/**
-	 * Find the IngestReport associated to an {@link IngestJobStatus}.
-	 * 
-	 * @param id
-	 *            the job status identifier.
-	 * @return the ingest report or <code>null</code> if an associated report
-	 *         cannot be found.
-	 */
-	IngestReport findReportByJobStatusId(Long id);
+    /**
+     * Save an {@link IngestReport}.
+     * 
+     * @param report
+     *            the report.
+     * @return the saved report.
+     */
+    IngestReport save(IngestReport report);
 
 }

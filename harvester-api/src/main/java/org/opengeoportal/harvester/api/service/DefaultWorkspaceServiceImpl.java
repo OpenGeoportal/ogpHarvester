@@ -37,41 +37,36 @@ import org.opengeoportal.harvester.api.dao.DefaultWorspaceRepository;
 import org.opengeoportal.harvester.api.domain.DefaultWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DefaultWorkspaceServiceImpl implements DefaultWorkspaceService {
-    private Logger logger = LoggerFactory
+    private final Logger logger = LoggerFactory
             .getLogger(DefaultWorkspaceServiceImpl.class);
 
-    
     @Resource
     private DefaultWorspaceRepository defaultWorkspaceRepository;
 
     @Override
-    public void save(DefaultWorkspace entity) {
-        defaultWorkspaceRepository.save(entity);
-
-    }
-
-    @Override
-    public void delete(Long id) {
-        defaultWorkspaceRepository.delete(id);
+    public void delete(final Long id) {
+        this.defaultWorkspaceRepository.delete(id);
 
     }
 
     @Override
     public List<DefaultWorkspace> findAll() {
 
-        return defaultWorkspaceRepository.findAll();
+        return this.defaultWorkspaceRepository.findAll();
     }
-    
-    DefaultWorkspace findByWorksp(String worksp) {
+
+    DefaultWorkspace findByWorksp(final String worksp) {
         return null;
     }
 
+    @Override
+    public void save(final DefaultWorkspace entity) {
+        this.defaultWorkspaceRepository.save(entity);
 
-
+    }
 
 }

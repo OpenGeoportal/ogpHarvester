@@ -29,13 +29,21 @@
  */
 package org.opengeoportal.harvester.api.scheduler;
 
-import com.google.common.collect.Sets;
-
-import ch.qos.logback.core.net.SyslogOutputStream;
+import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
 
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
-import org.quartz.*;
+import org.quartz.CalendarIntervalScheduleBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.UnableToInterruptJobException;
 import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,20 +57,14 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import java.util.Date;
-import java.util.List;
-import java.util.SortedSet;
-
-import static org.quartz.CalendarIntervalScheduleBuilder.calendarIntervalSchedule;
-import static org.quartz.JobKey.jobKey;
-import static org.quartz.TriggerBuilder.newTrigger;
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  */
 @Service
-public class IngestScheduler implements
-org.opengeoportal.harvester.api.scheduler.Scheduler {
+public class IngestScheduler
+        implements org.opengeoportal.harvester.api.scheduler.Scheduler {
     /**
      *
      */
@@ -86,119 +88,205 @@ org.opengeoportal.harvester.api.scheduler.Scheduler {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    /*
-     * (non-Javadoc)
+    /**
+     * Create a {@link JobDetail} based on the ingest passed as parameter.
      *
-     * @see
-     * org.opengeoportal.harvester.api.scheduler.Scheduler#scheduleIngest(org
-     * .opengeoportal.harvester.api.domain.Ingest)
+     * @param ingest
+     *            the ingest to be scheduled.
+     * @return a JobDetail base on the ingest passed.
      */
-    @Override
-    @Transactional
-    public boolean scheduleIngest(Ingest ingest) {
+    private JobDetail createJobDetail(final Ingest ingest) {
+        final JobDetailFactoryBean jdFactory = new JobDetailFactoryBean();
+        jdFactory.setName(this.generateJobName(ingest));
+        jdFactory.setJobClass(IngestJob.class);
+        jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
+                ingest.getId().toString());
+        jdFactory.afterPropertiesSet();
+        return jdFactory.getObject();
+    }
 
-        boolean scheduled = true;
-        TransactionStatus transactionStatus = null;
-        try {
-            transactionStatus = this.transactionManager
-                    .getTransaction(new DefaultTransactionDefinition());
-            unschedule(ingest);
-            Date startDate = ingest.getBeginDate();
-            Frequency frequency = ingest.getFrequency();
-
-            JobDetail jobDetail = createJobDetail(ingest);
-            Trigger trigger = createTrigger(ingest.getId(), startDate,
-                    frequency, jobDetail);
-
-            schedulerFactoryBean.getScheduler().scheduleJob(jobDetail, trigger);
-        } catch (SchedulerException se) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Cannot scheduled the ingest " + ingest.getId(), se);
-            }
-            scheduled = false;
-            rollbackTransaction(transactionStatus, se);
-
+    /**
+     * Create a trigger for jobDetail with the given frequency and start date.
+     *
+     * @param ingestId
+     *            ingest identifier.
+     * @param startDate
+     *            start date.
+     * @param frequency
+     *            frequency.
+     * @param jobDetail
+     *            jobDetail to be launched when the trigger fire.
+     * @return a trigger.s
+     */
+    private Trigger createTrigger(final Long ingestId, final Date startDate,
+            final Frequency frequency, final JobDetail jobDetail) {
+        final TriggerBuilder<Trigger> triggerBuilder = TriggerBuilder
+                .newTrigger();
+        triggerBuilder.withIdentity(this.generateTriggerIdentity(ingestId))
+                .forJob(jobDetail).startAt(startDate);
+        switch (frequency) {
+        case ONCE:
+            // no schedule needed
+            break;
+        case DAILY:
+            triggerBuilder.withSchedule(CalendarIntervalScheduleBuilder
+                    .calendarIntervalSchedule().withIntervalInDays(1));
+            break;
+        case WEEKLY:
+            triggerBuilder.withSchedule(CalendarIntervalScheduleBuilder
+                    .calendarIntervalSchedule().withIntervalInWeeks(1));
+            break;
+        case MONTHLY:
+            triggerBuilder.withSchedule(CalendarIntervalScheduleBuilder
+                    .calendarIntervalSchedule().withIntervalInMonths(1));
+            break;
+        case EVERYXMINUTES:
+            triggerBuilder.withSchedule(CalendarIntervalScheduleBuilder
+                    .calendarIntervalSchedule().withIntervalInMinutes(1));
+            break;
+        default:
+            break;
         }
+        return triggerBuilder.build();
+    }
 
-        if (transactionStatus != null) {
-            this.transactionManager.commit(transactionStatus);
-        }
+    private String generateJobName(final Ingest ingest) {
+        return IngestScheduler.JOB_PREFIX + ingest.getId();
+    }
 
-        return scheduled;
-
+    /**
+     * @param ingestId
+     *            ingest identifier.
+     * @return a key for the passed identifier.
+     */
+    private String generateTriggerIdentity(final Long ingestId) {
+        return IngestScheduler.TRIGGER_PREFIX + ingestId;
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see
-     * org.opengeoportal.harvester.api.scheduler.Scheduler#scheduleIngest(org
-     * .opengeoportal.harvester.api.domain.Ingest)
+     * @see org.opengeoportal.harvester.api.scheduler.Scheduler#
+     * getCurrentlyExecutingJobs ()
      */
     @Override
-    @Transactional
-    public boolean scheduleAnImmediateIngest(Ingest ingest) {
+    public SortedSet<Long> getCurrentlyExecutingJobs() {
+        final org.quartz.Scheduler scheduler = this.schedulerFactoryBean
+                .getScheduler();
+        final SortedSet<Long> ingestIdList = Sets.newTreeSet();
+        try {
+            final List<JobExecutionContext> jobList = scheduler
+                    .getCurrentlyExecutingJobs();
+            for (final JobExecutionContext jec : jobList) {
+                final Long ingestId = Long.valueOf((String) jec
+                        .getMergedJobDataMap().get(IngestJob.INGEST_ID));
+                ingestIdList.add(ingestId);
+            }
 
-        boolean scheduled = true;
+        } catch (final SchedulerException e) {
+            if (this.logger.isErrorEnabled()) {
+                this.logger.error("Error getting currently executing ingests",
+                        e);
+            }
+        }
+        return ingestIdList;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.opengeoportal.harvester.api.scheduler.Scheduler#getNextRun(org.
+     * opengeoportal.harvester.api.domain.Ingest)
+     */
+    @Override
+    public Date getNextRun(final Ingest ingest) {
+        Date nextFireTimeUtc = null;
+        final org.quartz.Scheduler scheduler = this.schedulerFactoryBean
+                .getScheduler();
+        final String jobName = this.generateJobName(ingest);
+        new JobKey(jobName, org.quartz.Scheduler.DEFAULT_GROUP);
+        final TriggerKey triggerKey = new TriggerKey(
+                this.generateTriggerIdentity(ingest.getId()),
+                org.quartz.Scheduler.DEFAULT_GROUP);
+        boolean isTriggerExisting;
+        try {
+            isTriggerExisting = scheduler.checkExists(triggerKey);
+
+            if (isTriggerExisting) {
+                final Trigger trigger = scheduler.getTrigger(triggerKey);
+                nextFireTimeUtc = trigger.getNextFireTime();
+            }
+        } catch (final SchedulerException e) {
+            if (this.logger.isErrorEnabled()) {
+                this.logger.error("Error getting next fire time for ingest: "
+                        + ingest.getId(), e);
+            }
+        }
+
+        return nextFireTimeUtc;
+    }
+
+    @Override
+    @Transactional
+    public boolean interrupt(final Ingest ingest) throws SchedulerException {
+        boolean cancelled = true;
         TransactionStatus transactionStatus = null;
         try {
             transactionStatus = this.transactionManager
                     .getTransaction(new DefaultTransactionDefinition());
+            this.schedulerFactoryBean.getScheduler().interrupt(
+                    JobKey.jobKey(IngestScheduler.JOB_PREFIX + ingest.getId()));
 
-            //Create the Job and the trigger
-            JobDetail job = createJobDetail(ingest);            
-            Trigger trigger = createTrigger(ingest.getId(), new Date(System.currentTimeMillis()+10000), ingest.getFrequency(), job);
-            
-            if(schedulerFactoryBean.getScheduler().checkExists(job.getKey())) {
-                schedulerFactoryBean.getScheduler().deleteJob(job.getKey());               
+        } catch (final UnableToInterruptJobException e) {
+            if (this.logger.isWarnEnabled()) {
+                this.logger.warn(
+                        "Cannot cancel ingest with id " + ingest.getId(), e);
             }
-            
-            schedulerFactoryBean.getScheduler().scheduleJob(job, trigger);              
-            
-            printLogInfos(job, true);
-
-        } catch (SchedulerException se) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Cannot scheduled the ingest " + ingest.getId(), se);
-            }
-            scheduled = false;
-            rollbackTransaction(transactionStatus, se);
-
+            cancelled = false;
+            this.rollbackTransaction(transactionStatus, e);
         }
-
         if (transactionStatus != null) {
             this.transactionManager.commit(transactionStatus);
         }
-
-        return scheduled;
-
+        return cancelled;
     }
 
-    private void printLogInfos(JobDetail job, boolean debug) throws SchedulerException {
-        if(debug) {
-            System.out.println("JOB KEY --- " + job.getKey().getGroup() + job.getKey().getName());
-            for (String groupName : schedulerFactoryBean.getScheduler().getJobGroupNames()) {
+    private void printLogInfos(final JobDetail job, final boolean debug)
+            throws SchedulerException {
+        if (debug) {
+            System.out.println("JOB KEY --- " + job.getKey().getGroup()
+                    + job.getKey().getName());
+            for (final String groupName : this.schedulerFactoryBean
+                    .getScheduler().getJobGroupNames()) {
 
-                for (JobKey jobKey : schedulerFactoryBean.getScheduler().getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
+                for (final JobKey jobKey : this.schedulerFactoryBean
+                        .getScheduler()
+                        .getJobKeys(GroupMatcher.jobGroupEquals(groupName))) {
 
-                    String jobName = jobKey.getName();
-                    String jobGroup = jobKey.getGroup();
+                    final String jobName = jobKey.getName();
+                    final String jobGroup = jobKey.getGroup();
 
-                    //get job's trigger
-                    List<Trigger> triggers = (List<Trigger>) schedulerFactoryBean.getScheduler().getTriggersOfJob(jobKey);
+                    // get job's trigger
+                    final List<Trigger> triggers = (List<Trigger>) this.schedulerFactoryBean
+                            .getScheduler().getTriggersOfJob(jobKey);
 
-                    if(!triggers.isEmpty()) {
-                        Date nextFireTime = triggers.get(0).getNextFireTime();
+                    if (!triggers.isEmpty()) {
+                        final Date nextFireTime = triggers.get(0)
+                                .getNextFireTime();
 
-                        String triggerName = triggers.get(0).getJobKey().getName();
-                        String triggerGroup = triggers.get(0).getJobKey().getGroup();
+                        final String triggerName = triggers.get(0).getJobKey()
+                                .getName();
+                        final String triggerGroup = triggers.get(0).getJobKey()
+                                .getGroup();
 
-                        System.out.println("[jobName] : " + jobName + " [groupName] : "
-                                + jobGroup + " - " + "[triggerName] : " + triggerName + " [triggerrGroupName] : "
-                                + triggerGroup + " - " + nextFireTime);
+                        System.out.println("[jobName] : " + jobName
+                                + " [groupName] : " + jobGroup + " - "
+                                + "[triggerName] : " + triggerName
+                                + " [triggerrGroupName] : " + triggerGroup
+                                + " - " + nextFireTime);
                     } else {
-                        System.out.println("[jobName] : " + jobName + " [groupName] : "
-                                + jobGroup);
+                        System.out.println("[jobName] : " + jobName
+                                + " [groupName] : " + jobGroup);
                     }
 
                 }
@@ -206,12 +294,13 @@ org.opengeoportal.harvester.api.scheduler.Scheduler {
         }
     }
 
-    private void rollbackTransaction(TransactionStatus transactionStatus, SchedulerException se) {
+    private void rollbackTransaction(final TransactionStatus transactionStatus,
+            final SchedulerException se) {
         if (transactionStatus != null) {
             try {
                 this.transactionManager.rollback(transactionStatus);
-            } catch (TransactionException tex) {
-                logger.error(
+            } catch (final TransactionException tex) {
+                this.logger.error(
                         "Job registration exception overridden by rollback exception",
                         se);
                 throw tex;
@@ -222,203 +311,127 @@ org.opengeoportal.harvester.api.scheduler.Scheduler {
     /*
      * (non-Javadoc)
      *
-     * @see org.opengeoportal.harvester.api.scheduler.Scheduler#unschedule(org.
-     * opengeoportal.harvester.api.domain.Ingest)
+     * @see
+     * org.opengeoportal.harvester.api.scheduler.Scheduler#scheduleIngest(org
+     * .opengeoportal.harvester.api.domain.Ingest)
      */
     @Override
     @Transactional
-    public boolean unschedule(Ingest ingest) throws SchedulerException {
-        boolean unscheduled = true;
+    public boolean scheduleAnImmediateIngest(final Ingest ingest) {
+
+        boolean scheduled = true;
         TransactionStatus transactionStatus = null;
         try {
             transactionStatus = this.transactionManager
                     .getTransaction(new DefaultTransactionDefinition());
-            unscheduled = schedulerFactoryBean.getScheduler().deleteJob(
-                    jobKey(JOB_PREFIX + ingest.getId()));
-        } catch (SchedulerException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn(
-                        "Cannot unschedule ingest with id " + ingest.getId(), e);
+
+            // Create the Job and the trigger
+            final JobDetail job = this.createJobDetail(ingest);
+            final Trigger trigger = this.createTrigger(ingest.getId(),
+                    new Date(System.currentTimeMillis() + 10000),
+                    ingest.getFrequency(), job);
+
+            if (this.schedulerFactoryBean.getScheduler()
+                    .checkExists(job.getKey())) {
+                this.schedulerFactoryBean.getScheduler()
+                        .deleteJob(job.getKey());
             }
-            unscheduled = false;
-            rollbackTransaction(transactionStatus, e);
+
+            this.schedulerFactoryBean.getScheduler().scheduleJob(job, trigger);
+
+            this.printLogInfos(job, true);
+
+        } catch (final SchedulerException se) {
+            if (this.logger.isWarnEnabled()) {
+                this.logger.warn(
+                        "Cannot scheduled the ingest " + ingest.getId(), se);
+            }
+            scheduled = false;
+            this.rollbackTransaction(transactionStatus, se);
+
         }
+
         if (transactionStatus != null) {
             this.transactionManager.commit(transactionStatus);
         }
-        return unscheduled;
-    }
 
+        return scheduled;
 
-    @Override
-    @Transactional
-    public boolean interrupt(Ingest ingest) throws SchedulerException {
-        boolean cancelled = true;
-        TransactionStatus transactionStatus = null;
-        try {
-            transactionStatus = this.transactionManager
-                    .getTransaction(new DefaultTransactionDefinition());
-            schedulerFactoryBean.getScheduler().interrupt(jobKey(JOB_PREFIX + ingest.getId()));
-
-        } catch (UnableToInterruptJobException e) {
-            if (logger.isWarnEnabled()) {
-                logger.warn("Cannot cancel ingest with id " + ingest.getId(), e);
-            }
-            cancelled = false;
-            rollbackTransaction(transactionStatus, e);
-        }
-        if (transactionStatus != null) {
-            this.transactionManager.commit(transactionStatus);
-        }
-        return cancelled;
-    }
-
-    /**
-     * Create a trigger for jobDetail with the given frequency and start date.
-     *
-     * @param ingestId  ingest identifier.
-     * @param startDate start date.
-     * @param frequency frequency.
-     * @param jobDetail jobDetail to be launched when the trigger fire.
-     * @return a trigger.s
-     */
-    private Trigger createTrigger(Long ingestId, Date startDate,
-            Frequency frequency, JobDetail jobDetail) {
-        TriggerBuilder<Trigger> triggerBuilder = newTrigger();
-        triggerBuilder.withIdentity(generateTriggerIdentity(ingestId))
-        .forJob(jobDetail).startAt(startDate);
-        switch (frequency) {
-        case ONCE:
-            // no schedule needed
-            break;
-        case DAILY:
-            triggerBuilder.withSchedule(calendarIntervalSchedule()
-                    .withIntervalInDays(1));
-            break;
-        case WEEKLY:
-            triggerBuilder.withSchedule(calendarIntervalSchedule()
-                    .withIntervalInWeeks(1));
-            break;
-        case MONTHLY:
-            triggerBuilder.withSchedule(calendarIntervalSchedule()
-                    .withIntervalInMonths(1));
-            break;
-        case EVERYXMINUTES:
-            triggerBuilder.withSchedule(calendarIntervalSchedule()
-                    .withIntervalInMinutes(1));
-            break;
-        default:
-            break;
-        }
-        return triggerBuilder.build();
-    }
-
-    /**
-     * @param ingestId ingest identifier.
-     * @return a key for the passed identifier.
-     */
-    private String generateTriggerIdentity(Long ingestId) {
-        return TRIGGER_PREFIX + ingestId;
-    }
-
-    /**
-     * Create a {@link JobDetail} based on the ingest passed as parameter.
-     *
-     * @param ingest the ingest to be scheduled.
-     * @return a JobDetail base on the ingest passed.
-     */
-    private JobDetail createJobDetail(Ingest ingest) {
-        JobDetailFactoryBean jdFactory = new JobDetailFactoryBean();
-        jdFactory.setName(generateJobName(ingest));
-        jdFactory.setJobClass(IngestJob.class);
-        jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
-                ingest.getId().toString());
-        jdFactory.afterPropertiesSet();
-        return jdFactory.getObject();
-    }
-
-    /**
-     * Create a {@link JobDetail} based on the ingest passed as parameter.
-     *
-     * @param ingest the ingest to be scheduled.
-     * @param isDurable for durabilty
-     * @return a JobDetail base on the ingest passed.
-     */
-    private JobDetail createImmediateJobDetail(Ingest ingest) {
-        JobDetailFactoryBean jdFactory = new JobDetailFactoryBean();
-        jdFactory.setName(generateJobName(ingest));
-        jdFactory.setDurability(true);
-        jdFactory.setJobClass(IngestJob.class);
-        jdFactory.getJobDataMap().put(IngestJob.INGEST_ID,
-                ingest.getId().toString());
-        jdFactory.afterPropertiesSet();
-
-        return jdFactory.getObject();
-    }
-
-    private String generateJobName(Ingest ingest) {
-        return JOB_PREFIX + ingest.getId();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.opengeoportal.harvester.api.scheduler.Scheduler#getNextRun(org.
-     * opengeoportal.harvester.api.domain.Ingest)
-     */
-    @Override
-    public Date getNextRun(Ingest ingest) {
-        Date nextFireTimeUtc = null;
-        org.quartz.Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        String jobName = generateJobName(ingest);
-        JobKey jobKey = new JobKey(jobName, org.quartz.Scheduler.DEFAULT_GROUP);
-        TriggerKey triggerKey = new TriggerKey(
-                generateTriggerIdentity(ingest.getId()),
-                org.quartz.Scheduler.DEFAULT_GROUP);
-        boolean isTriggerExisting;
-        try {
-            isTriggerExisting = scheduler.checkExists(triggerKey);
-
-            if (isTriggerExisting) {
-                Trigger trigger = scheduler.getTrigger(triggerKey);
-                nextFireTimeUtc = trigger.getNextFireTime();
-            }
-        } catch (SchedulerException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("Error getting next fire time for ingest: "
-                        + ingest.getId(), e);
-            }
-        }
-
-        return nextFireTimeUtc;
     }
 
     /*
      * (non-Javadoc)
      *
      * @see
-     * org.opengeoportal.harvester.api.scheduler.Scheduler#getCurrentlyExecutingJobs
-     * ()
+     * org.opengeoportal.harvester.api.scheduler.Scheduler#scheduleIngest(org
+     * .opengeoportal.harvester.api.domain.Ingest)
      */
     @Override
-    public SortedSet<Long> getCurrentlyExecutingJobs() {
-        org.quartz.Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        SortedSet<Long> ingestIdList = Sets.newTreeSet();
-        try {
-            List<JobExecutionContext> jobList = scheduler
-                    .getCurrentlyExecutingJobs();
-            for (JobExecutionContext jec : jobList) {
-                Long ingestId = Long.valueOf((String) jec.getMergedJobDataMap()
-                        .get(IngestJob.INGEST_ID));
-                ingestIdList.add(ingestId);
-            }
+    @Transactional
+    public boolean scheduleIngest(final Ingest ingest) {
 
-        } catch (SchedulerException e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("Error getting currently executing ingests", e);
+        boolean scheduled = true;
+        TransactionStatus transactionStatus = null;
+        try {
+            transactionStatus = this.transactionManager
+                    .getTransaction(new DefaultTransactionDefinition());
+            this.unschedule(ingest);
+            final Date startDate = ingest.getBeginDate();
+            final Frequency frequency = ingest.getFrequency();
+
+            final JobDetail jobDetail = this.createJobDetail(ingest);
+            final Trigger trigger = this.createTrigger(ingest.getId(),
+                    startDate, frequency, jobDetail);
+
+            this.schedulerFactoryBean.getScheduler().scheduleJob(jobDetail,
+                    trigger);
+        } catch (final SchedulerException se) {
+            if (this.logger.isWarnEnabled()) {
+                this.logger.warn(
+                        "Cannot scheduled the ingest " + ingest.getId(), se);
             }
+            scheduled = false;
+            this.rollbackTransaction(transactionStatus, se);
+
         }
-        return ingestIdList;
+
+        if (transactionStatus != null) {
+            this.transactionManager.commit(transactionStatus);
+        }
+
+        return scheduled;
+
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see org.opengeoportal.harvester.api.scheduler.Scheduler#unschedule(org.
+     * opengeoportal.harvester.api.domain.Ingest)
+     */
+    @Override
+    @Transactional
+    public boolean unschedule(final Ingest ingest) throws SchedulerException {
+        boolean unscheduled = true;
+        TransactionStatus transactionStatus = null;
+        try {
+            transactionStatus = this.transactionManager
+                    .getTransaction(new DefaultTransactionDefinition());
+            unscheduled = this.schedulerFactoryBean.getScheduler().deleteJob(
+                    JobKey.jobKey(IngestScheduler.JOB_PREFIX + ingest.getId()));
+        } catch (final SchedulerException e) {
+            if (this.logger.isWarnEnabled()) {
+                this.logger.warn(
+                        "Cannot unschedule ingest with id " + ingest.getId(),
+                        e);
+            }
+            unscheduled = false;
+            this.rollbackTransaction(transactionStatus, e);
+        }
+        if (transactionStatus != null) {
+            this.transactionManager.commit(transactionStatus);
+        }
+        return unscheduled;
     }
 
 }

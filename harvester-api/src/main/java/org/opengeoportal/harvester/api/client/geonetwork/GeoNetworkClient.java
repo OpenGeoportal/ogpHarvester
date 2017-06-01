@@ -29,15 +29,15 @@
  */
 package org.opengeoportal.harvester.api.client.geonetwork;
 
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.output.DOMOutputter;
-
 import java.net.URL;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jdom.Document;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.jdom.output.DOMOutputter;
 
 /**
  * GeoNetwork client class.
@@ -55,7 +55,7 @@ public class GeoNetworkClient {
 
     private final XmlRequest request;
 
-    public GeoNetworkClient(URL serverUrl) {
+    public GeoNetworkClient(final URL serverUrl) {
         this.serverUrl = serverUrl.toString();
         this.request = new XmlRequest(serverUrl);
     }
@@ -67,74 +67,77 @@ public class GeoNetworkClient {
      * @throws Exception
      */
     @SuppressWarnings("unchecked")
-    public List<AbstractMap.SimpleEntry<String, String>> getSources() throws Exception {
-        List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
+    public List<AbstractMap.SimpleEntry<String, String>> getSources()
+            throws Exception {
+        final List<AbstractMap.SimpleEntry<String, String>> sources = new ArrayList<AbstractMap.SimpleEntry<String, String>>();
 
-        request.setUrl(new URL(serverUrl + "/srv/eng/xml.info?type=sources"));
+        this.request.setUrl(
+                new URL(this.serverUrl + "/srv/eng/xml.info?type=sources"));
 
-        Element xmlResponse = request.execute();
-        /* Response xml example:
-         <info>
-         <sources>
-         <source>
-         <uuid>321d0c64-24ae-460d-89fc-e425c8857331</uuid>
-         <name>SOURCE 1</name>
-         </source>
-         <source>
-         <uuid>f6014c39-7f47-472f-915b-920d334f4780</uuid>
-         <name>SOURCE 1</name>
-         </source>
-         </sources>
-         </info>
+        final Element xmlResponse = this.request.execute();
+        /*
+         * Response xml example: <info> <sources> <source>
+         * <uuid>321d0c64-24ae-460d-89fc-e425c8857331</uuid> <name>SOURCE
+         * 1</name> </source> <source>
+         * <uuid>f6014c39-7f47-472f-915b-920d334f4780</uuid> <name>SOURCE
+         * 1</name> </source> </sources> </info>
          */
 
-        for (Element source : (List<Element>) xmlResponse.getChild("sources").getChildren()) {
-            sources.add(new AbstractMap.SimpleEntry<String, String>(source.getChildText("uuid"), source.getChildText("name")));
+        for (final Element source : (List<Element>) xmlResponse
+                .getChild("sources").getChildren()) {
+            sources.add(new AbstractMap.SimpleEntry<String, String>(
+                    source.getChildText("uuid"), source.getChildText("name")));
         }
 
         return sources;
     }
 
-    public org.w3c.dom.Document retrieveMetadata(int metadataId) throws Exception {
-        request.setUrl(new URL(serverUrl + "/srv/eng/xml.metadata.get"));
+    public org.w3c.dom.Document retrieveMetadata(final int metadataId)
+            throws Exception {
+        this.request
+                .setUrl(new URL(this.serverUrl + "/srv/eng/xml.metadata.get"));
 
-        request.clearParams();
-        request.addParam("id", metadataId);
+        this.request.clearParams();
+        this.request.addParam("id", metadataId);
 
-        Element md = request.execute();
-        Element info = md.getChild("info", GEONET_NS);
+        final Element md = this.request.execute();
+        final Element info = md.getChild("info", GeoNetworkClient.GEONET_NS);
 
         if (info != null) {
             info.detach();
         }
 
-        Document doc = new Document(md);
+        final Document doc = new Document(md);
 
-        DOMOutputter domOutputter = new DOMOutputter();
-        org.w3c.dom.Document document = domOutputter.output(doc);
+        final DOMOutputter domOutputter = new DOMOutputter();
+        final org.w3c.dom.Document document = domOutputter.output(doc);
 
         return document;
     }
 
     @SuppressWarnings("unchecked")
-    public GeoNetworkSearchResponse search(GeoNetworkSearchParams searchParams) throws Exception {
-        GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
+    public GeoNetworkSearchResponse search(
+            final GeoNetworkSearchParams searchParams) throws Exception {
+        final GeoNetworkSearchResponse response = new GeoNetworkSearchResponse();
 
-        request.setUrl(new URL(serverUrl + "/srv/eng/xml.search"));
+        this.request.setUrl(new URL(this.serverUrl + "/srv/eng/xml.search"));
 
-        Element xmlResponse = request.execute(searchParams.toXml());
+        final Element xmlResponse = this.request.execute(searchParams.toXml());
 
-        response.setTotal(Integer.parseInt(xmlResponse.getChild("summary").getAttribute("count").getValue()));
+        response.setTotal(Integer.parseInt(xmlResponse.getChild("summary")
+                .getAttribute("count").getValue()));
 
-        List<Element> records = xmlResponse.getChildren("metadata");
-        for (Element record : records) {
-            Element info = record.getChild("info", GEONET_NS);
+        final List<Element> records = xmlResponse.getChildren("metadata");
+        for (final Element record : records) {
+            final Element info = record.getChild("info",
+                    GeoNetworkClient.GEONET_NS);
 
             if (info == null) {
-                //logger.warning("Missing 'geonet:info' element in 'metadata' element");
+                // logger.warning("Missing 'geonet:info' element in 'metadata'
+                // element");
 
             } else {
-                GeoNetworkSearchResult metadataResult = new GeoNetworkSearchResult();
+                final GeoNetworkSearchResult metadataResult = new GeoNetworkSearchResult();
                 metadataResult.setId(Integer.parseInt(info.getChildText("id")));
                 metadataResult.setUuid(info.getChildText("uuid"));
                 metadataResult.setSchema(info.getChildText("schema"));

@@ -32,7 +32,6 @@ package org.opengeoportal.harvester.api.domain;
 import java.util.Date;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -48,145 +47,146 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
  * Every execution of a Ingest Job creates a new IngestJob.
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 @Entity
 public class IngestJobStatus extends AbstractPersistable<Long> {
-	/** Unique identifier for serialization. */
-	private static final long serialVersionUID = -5208109428117150361L;
+    /** Unique identifier for serialization. */
+    private static final long serialVersionUID = -5208109428117150361L;
 
-	/**
-	 * Each IngestJobStatus has a {@link IngestReportError} where to store the
-	 * results of the ingest.
-	 */
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name = "report_id")
-	private IngestReport ingestReport;
+    /**
+     * Each IngestJobStatus has a {@link IngestReportError} where to store the
+     * results of the ingest.
+     */
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "report_id")
+    private IngestReport ingestReport;
 
-	/**
-	 * The status of the execution.
-	 */
-	@Column
-	@Enumerated(EnumType.STRING)
-	private IngestJobStatusValue status;
+    /**
+     * The status of the execution.
+     */
+    @Column
+    @Enumerated(EnumType.STRING)
+    private IngestJobStatusValue status;
 
-	/**
-	 * Start time.
-	 */
-	@Column
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date startTime;
+    /**
+     * Start time.
+     */
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date startTime;
 
-	/**
-	 * End time.
-	 */
-	@Column
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date endTime;
+    /**
+     * End time.
+     */
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endTime;
 
-	/**
-	 * Job execution identifier. This can be used to retrieve actual job in the
-	 * scheduler.
-	 */
-	@Column
-	private UUID jobExecutionIdentifier;
+    /**
+     * Job execution identifier. This can be used to retrieve actual job in the
+     * scheduler.
+     */
+    @Column
+    private UUID jobExecutionIdentifier;
 
-	/**
-	 * The owner ingest of the status.
-	 */
-	@ManyToOne
-	@JoinColumn(name = "ingest_id")
-	private Ingest ingest;
+    /**
+     * The owner ingest of the status.
+     */
+    @ManyToOne
+    @JoinColumn(name = "ingest_id")
+    private Ingest ingest;
 
-	/**
-	 * @return the ingestReport
-	 */
-	public IngestReport getIngestReport() {
-		return ingestReport;
-	}
+    /**
+     * @return the endTime
+     */
+    public Date getEndTime() {
+        return this.endTime;
+    }
 
-	/**
-	 * @param ingestReport
-	 *            the ingestReport to set
-	 */
-	public void setIngestReport(IngestReport ingestReport) {
-		this.ingestReport = ingestReport;
-	}
+    /**
+     * @return the ingest
+     */
+    public Ingest getIngest() {
+        return this.ingest;
+    }
 
-	/**
-	 * @return the status
-	 */
-	public IngestJobStatusValue getStatus() {
-		return status;
-	}
+    /**
+     * @return the ingestReport
+     */
+    public IngestReport getIngestReport() {
+        return this.ingestReport;
+    }
 
-	/**
-	 * @param status
-	 *            the status to set
-	 */
-	public void setStatus(IngestJobStatusValue status) {
-		this.status = status;
-	}
+    /**
+     * @return the jobExecutionIdentifier
+     */
+    public UUID getJobExecutionIdentifier() {
+        return this.jobExecutionIdentifier;
+    }
 
-	/**
-	 * @return the startTime
-	 */
-	public Date getStartTime() {
-		return startTime;
-	}
+    /**
+     * @return the startTime
+     */
+    public Date getStartTime() {
+        return this.startTime;
+    }
 
-	/**
-	 * @param startTime
-	 *            the startTime to set
-	 */
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
+    /**
+     * @return the status
+     */
+    public IngestJobStatusValue getStatus() {
+        return this.status;
+    }
 
-	/**
-	 * @return the endTime
-	 */
-	public Date getEndTime() {
-		return endTime;
-	}
+    /**
+     * @param endTime
+     *            the endTime to set
+     */
+    public void setEndTime(final Date endTime) {
+        this.endTime = endTime;
+    }
 
-	/**
-	 * @param endTime
-	 *            the endTime to set
-	 */
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
+    /**
+     * @param ingest
+     *            the ingest to set
+     */
+    public void setIngest(final Ingest ingest) {
+        this.ingest = ingest;
+    }
 
-	/**
-	 * @return the jobExecutionIdentifier
-	 */
-	public UUID getJobExecutionIdentifier() {
-		return jobExecutionIdentifier;
-	}
+    /**
+     * @param ingestReport
+     *            the ingestReport to set
+     */
+    public void setIngestReport(final IngestReport ingestReport) {
+        this.ingestReport = ingestReport;
+    }
 
-	/**
-	 * @param jobExecutionIdentifier
-	 *            the jobExecutionIdentifier to set
-	 */
-	public void setJobExecutionIdentifier(UUID jobExecutionIdentifier) {
-		this.jobExecutionIdentifier = jobExecutionIdentifier;
-	}
+    /**
+     * @param jobExecutionIdentifier
+     *            the jobExecutionIdentifier to set
+     */
+    public void setJobExecutionIdentifier(final UUID jobExecutionIdentifier) {
+        this.jobExecutionIdentifier = jobExecutionIdentifier;
+    }
 
-	/**
-	 * @return the ingest
-	 */
-	public Ingest getIngest() {
-		return ingest;
-	}
+    /**
+     * @param startTime
+     *            the startTime to set
+     */
+    public void setStartTime(final Date startTime) {
+        this.startTime = startTime;
+    }
 
-	/**
-	 * @param ingest the ingest to set
-	 */
-	public void setIngest(Ingest ingest) {
-		this.ingest = ingest;
-	}
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(final IngestJobStatusValue status) {
+        this.status = status;
+    }
 
 }

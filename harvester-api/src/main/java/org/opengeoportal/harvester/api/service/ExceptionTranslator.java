@@ -44,10 +44,10 @@ public interface ExceptionTranslator {
      *
      * @param e
      * @param errorType
-     * @param document
      * @return
      */
-    IngestReportError translateException(Exception e, IngestReportErrorType errorType, Document document);
+    IngestReportError translateException(Exception e,
+            IngestReportErrorType errorType);
 
     /**
      *
@@ -56,14 +56,17 @@ public interface ExceptionTranslator {
      * @param document
      * @return
      */
-    IngestReportError translateException(Exception e, IngestReportErrorType errorType, SolrRecord document);
+    IngestReportError translateException(Exception e,
+            IngestReportErrorType errorType, Document document);
 
     /**
      *
      * @param e
      * @param errorType
+     * @param document
      * @return
      */
-    IngestReportError translateException(Exception e, IngestReportErrorType errorType);
+    IngestReportError translateException(Exception e,
+            IngestReportErrorType errorType, SolrRecord document);
 
 }

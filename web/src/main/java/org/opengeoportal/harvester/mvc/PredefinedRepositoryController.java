@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.opengeoportal.harvester.mvc;
 
@@ -14,20 +14,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * The Class PredefinedRepositoryController.
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
- * 
  */
 @Controller
 public class PredefinedRepositoryController {
-	@Resource
-	private PredefinedRepositoryService predefinedRepositoryService;
+    
+    /** The predefined repository service. */
+    @Resource
+    private PredefinedRepositoryService predefinedRepositoryService;
 
-	@RequestMapping("/rest/predefinedRepositories/notInCustomRepos")
-	public @ResponseBody List<PredefinedRepository> getPredefinedRepoList() {
-		List<PredefinedRepository> result = predefinedRepositoryService
-				.findAllNotInCustomRepositories();
+    /**
+     * Gets the predefined repo list.
+     *
+     * @return the predefined repo list
+     */
+    @RequestMapping("/rest/predefinedRepositories/notInCustomRepos")
+    public @ResponseBody List<PredefinedRepository> getPredefinedRepoList() {
+        final List<PredefinedRepository> result = this.predefinedRepositoryService
+                .findAllNotInCustomRepositories();
 
-		return result;
-	}
+        return result;
+    }
 
 }

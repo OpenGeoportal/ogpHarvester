@@ -37,23 +37,23 @@ import org.springframework.data.jpa.repository.Query;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
- * 
- * 
+ *
+ *
  */
-public interface PredefinedRepositoryRepository extends
-		JpaRepository<PredefinedRepository, Long> {
+public interface PredefinedRepositoryRepository
+        extends JpaRepository<PredefinedRepository, Long> {
 
-	/**
-	 * Return all the predefined repositories that has not been added yet to
-	 * custom repositories.
-	 * 
-	 * @return all the predefined repositories not added to custom repositories.
-	 */
-	@Query("select pr from PredefinedRepository pr where not exists (select "
-			+ "cr from CustomRepository cr where "
-			+ "cr.serviceType = pr.serviceType "
-			+ "and cr.url = pr.url and cr.deleted=false) "
-			+ "order by pr.name asc")
-	List<PredefinedRepository> findAllNotInCustomRepositories();
+    /**
+     * Return all the predefined repositories that has not been added yet to
+     * custom repositories.
+     * 
+     * @return all the predefined repositories not added to custom repositories.
+     */
+    @Query("select pr from PredefinedRepository pr where not exists (select "
+            + "cr from CustomRepository cr where "
+            + "cr.serviceType = pr.serviceType "
+            + "and cr.url = pr.url and cr.deleted=false) "
+            + "order by pr.name asc")
+    List<PredefinedRepository> findAllNotInCustomRepositories();
 
 }

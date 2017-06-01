@@ -60,195 +60,201 @@ import com.google.common.collect.ListMultimap;
 
 @Service
 public class CustomRepositoryServiceImpl implements CustomRepositoryService {
-	private Logger logger = LoggerFactory
-			.getLogger(CustomRepositoryServiceImpl.class);
+    private final Logger logger = LoggerFactory
+            .getLogger(CustomRepositoryServiceImpl.class);
 
-	@Resource
-	private CustomRepositoryRepository customRepositoryRepository;
-	@Resource
-	private IngestService ingestService;
+    @Resource
+    private CustomRepositoryRepository customRepositoryRepository;
+    @Resource
+    private IngestService ingestService;
 
-	@Override
-	@Transactional
-	public CustomRepository save(CustomRepository customRepository) {
-		return customRepositoryRepository.save(customRepository);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
+     * checkExistActiveRepositoryNameAndType(java.lang.String,
+     * org.opengeoportal.harvester.api.domain.InstanceType)
+     */
+    @Override
+    public boolean checkExistActiveRepositoryNameAndType(final String name,
+            final InstanceType type) {
+        boolean result = false;
+        final List<CustomRepository> repositories = this.customRepositoryRepository
+                .findByNameAndServiceTypeAndDeleted(name, type, false);
+        if (repositories.size() != 0) {
+            result = true;
+        }
+        return result;
+    }
 
-	@Override
-	@Transactional(readOnly = false)
-	public void logicalDelete(Long id) {
-		CustomRepository cRepository = customRepositoryRepository.findOne(id);
-		if (cRepository != null) {
-			cRepository.setDeleted(true);
-			cRepository = customRepositoryRepository.save(cRepository);
-			ingestService.unscheduleByRepository(cRepository.getId());
-		}
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public Page<CustomRepository> findAll(final Pageable pageable) {
+        final Page<CustomRepository> page = this.customRepositoryRepository
+                .findByDeletedFalse(pageable);
+        return page;
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public CustomRepository findByName(String name) {
-		return customRepositoryRepository.findByName(name);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.CustomRepositoryService#findById
+     * (java.lang.Long)
+     */
+    @Override
+    public CustomRepository findById(final Long id) {
+        return this.customRepositoryRepository.findOne(id);
+    }
 
-	@Override
-	@Transactional(readOnly = true)
-	public Page<CustomRepository> findAll(Pageable pageable) {
-		Page<CustomRepository> page = customRepositoryRepository
-				.findByDeletedFalse(pageable);
-		return page;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public CustomRepository findByName(final String name) {
+        return this.customRepositoryRepository.findByName(name);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
-	 * getAllGroupByType()
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
-		Sort typeSortAsc = new Sort(new Order(
-				CustomRepository.COLUMN_SERVICE_TYPE), new Order(
-				CustomRepository.COLUMN_NAME));
-		List<CustomRepository> repositories = customRepositoryRepository
-				.findByDeletedFalse(typeSortAsc);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
+     * getAllGroupByType()
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public ListMultimap<InstanceType, CustomRepository> getAllGroupByType() {
+        final Sort typeSortAsc = new Sort(
+                new Order(CustomRepository.COLUMN_SERVICE_TYPE),
+                new Order(CustomRepository.COLUMN_NAME));
+        final List<CustomRepository> repositories = this.customRepositoryRepository
+                .findByDeletedFalse(typeSortAsc);
 
-		ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
-				.create();
-		for (CustomRepository repository : repositories) {
-			map.put(repository.getServiceType(), repository);
-		}
-		return map;
-	}
+        final ListMultimap<InstanceType, CustomRepository> map = ArrayListMultimap
+                .create();
+        for (final CustomRepository repository : repositories) {
+            map.put(repository.getServiceType(), repository);
+        }
+        return map;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
-	 * getRemoteRepositories
-	 * (org.opengeoportal.harvester.api.domain.InstanceType, java.net.URL)
-	 */
-	@Override
-	public List<SimpleEntry<String, String>> getRemoteRepositories(
-			InstanceType repoType, URL url) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
+     * getRemoteRepositories
+     * (org.opengeoportal.harvester.api.domain.InstanceType, java.net.URL)
+     */
+    @Override
+    public List<SimpleEntry<String, String>> getRemoteRepositories(
+            final InstanceType repoType, final URL url) {
 
-		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
+        List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
 
-		if (repoType == InstanceType.GEONETWORK) {
-			result = retrieveGeoNetworkSources(url);
-		} else if (repoType == InstanceType.SOLR) {
-			result = retrieveSolrInstitutions(url);
-		}
+        if (repoType == InstanceType.GEONETWORK) {
+            result = this.retrieveGeoNetworkSources(url);
+        } else if (repoType == InstanceType.SOLR) {
+            result = this.retrieveSolrInstitutions(url);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * @param url
-	 * @return
-	 */
-	private List<SimpleEntry<String, String>> retrieveSolrInstitutions(URL url) {
-		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
-		SolrClient solrClient = new SolrJClient(url.toString());
-		try {
-			List<String> institutionsList = solrClient.getInstitutions();
-			for (String institution : institutionsList) {
-				result.add(new SimpleEntry<String, String>(institution,
-						institution));
-			}
-		} catch (Exception e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Can not retrieve institutions from " + url, e);
-			}
-			throw new OgpSolrException("Can not retrieve institutions from "
-					+ url, e);
-		}
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
+     * getRemoteRepositoriesByRepoId(java.lang.Long)
+     */
+    @Override
+    public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
+            final Long repoId) {
+        final CustomRepository repository = this.customRepositoryRepository
+                .findOne(repoId);
+        List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
+        if (repository != null) {
+            final String url = repository.getUrl();
+            final InstanceType serviceType = repository.getServiceType();
+            try {
+                result = this.getRemoteRepositories(serviceType, new URL(url));
+            } catch (final MalformedURLException e) {
+                throw new BadDatabaseContentsException(
+                        "Cannot parse the url stored in database for repository "
+                                + repoId + " (" + url + ")",
+                        e);
+            }
+        }
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
-	 * getRemoteRepositoriesByRepoId(java.lang.Long)
-	 */
-	@Override
-	public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
-			Long repoId) {
-		CustomRepository repository = customRepositoryRepository
-				.findOne(repoId);
-		List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
-		if (repository != null) {
-			String url = repository.getUrl();
-			InstanceType serviceType = repository.getServiceType();
-			try {
-				result = getRemoteRepositories(serviceType, new URL(url));
-			} catch (MalformedURLException e) {
-				throw new BadDatabaseContentsException(
-						"Cannot parse the url stored in database for repository "
-								+ repoId + " (" + url + ")", e);
-			}
-		}
-		return result;
-	}
+    @Override
+    @Transactional(readOnly = false)
+    public void logicalDelete(final Long id) {
+        CustomRepository cRepository = this.customRepositoryRepository
+                .findOne(id);
+        if (cRepository != null) {
+            cRepository.setDeleted(true);
+            cRepository = this.customRepositoryRepository.save(cRepository);
+            this.ingestService.unscheduleByRepository(cRepository.getId());
+        }
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.CustomRepositoryService#findById
-	 * (java.lang.Long)
-	 */
-	@Override
-	public CustomRepository findById(Long id) {
-		return customRepositoryRepository.findOne(id);
-	}
+    /**
+     * Retrieve Geonetwork remote sources
+     * 
+     * @param url
+     *            service URL, for example http://www.example.com/geonetwork.
+     * @return
+     */
+    private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(
+            final URL url) {
+        List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
 
-	/**
-	 * Retrieve Geonetwork remote sources
-	 * 
-	 * @param url
-	 *            service URL, for example http://www.example.com/geonetwork.
-	 * @return
-	 */
-	private List<SimpleEntry<String, String>> retrieveGeoNetworkSources(URL url) {
-		List<SimpleEntry<String, String>> sources = new ArrayList<SimpleEntry<String, String>>();
+        try {
+            final GeoNetworkClient gnClient = new GeoNetworkClient(url);
 
-		try {
-			GeoNetworkClient gnClient = new GeoNetworkClient(url);
+            sources = gnClient.getSources();
+        } catch (final Exception e) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger
+                        .debug("Cannot retrieve remote Geonetwork sources for server "
+                                + url, e);
+            }
+            throw new GeonetworkException(
+                    "Cannot retrieve remote Geonetwork sources for server "
+                            + url,
+                    e);
+        }
 
-			sources = gnClient.getSources();
-		} catch (Exception e) {
-			if (logger.isDebugEnabled()) {
-				logger.debug(
-						"Cannot retrieve remote Geonetwork sources for server "
-								+ url, e);
-			}
-			throw new GeonetworkException(
-					"Cannot retrieve remote Geonetwork sources for server "
-							+ url, e);
-		}
+        return sources;
+    }
 
-		return sources;
-	}
+    /**
+     * @param url
+     * @return
+     */
+    private List<SimpleEntry<String, String>> retrieveSolrInstitutions(
+            final URL url) {
+        final List<SimpleEntry<String, String>> result = new ArrayList<SimpleEntry<String, String>>();
+        final SolrClient solrClient = new SolrJClient(url.toString());
+        try {
+            final List<String> institutionsList = solrClient.getInstitutions();
+            for (final String institution : institutionsList) {
+                result.add(new SimpleEntry<String, String>(institution,
+                        institution));
+            }
+        } catch (final Exception e) {
+            if (this.logger.isDebugEnabled()) {
+                this.logger.debug("Can not retrieve institutions from " + url,
+                        e);
+            }
+            throw new OgpSolrException(
+                    "Can not retrieve institutions from " + url, e);
+        }
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.CustomRepositoryService#
-	 * checkExistActiveRepositoryNameAndType(java.lang.String,
-	 * org.opengeoportal.harvester.api.domain.InstanceType)
-	 */
-	@Override
-	public boolean checkExistActiveRepositoryNameAndType(String name,
-			InstanceType type) {
-		boolean result = false;
-		List<CustomRepository> repositories = customRepositoryRepository
-				.findByNameAndServiceTypeAndDeleted(name, type, false);
-		if (repositories.size() != 0) {
-			result = true;
-		}
-		return result;
-	}
+    @Override
+    @Transactional
+    public CustomRepository save(final CustomRepository customRepository) {
+        return this.customRepositoryRepository.save(customRepository);
+    }
 }

@@ -60,259 +60,261 @@ import org.springframework.util.Assert;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Check(constraints = "(url IS NULL AND repository_id IS NOT NULL) OR (url IS NOT NULL AND repository_id IS NULL)")
 public abstract class Ingest extends AbstractPersistable<Long> {
-	/** Version UID for serialisation. */
-	private static final long serialVersionUID = -3390351777452085398L;
+    /** Version UID for serialisation. */
+    private static final long serialVersionUID = -3390351777452085398L;
 
-	/** Ingest name. */
-	@Column(unique = true, nullable = false)
-	private String name;
+    /** Ingest name. */
+    @Column(unique = true, nullable = false)
+    private String name;
 
-	/** Ingest begin date. */
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
-	private Date beginDate;
+    /** Ingest begin date. */
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    private Date beginDate;
 
-	/** Frequency of execution. */
-	@Column
-	@Enumerated(EnumType.STRING)
-	private Frequency frequency;
+    /** Frequency of execution. */
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Frequency frequency;
 
-	/**
-	 * Repository URL. If it is <code>null</code> a {@link CustomRepository}
-	 * must be provided instead.
-	 */
-	@Column
-	private String url;
+    /**
+     * Repository URL. If it is <code>null</code> a {@link CustomRepository}
+     * must be provided instead.
+     */
+    @Column
+    private String url;
 
-	/** <code>true</code> if there is any future execution scheduled. */
-	@Column
-	private Boolean scheduled;
+    /** <code>true</code> if there is any future execution scheduled. */
+    @Column
+    private Boolean scheduled;
 
-	/** Last run timestamp. */
-	@Column
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastRun;
+    /** Last run timestamp. */
+    @Column
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date lastRun;
 
-	/** Repository where the data will be stored. */
-	@Column
-	private String nameOgpRepository;
+    /** Repository where the data will be stored. */
+    @Column
+    private String nameOgpRepository;
 
-	/**
-	 * Mandatorye fields that a record must have to be stored into the local
-	 * instance.
-	 */
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<String> requiredFields = new HashSet<String>();
+    /**
+     * Mandatorye fields that a record must have to be stored into the local
+     * instance.
+     */
+    @ElementCollection(fetch = FetchType.EAGER)
+    private final Set<String> requiredFields = new HashSet<String>();
 
-	/**
-	 * Set of the fields that an ingest can have. This can be different for each
-	 * child class.
-	 */
-	@Transient
-	protected Set<String> validRequiredFields = new HashSet<String>();
+    /**
+     * Set of the fields that an ingest can have. This can be different for each
+     * child class.
+     */
+    @Transient
+    protected Set<String> validRequiredFields = new HashSet<String>();
 
-	/**
-	 * If {@link Ingest#url} is null a custom repository has to be set. The data
-	 * will be retrieved from this repository.
-	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "repository_id")
-	private CustomRepository repository;
+    /**
+     * If {@link Ingest#url} is null a custom repository has to be set. The data
+     * will be retrieved from this repository.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "repository_id")
+    private CustomRepository repository;
 
-	/**
-	 * List of previous executions of the ingest.
-	 */
-	@OneToMany
-	@JoinColumn(name = "ingest_id")
-	private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
+    /**
+     * List of previous executions of the ingest.
+     */
+    @OneToMany
+    @JoinColumn(name = "ingest_id")
+    private List<IngestJobStatus> ingestJobStatuses = new ArrayList<IngestJobStatus>();
 
-	/**
-	 * Sets the attribute with the given name to the given value.
-	 * 
-	 * @param field
-	 *            must not be {@literal null} or empty.
-	 */
-	public void addRequiredField(String field) {
-		Assert.hasText(field);
+    public void addJobStatus(final IngestJobStatus job) {
+        this.ingestJobStatuses.add(job);
+    }
 
-		if (validRequiredFields.contains(field))
-			requiredFields.add(field);
-	}
+    /**
+     * Sets the attribute with the given name to the given value.
+     * 
+     * @param field
+     *            must not be {@literal null} or empty.
+     */
+    public void addRequiredField(final String field) {
+        Assert.hasText(field);
 
-	/**
-	 * Returns all the required fields of the {@link Ingest}.
-	 * 
-	 * @return
-	 */
-	public Set<String> getRequiredFields() {
-		return requiredFields;
-	}
+        if (this.validRequiredFields.contains(field)) {
+            this.requiredFields.add(field);
+        }
+    }
 
-	/**
-	 * Returns all the valid required fields that can be added to the
-	 * {@link Ingest}.
-	 * 
-	 * @return
-	 */
-	public Set<String> getValidRequiredFields() {
-		return Collections.unmodifiableSet(validRequiredFields);
-	}
+    /**
+     * Return the actual Ingest URL. This can be the URL of the associated
+     * {@link CustomRepository} or the one stored in {@link Ingest#url}
+     * property.
+     * 
+     * @return the actual URL.
+     */
+    public String getActualUrl() {
+        String actualUrl = null;
 
-	/**
-	 * @return the repository
-	 */
-	public CustomRepository getRepository() {
-		return repository;
-	}
+        if (this.getRepository() != null) {
+            actualUrl = this.getRepository().getUrl();
+        } else {
+            actualUrl = this.url;
+        }
 
-	/**
-	 * @param repository
-	 *            the repository to set
-	 */
-	public void setRepository(CustomRepository repository) {
-		this.repository = repository;
-	}
+        return actualUrl;
 
-	/**
-	 * @return the lastRun
-	 */
-	public Date getLastRun() {
-		return lastRun;
-	}
+    }
 
-	/**
-	 * @param lastRun
-	 *            the lastRun to set
-	 */
-	public void setLastRun(Date lastRun) {
-		this.lastRun = lastRun;
-	}
+    /**
+     * @return the beginDate
+     */
+    public Date getBeginDate() {
+        return this.beginDate;
+    }
 
-	/**
-	 * @return the nameOgpRepository
-	 */
-	public String getNameOgpRepository() {
-		return nameOgpRepository;
-	}
+    /**
+     * @return the frequency
+     */
+    public Frequency getFrequency() {
+        return this.frequency;
+    }
 
-	/**
-	 * @param nameOgpRepository
-	 *            the nameOgpRepository to set
-	 */
-	public void setNameOgpRepository(String nameOgpRepository) {
-		this.nameOgpRepository = nameOgpRepository;
-	}
+    /**
+     * @return the ingestJobStatuses
+     */
+    public List<IngestJobStatus> getIngestJobStatuses() {
+        return this.ingestJobStatuses;
+    }
 
-	/**
-	 * @return the ingestJobStatuses
-	 */
-	public List<IngestJobStatus> getIngestJobStatuses() {
-		return ingestJobStatuses;
-	}
+    /**
+     * @return the lastRun
+     */
+    public Date getLastRun() {
+        return this.lastRun;
+    }
 
-	/**
-	 * @param ingestJobStatuses
-	 *            the IngestJobStatus list to set
-	 */
-	public void setIngestJobStatuses(List<IngestJobStatus> ingestJobStatuses) {
-		this.ingestJobStatuses = ingestJobStatuses;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	public void addJobStatus(IngestJobStatus job) {
-		ingestJobStatuses.add(job);
-	}
+    /**
+     * @return the nameOgpRepository
+     */
+    public String getNameOgpRepository() {
+        return this.nameOgpRepository;
+    }
 
-	public Boolean isScheduled() {
-		return scheduled;
-	}
+    /**
+     * @return the repository
+     */
+    public CustomRepository getRepository() {
+        return this.repository;
+    }
 
-	public void setScheduled(Boolean scheduled) {
-		this.scheduled = scheduled;
-	}
+    /**
+     * Returns all the required fields of the {@link Ingest}.
+     * 
+     * @return
+     */
+    public Set<String> getRequiredFields() {
+        return this.requiredFields;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the scheduled
+     */
+    public Boolean getScheduled() {
+        return this.scheduled;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return the url
+     */
+    public String getUrl() {
+        return this.url;
+    }
 
-	/**
-	 * @return the beginDate
-	 */
-	public Date getBeginDate() {
-		return beginDate;
-	}
+    /**
+     * Returns all the valid required fields that can be added to the
+     * {@link Ingest}.
+     * 
+     * @return
+     */
+    public Set<String> getValidRequiredFields() {
+        return Collections.unmodifiableSet(this.validRequiredFields);
+    }
 
-	/**
-	 * @param beginDate
-	 *            the beginDate to set
-	 */
-	public void setBeginDate(Date beginDate) {
-		this.beginDate = beginDate;
-	}
+    public Boolean isScheduled() {
+        return this.scheduled;
+    }
 
-	/**
-	 * @return the frequency
-	 */
-	public Frequency getFrequency() {
-		return frequency;
-	}
+    /**
+     * @param beginDate
+     *            the beginDate to set
+     */
+    public void setBeginDate(final Date beginDate) {
+        this.beginDate = beginDate;
+    }
 
-	/**
-	 * @param frequency
-	 *            the frequency to set
-	 */
-	public void setFrequency(Frequency frequency) {
-		this.frequency = frequency;
-	}
+    /**
+     * @param frequency
+     *            the frequency to set
+     */
+    public void setFrequency(final Frequency frequency) {
+        this.frequency = frequency;
+    }
 
-	/**
-	 * @return the url
-	 */
-	public String getUrl() {
-		return url;
-	}
+    /**
+     * @param ingestJobStatuses
+     *            the IngestJobStatus list to set
+     */
+    public void setIngestJobStatuses(
+            final List<IngestJobStatus> ingestJobStatuses) {
+        this.ingestJobStatuses = ingestJobStatuses;
+    }
 
-	/**
-	 * @param url
-	 *            the url to set
-	 */
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    /**
+     * @param lastRun
+     *            the lastRun to set
+     */
+    public void setLastRun(final Date lastRun) {
+        this.lastRun = lastRun;
+    }
 
-	/**
-	 * @return the scheduled
-	 */
-	public Boolean getScheduled() {
-		return scheduled;
-	}
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Return the actual Ingest URL. This can be the URL of the associated
-	 * {@link CustomRepository} or the one stored in {@link Ingest#url}
-	 * property.
-	 * 
-	 * @return the actual URL.
-	 */
-	public String getActualUrl() {
-		String actualUrl = null;
+    /**
+     * @param nameOgpRepository
+     *            the nameOgpRepository to set
+     */
+    public void setNameOgpRepository(final String nameOgpRepository) {
+        this.nameOgpRepository = nameOgpRepository;
+    }
 
-		if (this.getRepository() != null) {
-			actualUrl = this.getRepository().getUrl();
-		} else {
-			actualUrl = this.url;
-		}
+    /**
+     * @param repository
+     *            the repository to set
+     */
+    public void setRepository(final CustomRepository repository) {
+        this.repository = repository;
+    }
 
-		return actualUrl;
+    public void setScheduled(final Boolean scheduled) {
+        this.scheduled = scheduled;
+    }
 
-	}
+    /**
+     * @param url
+     *            the url to set
+     */
+    public void setUrl(final String url) {
+        this.url = url;
+    }
 }

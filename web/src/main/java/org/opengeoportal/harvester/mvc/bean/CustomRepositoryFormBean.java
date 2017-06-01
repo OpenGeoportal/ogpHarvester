@@ -35,26 +35,26 @@ public class CustomRepositoryFormBean {
     private String type;
 
     public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+        return this.name;
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
-    public void setType(String type) {
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public void setType(final String type) {
         this.type = type;
+    }
+
+    public void setUrl(final String url) {
+        this.url = url;
     }
 }

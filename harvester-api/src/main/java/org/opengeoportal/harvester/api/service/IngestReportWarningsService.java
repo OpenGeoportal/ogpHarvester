@@ -31,7 +31,6 @@ package org.opengeoportal.harvester.api.service;
 
 import java.util.Map;
 
-import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.domain.IngestReportWarning;
 import org.opengeoportal.harvester.api.domain.IngestReportWarningType;
 
@@ -40,28 +39,27 @@ import org.opengeoportal.harvester.api.domain.IngestReportWarningType;
  * @author cbarne02
  */
 public interface IngestReportWarningsService {
-	/**
-	 * Save an {@link IngestReportWarning}.
-	 * 
-	 * @param reportWarning
-	 *            the {@link IngestReportWarning}.
-	 * @return the saved warning report.
-	 */
-	IngestReportWarning save(IngestReportWarning reportWarning);
+    /**
+     * Return the count of type field not found warnings categorized by the name
+     * of the field for a given ingest report.
+     * 
+     * @param id
+     *            the ingest report identifier.
+     * @return a Map with the field name as a key and the count of this error
+     *         like value.
+     */
+    Map<String, Long> getCountWarningsByReportId(Long id);
 
-	/**
-	 * Return the count of type field not found warnings categorized by the name
-	 * of the field for a given ingest report.
-	 * 
-	 * @param id
-	 *            the ingest report identifier.
-	 * @return a Map with the field name as a key and the count of this error
-	 *         like value.
-	 */
-	Map<String, Long> getCountWarningsByReportId(Long id);
+    Map<IngestReportWarningType, Long> getCountWarningTypesByReportId(
+            Long reportId);
 
-	Map<IngestReportWarningType, Long> getCountWarningTypesByReportId(
-			Long reportId);
-
+    /**
+     * Save an {@link IngestReportWarning}.
+     * 
+     * @param reportWarning
+     *            the {@link IngestReportWarning}.
+     * @return the saved warning report.
+     */
+    IngestReportWarning save(IngestReportWarning reportWarning);
 
 }

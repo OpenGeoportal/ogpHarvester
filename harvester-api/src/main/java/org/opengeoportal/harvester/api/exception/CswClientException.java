@@ -36,19 +36,24 @@ package org.opengeoportal.harvester.api.exception;
  */
 public class CswClientException extends Exception {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     public CswClientException() {
     }
 
-    public CswClientException(String message) {
+    public CswClientException(final String message) {
         super(message);
     }
 
-    public CswClientException(String message, Throwable cause) {
+    public CswClientException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public CswClientException(Throwable cause) {
+    public CswClientException(final Throwable cause) {
         super(cause);
     }
-    
+
 }

@@ -42,64 +42,64 @@ import org.springframework.data.domain.Pageable;
 import com.google.common.collect.ListMultimap;
 
 public interface CustomRepositoryService {
-	public CustomRepository save(CustomRepository customRepository);
+    /**
+     * Check if exists a non deleted {@link CustomRepository} with the same name
+     * and service type.
+     * 
+     * @param name
+     *            the name.
+     * @param type
+     *            the service type.
+     * @return <code>true</code> if does not exist any CustomRepository with
+     *         deleted=false, and the name and type passed, <code>false</code>
+     *         otherwise.
+     */
+    public boolean checkExistActiveRepositoryNameAndType(String name,
+            InstanceType type);
 
-	/**
-	 * Mark {@link CustomRepository} with id <code>id</code> passed and
-	 * unschedule all {@link Ingest} that use that custom repo.
-	 * 
-	 * @param id custom repository identifier.
-	 */
-	public void logicalDelete(Long id);
+    public Page<CustomRepository> findAll(Pageable pageable);
 
-	public CustomRepository findByName(String name);
+    /**
+     * Retrieve the {@link CustomRepository} with the identifier passed.
+     * 
+     * @param id
+     *            the {@link CustomRepository} identifier.
+     * @return the {@link CustomRepository} or null if can not be found.
+     */
+    public CustomRepository findById(Long id);
 
-	public Page<CustomRepository> findAll(Pageable pageable);
+    public CustomRepository findByName(String name);
 
-	public ListMultimap<InstanceType, CustomRepository> getAllGroupByType();
+    public ListMultimap<InstanceType, CustomRepository> getAllGroupByType();
 
-	/**
-	 * Fetch the URL and search remote instances in the catalog.
-	 * 
-	 * @param repoType
-	 * @param urlObj
-	 * @return
-	 */
-	public List<SimpleEntry<String, String>> getRemoteRepositories(
-			InstanceType repoType, URL urlObj);
+    /**
+     * Fetch the URL and search remote instances in the catalog.
+     * 
+     * @param repoType
+     * @param urlObj
+     * @return
+     */
+    public List<SimpleEntry<String, String>> getRemoteRepositories(
+            InstanceType repoType, URL urlObj);
 
+    /**
+     * Fetch the remote repository with <code>repoID</code> and connect to its
+     * URL looking for remote sources.
+     * 
+     * @param repoId
+     * @return
+     */
+    public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
+            Long repoId);
 
-	/**
-	 * Fetch the remote repository with <code>repoID</code> and connect to its
-	 * URL looking for remote sources.
-	 * 
-	 * @param repoId
-	 * @return
-	 */
-	public List<SimpleEntry<String, String>> getRemoteRepositoriesByRepoId(
-			Long repoId);
+    /**
+     * Mark {@link CustomRepository} with id <code>id</code> passed and
+     * unschedule all {@link Ingest} that use that custom repo.
+     * 
+     * @param id
+     *            custom repository identifier.
+     */
+    public void logicalDelete(Long id);
 
-	/**
-	 * Retrieve the {@link CustomRepository} with the identifier passed.
-	 * 
-	 * @param id
-	 *            the {@link CustomRepository} identifier.
-	 * @return the {@link CustomRepository} or null if can not be found.
-	 */
-	public CustomRepository findById(Long id);
-
-	/**
-	 * Check if exists a non deleted {@link CustomRepository} with the same name
-	 * and service type.
-	 * 
-	 * @param name
-	 *            the name.
-	 * @param type
-	 *            the service type.
-	 * @return <code>true</code> if does not exist any CustomRepository with
-	 *         deleted=false, and the name and type passed, <code>false</code>
-	 *         otherwise.
-	 */
-	public boolean checkExistActiveRepositoryNameAndType(String name,
-			InstanceType type);
+    public CustomRepository save(CustomRepository customRepository);
 }

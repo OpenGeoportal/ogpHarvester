@@ -31,27 +31,27 @@ package org.opengeoportal.harvester.api.domain;
 
 /**
  * Indicate the status of an ingest job.
- * 
+ *
  * @author <a href="mailto:jose.garcia@geocat.net">Jose García</a>.
- * 
+ *
  */
 public enum IngestJobStatusValue {
-	/**
-	 * The job execution has not been started yet.
-	 */
-	NOT_STARTED_YET,
-	/**
-	 * The ingest is being processed.
-	 */
-	PROCESSING,
-	/**
-	 * The execution has finished with success.
-	 */
-	SUCCESSED,
-	/**
-	 * The execution has finished but it has failed.
-	 */
-	FAILED,
+    /**
+     * The job execution has not been started yet.
+     */
+    NOT_STARTED_YET,
+    /**
+     * The ingest is being processed.
+     */
+    PROCESSING,
+    /**
+     * The execution has finished with success.
+     */
+    SUCCESSED,
+    /**
+     * The execution has finished but it has failed.
+     */
+    FAILED,
     /** Execution has been cancelled by user. */
     CANCELLED;
 }

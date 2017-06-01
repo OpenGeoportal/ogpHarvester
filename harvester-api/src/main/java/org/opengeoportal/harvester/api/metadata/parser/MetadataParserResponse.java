@@ -1,30 +1,30 @@
 package org.opengeoportal.harvester.api.metadata.parser;
 
-import org.opengeoportal.harvester.api.metadata.model.Metadata;
-
 import java.util.ArrayList;
 
+import org.opengeoportal.harvester.api.metadata.model.Metadata;
+
 public class MetadataParserResponse extends IngestResponse {
-    private Metadata metadata;
+    private final Metadata metadata;
 
     private boolean metadataParsed = false;
 
-    public Metadata getMetadata() {
-        return metadata;
+    public MetadataParserResponse() {
+        this.metadata = new Metadata();
+        this.ingestErrors = new ArrayList<IngestInfo>();
+        this.ingestWarnings = new ArrayList<IngestInfo>();
     }
 
-    public void setMetadataParsed(boolean metadataParsed) {
-        this.metadataParsed = metadataParsed;
+    public Metadata getMetadata() {
+        return this.metadata;
     }
 
     public boolean isMetadataParsed() {
-        return metadataParsed;
+        return this.metadataParsed;
     }
 
-    public MetadataParserResponse(){
-		metadata = new Metadata();
-		ingestErrors = new ArrayList<IngestInfo>();
-		ingestWarnings = new ArrayList<IngestInfo>();
-	}
-	
+    public void setMetadataParsed(final boolean metadataParsed) {
+        this.metadataParsed = metadataParsed;
+    }
+
 }

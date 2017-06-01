@@ -39,55 +39,54 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Entity
 public class CustomRepository extends AbstractPersistable<Long> {
 
-	public static final String COLUMN_SERVICE_TYPE = "serviceType";
-	public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_SERVICE_TYPE = "serviceType";
+    public static final String COLUMN_NAME = "name";
 
-	private static final long serialVersionUID = -3588708291290281469L;
+    private static final long serialVersionUID = -3588708291290281469L;
 
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String url;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InstanceType serviceType;
+    @Column
+    private boolean deleted = false;
 
-	@Column(nullable = false)
-	private String name;
-	@Column(nullable = false)
-	private String url;
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private InstanceType serviceType;
-	@Column
-	private boolean deleted = false;
+    public CustomRepository() {
+        this.deleted = false;
+    }
 
-	public CustomRepository() {
-		this.deleted = false;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public boolean isDeleted() {
-		return deleted;
-	}
+    public InstanceType getServiceType() {
+        return this.serviceType;
+    }
 
-	public void setDeleted(boolean deleted) {
-		this.deleted = deleted;
-	}
+    public String getUrl() {
+        return this.url;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public boolean isDeleted() {
+        return this.deleted;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setDeleted(final boolean deleted) {
+        this.deleted = deleted;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setServiceType(final InstanceType serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public InstanceType getServiceType() {
-		return serviceType;
-	}
-
-	public void setServiceType(InstanceType serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setUrl(final String url) {
+        this.url = url;
+    }
 }

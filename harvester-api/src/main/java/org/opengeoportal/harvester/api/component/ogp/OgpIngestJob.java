@@ -10,6 +10,7 @@ import org.opengeoportal.harvester.api.client.solr.SolrRecord;
 import org.opengeoportal.harvester.api.client.solr.SolrSearchParams;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestOGP;
+import org.opengeoportal.harvester.api.domain.IngestReport;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
@@ -19,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import org.opengeoportal.harvester.api.domain.IngestReport;
 
 /**
  *
@@ -39,55 +39,56 @@ public class OgpIngestJob extends BaseIngestJob {
             boolean processFinished = false;
             int startPage = 0;
             long failedRecordsCount = 0;
-            IngestReport currentReport = getIngestReport();
-            String url = ingest.getActualUrl();
+            final IngestReport currentReport = this.getIngestReport();
+            final String url = this.ingest.getActualUrl();
             if (StringUtils.isBlank(url)) {
-                throw new SchedulerException("Ingest " + ingest.getId()
+                throw new SchedulerException("Ingest " + this.ingest.getId()
                         + " has not a valid URL or valid repository"
                         + " associated");
             }
 
-            SolrClient client = new SolrJClient(url);
-            SolrSearchParams searchParams = new SolrSearchParams(
-                    (IngestOGP) ingest);
-            if (logger.isInfoEnabled()) {
-                logger.info("OgpIngestJob: search parameters "
+            final SolrClient client = new SolrJClient(url);
+            final SolrSearchParams searchParams = new SolrSearchParams(
+                    (IngestOGP) this.ingest);
+            if (this.logger.isInfoEnabled()) {
+                this.logger.info("OgpIngestJob: search parameters "
                         + searchParams.toString());
             }
 
-            while (!isInterruptRequested() && !processFinished) {
+            while (!this.isInterruptRequested() && !processFinished) {
                 searchParams.setPage(startPage);
-                QueryResponse searchResponse = client.search(searchParams);
+                final QueryResponse searchResponse = client
+                        .search(searchParams);
 
-                List<SolrRecord> records = searchResponse
+                final List<SolrRecord> records = searchResponse
                         .getBeans(SolrRecord.class);
-                for (SolrRecord record : records) {
+                for (final SolrRecord record : records) {
                     record.setOriginalXmlMetadata(record.getFgdcText());
                 }
                 if (records.size() > 0) {
-                    OgpMetadataParser parser = new OgpMetadataParser();
-                    List<Metadata> metadataList = Lists
+                    final OgpMetadataParser parser = new OgpMetadataParser();
+                    final List<Metadata> metadataList = Lists
                             .newArrayListWithCapacity(records.size());
-                    for (SolrRecord record : records) {
+                    for (final SolrRecord record : records) {
                         try {
-                            MetadataParserResponse parseResult = parser
+                            final MetadataParserResponse parseResult = parser
                                     .parse(record);
-                            Metadata metadata = parseResult.getMetadata();
-                            boolean valid = metadataValidator.validate(
-                                    metadata, currentReport);
+                            final Metadata metadata = parseResult.getMetadata();
+                            final boolean valid = this.metadataValidator
+                                    .validate(metadata, currentReport);
                             if (valid) {
                                 metadataList.add(metadata);
                             } else {
                                 failedRecordsCount++;
                             }
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             failedRecordsCount++;
-                            saveException(e,
+                            this.saveException(e,
                                     IngestReportErrorType.SYSTEM_ERROR, record);
                         }
                     }
                     currentReport.setFailedRecordsCount(failedRecordsCount);
-                    metadataIngester.ingest(metadataList, currentReport);
+                    this.metadataIngester.ingest(metadataList, currentReport);
 
                 } else {
                     processFinished = true;
@@ -96,9 +97,10 @@ public class OgpIngestJob extends BaseIngestJob {
                 startPage++;
 
             }
-        } catch (Exception e) {
-            logger.error("Error in OGP Ingest: " + this.ingest.getName(), e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+        } catch (final Exception e) {
+            this.logger.error("Error in OGP Ingest: " + this.ingest.getName(),
+                    e);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
         }
     }
 }

@@ -29,7 +29,6 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-
 public enum IngestReportWarningType {
-	UNREQUIRED_FIELD_WARNING
+    UNREQUIRED_FIELD_WARNING
 }

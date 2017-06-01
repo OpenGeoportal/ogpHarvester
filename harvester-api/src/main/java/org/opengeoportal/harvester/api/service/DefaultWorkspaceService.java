@@ -34,11 +34,11 @@ import java.util.List;
 import org.opengeoportal.harvester.api.domain.DefaultWorkspace;
 
 public interface DefaultWorkspaceService {
-	
-	void save(DefaultWorkspace entity);
-	
-	void delete(Long id);
-	
-	List<DefaultWorkspace> findAll();
-	
+
+    void delete(Long id);
+
+    List<DefaultWorkspace> findAll();
+
+    void save(DefaultWorkspace entity);
+
 }

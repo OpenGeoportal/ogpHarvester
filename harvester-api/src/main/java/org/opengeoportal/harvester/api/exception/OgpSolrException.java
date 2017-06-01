@@ -31,39 +31,38 @@ package org.opengeoportal.harvester.api.exception;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class OgpSolrException extends MetadataRepositoryException {
 
-	private static final long serialVersionUID = 7299991676005559713L;
+    private static final long serialVersionUID = 7299991676005559713L;
 
-	/**
-	 * 
-	 */
-	public OgpSolrException() {
-	}
+    /**
+     * 
+     */
+    public OgpSolrException() {
+    }
 
-	/**
-	 * @param message
-	 */
-	public OgpSolrException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public OgpSolrException(final String message) {
+        super(message);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public OgpSolrException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public OgpSolrException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public OgpSolrException(String message, Throwable cause) {
-		super(message, cause);
-	}
-
+    /**
+     * @param cause
+     */
+    public OgpSolrException(final Throwable cause) {
+        super(cause);
+    }
 
 }

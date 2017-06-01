@@ -36,6 +36,6 @@ import org.opengeoportal.harvester.api.component.IngestJobFactory;
  *
  */
 public interface IngestJobFactorySetter {
-	void setIngestJobFactory(IngestJobFactory ingestJobFactory);
+    void setIngestJobFactory(IngestJobFactory ingestJobFactory);
 
 }

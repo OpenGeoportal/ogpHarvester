@@ -29,7 +29,6 @@
  */
 package org.opengeoportal.harvester.api.client.solr;
 
-import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -39,12 +38,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SolrRepository {
 
-
-	private SolrTemplate dsaf ;
-	/**
-	 * 
-	 */
-	public SolrRepository() {
-	}
+    /**
+     * 
+     */
+    public SolrRepository() {
+    }
 
 }

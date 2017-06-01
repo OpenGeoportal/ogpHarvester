@@ -48,67 +48,68 @@ import com.google.common.collect.Lists;
 @DiscriminatorValue("GN")
 public class IngestGeonetwork extends Ingest {
 
-	private static final long serialVersionUID = 2521267747992995326L;
+    private static final long serialVersionUID = 2521267747992995326L;
 
-	@Column
-	private String title;
-	@Column
-	private String keyword;
-	@Column
-	private String abstractText;
-	@Column
-	private String freeText;
+    @Column
+    private String title;
+    @Column
+    private String keyword;
+    @Column
+    private String abstractText;
+    @Column
+    private String freeText;
 
-	@ElementCollection(fetch = FetchType.EAGER)
-	@CollectionTable(name = "ingestgn_gn_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
-	@OrderColumn
-	@Column
-	private List<String> geonetworkSources = Lists.newArrayList();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "ingestgn_gn_remote_sources", joinColumns = @JoinColumn(name = "ingest_id"))
+    @OrderColumn
+    @Column
+    private List<String> geonetworkSources = Lists.newArrayList();
 
-	public IngestGeonetwork() {
-		super();
-		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
-				"dateOfContent", "originator", "dataType", "webServices" }));
-	}
+    public IngestGeonetwork() {
+        super();
+        this.validRequiredFields = new HashSet<String>(
+                Arrays.asList(new String[] { "geographicExtent", "themeKeyword",
+                        "placeKeyword", "topic", "dateOfContent", "originator",
+                        "dataType", "webServices" }));
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getAbstractText() {
+        return this.abstractText;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public String getFreeText() {
+        return this.freeText;
+    }
 
-	public String getKeyword() {
-		return keyword;
-	}
+    public List<String> getGeonetworkSources() {
+        return this.geonetworkSources;
+    }
 
-	public void setKeyword(String keyword) {
-		this.keyword = keyword;
-	}
+    public String getKeyword() {
+        return this.keyword;
+    }
 
-	public String getAbstractText() {
-		return abstractText;
-	}
+    public String getTitle() {
+        return this.title;
+    }
 
-	public void setAbstractText(String abstractText) {
-		this.abstractText = abstractText;
-	}
+    public void setAbstractText(final String abstractText) {
+        this.abstractText = abstractText;
+    }
 
-	public String getFreeText() {
-		return freeText;
-	}
+    public void setFreeText(final String freeText) {
+        this.freeText = freeText;
+    }
 
-	public void setFreeText(String freeText) {
-		this.freeText = freeText;
-	}
+    public void setGeonetworkSource(final List<String> geonetworkSource) {
+        this.geonetworkSources = geonetworkSource;
+    }
 
-	public List<String> getGeonetworkSources() {
-		return geonetworkSources;
-	}
+    public void setKeyword(final String keyword) {
+        this.keyword = keyword;
+    }
 
-	public void setGeonetworkSource(List<String> geonetworkSource) {
-		this.geonetworkSources = geonetworkSource;
-	}
+    public void setTitle(final String title) {
+        this.title = title;
+    }
 }

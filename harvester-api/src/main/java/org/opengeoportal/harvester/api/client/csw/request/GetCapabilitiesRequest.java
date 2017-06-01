@@ -1,80 +1,84 @@
 package org.opengeoportal.harvester.api.client.csw.request;
 
-import org.jdom.Element;
-import org.opengeoportal.harvester.api.client.csw.Csw;
-import org.opengeoportal.harvester.api.client.csw.Section;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jdom.Element;
+import org.opengeoportal.harvester.api.client.csw.Csw;
+import org.opengeoportal.harvester.api.client.csw.Section;
 
-/** Params:
-  *  - sections       (0..n)
-  *  - updateSequence (0..1)
-  *  - acceptFormats  (0..n)
-  *  - acceptVersions (0..n)
-  */
+/**
+ * Params: - sections (0..n) - updateSequence (0..1) - acceptFormats (0..n) -
+ * acceptVersions (0..n)
+ */
 
-public class GetCapabilitiesRequest extends CatalogRequest
-{
-	private String sequence;
+public class GetCapabilitiesRequest extends CatalogRequest {
+    private String sequence;
 
-	private List<String> alVersions = new ArrayList<String>();
-	private List<String> alFormats  = new ArrayList<String>();
-	private Set<Section>  hsSections = new HashSet<Section>();
+    private final List<String> alVersions = new ArrayList<String>();
+    private final List<String> alFormats = new ArrayList<String>();
+    private final Set<Section> hsSections = new HashSet<Section>();
 
-    public GetCapabilitiesRequest(URL cswServerUrl) {
+    public GetCapabilitiesRequest(final URL cswServerUrl) {
         super(cswServerUrl);
     }
 
-	public void addVersion(String version) {
-		alVersions.add(version);
-	}
+    public void addOutputFormat(final String format) {
+        this.alFormats.add(format);
+    }
 
-	public void addSection(Section section) {
-		hsSections.add(section);
-	}
+    public void addSection(final Section section) {
+        this.hsSections.add(section);
+    }
 
-	public void addOutputFormat(String format) {
-		alFormats.add(format);
-	}
+    public void addVersion(final String version) {
+        this.alVersions.add(version);
+    }
 
+    @Override
+    protected Element getPostParams() {
+        final Element params = new Element(this.getRequestName(),
+                Csw.NAMESPACE_CSW);
 
-	public void setUpdateSequence(String sequence) {
-		this.sequence = sequence;
-	}
+        params.setAttribute("service", Csw.SERVICE);
 
-	protected String getRequestName() {
+        if (this.sequence != null) {
+            params.setAttribute("updateSequence", this.sequence);
+        }
+
+        this.fill(params, "AcceptVersions", "Version", this.alVersions,
+                Csw.NAMESPACE_OWS);
+        this.fill(params, "Sections", "Section", this.hsSections,
+                Csw.NAMESPACE_OWS);
+        this.fill(params, "AcceptFormats", "OutputFormat", this.alFormats,
+                Csw.NAMESPACE_OWS);
+
+        return params;
+    }
+
+    @Override
+    protected String getRequestName() {
         return "GetCapabilities";
     }
 
-	protected void setupGetParams() {
-		addParam("request", getRequestName());
-		addParam("service", Csw.SERVICE);
+    public void setUpdateSequence(final String sequence) {
+        this.sequence = sequence;
+    }
 
-		if (sequence != null)
-			addParam("updateSequence", sequence);
+    @Override
+    protected void setupGetParams() {
+        this.addParam("request", this.getRequestName());
+        this.addParam("service", Csw.SERVICE);
 
-		fill("acceptVersions", alVersions);
-		fill("sections",       hsSections);
-		fill("acceptFormats",  alFormats);
-	}
+        if (this.sequence != null) {
+            this.addParam("updateSequence", this.sequence);
+        }
 
-	protected Element getPostParams() {
-		Element params  = new Element(getRequestName(), Csw.NAMESPACE_CSW);
-
-		params.setAttribute("service", Csw.SERVICE);
-
-		if (sequence != null)
-			params.setAttribute("updateSequence", sequence);
-
-		fill(params, "AcceptVersions", "Version",      alVersions, Csw.NAMESPACE_OWS);
-		fill(params, "Sections",       "Section",      hsSections, Csw.NAMESPACE_OWS);
-		fill(params, "AcceptFormats",  "OutputFormat", alFormats,  Csw.NAMESPACE_OWS);
-
-		return params;
-	}
+        this.fill("acceptVersions", this.alVersions);
+        this.fill("sections", this.hsSections);
+        this.fill("acceptFormats", this.alFormats);
+    }
 }

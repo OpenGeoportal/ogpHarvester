@@ -36,34 +36,129 @@ public class WebdavIngestJob extends BaseIngestJob {
      */
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * DavResource contains only the relative path. This method uses the base
+     * url to return the absolute url of the resource.
+     *
+     * @param res
+     *            WebDav resource.
+     * @param baseUrl
+     *            Base url of the WebDav resource.
+     * @return Absolute url of the WebDav resource.
+     * @throws MalformedURLException
+     *             thrown when baseUrl param is nota valid URL.
+     */
+    private String getResourceAbsoluteUrl(final DavResource res,
+            final String baseUrl) throws MalformedURLException {
+        final URL urlR = new URL(baseUrl);
+
+        return urlR + res.getHref().toString().replace(urlR.getPath(), "");
+    }
+
+    /**
+     * Checks if the file has to be processed, verifying the content type
+     * (application/xml) and the date filter configured in the the Ingest.
+     *
+     * @param res
+     *            WebDav resource.
+     * @return <code>true</code> is the file has to be processed,
+     *         <code>false</code> otherwise.
+     */
+    private boolean hasToProcessFile(final DavResource res) {
+        if (res.isDirectory()) {
+            return false;
+        }
+        if (!res.getContentType().equalsIgnoreCase("application/xml")) {
+            return false;
+        }
+
+        final IngestWebDav ingestWebdav = (IngestWebDav) this.ingest;
+        final Date beginFilterDate = ingestWebdav.getDateFrom();
+        final Date endFilterDate = ingestWebdav.getDateTo();
+        final Date resourceDate = res.getModified();
+
+        if ((beginFilterDate != null)
+                && (resourceDate.before(beginFilterDate))) {
+            return false;
+        }
+        return (endFilterDate == null) || (resourceDate.after(endFilterDate));
+    }
+
     @Override
     public void ingest() {
         long failedRecordsCount = 0;
         Sardine sardine = null;
         try {
             sardine = SardineFactory.begin();
-            failedRecordsCount = processWebdavFolder(sardine, ingest.getActualUrl());
-        } catch (Exception e) {
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+            failedRecordsCount = this.processWebdavFolder(sardine,
+                    this.ingest.getActualUrl());
+        } catch (final Exception e) {
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
         } finally {
             if (sardine != null) {
                 sardine.shutdown();
             }
         }
-        report.setFailedRecordsCount(failedRecordsCount);
+        this.report.setFailedRecordsCount(failedRecordsCount);
+    }
+
+    /**
+     * Process the remote WebDav file, validating it and ingesting in the
+     * system.
+     *
+     * @param res
+     *            WebDav resource.
+     * @param baseUrl
+     *            Base url of the WebDav resource.
+     * @return count of invalid records processed.
+     */
+    private long processFile(final DavResource res, final String baseUrl) {
+        long failedRecordsCount = 0;
+        Document document = null;
+        try {
+            // Retrieve file content
+            final String absoluteHrefPath = this.getResourceAbsoluteUrl(res,
+                    baseUrl);
+
+            document = XmlUtil.load(absoluteHrefPath);
+            final MetadataParser parser = this.parserProvider
+                    .getMetadataParser(document);
+            final MetadataParserResponse parserResult = parser.parse(document);
+
+            final Metadata metadata = parserResult.getMetadata();
+            metadata.setInstitution(this.ingest.getNameOgpRepository());
+
+            final boolean valid = this.metadataValidator.validate(metadata,
+                    this.report);
+            if (valid) {
+                this.metadataIngester.ingest(ImmutableList.of(metadata),
+                        this.getIngestReport());
+            } else {
+                failedRecordsCount++;
+            }
+
+        } catch (final Exception e) {
+            failedRecordsCount++;
+            this.logger.error("Error in Webdav Ingest: " + this.ingest.getName()
+                    + " (processing file:" + baseUrl + ")", e);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR, document);
+        }
+        return failedRecordsCount;
     }
 
     /**
      * Process the metadata files in the webdav server, recursing the
      * subfolders.
      *
-     * @param sardine {@link Sardine} instance.
-     * @param url WebDAV folder URL.
+     * @param sardine
+     *            {@link Sardine} instance.
+     * @param url
+     *            WebDAV folder URL.
      * @return count of invalid records processed.
      */
-    private long processWebdavFolder(Sardine sardine, String url) {
+    private long processWebdavFolder(final Sardine sardine, String url) {
         long failedRecordsCount = 0;
-        if (isInterruptRequested()) {
+        if (this.isInterruptRequested()) {
             return failedRecordsCount;
         }
         if (!url.endsWith("/")) {
@@ -72,137 +167,54 @@ public class WebdavIngestJob extends BaseIngestJob {
         List<DavResource> resources;
         try {
             resources = sardine.list(url);
-        } catch (IOException e) {
-            logger.error("Error in Webdav Ingest " + this.ingest.getName()
+        } catch (final IOException e) {
+            this.logger.error("Error in Webdav Ingest " + this.ingest.getName()
                     + " (getting resources)", e);
 
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
             return failedRecordsCount;
         }
 
-        for (DavResource res : resources) {
-            if (isInterruptRequested()) {
+        for (final DavResource res : resources) {
+            if (this.isInterruptRequested()) {
                 return failedRecordsCount;
             }
             if (res.isDirectory()) {
                 // If it's not the current folder, process the files inside
                 if (!url.endsWith(res.getPath())) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Processing webdav folder resource: "
+                    if (this.logger.isDebugEnabled()) {
+                        this.logger.debug("Processing webdav folder resource: "
                                 + res.toString());
-                    } 
+                    }
                     try {
-                        String absoluteHrefPath = getResourceAbsoluteUrl(res,
-                                url);
-                        failedRecordsCount += processWebdavFolder(sardine, absoluteHrefPath);
+                        final String absoluteHrefPath = this
+                                .getResourceAbsoluteUrl(res, url);
+                        failedRecordsCount += this.processWebdavFolder(sardine,
+                                absoluteHrefPath);
 
-                    } catch (MalformedURLException e) {
-                        logger.error(
-                                "Error in Webdav Ingest: "
-                                + this.ingest.getName()
-                                + " (malformed url)", e);
-                        saveException(e,
+                    } catch (final MalformedURLException e) {
+                        this.logger.error("Error in Webdav Ingest: "
+                                + this.ingest.getName() + " (malformed url)",
+                                e);
+                        this.saveException(e,
                                 IngestReportErrorType.SYSTEM_ERROR);
                     }
                 }
             } else {
-                if (hasToProcessFile(res)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Processing webdav resource: "
+                if (this.hasToProcessFile(res)) {
+                    if (this.logger.isDebugEnabled()) {
+                        this.logger.debug("Processing webdav resource: "
                                 + res.toString());
                     }
-                    failedRecordsCount += processFile(res, url);
+                    failedRecordsCount += this.processFile(res, url);
                 } else {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Ignoring webdav resource: "
-                                + res.toString());
+                    if (this.logger.isDebugEnabled()) {
+                        this.logger.debug(
+                                "Ignoring webdav resource: " + res.toString());
                     }
                 }
             }
         }
         return failedRecordsCount;
-    }
-
-    /**
-     * Process the remote WebDav file, validating it and ingesting in the
-     * system.
-     *
-     * @param res WebDav resource.
-     * @param baseUrl Base url of the WebDav resource.
-     * @return count of invalid records processed.
-     */
-    private long processFile(DavResource res, String baseUrl) {
-        long failedRecordsCount = 0;
-        Document document = null;
-        try {
-            // Retrieve file content
-            String absoluteHrefPath = getResourceAbsoluteUrl(res, baseUrl);
-
-            document = XmlUtil.load(absoluteHrefPath);
-            MetadataParser parser = parserProvider.getMetadataParser(document);
-            MetadataParserResponse parserResult = parser.parse(document);
-
-            Metadata metadata = parserResult.getMetadata();
-            metadata.setInstitution(ingest.getNameOgpRepository());
-
-            boolean valid = metadataValidator.validate(metadata, report);
-            if (valid) {
-                metadataIngester.ingest(ImmutableList.of(metadata),
-                        getIngestReport());
-            } else {
-                failedRecordsCount++;
-            }
-
-        } catch (Exception e) {
-            failedRecordsCount++;
-            logger.error("Error in Webdav Ingest: " + this.ingest.getName()
-                    + " (processing file:" + baseUrl + ")", e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR, document);
-        }
-        return failedRecordsCount;
-    }
-
-    /**
-     * Checks if the file has to be processed, verifying the content type
-     * (application/xml) and the date filter configured in the the Ingest.
-     *
-     * @param res WebDav resource.
-     * @return <code>true</code> is the file has to be processed,
-     * <code>false</code> otherwise.
-     */
-    private boolean hasToProcessFile(DavResource res) {
-        if (res.isDirectory()) {
-            return false;
-        }
-        if (!res.getContentType().equalsIgnoreCase("application/xml")) {
-            return false;
-        }
-
-        IngestWebDav ingestWebdav = (IngestWebDav) ingest;
-        Date beginFilterDate = ingestWebdav.getDateFrom();
-        Date endFilterDate = ingestWebdav.getDateTo();
-        Date resourceDate = res.getModified();
-
-        if ((beginFilterDate != null) && (resourceDate.before(beginFilterDate))) {
-            return false;
-        }
-        return (endFilterDate == null) || (resourceDate.after(endFilterDate));
-    }
-
-    /**
-     * DavResource contains only the relative path. This method uses the base
-     * url to return the absolute url of the resource.
-     *
-     * @param res WebDav resource.
-     * @param baseUrl Base url of the WebDav resource.
-     * @return Absolute url of the WebDav resource.
-     * @throws MalformedURLException thrown when baseUrl param is nota valid
-     * URL.
-     */
-    private String getResourceAbsoluteUrl(DavResource res, String baseUrl)
-            throws MalformedURLException {
-        URL urlR = new URL(baseUrl);
-
-        return urlR + res.getHref().toString().replace(urlR.getPath(), "");
     }
 }

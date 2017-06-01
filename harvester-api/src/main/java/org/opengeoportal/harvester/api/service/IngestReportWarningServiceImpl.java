@@ -29,26 +29,15 @@
  */
 package org.opengeoportal.harvester.api.service;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import org.opengeoportal.harvester.api.dao.IngestReportErrorRepository;
 import org.opengeoportal.harvester.api.dao.IngestReportWarningRepository;
-import org.opengeoportal.harvester.api.domain.IngestReportError;
-import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 import org.opengeoportal.harvester.api.domain.IngestReportWarning;
 import org.opengeoportal.harvester.api.domain.IngestReportWarningType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,80 +49,81 @@ import com.google.common.collect.Maps;
  * @author cbarne02
  */
 @Service
-public class IngestReportWarningServiceImpl implements IngestReportWarningsService {
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class IngestReportWarningServiceImpl
+        implements IngestReportWarningsService {
+    /** Logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/** Report error repository. */
-	@Autowired
-	private IngestReportWarningRepository reportWarningRepository;
+    /** Report error repository. */
+    @Autowired
+    private IngestReportWarningRepository reportWarningRepository;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.IngestReportErrorService#save
-	 * (org.opengeoportal.harvester.api.domain.IngestReportError)
-	 */
-	@Override
-	@Transactional
-	public IngestReportWarning save(IngestReportWarning reportWarning) {
-		return reportWarningRepository.save(reportWarning);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+     * getCountFieldErrorsByReportId(java.lang.Long)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Long> getCountWarningsByReportId(final Long id) {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
-	 * getCountErrorTypesByReportId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Map<IngestReportWarningType, Long> getCountWarningTypesByReportId(
-			Long reportId) {
-		List<Object[]> items = reportWarningRepository
-				.getCountWarningTypesByReportId(reportId);
-		List<IngestReportWarningType> remainingTypes = Lists
-				.newArrayList(IngestReportWarningType.values());
-		Map<IngestReportWarningType, Long> result = Maps.newHashMap();
-		for (Object item : items) {
-			Object[] tuple = (Object[]) item;
-			IngestReportWarningType warningType = (IngestReportWarningType) tuple[0];
-			Long count = (Long) tuple[1];
-			result.put(warningType, count);
-			remainingTypes.remove(warningType);
-		}
+        final List<Object[]> errorList = this.reportWarningRepository
+                .getCountWarningsByReportId(id,
+                        IngestReportWarningType.UNREQUIRED_FIELD_WARNING);
+        final Map<String, Long> result = Maps.newTreeMap();
+        for (final Object[] fieldError : errorList) {
+            final String fieldName = (String) fieldError[0];
+            final Long errorCount = (Long) fieldError[1];
 
-		// Set a default value for error types not returned by the repository
-		for (IngestReportWarningType warningType : remainingTypes) {
-			result.put(warningType, 0L);
-		}
+            result.put(fieldName, errorCount);
 
-		return result;
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
-	 * getCountFieldErrorsByReportId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Map<String, Long> getCountWarningsByReportId(Long id) {
+        }
+        return result;
+    }
 
-		List<Object[]> errorList = reportWarningRepository.getCountWarningsByReportId(id, IngestReportWarningType.UNREQUIRED_FIELD_WARNING);
-		Map<String, Long> result = Maps.newTreeMap();
-		for (Object[] fieldError : errorList) {
-			String fieldName = (String) fieldError[0];
-			Long errorCount = (Long) fieldError[1];
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+     * getCountErrorTypesByReportId(java.lang.Long)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<IngestReportWarningType, Long> getCountWarningTypesByReportId(
+            final Long reportId) {
+        final List<Object[]> items = this.reportWarningRepository
+                .getCountWarningTypesByReportId(reportId);
+        final List<IngestReportWarningType> remainingTypes = Lists
+                .newArrayList(IngestReportWarningType.values());
+        final Map<IngestReportWarningType, Long> result = Maps.newHashMap();
+        for (final Object item : items) {
+            final Object[] tuple = (Object[]) item;
+            final IngestReportWarningType warningType = (IngestReportWarningType) tuple[0];
+            final Long count = (Long) tuple[1];
+            result.put(warningType, count);
+            remainingTypes.remove(warningType);
+        }
 
-			result.put(fieldName, errorCount);
+        // Set a default value for error types not returned by the repository
+        for (final IngestReportWarningType warningType : remainingTypes) {
+            result.put(warningType, 0L);
+        }
 
-		}
-		return result;
-	}
+        return result;
+    }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.IngestReportErrorService#save
+     * (org.opengeoportal.harvester.api.domain.IngestReportError)
+     */
+    @Override
+    @Transactional
+    public IngestReportWarning save(final IngestReportWarning reportWarning) {
+        return this.reportWarningRepository.save(reportWarning);
+    }
 
 }

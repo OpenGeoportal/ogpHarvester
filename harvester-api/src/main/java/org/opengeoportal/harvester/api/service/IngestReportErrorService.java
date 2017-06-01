@@ -38,61 +38,62 @@ import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public interface IngestReportErrorService {
-	/**
-	 * Save an {@link IngestReportError}.
-	 * 
-	 * @param reportError
-	 *            the {@link IngestReportError}.
-	 * @return the saved error report.
-	 */
-	IngestReportError save(IngestReportError reportError);
+    /**
+     * Return the count of type field not found errors categorized by the name
+     * of the field for a given ingest report.
+     * 
+     * @param id
+     *            the ingest report identifier.
+     * @param errorType
+     *            main error category.
+     * @return a Map with the field name as a key and the count of this error
+     *         like value.
+     */
+    Map<String, Long> getCountErrorsByReportId(Long id,
+            IngestReportErrorType errorType);
 
-	/**
-	 * Gets the count of each errors group by error type for a given
-	 * {@link IngestReport}.
-	 * 
-	 * @param reportId
-	 *            the ingest report identifier.
-	 * @return a Map with the count of errors for each
-	 *         {@link IngestReportErrorType}.
-	 */
-	Map<IngestReportErrorType, Long> getCountErrorTypesByReportId(Long reportId);
+    /**
+     * Gets the count of each errors group by error type for a given
+     * {@link IngestReport}.
+     * 
+     * @param reportId
+     *            the ingest report identifier.
+     * @return a Map with the count of errors for each
+     *         {@link IngestReportErrorType}.
+     */
+    Map<IngestReportErrorType, Long> getCountErrorTypesByReportId(
+            Long reportId);
 
-	/**
-	 * Return the count of type field not found errors categorized by the name
-	 * of the field for a given ingest report.
-	 * 
-	 * @param id
-	 *            the ingest report identifier.
-	 * @param errorType
-	 *            main error category.
-	 * @return a Map with the field name as a key and the count of this error
-	 *         like value.
-	 */
-	Map<String, Long> getCountErrorsByReportId(Long id,
-			IngestReportErrorType errorType);
+    /**
+     * Save an {@link IngestReportError}.
+     * 
+     * @param reportError
+     *            the {@link IngestReportError}.
+     * @return the saved error report.
+     */
+    IngestReportError save(IngestReportError reportError);
 
-	/**
-	 * Write the errors into a zipOutputStream.
-	 * 
-	 * @param reportId
-	 *            Ingest report identifier
-	 * @param zipOutputStream
-	 *            where to write errors.
-	 * @param requiredFieldErrors
-	 *            array with the name of the field errors to be writtrn.
-	 * @param webserviceErrors
-	 *            array with the name of the webservice error subcategories to
-	 *            be written.
-	 * @param systemErrors
-	 *            array with the name of the system error subcategories to be
-	 *            written.
-	 */
-	void writeErrorZipForIngest(Long reportId, ZipOutputStream zipOutputStream,
-			String[] requiredFieldErrors, String[] webserviceErrors,
-			String[] systemErrors);
+    /**
+     * Write the errors into a zipOutputStream.
+     * 
+     * @param reportId
+     *            Ingest report identifier
+     * @param zipOutputStream
+     *            where to write errors.
+     * @param requiredFieldErrors
+     *            array with the name of the field errors to be writtrn.
+     * @param webserviceErrors
+     *            array with the name of the webservice error subcategories to
+     *            be written.
+     * @param systemErrors
+     *            array with the name of the system error subcategories to be
+     *            written.
+     */
+    void writeErrorZipForIngest(Long reportId, ZipOutputStream zipOutputStream,
+            String[] requiredFieldErrors, String[] webserviceErrors,
+            String[] systemErrors);
 
 }

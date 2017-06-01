@@ -24,53 +24,56 @@ import org.springframework.web.client.RestTemplate;
 public class AuthenticationSuccessHandlerImpl
         implements AuthenticationSuccessHandler {
 
-    private String dataIngestUrl;
+    private final String dataIngestUrl;
 
-    private String password;
+    private final String password;
 
     @Autowired
     public AuthenticationSuccessHandlerImpl(
-            @Value("#{dataIngest['dataIngest.url']}") String dataIngestUrl,
-            @Value("#{dataIngest['dataIngest.password']}") String password) {
+            @Value("#{dataIngest['dataIngest.url']}") final String dataIngestUrl,
+            @Value("#{dataIngest['dataIngest.password']}") final String password) {
         super();
         this.dataIngestUrl = dataIngestUrl;
         this.password = password;
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest,
-            HttpServletResponse httpServletResponse,
-            Authentication authentication)
+    public void onAuthenticationSuccess(
+            final HttpServletRequest httpServletRequest,
+            final HttpServletResponse httpServletResponse,
+            final Authentication authentication)
             throws IOException, ServletException {
-        HttpSession session = httpServletRequest.getSession();
-        User authUser = (User) SecurityContextHolder.getContext()
+        final HttpSession session = httpServletRequest.getSession();
+        final User authUser = (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
         session.setAttribute("username", authUser.getUsername());
         session.setAttribute("authorities", authentication.getAuthorities());
 
         // Login on dataingest
 
-        RestTemplate restTemplate = new RestTemplate();
+        final RestTemplate restTemplate = new RestTemplate();
 
         // Prepare JSON Object for the request
-        JSONObject request = new JSONObject();
+        final JSONObject request = new JSONObject();
 
         request.put("username", authUser.getUsername());
-        request.put("password", password);
+        request.put("password", this.password);
 
         // Set Headers
-        HttpHeaders headers = new HttpHeaders();
+        final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<String> entity = new HttpEntity<String>(request.toString(),
-                headers);
+        final HttpEntity<String> entity = new HttpEntity<String>(
+                request.toString(), headers);
 
         ResponseEntity<String> createResponse = null;
 
         // Send request and parse result
         try {
-            createResponse = restTemplate.exchange(dataIngestUrl + "/login", HttpMethod.POST, entity, String.class);
-        } catch (Exception e) {
+            createResponse = restTemplate.exchange(
+                    this.dataIngestUrl + "/login", HttpMethod.POST, entity,
+                    String.class);
+        } catch (final Exception e) {
             System.out.println("DataIngest auth error " + e.getMessage());
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             httpServletResponse.sendRedirect("/loginfailed");

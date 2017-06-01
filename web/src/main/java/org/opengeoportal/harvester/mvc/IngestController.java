@@ -39,120 +39,137 @@ import com.google.common.collect.Maps;
  *
  */
 @Controller
-@SessionAttributes(types = {IngestFormBean.class})
+@SessionAttributes(types = { IngestFormBean.class })
 public class IngestController {
 
+    /** The ingest service. */
     @Resource
     private IngestService ingestService;
 
+    /**
+     * Angular.
+     *
+     * @return the string
+     */
+    @RequestMapping("/")
+    public String angular() {
+        return "ngView";
+    }
+
+    /**
+     * Creates the ingest.
+     *
+     * @param ingestFormBean the ingest form bean
+     * @return the map
+     */
     @RequestMapping(value = "/rest/ingests/new", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Object> createIngest(
-            @RequestBody IngestFormBean ingestFormBean) {
+            @RequestBody final IngestFormBean ingestFormBean) {
         Ingest ingest = null;
-        boolean updating = ingestFormBean.getId() != null;
-        InstanceType instanceType = ingestFormBean.getTypeOfInstance();
+        final boolean updating = ingestFormBean.getId() != null;
+        final InstanceType instanceType = ingestFormBean.getTypeOfInstance();
         if (updating) {
-            ingest = ingestService.findById(ingestFormBean.getId());
+            ingest = this.ingestService.findById(ingestFormBean.getId());
             if (ingest == null) {
-                throw new ItemNotFoundException(
-                        "Cannot find an Ingest with id "
+                throw new ItemNotFoundException("Cannot find an Ingest with id "
                         + ingestFormBean.getId());
             }
         } else {
             switch (instanceType) {
-                case SOLR:
-                    ingest = new IngestOGP();
-                    break;
-                case GEONETWORK:
-                    ingest = new IngestGeonetwork();
-                    break;
-                case CSW:
-                    ingest = new IngestCsw();
-                    break;
-                case WEBDAV:
-                    ingest = new IngestWebDav();
-                    break;
+            case SOLR:
+                ingest = new IngestOGP();
+                break;
+            case GEONETWORK:
+                ingest = new IngestGeonetwork();
+                break;
+            case CSW:
+                ingest = new IngestCsw();
+                break;
+            case WEBDAV:
+                ingest = new IngestWebDav();
+                break;
 
-                default:
-                    throw new InvalidParameterValue(ingestFormBean
-                            .getTypeOfInstance().name()
-                            + " is not a valid instance type. Please add a new "
-                            + "case to the switch instruction");
+            default:
+                throw new InvalidParameterValue(
+                        ingestFormBean.getTypeOfInstance().name()
+                                + " is not a valid instance type. Please add a new "
+                                + "case to the switch instruction");
             }
 
         }
 
-        boolean usesCustomRepo = ingestFormBean.getCatalogOfServices() != null;
+        final boolean usesCustomRepo = ingestFormBean
+                .getCatalogOfServices() != null;
 
         switch (ingestFormBean.getTypeOfInstance()) {
-            case SOLR:
-                IngestOGP ingestOGP = (IngestOGP) ingest;
-                if (ingestFormBean.getExtent() != null) {
-                    BoundingBox bbox = ingestFormBean.getExtent();
-                    ingestOGP.setBboxWest(bbox.getMinx());
-                    ingestOGP.setBboxEast(bbox.getMaxx());
-                    ingestOGP.setBboxSouth(bbox.getMiny());
-                    ingestOGP.setBboxNorth(bbox.getMaxy());
-                }
-                ingestOGP.setCustomSolrQuery(ingestFormBean.getSolrCustomQuery());
-                ingestOGP.setDataRepositories(Arrays.asList(ingestFormBean
-                        .getDataRepositories()));
-                ingestOGP
-                        .setDataTypes(Arrays.asList(ingestFormBean.getDataTypes()));
-                ingestOGP.setDateFrom(ingestFormBean.getContentRangeFrom());
-                ingestOGP.setDateTo(ingestFormBean.getContentRangeTo());
-                ingestOGP.setExcludeRestrictedData(ingestFormBean
-                        .isExcludeRestricted());
-                ingestOGP.setFromSolrTimestamp(ingestFormBean.getRangeSolrFrom());
-                ingestOGP.setToSolrTimestamp(ingestFormBean.getRangeSolrTo());
-                ingestOGP.setOriginator(ingestFormBean.getOriginator());
-                ingestOGP.setPlaceKeyword(ingestFormBean.getPlaceKeyword());
-                ingestOGP.setThemeKeyword(ingestFormBean.getThemeKeyword());
-                ingestOGP.setTopicCategory(ingestFormBean.getTopic());
+        case SOLR:
+            final IngestOGP ingestOGP = (IngestOGP) ingest;
+            if (ingestFormBean.getExtent() != null) {
+                final BoundingBox bbox = ingestFormBean.getExtent();
+                ingestOGP.setBboxWest(bbox.getMinx());
+                ingestOGP.setBboxEast(bbox.getMaxx());
+                ingestOGP.setBboxSouth(bbox.getMiny());
+                ingestOGP.setBboxNorth(bbox.getMaxy());
+            }
+            ingestOGP.setCustomSolrQuery(ingestFormBean.getSolrCustomQuery());
+            ingestOGP.setDataRepositories(
+                    Arrays.asList(ingestFormBean.getDataRepositories()));
+            ingestOGP
+                    .setDataTypes(Arrays.asList(ingestFormBean.getDataTypes()));
+            ingestOGP.setDateFrom(ingestFormBean.getContentRangeFrom());
+            ingestOGP.setDateTo(ingestFormBean.getContentRangeTo());
+            ingestOGP.setExcludeRestrictedData(
+                    ingestFormBean.isExcludeRestricted());
+            ingestOGP.setFromSolrTimestamp(ingestFormBean.getRangeSolrFrom());
+            ingestOGP.setToSolrTimestamp(ingestFormBean.getRangeSolrTo());
+            ingestOGP.setOriginator(ingestFormBean.getOriginator());
+            ingestOGP.setPlaceKeyword(ingestFormBean.getPlaceKeyword());
+            ingestOGP.setThemeKeyword(ingestFormBean.getThemeKeyword());
+            ingestOGP.setTopicCategory(ingestFormBean.getTopic());
 
-                break;
-            case GEONETWORK:
-                IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
+            break;
+        case GEONETWORK:
+            final IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
 
-                ingestGN.setAbstractText(ingestFormBean.getGnAbstractText());
-                ingestGN.setFreeText(ingestFormBean.getGnFreeText());
-                ingestGN.setGeonetworkSource(Arrays.asList(ingestFormBean
-                        .getGnSources()));
-                ingestGN.setKeyword(ingestFormBean.getGnKeyword());
-                ingestGN.setTitle(ingestFormBean.getGnTitle());
-                ;
-                break;
-            case CSW:
-                IngestCsw ingestCsw = (IngestCsw) ingest;
+            ingestGN.setAbstractText(ingestFormBean.getGnAbstractText());
+            ingestGN.setFreeText(ingestFormBean.getGnFreeText());
+            ingestGN.setGeonetworkSource(
+                    Arrays.asList(ingestFormBean.getGnSources()));
+            ingestGN.setKeyword(ingestFormBean.getGnKeyword());
+            ingestGN.setTitle(ingestFormBean.getGnTitle());
+            ;
+            break;
+        case CSW:
+            final IngestCsw ingestCsw = (IngestCsw) ingest;
 
-                if (ingestFormBean.getExtent() != null) {
-                    BoundingBox bbox = ingestFormBean.getExtent();
-                    ingestCsw.setBboxWest(bbox.getMinx());
-                    ingestCsw.setBboxEast(bbox.getMaxx());
-                    ingestCsw.setBboxSouth(bbox.getMiny());
-                    ingestCsw.setBboxNorth(bbox.getMaxy());
-                }
-                ingestCsw.setCustomCswQuery(ingestFormBean.getCswCustomQuery());
-                ingestCsw.setDateFrom(ingestFormBean.getCswRangeFrom());
-                ingestCsw.setDateTo(ingestFormBean.getCswRangeTo());
-                ingestCsw.setFreeText(ingestFormBean.getCswFreeText());
-                ingestCsw.setSubject(ingestFormBean.getCswSubject());
-                ingestCsw.setTitle(ingestFormBean.getCswTitle());
+            if (ingestFormBean.getExtent() != null) {
+                final BoundingBox bbox = ingestFormBean.getExtent();
+                ingestCsw.setBboxWest(bbox.getMinx());
+                ingestCsw.setBboxEast(bbox.getMaxx());
+                ingestCsw.setBboxSouth(bbox.getMiny());
+                ingestCsw.setBboxNorth(bbox.getMaxy());
+            }
+            ingestCsw.setCustomCswQuery(ingestFormBean.getCswCustomQuery());
+            ingestCsw.setDateFrom(ingestFormBean.getCswRangeFrom());
+            ingestCsw.setDateTo(ingestFormBean.getCswRangeTo());
+            ingestCsw.setFreeText(ingestFormBean.getCswFreeText());
+            ingestCsw.setSubject(ingestFormBean.getCswSubject());
+            ingestCsw.setTitle(ingestFormBean.getCswTitle());
 
-                break;
-            case WEBDAV:
-                IngestWebDav ingestWebDav = (IngestWebDav) ingest;
-                ingestWebDav
-                        .setDateFrom(ingestFormBean.getWebdavFromLastModified());
-                ingestWebDav.setDateTo(ingestFormBean.getWebdavToLastModified());
+            break;
+        case WEBDAV:
+            final IngestWebDav ingestWebDav = (IngestWebDav) ingest;
+            ingestWebDav
+                    .setDateFrom(ingestFormBean.getWebdavFromLastModified());
+            ingestWebDav.setDateTo(ingestFormBean.getWebdavToLastModified());
 
-                break;
-            default:
-                throw new InvalidParameterValue(ingestFormBean.getTypeOfInstance()
-                        .name()
-                        + " is not a valid instance type. Please add a new "
-                        + "case to the switch instruction");
+            break;
+        default:
+            throw new InvalidParameterValue(
+                    ingestFormBean.getTypeOfInstance().name()
+                            + " is not a valid instance type. Please add a new "
+                            + "case to the switch instruction");
         }
 
         // common fields
@@ -168,7 +185,7 @@ public class IngestController {
 
         // remove old required fields and add the new ones
         ingest.getRequiredFields().clear();
-        for (Entry<String, Boolean> requiredField : ingestFormBean
+        for (final Entry<String, Boolean> requiredField : ingestFormBean
                 .getRequiredFields().entrySet()) {
             if (requiredField.getValue()) {
                 ingest.addRequiredField(requiredField.getKey());
@@ -176,15 +193,15 @@ public class IngestController {
         }
 
         if (usesCustomRepo) {
-            ingest = ingestService.saveAndSchedule(ingest,
+            ingest = this.ingestService.saveAndSchedule(ingest,
                     ingestFormBean.getCatalogOfServices(),
                     ingestFormBean.getTypeOfInstance());
         } else {
-            ingest = ingestService.saveAndSchedule(ingest);
+            ingest = this.ingestService.saveAndSchedule(ingest);
         }
-        Map<String, Object> result = Maps.newHashMap();
+        final Map<String, Object> result = Maps.newHashMap();
         result.put("success", true);
-        Map<String, Object> data = Maps.newHashMap();
+        final Map<String, Object> data = Maps.newHashMap();
         data.put("id", ingest.getId());
         data.put("name", ingest.getName());
         result.put("data", data);
@@ -195,30 +212,31 @@ public class IngestController {
     /**
      * Return details about an ingest.
      *
-     * @param id ingest identifier.
+     * @param id
+     *            ingest identifier.
      * @return JSON with ingest details.
      */
     @RequestMapping(value = "/rest/ingests/{id}/details")
     @ResponseBody
-    public IngestFormBean getDetails(@PathVariable("id") Long id) {
-        IngestFormBean result = new IngestFormBean();
+    public IngestFormBean getDetails(@PathVariable("id") final Long id) {
+        final IngestFormBean result = new IngestFormBean();
 
         // Check if ingest exist
-        Ingest ingest = ingestService.findById(id);
+        final Ingest ingest = this.ingestService.findById(id);
         if (ingest == null) {
-            throw new ItemNotFoundException("Cannot find an ingest with id "
-                    + id);
+            throw new ItemNotFoundException(
+                    "Cannot find an ingest with id " + id);
         }
 
         if (ingest instanceof IngestOGP) {
-            IngestOGP ingestOGP = (IngestOGP) ingest;
+            final IngestOGP ingestOGP = (IngestOGP) ingest;
             result.setTypeOfInstance(InstanceType.SOLR);
 
-            BoundingBox bbox = new BoundingBox();
-            if (ingestOGP.getBboxEast() != null
-                    && ingestOGP.getBboxNorth() != null
-                    && ingestOGP.getBboxSouth() != null
-                    && ingestOGP.getBboxWest() != null) {
+            final BoundingBox bbox = new BoundingBox();
+            if ((ingestOGP.getBboxEast() != null)
+                    && (ingestOGP.getBboxNorth() != null)
+                    && (ingestOGP.getBboxSouth() != null)
+                    && (ingestOGP.getBboxWest() != null)) {
                 bbox.setMinx(ingestOGP.getBboxWest());
                 bbox.setMiny(ingestOGP.getBboxSouth());
                 bbox.setMaxx(ingestOGP.getBboxEast());
@@ -226,10 +244,10 @@ public class IngestController {
             }
             result.setExtent(bbox);
             result.setSolrCustomQuery(ingestOGP.getCustomSolrQuery());
-            result.setDataRepositories(ingestOGP.getDataRepositories().toArray(
-                    new String[]{}));
-            result.setDataTypes(ingestOGP.getDataTypes().toArray(
-                    new DataType[]{}));
+            result.setDataRepositories(
+                    ingestOGP.getDataRepositories().toArray(new String[] {}));
+            result.setDataTypes(
+                    ingestOGP.getDataTypes().toArray(new DataType[] {}));
             result.setContentRangeFrom(ingestOGP.getDateFrom());
             result.setContentRangeTo(ingestOGP.getDateTo());
             result.setExcludeRestricted(ingestOGP.isExcludeRestrictedData());
@@ -241,24 +259,24 @@ public class IngestController {
             result.setTopic(ingestOGP.getTopicCategory());
             result.setServerQuery(ingestOGP.getServerQuery());
         } else if (ingest instanceof IngestGeonetwork) {
-            IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
+            final IngestGeonetwork ingestGN = (IngestGeonetwork) ingest;
             result.setTypeOfInstance(InstanceType.GEONETWORK);
 
             result.setGnAbstractText(ingestGN.getAbstractText());
             result.setGnFreeText(ingestGN.getFreeText());
-            result.setGnSources(ingestGN.getGeonetworkSources().toArray(
-                    new String[]{}));
+            result.setGnSources(
+                    ingestGN.getGeonetworkSources().toArray(new String[] {}));
             result.setGnKeyword(ingestGN.getKeyword());
             result.setGnTitle(ingestGN.getTitle());
         } else if (ingest instanceof IngestCsw) {
-            IngestCsw ingestCsw = (IngestCsw) ingest;
+            final IngestCsw ingestCsw = (IngestCsw) ingest;
             result.setTypeOfInstance(InstanceType.CSW);
 
-            BoundingBox bbox = new BoundingBox();
-            if (ingestCsw.getBboxEast() != null
-                    && ingestCsw.getBboxNorth() != null
-                    && ingestCsw.getBboxSouth() != null
-                    && ingestCsw.getBboxWest() != null) {
+            final BoundingBox bbox = new BoundingBox();
+            if ((ingestCsw.getBboxEast() != null)
+                    && (ingestCsw.getBboxNorth() != null)
+                    && (ingestCsw.getBboxSouth() != null)
+                    && (ingestCsw.getBboxWest() != null)) {
                 bbox.setMinx(ingestCsw.getBboxWest());
                 bbox.setMiny(ingestCsw.getBboxSouth());
                 bbox.setMaxx(ingestCsw.getBboxEast());
@@ -272,7 +290,7 @@ public class IngestController {
             result.setCswSubject(ingestCsw.getSubject());
             result.setCswTitle(ingestCsw.getTitle());
         } else if (ingest instanceof IngestWebDav) {
-            IngestWebDav ingestWebDav = (IngestWebDav) ingest;
+            final IngestWebDav ingestWebDav = (IngestWebDav) ingest;
             result.setTypeOfInstance(InstanceType.WEBDAV);
 
             result.setWebdavFromLastModified(ingestWebDav.getDateFrom());
@@ -290,7 +308,7 @@ public class IngestController {
         result.setScheduled(ingest.isScheduled());
         result.setId(ingest.getId());
         result.setUrl(ingest.getUrl());
-        CustomRepository repository = ingest.getRepository();
+        final CustomRepository repository = ingest.getRepository();
         if (repository != null) {
             if (!repository.isDeleted()) {
                 result.setCatalogOfServices(repository.getId());
@@ -304,7 +322,7 @@ public class IngestController {
             requiredFields = Maps.newHashMap();
             result.setRequiredFields(requiredFields);
         }
-        for (String requiredField : ingest.getRequiredFields()) {
+        for (final String requiredField : ingest.getRequiredFields()) {
             requiredFields.put(requiredField, Boolean.TRUE);
         }
 
@@ -314,31 +332,32 @@ public class IngestController {
     /**
      * Unschedule the passed ingest.
      *
-     * @param id ingest identifier.
+     * @param id
+     *            ingest identifier.
      * @return a {@link JsonResponse} object with the result of the operation.
      */
     @RequestMapping(value = "/rest/ingests/{id}/unschedule")
     @ResponseBody
-    public JsonResponse unscheduleIngest(@PathVariable("id") Long id) {
-        JsonResponse response = new JsonResponse();
-        Ingest ingest = ingestService.findById(id);
+    public JsonResponse unscheduleIngest(@PathVariable("id") final Long id) {
+        final JsonResponse response = new JsonResponse();
+        final Ingest ingest = this.ingestService.findById(id);
         if (ingest == null) {
             response.setStatus(STATUS.FAIL);
-            Map<String, String> errorMap = Maps.newHashMap();
+            final Map<String, String> errorMap = Maps.newHashMap();
             errorMap.put("errorCode", "INGEST_NOT_FOUND");
             errorMap.put("ingestId", id.toString());
             response.setResult(errorMap);
         }
 
-        boolean unscheduled = ingestService.unscheduleIngest(id);
+        final boolean unscheduled = this.ingestService.unscheduleIngest(id);
         if (unscheduled) {
             response.setStatus(STATUS.SUCCESS);
-            Map<String, Object> resultMap = Maps.newHashMap();
+            final Map<String, Object> resultMap = Maps.newHashMap();
             resultMap.put("ingestId", id);
             response.setResult(resultMap);
         } else {
             response.setStatus(STATUS.FAIL);
-            Map<String, String> errorMap = Maps.newHashMap();
+            final Map<String, String> errorMap = Maps.newHashMap();
             errorMap.put("errorCode", "INGEST_NOT_FOUND");
             errorMap.put("ingestId", id.toString());
             response.setResult(errorMap);
@@ -346,11 +365,6 @@ public class IngestController {
 
         return response;
 
-    }
-
-    @RequestMapping("/")
-    public String angular() {
-        return "ngView";
     }
 
 }

@@ -50,7 +50,7 @@ public class UncompressStrategyTar implements UncompressStrategy {
         OutputStream out = null;
 
         try {
-            tarIn = createTarArchiveInputStream(file);
+            tarIn = this.createTarArchiveInputStream(file);
 
             TarArchiveEntry tarEntry = tarIn.getNextTarEntry();
 

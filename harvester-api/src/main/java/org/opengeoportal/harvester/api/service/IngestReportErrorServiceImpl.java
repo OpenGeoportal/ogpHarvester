@@ -54,142 +54,147 @@ import com.google.common.collect.Maps;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 @Service
 public class IngestReportErrorServiceImpl implements IngestReportErrorService {
-	/** Logger. */
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    /** Logger. */
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	/** Report error repository. */
-	@Autowired
-	private IngestReportErrorRepository reportErrorRepository;
+    /** Report error repository. */
+    @Autowired
+    private IngestReportErrorRepository reportErrorRepository;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.IngestReportErrorService#save
-	 * (org.opengeoportal.harvester.api.domain.IngestReportError)
-	 */
-	@Override
-	@Transactional
-	public IngestReportError save(IngestReportError reportError) {
-		return reportErrorRepository.save(reportError);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+     * getCountFieldErrorsByReportId(java.lang.Long)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Long> getCountErrorsByReportId(final Long id,
+            final IngestReportErrorType errorType) {
+        final List<Object[]> errorList = this.reportErrorRepository
+                .getCountErrorsByReportId(id, errorType);
+        final Map<String, Long> result = Maps.newTreeMap();
+        for (final Object[] fieldError : errorList) {
+            final String fieldName = (String) fieldError[0];
+            final Long errorCount = (Long) fieldError[1];
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
-	 * getCountErrorTypesByReportId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Map<IngestReportErrorType, Long> getCountErrorTypesByReportId(
-			Long reportId) {
-		List<Object[]> items = reportErrorRepository
-				.getCountErrorTypesByReportId(reportId);
-		List<IngestReportErrorType> remainingTypes = Lists
-				.newArrayList(IngestReportErrorType.values());
-		Map<IngestReportErrorType, Long> result = Maps.newHashMap();
-		for (Object item : items) {
-			Object[] tuple = (Object[]) item;
-			IngestReportErrorType errorType = (IngestReportErrorType) tuple[0];
-			Long count = (Long) tuple[1];
-			result.put(errorType, count);
-			remainingTypes.remove(errorType);
-		}
+            result.put(fieldName, errorCount);
 
-		// Set a default value for error types not returned by the repository
-		for (IngestReportErrorType errorType : remainingTypes) {
-			result.put(errorType, 0L);
-		}
+        }
+        return result;
+    }
 
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+     * getCountErrorTypesByReportId(java.lang.Long)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<IngestReportErrorType, Long> getCountErrorTypesByReportId(
+            final Long reportId) {
+        final List<Object[]> items = this.reportErrorRepository
+                .getCountErrorTypesByReportId(reportId);
+        final List<IngestReportErrorType> remainingTypes = Lists
+                .newArrayList(IngestReportErrorType.values());
+        final Map<IngestReportErrorType, Long> result = Maps.newHashMap();
+        for (final Object item : items) {
+            final Object[] tuple = (Object[]) item;
+            final IngestReportErrorType errorType = (IngestReportErrorType) tuple[0];
+            final Long count = (Long) tuple[1];
+            result.put(errorType, count);
+            remainingTypes.remove(errorType);
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
-	 * getCountFieldErrorsByReportId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Map<String, Long> getCountErrorsByReportId(Long id,
-			IngestReportErrorType errorType) {
-		List<Object[]> errorList = reportErrorRepository
-				.getCountErrorsByReportId(id, errorType);
-		Map<String, Long> result = Maps.newTreeMap();
-		for (Object[] fieldError : errorList) {
-			String fieldName = (String) fieldError[0];
-			Long errorCount = (Long) fieldError[1];
+        // Set a default value for error types not returned by the repository
+        for (final IngestReportErrorType errorType : remainingTypes) {
+            result.put(errorType, 0L);
+        }
 
-			result.put(fieldName, errorCount);
+        return result;
+    }
 
-		}
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.IngestReportErrorService#save
+     * (org.opengeoportal.harvester.api.domain.IngestReportError)
+     */
+    @Override
+    @Transactional
+    public IngestReportError save(final IngestReportError reportError) {
+        return this.reportErrorRepository.save(reportError);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
-	 * writeErrorZipForIngest(java.lang.Long, java.util.zip.ZipOutputStream,
-	 * java.lang.String[], java.lang.String[], java.lang.String[])
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public void writeErrorZipForIngest(Long reportId, ZipOutputStream out,
-			String[] requiredFieldErrors, String[] webserviceErrors,
-			String[] systemErrors) {
+    private void writeErrors(final Long reportId,
+            final IngestReportErrorType errorType, final String[] subcategories,
+            final ZipOutputStream out) {
+        if ((subcategories != null) && (subcategories.length > 0)) {
+            for (final String subcat : subcategories) {
+                final String fieldDir = errorType.toString()
+                        .toLowerCase(Locale.ENGLISH) + "/" + subcat;
+                int page = 0;
+                final int pageSize = 100;
+                boolean existNextPage = true;
+                while (existNextPage) {
+                    final Pageable pageRequest = new PageRequest(page,
+                            pageSize);
+                    final Page<IngestReportError> p = this.reportErrorRepository
+                            .findByReportIdAndTypeAndField(reportId, errorType,
+                                    subcat, pageRequest);
+                    for (final IngestReportError error : p.getContent()) {
+                        final String metadata = error.getMetadata();
 
-		writeErrors(reportId, IngestReportErrorType.REQUIRED_FIELD_ERROR,
-				requiredFieldErrors, out);
-		writeErrors(reportId, IngestReportErrorType.WEB_SERVICE_ERROR,
-				webserviceErrors, out);
-		writeErrors(reportId, IngestReportErrorType.SYSTEM_ERROR, systemErrors,
-				out);
+                        if (metadata != null) {
+                            try {
+                                out.putNextEntry(new ZipEntry(fieldDir
+                                        + "/error_" + error.getId() + ".xml"));
+                                out.write(metadata
+                                        .getBytes(Charset.forName("UTF-8")));
+                            } catch (final IOException e) {
+                                if (this.logger.isErrorEnabled()) {
+                                    this.logger
+                                            .error("Error adding entry (errorId="
+                                                    + error.getId()
+                                                    + " to zip file", e);
+                                }
+                            }
+                        }
+                    }
 
-	}
+                    page++;
+                    existNextPage = page < p.getTotalPages();
+                }
+            }
+        }
+    }
 
-	private void writeErrors(Long reportId, IngestReportErrorType errorType,
-			String[] subcategories, ZipOutputStream out) {
-		if (subcategories != null && subcategories.length > 0) {
-			for (String subcat : subcategories) {
-				String fieldDir = errorType.toString().toLowerCase(Locale.ENGLISH) + "/" + subcat;
-				int page = 0;
-				int pageSize = 100;
-				boolean existNextPage = true;
-				while (existNextPage) {
-					Pageable pageRequest = new PageRequest(page, pageSize);
-					Page<IngestReportError> p = reportErrorRepository
-							.findByReportIdAndTypeAndField(reportId, errorType,
-									subcat, pageRequest);
-					for (IngestReportError error : p.getContent()) {
-						String metadata = error.getMetadata();
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportErrorService#
+     * writeErrorZipForIngest(java.lang.Long, java.util.zip.ZipOutputStream,
+     * java.lang.String[], java.lang.String[], java.lang.String[])
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void writeErrorZipForIngest(final Long reportId,
+            final ZipOutputStream out, final String[] requiredFieldErrors,
+            final String[] webserviceErrors, final String[] systemErrors) {
 
-						if (metadata != null) {
-							try {
-								out.putNextEntry(new ZipEntry(fieldDir
-										+ "/error_" + error.getId() + ".xml"));
-								out.write(metadata.getBytes(Charset
-										.forName("UTF-8")));
-							} catch (IOException e) {
-								if (logger.isErrorEnabled()) {
-									logger.error("Error adding entry (errorId="
-											+ error.getId() + " to zip file", e);
-								}
-							}
-						}
-					}
+        this.writeErrors(reportId, IngestReportErrorType.REQUIRED_FIELD_ERROR,
+                requiredFieldErrors, out);
+        this.writeErrors(reportId, IngestReportErrorType.WEB_SERVICE_ERROR,
+                webserviceErrors, out);
+        this.writeErrors(reportId, IngestReportErrorType.SYSTEM_ERROR,
+                systemErrors, out);
 
-					page++;
-					existNextPage = page < p.getTotalPages();
-				}
-			}
-		}
-	}
+    }
 
 }

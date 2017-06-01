@@ -1,29 +1,27 @@
 package org.opengeoportal.harvester.api.client.geonetwork;
 
-
-import org.opengeoportal.harvester.api.client.geonetwork.GeoNetworkSearchResult;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class GeoNetworkSearchResponse {
     private int total;
-    private List<GeoNetworkSearchResult> metadataSearchResults = new ArrayList<GeoNetworkSearchResult>();
+    private final List<GeoNetworkSearchResult> metadataSearchResults = new ArrayList<GeoNetworkSearchResult>();
 
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
+    public void addMetadataSearchResult(
+            final GeoNetworkSearchResult metadataSearchResult) {
+        this.metadataSearchResults.add(metadataSearchResult);
     }
 
     public List<GeoNetworkSearchResult> getMetadataSearchResults() {
-        return Collections.unmodifiableList(metadataSearchResults);
+        return Collections.unmodifiableList(this.metadataSearchResults);
     }
 
-    public void addMetadataSearchResult(GeoNetworkSearchResult metadataSearchResult) {
-        metadataSearchResults.add(metadataSearchResult);
+    public int getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(final int total) {
+        this.total = total;
     }
 }

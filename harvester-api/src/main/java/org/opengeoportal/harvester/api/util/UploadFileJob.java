@@ -3,7 +3,7 @@ package org.opengeoportal.harvester.api.util;
 import java.io.File;
 
 public class UploadFileJob {
-    
+
     private String workspace;
     private String dataset;
     private String wmsEndPoint;
@@ -11,65 +11,78 @@ public class UploadFileJob {
     private File file;
     private long assigned = 0;
     private boolean completed = false;
-    
-    public String getWorkspace() {
-        return workspace;
+
+    public long getAssigned() {
+        return this.assigned;
     }
-    public void setWorkspace(String workspace) {
-        this.workspace = workspace;
-    }
+
     public String getDataset() {
-        return dataset;
+        return this.dataset;
     }
-    public void setDataset(String dataset) {
-        this.dataset = dataset;
-    }
+
     public File getFile() {
-        return file;
+        return this.file;
     }
-    public void setFile(File file) {
-        this.file = file;
+
+    public String getWfsEndPoint() {
+        return this.wfsEndPoint;
     }
+
+    public String getWmsEndPoint() {
+        return this.wmsEndPoint;
+    }
+
+    public String getWorkspace() {
+        return this.workspace;
+    }
+
     public boolean isCompleted() {
-        return completed;
+        return this.completed;
     }
-    public void setCompleted(boolean completed) {
-        if(completed == true) {
-            try{
+
+    public void setAssigned(final long assigned) {
+        this.assigned = assigned;
+    }
+
+    public void setCompleted(final boolean completed) {
+        if (completed == true) {
+            try {
                 // To free disk space and memory
-                file.delete();
-                file = null;
-            } catch (Exception e) {}
+                this.file.delete();
+                this.file = null;
+            } catch (final Exception e) {
+            }
         }
         this.completed = completed;
     }
-    public long getAssigned() {
-        return assigned;
+
+    public void setDataset(final String dataset) {
+        this.dataset = dataset;
     }
-    public void setAssigned(long assigned) {
-        this.assigned = assigned;
-    }   
-    public String getWmsEndPoint() {
-        return wmsEndPoint;
+
+    public void setFile(final File file) {
+        this.file = file;
     }
-    public void setWmsEndPoint(String wmsEndPoint) {
-        this.wmsEndPoint = wmsEndPoint;
-    }
-    public String getWfsEndPoint() {
-        return wfsEndPoint;
-    }
-    public void setWfsEndPoint(String wfsEndPoint) {
+
+    public void setWfsEndPoint(final String wfsEndPoint) {
         this.wfsEndPoint = wfsEndPoint;
     }
-    
+
+    public void setWmsEndPoint(final String wmsEndPoint) {
+        this.wmsEndPoint = wmsEndPoint;
+    }
+
+    public void setWorkspace(final String workspace) {
+        this.workspace = workspace;
+    }
+
     @Override
     public String toString() {
-        return "UploadFileJob [workspace=" + workspace + ", dataset=" + dataset
-                + ", wmsEndPoint=" + wmsEndPoint + ", wfsEndPoint="
-                + wfsEndPoint + ", file=" + file + ", assigned=" + assigned
-                + ", completed=" + completed + "]";
+        return "UploadFileJob [workspace=" + this.workspace + ", dataset="
+                + this.dataset + ", wmsEndPoint=" + this.wmsEndPoint
+                + ", wfsEndPoint=" + this.wfsEndPoint + ", file=" + this.file
+                + ", assigned=" + this.assigned + ", completed="
+                + this.completed + "]";
     }
-    
-    
 
 }

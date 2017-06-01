@@ -38,46 +38,47 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
  * Repositories predefined in the app.
+ * 
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
  *
  */
 @Entity
 public class PredefinedRepository extends AbstractPersistable<Long> {
 
-	public static final String COLUMN_SERVICE_TYPE = "serviceType";
-	public static final String COLUMN_SERVICE_NAME = "name";
+    public static final String COLUMN_SERVICE_TYPE = "serviceType";
+    public static final String COLUMN_SERVICE_NAME = "name";
 
-	private static final long serialVersionUID = -3588702298290481469L;
+    private static final long serialVersionUID = -3588702298290481469L;
 
-	@Column(unique = true, nullable = false)
-	private String name;
-	@Column(nullable = false)
-	private String url;
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private InstanceType serviceType;
+    @Column(unique = true, nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private String url;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private InstanceType serviceType;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public InstanceType getServiceType() {
+        return this.serviceType;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getUrl() {
+        return this.url;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public InstanceType getServiceType() {
-		return serviceType;
-	}
+    public void setServiceType(final InstanceType serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public void setServiceType(InstanceType serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setUrl(final String url) {
+        this.url = url;
+    }
 }

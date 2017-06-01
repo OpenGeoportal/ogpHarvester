@@ -6,29 +6,30 @@ import org.opengeoportal.harvester.api.client.csw.exception.InvalidParameterValu
  * Result type enum.
  */
 public enum ResultType {
-	HITS("hits"),
-    RESULTS("results"),
-    VALIDATE("validate");
+    HITS("hits"), RESULTS("results"), VALIDATE("validate");
+
+    public static ResultType parse(final String type)
+            throws InvalidParameterValueEx {
+        if (type == null) {
+            return HITS;
+        }
+        for (final ResultType rtype : ResultType.values()) {
+            if (type.equals(rtype.toString())) {
+                return rtype;
+            }
+        }
+        throw new InvalidParameterValueEx("resultType", type);
+    }
 
     private String type;
 
-	private ResultType(String type) {
+    private ResultType(final String type) {
         this.type = type;
     }
 
-	public String toString() {
-        return type;
+    @Override
+    public String toString() {
+        return this.type;
     }
-
-	public static ResultType parse(String type) throws InvalidParameterValueEx {
-		if (type == null) {
-            return HITS;
-        }
-		for (ResultType rtype : ResultType.values()) {
-			if (type.equals(rtype.toString()))
-				return rtype;
-		}
-		throw new InvalidParameterValueEx("resultType", type);
-	}
 
 }

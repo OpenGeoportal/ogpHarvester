@@ -40,30 +40,30 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class CustomJsonDateSerializer extends JsonSerializer<Date> {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
-	 * com.fasterxml.jackson.core.JsonGenerator,
-	 * com.fasterxml.jackson.databind.SerializerProvider)
-	 */
-	@Override
-	public void serialize(Date value, JsonGenerator jgen,
-			SerializerProvider provider) throws IOException,
-			JsonProcessingException {
-		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
-		String formattedDate = null;
-		if (value != null) {
-			formattedDate = formatter.format(value);
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.fasterxml.jackson.databind.JsonSerializer#serialize(java.lang.Object,
+     * com.fasterxml.jackson.core.JsonGenerator,
+     * com.fasterxml.jackson.databind.SerializerProvider)
+     */
+    @Override
+    public void serialize(final Date value, final JsonGenerator jgen,
+            final SerializerProvider provider)
+            throws IOException, JsonProcessingException {
+        final SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+        String formattedDate = null;
+        if (value != null) {
+            formattedDate = formatter.format(value);
+        }
 
-		jgen.writeString(formattedDate);
+        jgen.writeString(formattedDate);
 
-	}
+    }
 
 }

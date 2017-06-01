@@ -34,7 +34,7 @@ public class GeonetworkIngestJob extends BaseIngestJob {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opengeoportal.harvester.api.component.BaseIngestJob#ingest()
      */
     @Override
@@ -44,76 +44,78 @@ public class GeonetworkIngestJob extends BaseIngestJob {
             int page = 0;
             long failedRecordsCount = 0;
 
-            URL geonetworkURL = new URL(ingest.getActualUrl());
+            final URL geonetworkURL = new URL(this.ingest.getActualUrl());
 
-            GeoNetworkClient gnClient = new GeoNetworkClient(geonetworkURL);
+            final GeoNetworkClient gnClient = new GeoNetworkClient(
+                    geonetworkURL);
 
-            GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
-                    (IngestGeonetwork) ingest);
-            logger.info("GeonetworkIngestJob: search parameters "
+            final GeoNetworkSearchParams searchParameters = new GeoNetworkSearchParams(
+                    (IngestGeonetwork) this.ingest);
+            this.logger.info("GeonetworkIngestJob: search parameters "
                     + searchParameters.toString());
 
-            while (!(isInterruptRequested() || processFinished)) {
-                if (logger.isInfoEnabled()) {
-                    logger.info(String
-                            .format("Ingest %d: requesting page=%d,"
+            while (!(this.isInterruptRequested() || processFinished)) {
+                if (this.logger.isInfoEnabled()) {
+                    this.logger.info(String.format(
+                            "Ingest %d: requesting page=%d,"
                                     + " pageSize=%d, from=%d, to=%d to GN",
-                                    ingest.getId(), page,
-                                    searchParameters.getPageSize(),
-                                    searchParameters.getFrom(),
-                                    searchParameters.getTo()));
+                            this.ingest.getId(), page,
+                            searchParameters.getPageSize(),
+                            searchParameters.getFrom(),
+                            searchParameters.getTo()));
                 }
                 searchParameters.setPage(page++);
-                GeoNetworkSearchResponse searchResponse = gnClient
+                final GeoNetworkSearchResponse searchResponse = gnClient
                         .search(searchParameters);
 
-                List<Metadata> metadataList = Lists
+                final List<Metadata> metadataList = Lists
                         .newArrayListWithCapacity(searchResponse
                                 .getMetadataSearchResults().size());
 
-                for (GeoNetworkSearchResult record : searchResponse
+                for (final GeoNetworkSearchResult record : searchResponse
                         .getMetadataSearchResults()) {
                     Document document = null;
                     try {
-                        document = gnClient.retrieveMetadata(record
-                                .getId());
+                        document = gnClient.retrieveMetadata(record.getId());
 
-                        MetadataParser parser = parserProvider
+                        final MetadataParser parser = this.parserProvider
                                 .getMetadataParser(document);
-                        MetadataParserResponse parserResult = parser
+                        final MetadataParserResponse parserResult = parser
                                 .parse(document);
 
-                        Metadata metadata = parserResult.getMetadata();
-                        metadata.setInstitution(ingest.getNameOgpRepository());
+                        final Metadata metadata = parserResult.getMetadata();
+                        metadata.setInstitution(
+                                this.ingest.getNameOgpRepository());
 
-                        boolean valid = metadataValidator.validate(metadata,
-                                report);
+                        final boolean valid = this.metadataValidator
+                                .validate(metadata, this.report);
                         if (valid) {
                             metadataList.add(metadata);
                         } else {
                             failedRecordsCount++;
                         }
 
-                    } catch (Exception ex) {
+                    } catch (final Exception ex) {
                         failedRecordsCount++;
-                        saveException(ex,
+                        this.saveException(ex,
                                 IngestReportErrorType.SYSTEM_ERROR, document);
 
                     }
                 }
-                report.setFailedRecordsCount(failedRecordsCount);
-                metadataIngester.ingest(metadataList, report);
+                this.report.setFailedRecordsCount(failedRecordsCount);
+                this.metadataIngester.ingest(metadataList, this.report);
 
                 // --- check to see if we have to perform additional searches
-                processFinished = (searchParameters.getFrom() + searchParameters.getPageSize() > searchResponse
-                        .getTotal());
+                processFinished = ((searchParameters.getFrom()
+                        + searchParameters.getPageSize()) > searchResponse
+                                .getTotal());
 
             }
 
-        } catch (Exception e) {
-            logger.error(
+        } catch (final Exception e) {
+            this.logger.error(
                     "Error in Geonetwork Ingest: " + this.ingest.getName(), e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
         }
 
     }

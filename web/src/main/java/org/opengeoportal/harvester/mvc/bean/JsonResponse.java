@@ -31,30 +31,30 @@ package org.opengeoportal.harvester.mvc.bean;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class JsonResponse {
-	public enum STATUS {
-		SUCCESS, FAIL
-	};
+    public enum STATUS {
+        SUCCESS, FAIL
+    };
 
-	private STATUS status = null;
-	private Object result = null;
+    private STATUS status = null;
+    private Object result = null;
 
-	public STATUS getStatus() {
-		return status;
-	}
+    public Object getResult() {
+        return this.result;
+    }
 
-	public void setStatus(STATUS status) {
-		this.status = status;
-	}
+    public STATUS getStatus() {
+        return this.status;
+    }
 
-	public Object getResult() {
-		return result;
-	}
+    public void setResult(final Object result) {
+        this.result = result;
+    }
 
-	public void setResult(Object result) {
-		this.result = result;
-	}
+    public void setStatus(final STATUS status) {
+        this.status = status;
+    }
 
 }

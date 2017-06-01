@@ -3,7 +3,6 @@ package org.opengeoportal.harvester.mvc.utils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
@@ -30,8 +29,6 @@ public class UncompressStrategy7z implements UncompressStrategy {
     public void uncompress(final File file, final File uncompressDir)
             throws UncompressStrategyException {
         SevenZFile sevenZFile = null;
-        final OutputStream out = null;
-
         try {
             sevenZFile = new SevenZFile(file);
             SevenZArchiveEntry entry = sevenZFile.getNextEntry();

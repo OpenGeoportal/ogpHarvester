@@ -36,37 +36,37 @@ import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public interface IngestJobStatusService {
-	/**
-	 * Save an {@link IngestJobStatus}.
-	 * 
-	 * @param jobStatus
-	 *            the {@link IngestJobStatus} to save.
-	 * @return the saved {@link IngestJobStatus} instance.
-	 */
-	IngestJobStatus save(IngestJobStatus jobStatus);
+    /**
+     * Find the last IngestJobStatus available for the ingest with the passed
+     * identifier.
+     * 
+     * @param id
+     *            Ingest identifier.
+     * @return the last Ingest available for the ingest or null if it has never
+     *         been executed.
+     */
+    IngestJobStatus findLastStatusForIngest(Long id);
 
-	/**
-	 * Return the list of statuses for an ingest
-	 * 
-	 * @param ingestId
-	 *            ingest identifier.
-	 * @return the list of {@link IngestJobStatus} associated to the
-	 *         {@link Ingest}.
-	 */
-	List<IngestJobStatus> getStatusesForIngest(Long ingestId);
+    /**
+     * Return the list of statuses for an ingest
+     * 
+     * @param ingestId
+     *            ingest identifier.
+     * @return the list of {@link IngestJobStatus} associated to the
+     *         {@link Ingest}.
+     */
+    List<IngestJobStatus> getStatusesForIngest(Long ingestId);
 
-	/**
-	 * Find the last IngestJobStatus available for the ingest with the passed
-	 * identifier.
-	 * 
-	 * @param id
-	 *            Ingest identifier.
-	 * @return the last Ingest available for the ingest or null if it has never
-	 *         been executed.
-	 */
-	IngestJobStatus findLastStatusForIngest(Long id);
+    /**
+     * Save an {@link IngestJobStatus}.
+     * 
+     * @param jobStatus
+     *            the {@link IngestJobStatus} to save.
+     * @return the saved {@link IngestJobStatus} instance.
+     */
+    IngestJobStatus save(IngestJobStatus jobStatus);
 
 }

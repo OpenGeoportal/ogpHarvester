@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.opengeoportal.harvester.api.service;
 
@@ -16,36 +16,38 @@ import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>
- * 
- * 
+ *
+ *
  */
 @Service
-public class PredefinedRepositoryServiceImpl implements
-		PredefinedRepositoryService {
+public class PredefinedRepositoryServiceImpl
+        implements PredefinedRepositoryService {
 
-	@Resource
-	private PredefinedRepositoryRepository predefinedRepoRepository;
+    @Resource
+    private PredefinedRepositoryRepository predefinedRepoRepository;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.PredefinedRepositoryService#findAll
-	 * ()
-	 */
-	@Override
-	public List<PredefinedRepository> findAll() {
-		Sort sort = new Sort(Sort.Direction.ASC,
-				Lists.newArrayList(PredefinedRepository.COLUMN_SERVICE_NAME));
-		return predefinedRepoRepository.findAll(sort);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.PredefinedRepositoryService#
+     * findAll ()
+     */
+    @Override
+    public List<PredefinedRepository> findAll() {
+        final Sort sort = new Sort(Sort.Direction.ASC,
+                Lists.newArrayList(PredefinedRepository.COLUMN_SERVICE_NAME));
+        return this.predefinedRepoRepository.findAll(sort);
+    }
 
-	/* (non-Javadoc)
-	 * @see org.opengeoportal.harvester.api.service.PredefinedRepositoryService#findAllNotInCustomRepositories()
-	 */
-	@Override
-	public List<PredefinedRepository> findAllNotInCustomRepositories() {
-		return predefinedRepoRepository.findAllNotInCustomRepositories();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.PredefinedRepositoryService#
+     * findAllNotInCustomRepositories()
+     */
+    @Override
+    public List<PredefinedRepository> findAllNotInCustomRepositories() {
+        return this.predefinedRepoRepository.findAllNotInCustomRepositories();
+    }
 
 }

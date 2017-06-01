@@ -34,19 +34,19 @@ import org.opengeoportal.harvester.api.domain.Ingest;
 /**
  * An IngestJobFactory is responsible for producing instances of concrete
  * BaseIngestJob according with the Ingest passed to it.
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public interface IngestJobFactory {
-	/**
-	 * Create a new ingest job based on the ingest passed as parameter.
-	 * 
-	 * @param ingest
-	 *            the ingest.
-	 * @return a concrete {@link BaseIngestJob} subclass. This instance must be
-	 *         inited calling its method <code>init</code>.
-	 */
-	BaseIngestJob newIngestJob(Ingest ingest);
+    /**
+     * Create a new ingest job based on the ingest passed as parameter.
+     * 
+     * @param ingest
+     *            the ingest.
+     * @return a concrete {@link BaseIngestJob} subclass. This instance must be
+     *         inited calling its method <code>init</code>.
+     */
+    BaseIngestJob newIngestJob(Ingest ingest);
 
 }

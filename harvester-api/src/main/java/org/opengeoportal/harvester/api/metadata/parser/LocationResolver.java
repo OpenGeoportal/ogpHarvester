@@ -7,6 +7,6 @@ import org.w3c.dom.Document;
 import com.google.common.collect.Multimap;
 
 public interface LocationResolver {
-	Multimap<LocationType, LocationLink> resolveLocation(Document xmlDocument);
-	
+    Multimap<LocationType, LocationLink> resolveLocation(Document xmlDocument);
+
 }

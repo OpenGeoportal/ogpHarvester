@@ -35,20 +35,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
-public interface IngestReportRepository extends
-		JpaRepository<IngestReport, Long> {
+public interface IngestReportRepository
+        extends JpaRepository<IngestReport, Long> {
 
-	/**
-	 * Find an {@link IngestReport} by its associated {@link IngestJobStatus}
-	 * identifier.
-	 * 
-	 * @param id
-	 *            job status identifier.
-	 * @return an IngestReport with an associadted {@link IngestJobStatus} with
-	 *         <code>id</code> identifier or <code>null</code>.
-	 */
-	IngestReport findByJobStatusId(Long id);
+    /**
+     * Find an {@link IngestReport} by its associated {@link IngestJobStatus}
+     * identifier.
+     * 
+     * @param id
+     *            job status identifier.
+     * @return an IngestReport with an associadted {@link IngestJobStatus} with
+     *         <code>id</code> identifier or <code>null</code>.
+     */
+    IngestReport findByJobStatusId(Long id);
 
 }

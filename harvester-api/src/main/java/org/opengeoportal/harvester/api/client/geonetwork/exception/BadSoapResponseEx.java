@@ -1,29 +1,28 @@
 package org.opengeoportal.harvester.api.client.geonetwork.exception;
 
-
 public class BadSoapResponseEx extends BadResponseEx {
 
-	private static final long serialVersionUID = -3441153507513692436L;
-
-	/**
-     * @param message
-     * @param cause
-     */
-    public BadSoapResponseEx(String message, Throwable cause) {
-        super(message, cause);
-    }
+    private static final long serialVersionUID = -3441153507513692436L;
 
     /**
      * @param message
      */
-    public BadSoapResponseEx(String message) {
+    public BadSoapResponseEx(final String message) {
         super(message);
     }
 
     /**
+     * @param message
      * @param cause
      */
-    public BadSoapResponseEx(Throwable cause) {
+    public BadSoapResponseEx(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * @param cause
+     */
+    public BadSoapResponseEx(final Throwable cause) {
         super(cause);
     }
 }

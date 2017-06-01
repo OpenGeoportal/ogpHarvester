@@ -1,9 +1,8 @@
 package org.opengeoportal.harvester.api.client.csw.response;
 
-import org.jdom.Element;
-
 import java.util.List;
 
+import org.jdom.Element;
 
 public class GetRecordsResponse {
     private int numberOfRecordsMatched;
@@ -13,44 +12,43 @@ public class GetRecordsResponse {
 
     List<Element> results;
 
-
-    public int getNumberOfRecordsMatched() {
-        return numberOfRecordsMatched;
-    }
-
-    public void setNumberOfRecordsMatched(int numberOfRecordsMatched) {
-        this.numberOfRecordsMatched = numberOfRecordsMatched;
-    }
-
-    public int getNumberOfRecordsReturned() {
-        return numberOfRecordsReturned;
-    }
-
-    public void setNumberOfRecordsReturned(int numberOfRecordsReturned) {
-        this.numberOfRecordsReturned = numberOfRecordsReturned;
-    }
-
     public String getElementSet() {
-        return elementSet;
-    }
-
-    public void setElementSet(String elementSet) {
-        this.elementSet = elementSet;
+        return this.elementSet;
     }
 
     public int getNextRecord() {
-        return nextRecord;
+        return this.nextRecord;
     }
 
-    public void setNextRecord(int nextRecord) {
-        this.nextRecord = nextRecord;
+    public int getNumberOfRecordsMatched() {
+        return this.numberOfRecordsMatched;
+    }
+
+    public int getNumberOfRecordsReturned() {
+        return this.numberOfRecordsReturned;
     }
 
     public List<Element> getResults() {
-        return results;
+        return this.results;
     }
 
-    public void setResults(List<Element> results) {
+    public void setElementSet(final String elementSet) {
+        this.elementSet = elementSet;
+    }
+
+    public void setNextRecord(final int nextRecord) {
+        this.nextRecord = nextRecord;
+    }
+
+    public void setNumberOfRecordsMatched(final int numberOfRecordsMatched) {
+        this.numberOfRecordsMatched = numberOfRecordsMatched;
+    }
+
+    public void setNumberOfRecordsReturned(final int numberOfRecordsReturned) {
+        this.numberOfRecordsReturned = numberOfRecordsReturned;
+    }
+
+    public void setResults(final List<Element> results) {
         this.results = results;
     }
 }

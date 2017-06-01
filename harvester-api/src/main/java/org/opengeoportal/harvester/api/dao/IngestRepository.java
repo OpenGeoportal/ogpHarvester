@@ -38,53 +38,51 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public interface IngestRepository extends JpaRepository<Ingest, Long> {
 
-
-	/**
-	 * Set <code>scheduled</code> property to null for all Ingests related with
-	 * repository.
-	 * 
-	 * @param repositoryId
-	 *            repository Id
-	 * @return modified repositories count.
-	 */
-	@Modifying
-	@Transactional
-	@Query(value = "update Ingest i set i.scheduled=false where "
-			+ "i.repository.id=?1")
-	int setScheduledForRepositoryId(Long repositoryId);
-
-	/**
-	 * Count the ingests scheduled that use a given repository.
-	 * 
-	 * @param repoId
-	 *            repository identifier.
-	 * @return the number of ingests scheduled for a repository.
-	 */
-	@Query(value = "select count(i) from Ingest i where "
-			+ "i.repository.id=?1 and i.scheduled=true")
-	Long countByRepositoryIdAndScheduledTrue(Long repoId);
-
-	/**
-	 * 
-	 * @param repositoryId
-	 *            repository id.
-	 * @return return the list of scheduled ingests for a given repository.
-	 */
-	List<Ingest> findByRepositoryIdAndScheduledTrue(Long repositoryId);
-	
-	   /**
+    /**
+     * Count the ingests scheduled that use a given repository.
      * 
+     * @param repoId
+     *            repository identifier.
+     * @return the number of ingests scheduled for a repository.
+     */
+    @Query(value = "select count(i) from Ingest i where "
+            + "i.repository.id=?1 and i.scheduled=true")
+    Long countByRepositoryIdAndScheduledTrue(Long repoId);
+
+    /**
+     *
      * @param name
      *            the ingest name.
      * @return return the ingest for a given name.
      */
     Ingest findByName(String name);
-	
-	
+
+    /**
+     * 
+     * @param repositoryId
+     *            repository id.
+     * @return return the list of scheduled ingests for a given repository.
+     */
+    List<Ingest> findByRepositoryIdAndScheduledTrue(Long repositoryId);
+
+    /**
+     * Set <code>scheduled</code> property to null for all Ingests related with
+     * repository.
+     * 
+     * @param repositoryId
+     *            repository Id
+     * @return modified repositories count.
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "update Ingest i set i.scheduled=false where "
+            + "i.repository.id=?1")
+    int setScheduledForRepositoryId(Long repositoryId);
+
 }

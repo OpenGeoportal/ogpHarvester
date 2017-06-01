@@ -15,16 +15,20 @@ public interface MetadataParserProvider {
     /**
      * Create a new MetadataParser based on the nature of the document.
      *
-     * @param document DOM document.
+     * @param document
+     *            DOM document.
      * @return a new instance of MetadataParser.
-     * @throws UnsupportedMetadataType if Metadata Type is not supported.
+     * @throws UnsupportedMetadataType
+     *             if Metadata Type is not supported.
      */
-    MetadataParser getMetadataParser(Document document) throws UnsupportedMetadataType;
+    MetadataParser getMetadataParser(Document document)
+            throws UnsupportedMetadataType;
 
     /**
      * Create a new MetadataParser capable of read Solr records.
      *
-     * @param record a SolrRecord.
+     * @param record
+     *            a SolrRecord.
      * @return a new MetadataParser instance.
      */
     BaseMetadataParser getMetadataParser(SolrRecord record);

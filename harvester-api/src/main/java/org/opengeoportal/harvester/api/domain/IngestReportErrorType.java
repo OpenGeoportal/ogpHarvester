@@ -29,7 +29,6 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-
 public enum IngestReportErrorType {
-	REQUIRED_FIELD_ERROR, WEB_SERVICE_ERROR, SYSTEM_ERROR
+    REQUIRED_FIELD_ERROR, WEB_SERVICE_ERROR, SYSTEM_ERROR
 }

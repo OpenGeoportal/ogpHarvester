@@ -109,11 +109,11 @@
 				} else if(!download.locked && download.valid && download.dataset==='') {
 					download.status = $translate("UPLOAD_DATA.DATASET_NAME_REQUIRED");
 					download.statusColor = 'red';
-					validSet = false
+					validSet = false;
 				} else if(!download.locked && !download.valid) {
 					download.status = $translate("UPLOAD_DATA.NOT_ALLOWED");
 					download.statusColor = 'red';
-					validSet = false
+					validSet = false;
 				} else if(!download.locked) {
 					download.status = $translate("UPLOAD_DATA.READY");
 					download.statusColor = 'green';

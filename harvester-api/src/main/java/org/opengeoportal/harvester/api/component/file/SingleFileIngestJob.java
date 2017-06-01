@@ -41,107 +41,110 @@ public class SingleFileIngestJob extends BaseIngestJob {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.opengeoportal.harvester.api.component.BaseIngestJob#ingest()
      */
     @Override
     public void ingest() {
         try {
-            long failedRecordsCount = 0;          
+            long failedRecordsCount = 0;
 
-            List<Metadata> metadataList = Lists.newArrayListWithCapacity(1);
+            final List<Metadata> metadataList = Lists
+                    .newArrayListWithCapacity(1);
             UploadFileJob currentJob = UploadJobQueue.getAJob();
 
-            while (currentJob!=null && !isInterruptRequested()) {
+            while ((currentJob != null) && !this.isInterruptRequested()) {
 
                 Document doc = null;
 
                 try {
-                    File metadataFile = currentJob.getFile();
+                    final File metadataFile = currentJob.getFile();
 
-                    FileInputStream in = new FileInputStream(metadataFile);
+                    final FileInputStream in = new FileInputStream(
+                            metadataFile);
 
                     doc = XmlUtil.load(in);
 
-                    MetadataType metadataType = XmlUtil.getMetadataType(doc);
+                    final MetadataType metadataType = XmlUtil
+                            .getMetadataType(doc);
 
                     BaseXmlMetadataParser parser;
 
-                    if(metadataType.equals(MetadataType.ISO_19139)) {
+                    if (metadataType.equals(MetadataType.ISO_19139)) {
                         parser = new Iso19139MetadataParser();
-                    } else  if(metadataType.equals(MetadataType.FGDC)) {
+                    } else if (metadataType.equals(MetadataType.FGDC)) {
                         parser = new FgdcMetadataParser();
                     } else {
                         throw new UnsupportedMetadataType();
                     }
 
-                    MetadataParserResponse parsedMetadata = parser.parse(doc);
+                    final MetadataParserResponse parsedMetadata = parser
+                            .parse(doc);
 
-                    Metadata metadata = parsedMetadata.getMetadata();
-                    
+                    final Metadata metadata = parsedMetadata.getMetadata();
+
                     // to make metadata coupled with the shape file layer
-                    String workspace = currentJob.getWorkspace();
-                    String dataSet = currentJob.getDataset();
-                    String wms = currentJob.getWmsEndPoint();
-                    String wfs = currentJob.getWfsEndPoint();
-                           
+                    final String workspace = currentJob.getWorkspace();
+                    final String dataSet = currentJob.getDataset();
+                    final String wms = currentJob.getWmsEndPoint();
+                    final String wfs = currentJob.getWfsEndPoint();
+
                     // values for shapefile binding
                     metadata.setWorkspaceName(workspace);
                     metadata.setOwsName(dataSet);
-                   
+
                     String currentLocation = metadata.getLocation();
-                    if(currentLocation!= null && currentLocation.contains("{") && currentLocation.contains("}")) {
+                    if ((currentLocation != null)
+                            && currentLocation.contains("{")
+                            && currentLocation.contains("}")) {
                         // Prepare JSON Object for the request
                         JSONObject request = null;
-                        
-                        String json = "";
-                        
-                        JSONParser jsonParser = new JSONParser();
+
+                        final String json = "";
+
+                        final JSONParser jsonParser = new JSONParser();
                         request = (JSONObject) jsonParser.parse(json);
                         request.put("wms", wms);
                         request.put("wfs", wfs);
-                        
+
                         currentLocation = request.toString();
                     } else {
-                        JSONObject request = new JSONObject();
+                        final JSONObject request = new JSONObject();
                         request.put("wms", wms);
                         request.put("wfs", wfs);
-                        
-                        currentLocation = request.toString();                        
+
+                        currentLocation = request.toString();
                     }
-                    
+
                     metadata.setLocation(currentLocation);
 
-                    boolean valid = metadataValidator.validate(metadata,
-                            report);
-                    
+                    final boolean valid = this.metadataValidator
+                            .validate(metadata, this.report);
+
                     if (valid) {
                         metadataList.add(metadata);
                     } else {
                         failedRecordsCount++;
-                    }  
+                    }
 
-
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     failedRecordsCount++;
-                    saveException(ex,
-                            IngestReportErrorType.SYSTEM_ERROR, doc);
+                    this.saveException(ex, IngestReportErrorType.SYSTEM_ERROR,
+                            doc);
 
                 }
-                report.setFailedRecordsCount(failedRecordsCount);
-                metadataIngester.ingest(metadataList, report);
+                this.report.setFailedRecordsCount(failedRecordsCount);
+                this.metadataIngester.ingest(metadataList, this.report);
 
                 currentJob.setCompleted(true);
                 currentJob = UploadJobQueue.getAJob();
 
             }
 
-
-
-        } catch (Exception e) {
-            logger.error(
+        } catch (final Exception e) {
+            this.logger.error(
                     "Error in SingleFile Ingest: " + this.ingest.getName(), e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
         }
 
     }

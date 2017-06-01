@@ -43,36 +43,37 @@ import javax.persistence.TemporalType;
 @DiscriminatorValue("WEBDAV")
 public class IngestWebDav extends Ingest {
 
-	private static final long serialVersionUID = -5488792457603165652L;
+    private static final long serialVersionUID = -5488792457603165652L;
 
-	@Column
-	@Temporal(TemporalType.DATE)
-	private Date dateFrom;
+    @Column
+    @Temporal(TemporalType.DATE)
+    private Date dateFrom;
 
-	@Column
-	@Temporal(TemporalType.DATE)
-	private Date dateTo;
+    @Column
+    @Temporal(TemporalType.DATE)
+    private Date dateTo;
 
-	public IngestWebDav() {
-		super();
-		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"geographicExtent", "themeKeyword", "placeKeyword", "topic",
-				"dateOfContent", "originator", "dataType", "webServices" }));
-	}
+    public IngestWebDav() {
+        super();
+        this.validRequiredFields = new HashSet<String>(
+                Arrays.asList(new String[] { "geographicExtent", "themeKeyword",
+                        "placeKeyword", "topic", "dateOfContent", "originator",
+                        "dataType", "webServices" }));
+    }
 
-	public Date getDateFrom() {
-		return dateFrom;
-	}
+    public Date getDateFrom() {
+        return this.dateFrom;
+    }
 
-	public void setDateFrom(Date dateFrom) {
-		this.dateFrom = dateFrom;
-	}
+    public Date getDateTo() {
+        return this.dateTo;
+    }
 
-	public Date getDateTo() {
-		return dateTo;
-	}
+    public void setDateFrom(final Date dateFrom) {
+        this.dateFrom = dateFrom;
+    }
 
-	public void setDateTo(Date dateTo) {
-		this.dateTo = dateTo;
-	}
+    public void setDateTo(final Date dateTo) {
+        this.dateTo = dateTo;
+    }
 }

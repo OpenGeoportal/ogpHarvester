@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.hibernate.loader.custom.Return;
 import org.opengeoportal.harvester.api.dao.IngestJobStatusRepository;
 import org.opengeoportal.harvester.api.domain.IngestJobStatus;
 import org.springframework.data.domain.Page;
@@ -43,55 +42,55 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 @Service
 public class IngestJobStatusServiceImpl implements IngestJobStatusService {
 
-	/** IngestJobStatusRepository. */
-	@Resource
-	private IngestJobStatusRepository jobStatusRepository;
+    /** IngestJobStatusRepository. */
+    @Resource
+    private IngestJobStatusRepository jobStatusRepository;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.IngestJobStatusService#save(org
-	 * .opengeoportal.harvester.api.domain.IngestJobStatus)
-	 */
-	@Override
-	public IngestJobStatus save(IngestJobStatus jobStatus) {
-		return jobStatusRepository.save(jobStatus);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#
+     * findLastStatusForIngest(java.lang.Long)
+     */
+    @Override
+    public IngestJobStatus findLastStatusForIngest(final Long id) {
+        // We only want the first element, so we pass a Pageable
+        // asking for the first page with one element.
+        final Pageable page = new PageRequest(0, 1);
+        final Page<IngestJobStatus> responsePage = this.jobStatusRepository
+                .findByIngestIdAndEndTimeNotNullOrderByEndTimeDesc(id, page);
+        IngestJobStatus result = null;
+        if (responsePage.getNumberOfElements() > 0) {
+            result = responsePage.getContent().get(0);
+        }
+        return result;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#
-	 * getStatusesForIngest(java.lang.Long)
-	 */
-	@Override
-	public List<IngestJobStatus> getStatusesForIngest(Long ingestId) {
-		return jobStatusRepository.findByIngestId(ingestId);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#
+     * getStatusesForIngest(java.lang.Long)
+     */
+    @Override
+    public List<IngestJobStatus> getStatusesForIngest(final Long ingestId) {
+        return this.jobStatusRepository.findByIngestId(ingestId);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestJobStatusService#
-	 * findLastStatusForIngest(java.lang.Long)
-	 */
-	@Override
-	public IngestJobStatus findLastStatusForIngest(Long id) {
-		// We only want the first element, so we pass a Pageable
-		// asking for the first page with one element.
-		Pageable page = new PageRequest(0, 1);
-		Page<IngestJobStatus> responsePage = jobStatusRepository
-				.findByIngestIdAndEndTimeNotNullOrderByEndTimeDesc(id, page);
-		IngestJobStatus result = null;
-		if (responsePage.getNumberOfElements() > 0) {
-			result = responsePage.getContent().get(0);
-		}
-		return result;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.IngestJobStatusService#save(org
+     * .opengeoportal.harvester.api.domain.IngestJobStatus)
+     */
+    @Override
+    public IngestJobStatus save(final IngestJobStatus jobStatus) {
+        return this.jobStatusRepository.save(jobStatus);
+    }
 }

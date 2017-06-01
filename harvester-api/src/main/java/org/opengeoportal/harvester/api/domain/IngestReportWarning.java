@@ -39,84 +39,83 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class IngestReportWarning extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = -7743183591045567868L;
+    private static final long serialVersionUID = -7743183591045567868L;
 
-	/** Error type. */
-	@Column
-	@Enumerated(EnumType.STRING)
-	private IngestReportWarningType type;
+    /** Error type. */
+    @Column
+    @Enumerated(EnumType.STRING)
+    private IngestReportWarningType type;
 
-	/** Field name where the error exists. */
-	@Column
-	private String field;
+    /** Field name where the error exists. */
+    @Column
+    private String field;
 
-	/** Error message. */
-	@Column
-	private String message;
-	
-	/** Report where the warning was detected. */
-	@ManyToOne
-	private IngestReport report;
+    /** Error message. */
+    @Column
+    private String message;
 
-	/**
-	 * @return the type
-	 */
-	public IngestReportWarningType getType() {
-		return type;
-	}
+    /** Report where the warning was detected. */
+    @ManyToOne
+    private IngestReport report;
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(IngestReportWarningType type) {
-		this.type = type;
-	}
+    /**
+     * @return the field
+     */
+    public String getField() {
+        return this.field;
+    }
 
-	/**
-	 * @return the field
-	 */
-	public String getField() {
-		return field;
-	}
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return this.message;
+    }
 
-	/**
-	 * @param field
-	 *            the field to set
-	 */
-	public void setField(String field) {
-		this.field = field;
-	}
+    /**
+     * @return the report
+     */
+    public IngestReport getReport() {
+        return this.report;
+    }
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * @return the type
+     */
+    public IngestReportWarningType getType() {
+        return this.type;
+    }
 
-	/**
-	 * @param message
-	 *            the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * @param field
+     *            the field to set
+     */
+    public void setField(final String field) {
+        this.field = field;
+    }
 
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(final String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @return the report
-	 */
-	public IngestReport getReport() {
-		return report;
-	}
+    /**
+     * @param report
+     *            the report to set
+     */
+    public void setReport(final IngestReport report) {
+        this.report = report;
+    }
 
-	/**
-	 * @param report
-	 *            the report to set
-	 */
-	public void setReport(IngestReport report) {
-		this.report = report;
-	}
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(final IngestReportWarningType type) {
+        this.type = type;
+    }
 
 }

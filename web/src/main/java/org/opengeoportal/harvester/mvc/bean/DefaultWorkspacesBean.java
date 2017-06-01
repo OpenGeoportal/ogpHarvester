@@ -1,17 +1,15 @@
 package org.opengeoportal.harvester.mvc.bean;
 
 public class DefaultWorkspacesBean {
-    
+
     private String name;
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
-    
-    
 
 }

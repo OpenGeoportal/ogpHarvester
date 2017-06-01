@@ -36,18 +36,24 @@ package org.opengeoportal.harvester.api.exception;
  */
 public class UnsupportedMetadataType extends Exception {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
     public UnsupportedMetadataType() {
     }
 
-    public UnsupportedMetadataType(String message) {
+    public UnsupportedMetadataType(final String message) {
         super(message);
     }
 
-    public UnsupportedMetadataType(String message, Throwable cause) {
+    public UnsupportedMetadataType(final String message,
+            final Throwable cause) {
         super(message, cause);
     }
 
-    public UnsupportedMetadataType(Throwable cause) {
+    public UnsupportedMetadataType(final Throwable cause) {
         super(cause);
     }
 

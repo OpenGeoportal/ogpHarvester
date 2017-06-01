@@ -29,96 +29,96 @@
  */
 package org.opengeoportal.harvester.api.metadata.parser;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.opengeoportal.harvester.api.metadata.model.BoundingBox;
 import org.opengeoportal.harvester.api.metadata.model.LocationLink;
 import org.opengeoportal.harvester.api.metadata.model.LocationLink.LocationType;
 
-import java.util.Collection;
 import com.google.common.collect.Multimap;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class BaseMetadataParser {
 
-	/**
-	 * Constructor.
-	 */
-	public BaseMetadataParser() {
+    /**
+     * Constructor.
+     */
+    public BaseMetadataParser() {
 
-	}
+    }
 
-	/**
-	 * Check if the bounding box is valid.
-	 * 
-	 * @param minX
-	 *            lower horizontal value.
-	 * @param minY
-	 *            lower vertical value.
-	 * @param maxX
-	 *            upper horizontal value.
-	 * @param maxY
-	 *            upper vertical value.
-	 * @return <code>true</code> if passed values can be a valid bounding box
-	 *         and false otherwhise.
-	 */
-	protected Boolean validateBounds(String minX, String minY, String maxX,
-			String maxY) {
-		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
-		return bounds.isValid();
-	}
+    protected String buildLocationJsonFromLocationLinks(
+            final Multimap<LocationType, LocationLink> linksMultimap) {
+        // dont' return an empty object
+        if (linksMultimap.isEmpty()) {
+            return "";
+        }
 
-	protected Boolean validateBounds(Double minX, Double minY, Double maxX,
-			Double maxY) {
-		BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
-		return bounds.isValid();
-	}
+        final StringBuilder sb = new StringBuilder("{");
+        final Iterator<LocationType> keyIterator = linksMultimap.keySet()
+                .iterator();
+        while (keyIterator.hasNext()) {
+            final LocationType type = keyIterator.next();
+            final boolean isArray = type.getIsArray();
+            sb.append("\"").append(type.toString()).append("\":");
+            if (isArray) {
+                sb.append("[");
+                for (final Iterator<LocationLink> linkIterator = linksMultimap
+                        .get(type).iterator(); linkIterator.hasNext();) {
+                    final LocationLink link = linkIterator.next();
+                    sb.append("\"").append(link.getUrl()).append("\"");
+                    if (linkIterator.hasNext()) {
+                        sb.append(", ");
+                    }
+                }
+                sb.append("]");
+            } else { // not an array
+                sb.append("\"");
+                final Collection<LocationLink> links = linksMultimap.get(type);
+                if (links.size() > 0) {
+                    sb.append(links.iterator().next().getUrl());
+                }
+                sb.append("\"");
+            }
 
-	protected String buildLocationJsonFromLocationLinks(
-			Multimap<LocationType, LocationLink> linksMultimap) {
-		//dont' return an empty object
-		if (linksMultimap.isEmpty()){
-			return "";
-		}
-		
-		StringBuilder sb = new StringBuilder("{");
-		Iterator<LocationType> keyIterator = linksMultimap.keySet()
-				.iterator();
-		while (keyIterator.hasNext()) {
-			LocationType type = keyIterator.next();
-			boolean isArray = type.getIsArray();
-			sb.append("\"").append(type.toString()).append("\":");
-			if (isArray) {
-				sb.append("[");
-				for (Iterator<LocationLink> linkIterator = linksMultimap.get(
-						type).iterator(); linkIterator.hasNext();) {
-					LocationLink link = linkIterator.next();
-					sb.append("\"").append(link.getUrl()).append("\"");
-					if (linkIterator.hasNext()) {
-						sb.append(", ");
-					}
-				}
-				sb.append("]");
-			} else { // not an array
-				sb.append("\"");
-				Collection<LocationLink> links = linksMultimap.get(type);
-				if (links.size() > 0) {
-					sb.append(links.iterator().next().getUrl());
-				}
-				sb.append("\"");
-			}
+            if (keyIterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
 
-			if (keyIterator.hasNext()) {
-				sb.append(", ");
-			}
-		}
+        sb.append("}");
 
-		sb.append("}");
+        return sb.toString();
 
-		return sb.toString();
+    }
 
-	}
+    protected Boolean validateBounds(final Double minX, final Double minY,
+            final Double maxX, final Double maxY) {
+        final BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
+        return bounds.isValid();
+    }
+
+    /**
+     * Check if the bounding box is valid.
+     * 
+     * @param minX
+     *            lower horizontal value.
+     * @param minY
+     *            lower vertical value.
+     * @param maxX
+     *            upper horizontal value.
+     * @param maxY
+     *            upper vertical value.
+     * @return <code>true</code> if passed values can be a valid bounding box
+     *         and false otherwhise.
+     */
+    protected Boolean validateBounds(final String minX, final String minY,
+            final String maxX, final String maxY) {
+        final BoundingBox bounds = new BoundingBox(minX, minY, maxX, maxY);
+        return bounds.isValid();
+    }
 }

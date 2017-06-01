@@ -8,13 +8,6 @@ import org.opengeoportal.harvester.mvc.exception.UncompressStrategyException;
 public final class UncompressStrategyFactory {
 
     /**
-     * No constructor.
-     */
-    private UncompressStrategyFactory() {
-
-    }
-
-    /**
      * Gets the uncompress strategy.
      *
      * @param type
@@ -38,5 +31,12 @@ public final class UncompressStrategyFactory {
         } else {
             throw new UncompressStrategyException("Format not supported");
         }
+    }
+
+    /**
+     * No constructor.
+     */
+    private UncompressStrategyFactory() {
+
     }
 }

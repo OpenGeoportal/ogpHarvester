@@ -43,167 +43,169 @@ import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 public class OgpMetadataParser extends BaseMetadataParser {
-	public static final String ACCESS_NOT_VALID = "ACCESS_NOT_VALID";
-	public static final String BBOX_NOT_VALID = "BBOX_NOT_VALID";
-	private static final String GEOMETRY_TYPE_NOT_VALID = "GEOMETRY_TYPE_NOT_VALID";
-	
-	private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
-	/**
-	 * Transform the {@link SolrRecord} into a {@link MetadataParserResponse}.
-	 * 
-	 * @param record
-	 *            the Solr record.
-	 * @return an MetadataParserResponse with a {@link Metadata} inside.
-	 */
-	public MetadataParserResponse parse(SolrRecord record) {
-		MetadataParserResponse response = new MetadataParserResponse();
-		Metadata metadata = response.getMetadata();
-		handleAccess(record, response, metadata);
-		handleBounds(record, response, metadata);
-		metadata.setContentDate(record.getContentDate());
-		metadata.setDescription(record.getDescription());
-		metadata.setFullText(record.getFgdcText());
-		handleGeometryType(record, response, metadata);
-		handleGeoreference(record, response, metadata);
-		metadata.setId(record.getLayerId());
-		metadata.setInstitution(record.getInstitution());
-		metadata.setLocation(record.getLocation());
-		metadata.setOriginator(record.getOriginator());
-		metadata.setOwsName(record.getName());
-		handlePlaceKeywords(record, response, metadata);
-		metadata.setPublisher(record.getPublisher());
-		handleThemeKeywords(record, response, metadata);
-		metadata.setTitle(record.getLayerDisplayName());
-		metadata.setWorkspaceName(record.getWorkspaceName());
-		metadata.setOriginalMetadata(record.getOriginalXmlMetadata());
-		metadata.setExternalId(record.getExternalLayerId());
-		metadata.setCollectionId(record.getCollectionId());
-		return response;
-	}
+    public static final String ACCESS_NOT_VALID = "ACCESS_NOT_VALID";
+    public static final String BBOX_NOT_VALID = "BBOX_NOT_VALID";
+    private static final String GEOMETRY_TYPE_NOT_VALID = "GEOMETRY_TYPE_NOT_VALID";
 
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handleThemeKeywords(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		String themeKeywordsString = record.getThemeKeywords();
-		if (StringUtils.isNotBlank(themeKeywordsString)) {
-			String[] keywords = StringUtils.split(themeKeywordsString);
-			List<ThemeKeywords> themeKeywordsList = Lists.newArrayList();
-			for (String keyword : keywords) {
-				ThemeKeywords tKeywords = new ThemeKeywords();
-				tKeywords.addKeyword(keyword);
-				themeKeywordsList.add(tKeywords);
-				
-				String isoTopic = isoTopicResolver.getIsoTopicKeyword(keyword);
-				if (!isoTopic.isEmpty()){
-					metadata.setTopic(isoTopic);
-				}
-			}
-			metadata.setThemeKeywords(themeKeywordsList);
-		}
+    private final IsoTopicResolver isoTopicResolver = new IsoTopicResolver();
 
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handleAccess(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final String accessLevel = record.getAccess();
+        if (StringUtils.equals(accessLevel, AccessLevel.Public.toString())) {
+            metadata.setAccess(AccessLevel.Public);
+        } else if (StringUtils.equals(accessLevel,
+                AccessLevel.Restricted.toString())) {
+            metadata.setAccess(AccessLevel.Restricted);
+        } else {
+            metadata.setAccessLevel(accessLevel);
+            response.addError(SolrRecord.ACCESS, SolrRecord.ACCESS,
+                    OgpMetadataParser.ACCESS_NOT_VALID,
+                    "\"" + accessLevel + "\" is not a valid value for "
+                            + SolrRecord.ACCESS + " field");
+        }
+    }
 
-	}
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handleBounds(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final Double minX = record.getMinX();
+        final Double minY = record.getMinY();
+        final Double maxX = record.getMaxX();
+        final Double maxY = record.getMaxY();
+        if (this.validateBounds(minX, minY, maxX, maxY)) {
+            metadata.setBounds(minX, minY, maxX, maxY);
+        } else {
+            response.addError("BBOX", "bbox", OgpMetadataParser.BBOX_NOT_VALID,
+                    String.format(
+                            "The bounding box [%s, %s, %s, %s] is not valid",
+                            minX, minY, maxX, maxY));
+        }
 
-	
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handlePlaceKeywords(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		String placeKeywordsString = record.getPlaceKeywords();
-		if (StringUtils.isNotBlank(placeKeywordsString)) {
-			String[] keywords = StringUtils.split(placeKeywordsString);
-			List<PlaceKeywords> placeKeywordsList = Lists.newArrayList();
-			for (String keyword : keywords) {
-				PlaceKeywords pKeywords = new PlaceKeywords();
-				pKeywords.addKeyword(keyword);
-				placeKeywordsList.add(pKeywords);
-			}
-			metadata.setPlaceKeywords(placeKeywordsList);
-		}
-	}
+    }
 
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handleGeoreference(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		Boolean isGeorerferenced = record.getGeoreferenced();
-		metadata.setGeoreferenced(isGeorerferenced);
-	}
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handleGeometryType(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final String geometryTypeString = record.getDataType();
+        final GeometryType geom = GeometryType
+                .parseGeometryType(geometryTypeString);
 
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handleGeometryType(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		String geometryTypeString = record.getDataType();
-		GeometryType geom = GeometryType.parseGeometryType(geometryTypeString);
+        if (geom.equals(GeometryType.Undefined)) {
+            response.addError("GeometryType", SolrRecord.DATA_TYPE,
+                    OgpMetadataParser.GEOMETRY_TYPE_NOT_VALID,
+                    String.format("%s is not a valid GeometryType value",
+                            geometryTypeString));
+        }
 
-		if (geom.equals(GeometryType.Undefined)){
-			response.addError("GeometryType", SolrRecord.DATA_TYPE,
-					GEOMETRY_TYPE_NOT_VALID, String.format(
-							"%s is not a valid GeometryType value",
-							geometryTypeString));
-		}
-		
-		metadata.setGeometryType(geom);
+        metadata.setGeometryType(geom);
 
-	}
+    }
 
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handleBounds(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		Double minX = record.getMinX();
-		Double minY = record.getMinY();
-		Double maxX = record.getMaxX();
-		Double maxY = record.getMaxY();
-		if (validateBounds(minX, minY, maxX, maxY)) {
-			metadata.setBounds(minX, minY, maxX, maxY);
-		} else {
-			response.addError("BBOX", "bbox", BBOX_NOT_VALID, String.format(
-					"The bounding box [%s, %s, %s, %s] is not valid", minX,
-					minY, maxX, maxY));
-		}
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handleGeoreference(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final Boolean isGeorerferenced = record.getGeoreferenced();
+        metadata.setGeoreferenced(isGeorerferenced);
+    }
 
-	}
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handlePlaceKeywords(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final String placeKeywordsString = record.getPlaceKeywords();
+        if (StringUtils.isNotBlank(placeKeywordsString)) {
+            final String[] keywords = StringUtils.split(placeKeywordsString);
+            final List<PlaceKeywords> placeKeywordsList = Lists.newArrayList();
+            for (final String keyword : keywords) {
+                final PlaceKeywords pKeywords = new PlaceKeywords();
+                pKeywords.addKeyword(keyword);
+                placeKeywordsList.add(pKeywords);
+            }
+            metadata.setPlaceKeywords(placeKeywordsList);
+        }
+    }
 
-	/**
-	 * @param record
-	 * @param response
-	 * @param metadata
-	 */
-	private void handleAccess(SolrRecord record,
-			MetadataParserResponse response, Metadata metadata) {
-		String accessLevel = record.getAccess();
-		if (StringUtils.equals(accessLevel, AccessLevel.Public.toString())) {
-			metadata.setAccess(AccessLevel.Public);
-		} else if (StringUtils.equals(accessLevel,
-				AccessLevel.Restricted.toString())) {
-			metadata.setAccess(AccessLevel.Restricted);
-		} else {
-			metadata.setAccessLevel(accessLevel);
-			response.addError(SolrRecord.ACCESS, SolrRecord.ACCESS,
-					ACCESS_NOT_VALID, "\"" + accessLevel
-							+ "\" is not a valid value for "
-							+ SolrRecord.ACCESS + " field");
-		}
-	}
+    /**
+     * @param record
+     * @param response
+     * @param metadata
+     */
+    private void handleThemeKeywords(final SolrRecord record,
+            final MetadataParserResponse response, final Metadata metadata) {
+        final String themeKeywordsString = record.getThemeKeywords();
+        if (StringUtils.isNotBlank(themeKeywordsString)) {
+            final String[] keywords = StringUtils.split(themeKeywordsString);
+            final List<ThemeKeywords> themeKeywordsList = Lists.newArrayList();
+            for (final String keyword : keywords) {
+                final ThemeKeywords tKeywords = new ThemeKeywords();
+                tKeywords.addKeyword(keyword);
+                themeKeywordsList.add(tKeywords);
+
+                final String isoTopic = this.isoTopicResolver
+                        .getIsoTopicKeyword(keyword);
+                if (!isoTopic.isEmpty()) {
+                    metadata.setTopic(isoTopic);
+                }
+            }
+            metadata.setThemeKeywords(themeKeywordsList);
+        }
+
+    }
+
+    /**
+     * Transform the {@link SolrRecord} into a {@link MetadataParserResponse}.
+     * 
+     * @param record
+     *            the Solr record.
+     * @return an MetadataParserResponse with a {@link Metadata} inside.
+     */
+    public MetadataParserResponse parse(final SolrRecord record) {
+        final MetadataParserResponse response = new MetadataParserResponse();
+        final Metadata metadata = response.getMetadata();
+        this.handleAccess(record, response, metadata);
+        this.handleBounds(record, response, metadata);
+        metadata.setContentDate(record.getContentDate());
+        metadata.setDescription(record.getDescription());
+        metadata.setFullText(record.getFgdcText());
+        this.handleGeometryType(record, response, metadata);
+        this.handleGeoreference(record, response, metadata);
+        metadata.setId(record.getLayerId());
+        metadata.setInstitution(record.getInstitution());
+        metadata.setLocation(record.getLocation());
+        metadata.setOriginator(record.getOriginator());
+        metadata.setOwsName(record.getName());
+        this.handlePlaceKeywords(record, response, metadata);
+        metadata.setPublisher(record.getPublisher());
+        this.handleThemeKeywords(record, response, metadata);
+        metadata.setTitle(record.getLayerDisplayName());
+        metadata.setWorkspaceName(record.getWorkspaceName());
+        metadata.setOriginalMetadata(record.getOriginalXmlMetadata());
+        metadata.setExternalId(record.getExternalLayerId());
+        metadata.setCollectionId(record.getCollectionId());
+        return response;
+    }
 }

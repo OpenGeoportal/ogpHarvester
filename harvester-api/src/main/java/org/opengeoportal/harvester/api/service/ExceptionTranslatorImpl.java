@@ -31,6 +31,7 @@ package org.opengeoportal.harvester.api.service;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jdom.JDOMException;
 import org.opengeoportal.harvester.api.client.geonetwork.exception.BadXmlResponseEx;
@@ -51,53 +52,11 @@ import org.xml.sax.SAXException;
 @Service
 public class ExceptionTranslatorImpl implements ExceptionTranslator {
 
-    @Override
-    public IngestReportError translateException(Exception e, IngestReportErrorType errorType, Document document) {
-        String originalText = getMetadataText(document);
-        return translateException(e, errorType, originalText);
-    }
-
-    @Override
-    public IngestReportError translateException(Exception e, IngestReportErrorType errorType, SolrRecord record) {
-        String originalText = getMetadataText(record);
-        return translateException(e, errorType, originalText);
-    }
-
-    @Override
-    public IngestReportError translateException(Exception e, IngestReportErrorType errorType) {
-        String originalText = null;
-        return translateException(e, errorType, originalText);
-    }
-
-    /**
-     * From document get its string representation.
-     *
-     * @param document XML metadata document.
-     * @return document string representation.
-     */
-    protected String getMetadataText(Document document) {
-        return XmlUtil.getFullText(document);
-    }
-
-    /**
-     * From document get its string representation.
-     *
-     * @param record {@code SolrRecord} with metadata.
-     * @return document string representation.
-     */
-    protected String getMetadataText(SolrRecord record) {
-        if (record == null) {
-            return null;
-        } else {
-            return record.getFgdcText();
-        }
-    }
-
-    private void fillIngestReportError(IngestReportError error, String field,
-            String message, String originalText, Exception e,
-            IngestReportErrorType errorType) {
+    private void fillIngestReportError(final IngestReportError error,
+            final String field, final String message, final String originalText,
+            final Exception e, final IngestReportErrorType errorType) {
         error.setType(errorType);
-        Exception ex = (Exception) e.fillInStackTrace();
+        final Exception ex = (Exception) e.fillInStackTrace();
         error.setField(field);
         if (message == null) {
             error.setMessage(ex.getLocalizedMessage());
@@ -111,49 +70,105 @@ public class ExceptionTranslatorImpl implements ExceptionTranslator {
             error.setMetadata(originalText);
         }
     }
-    
-        /**
+
+    /**
+     * From document get its string representation.
+     *
+     * @param document
+     *            XML metadata document.
+     * @return document string representation.
+     */
+    protected String getMetadataText(final Document document) {
+        return XmlUtil.getFullText(document);
+    }
+
+    /**
+     * From document get its string representation.
+     *
+     * @param record
+     *            {@code SolrRecord} with metadata.
+     * @return document string representation.
+     */
+    protected String getMetadataText(final SolrRecord record) {
+        if (record == null) {
+            return null;
+        } else {
+            return record.getFgdcText();
+        }
+    }
+
+    @Override
+    public IngestReportError translateException(final Exception e,
+            final IngestReportErrorType errorType) {
+        final String originalText = null;
+        return this.translateException(e, errorType, originalText);
+    }
+
+    @Override
+    public IngestReportError translateException(final Exception e,
+            final IngestReportErrorType errorType, final Document document) {
+        final String originalText = this.getMetadataText(document);
+        return this.translateException(e, errorType, originalText);
+    }
+
+    @Override
+    public IngestReportError translateException(final Exception e,
+            final IngestReportErrorType errorType, final SolrRecord record) {
+        final String originalText = this.getMetadataText(record);
+        return this.translateException(e, errorType, originalText);
+    }
+
+    /**
      *
      * @param exception
      * @param errorType
      * @param originalText
      * @return
      */
-    public IngestReportError translateException(Exception exception, IngestReportErrorType errorType, String originalText) {
-        IngestReportError reportError = new IngestReportError();
+    public IngestReportError translateException(final Exception exception,
+            final IngestReportErrorType errorType, final String originalText) {
+        final IngestReportError reportError = new IngestReportError();
         String message;
         String field;
         if (exception instanceof UnsupportedMetadataType) {
             message = "Metadata type not supported";
             field = UnsupportedMetadataType.class.getSimpleName();
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else if (exception instanceof MalformedURLException) {
             message = "Malformed URL: " + exception.getLocalizedMessage();
             field = MalformedURLException.class.getSimpleName();
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else if (exception instanceof JDOMException) {
             message = "Error parsing XML document";
             field = "PARSE_XML_ERROR";
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
-        } else if (exception instanceof CswClientException) { 
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
+        } else if (exception instanceof CswClientException) {
             message = "Error connecting to CSW server";
             field = "CSW_CLIENT_ERROR";
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else if (exception instanceof SAXException) {
             message = null;
             field = "PARSE_XML_ERROR";
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else if (exception instanceof BadXmlResponseEx) {
             message = exception.getLocalizedMessage();
             field = "GN_BAD_XML_RESPONSE";
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else if (exception instanceof IOException) {
             message = exception.getLocalizedMessage();
             field = "CONNECTION_ERROR";
-            fillIngestReportError(reportError, field, message, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, message,
+                    originalText, exception, errorType);
         } else {
             field = exception.getClass().getSimpleName();
-            fillIngestReportError(reportError, field, null, originalText, exception, errorType);
+            this.fillIngestReportError(reportError, field, null, originalText,
+                    exception, errorType);
         }
         return reportError;
     }

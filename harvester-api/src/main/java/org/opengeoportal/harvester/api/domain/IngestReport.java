@@ -73,90 +73,91 @@ public class IngestReport extends AbstractPersistable<Long> {
     @JoinColumn(name = "report_id")
     private List<IngestReportError> errors = new ArrayList<IngestReportError>();
 
-    public long getRestrictedRecords() {
-        return restrictedRecords;
-    }
-
-    public void setRestrictedRecords(long restrictedRecords) {
-        this.restrictedRecords = restrictedRecords;
-    }
-
-    public long getPublicRecords() {
-        return publicRecords;
-    }
-
-    public void setPublicRecords(long publicRecords) {
-        this.publicRecords = publicRecords;
-    }
-
-    public long getVectorRecords() {
-        return vectorRecords;
-    }
-
-    public void setVectorRecords(long vectorRecords) {
-        this.vectorRecords = vectorRecords;
-    }
-
-    public long getRasterRecords() {
-        return rasterRecords;
-    }
-
-    public void setRasterRecords(long rasterRecords) {
-        this.rasterRecords = rasterRecords;
-    }
-
-    public long getUnrequiredFieldWarnings() {
-        return unrequiredFieldWarnings;
-    }
-
-    public void setUnrequiredFieldWarnings(long unrequiredFieldWarnings) {
-        this.unrequiredFieldWarnings = unrequiredFieldWarnings;
-    }
-
-    public void increaseUnrequiredFieldWarnings() {
-        this.unrequiredFieldWarnings++;
-    }
-
-    public long getWebServiceWarnings() {
-        return webServiceWarnings;
-    }
-
-    public void setWebServiceWarnings(long webServiceWarnings) {
-        this.webServiceWarnings = webServiceWarnings;
+    public void addError(final IngestReportError error) {
+        this.errors.add(error);
     }
 
     public List<IngestReportError> getErrors() {
-        return errors;
+        return this.errors;
     }
 
-    public void setErrors(List<IngestReportError> errors) {
-        this.errors = errors;
-    }
-
-    public void addError(IngestReportError error) {
-        errors.add(error);
+    public long getFailedRecordsCount() {
+        return this.failedRecordsCount;
     }
 
     /**
      * @return the jobStatus
      */
     public IngestJobStatus getJobStatus() {
-        return jobStatus;
+        return this.jobStatus;
+    }
+
+    public long getPublicRecords() {
+        return this.publicRecords;
+    }
+
+    public long getRasterRecords() {
+        return this.rasterRecords;
+    }
+
+    public long getRestrictedRecords() {
+        return this.restrictedRecords;
+    }
+
+    public long getUnrequiredFieldWarnings() {
+        return this.unrequiredFieldWarnings;
+    }
+
+    public long getVectorRecords() {
+        return this.vectorRecords;
+    }
+
+    public long getWebServiceWarnings() {
+        return this.webServiceWarnings;
+    }
+
+    public void increaseUnrequiredFieldWarnings() {
+        this.unrequiredFieldWarnings++;
+    }
+
+    public void setErrors(final List<IngestReportError> errors) {
+        this.errors = errors;
+    }
+
+    public void setFailedRecordsCount(final long failedRecordsCount) {
+        this.failedRecordsCount = failedRecordsCount;
     }
 
     /**
-     * @param jobStatus the jobStatus to set
+     * @param jobStatus
+     *            the jobStatus to set
      */
-    public void setJobStatus(IngestJobStatus jobStatus) {
+    public void setJobStatus(final IngestJobStatus jobStatus) {
         this.jobStatus = jobStatus;
     }
 
-    public long getFailedRecordsCount() {
-        return failedRecordsCount;
+    public void setPublicRecords(final long publicRecords) {
+        this.publicRecords = publicRecords;
     }
 
-    public void setFailedRecordsCount(long failedRecordsCount) {
-        this.failedRecordsCount = failedRecordsCount;
+    public void setRasterRecords(final long rasterRecords) {
+        this.rasterRecords = rasterRecords;
+    }
+
+    public void setRestrictedRecords(final long restrictedRecords) {
+        this.restrictedRecords = restrictedRecords;
+    }
+
+    public void setUnrequiredFieldWarnings(final long unrequiredFieldWarnings) {
+        this.unrequiredFieldWarnings = unrequiredFieldWarnings;
+    }
+
+    public void setVectorRecords(final long vectorRecords) {
+        this.vectorRecords = vectorRecords;
+    }
+
+    public void setWebServiceWarnings(final long webServiceWarnings) {
+        this.webServiceWarnings = webServiceWarnings;
     }
 
 }

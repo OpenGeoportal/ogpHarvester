@@ -5,46 +5,49 @@ import java.util.Collections;
 import java.util.List;
 
 public class UploadJobQueue {
-    
+
     private static long TIMEOUT = 120000;
-    
-   private static List<UploadFileJob> list = Collections.synchronizedList(new ArrayList<UploadFileJob>());
-    
-    public static List<UploadFileJob> getJobList() {
-        
-        return list;
-    }
-    
-    public static void addNewJob(UploadFileJob job) {        
-        synchronized (list) {     
+
+    private static List<UploadFileJob> list = Collections
+            .synchronizedList(new ArrayList<UploadFileJob>());
+
+    public static void addNewJob(final UploadFileJob job) {
+        synchronized (UploadJobQueue.list) {
             // REMOVE A RANDOM COMPLETE JOB
-            for (UploadFileJob uploadFileJob : list) {
-                if(uploadFileJob.isCompleted()) {
-                    list.remove(uploadFileJob);
+            for (final UploadFileJob uploadFileJob : UploadJobQueue.list) {
+                if (uploadFileJob.isCompleted()) {
+                    UploadJobQueue.list.remove(uploadFileJob);
                     break;
                 }
             }
             // ADD A NEW ONE
-            list.add(job);
+            UploadJobQueue.list.add(job);
         }
-        for (UploadFileJob uploadFileJob : list) {
+        for (final UploadFileJob uploadFileJob : UploadJobQueue.list) {
             System.out.println(uploadFileJob.toString());
         }
-        
+
     }
-    
+
     public static UploadFileJob getAJob() {
         UploadFileJob job = null;
-        synchronized (list) {          
-            long curtime = System.currentTimeMillis();
-            for (UploadFileJob uploadFileJob : list) {
-                if(curtime - uploadFileJob.getAssigned() > TIMEOUT && !uploadFileJob.isCompleted()) {
+        synchronized (UploadJobQueue.list) {
+            final long curtime = System.currentTimeMillis();
+            for (final UploadFileJob uploadFileJob : UploadJobQueue.list) {
+                if (((curtime
+                        - uploadFileJob.getAssigned()) > UploadJobQueue.TIMEOUT)
+                        && !uploadFileJob.isCompleted()) {
                     job = uploadFileJob;
                     uploadFileJob.setAssigned(curtime);
                 }
             }
         }
-        return job;        
+        return job;
+    }
+
+    public static List<UploadFileJob> getJobList() {
+
+        return UploadJobQueue.list;
     }
 
 }

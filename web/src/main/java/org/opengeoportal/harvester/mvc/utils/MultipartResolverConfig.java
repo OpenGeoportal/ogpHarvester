@@ -7,11 +7,9 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 @Configuration
 public class MultipartResolverConfig {
 
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        return new CommonsMultipartResolver();
+    }
 
-  @Bean
-  public CommonsMultipartResolver multipartResolver() {
-      return new CommonsMultipartResolver();
-  }
-
-  
 }

@@ -32,26 +32,28 @@ package org.opengeoportal.harvester.api.exception;
 /**
  * This exception is thrown when an ingest with isScheduled property has been
  * tried to launch.
+ * 
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  *
  */
 public class UnscheduledIngestException extends RuntimeException {
 
-	/** Serial version UID. */
-	private static final long serialVersionUID = -5819029852731979252L;
+    /** Serial version UID. */
+    private static final long serialVersionUID = -5819029852731979252L;
 
-	/**
-	 * Default constructor. 
-	 */
-	public UnscheduledIngestException() {
+    /**
+     * Default constructor.
+     */
+    public UnscheduledIngestException() {
 
-	}
+    }
 
-	/**
-	 * @param message the message.
-	 */
-	public UnscheduledIngestException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     *            the message.
+     */
+    public UnscheduledIngestException(final String message) {
+        super(message);
+    }
 
 }

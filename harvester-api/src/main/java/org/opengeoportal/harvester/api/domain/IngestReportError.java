@@ -40,103 +40,103 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 public class IngestReportError extends AbstractPersistable<Long> {
-	private static final long serialVersionUID = -760972452971727537L;
+    private static final long serialVersionUID = -760972452971727537L;
 
-	/** Error type. */
-	@Column
-	@Enumerated(EnumType.STRING)
-	private IngestReportErrorType type;
+    /** Error type. */
+    @Column
+    @Enumerated(EnumType.STRING)
+    private IngestReportErrorType type;
 
-	/** Field name where the error exists. */
-	@Column
-	private String field;
+    /** Field name where the error exists. */
+    @Column
+    private String field;
 
-	/** Error message. */
-	@Column
-	private String message;
+    /** Error message. */
+    @Column
+    private String message;
 
-	/** Original metadata. */
-	@Column
-	@Lob
-	private String metadata;
+    /** Original metadata. */
+    @Column
+    @Lob
+    private String metadata;
 
-	/** Report where the error was detected. */
-	@ManyToOne
-	private IngestReport report;
+    /** Report where the error was detected. */
+    @ManyToOne
+    private IngestReport report;
 
-	/**
-	 * @return the type
-	 */
-	public IngestReportErrorType getType() {
-		return type;
-	}
+    /**
+     * @return the field
+     */
+    public String getField() {
+        return this.field;
+    }
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
-	public void setType(IngestReportErrorType type) {
-		this.type = type;
-	}
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return this.message;
+    }
 
-	/**
-	 * @return the field
-	 */
-	public String getField() {
-		return field;
-	}
+    /**
+     * @return the metadata
+     */
+    public String getMetadata() {
+        return this.metadata;
+    }
 
-	/**
-	 * @param field
-	 *            the field to set
-	 */
-	public void setField(String field) {
-		this.field = field;
-	}
+    /**
+     * @return the report
+     */
+    public IngestReport getReport() {
+        return this.report;
+    }
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * @return the type
+     */
+    public IngestReportErrorType getType() {
+        return this.type;
+    }
 
-	/**
-	 * @param message
-	 *            the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * @param field
+     *            the field to set
+     */
+    public void setField(final String field) {
+        this.field = field;
+    }
 
-	/**
-	 * @return the metadata
-	 */
-	public String getMetadata() {
-		return metadata;
-	}
+    /**
+     * @param message
+     *            the message to set
+     */
+    public void setMessage(final String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @param metadata
-	 *            the metadata to set
-	 */
-	public void setMetadata(String metadata) {
-		this.metadata = metadata;
-	}
+    /**
+     * @param metadata
+     *            the metadata to set
+     */
+    public void setMetadata(final String metadata) {
+        this.metadata = metadata;
+    }
 
-	/**
-	 * @return the report
-	 */
-	public IngestReport getReport() {
-		return report;
-	}
+    /**
+     * @param report
+     *            the report to set
+     */
+    public void setReport(final IngestReport report) {
+        this.report = report;
+    }
 
-	/**
-	 * @param report
-	 *            the report to set
-	 */
-	public void setReport(IngestReport report) {
-		this.report = report;
-	}
+    /**
+     * @param type
+     *            the type to set
+     */
+    public void setType(final IngestReportErrorType type) {
+        this.type = type;
+    }
 
 }

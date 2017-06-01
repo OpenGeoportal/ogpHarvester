@@ -39,16 +39,15 @@ public class DefaultWorkspace extends AbstractPersistable<Long> {
 
     private static final long serialVersionUID = 86175528716759176L;
 
-	@Column
-	private String worksp;
-	
-	public String getWorksp() {
-		return worksp;
-	}
+    @Column
+    private String worksp;
 
-	public void setWorksp(String name) {
-		this.worksp = name;
-	}
+    public String getWorksp() {
+        return this.worksp;
+    }
 
+    public void setWorksp(final String name) {
+        this.worksp = name;
+    }
 
 }

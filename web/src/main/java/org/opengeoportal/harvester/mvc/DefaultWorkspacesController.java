@@ -14,47 +14,74 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * The Class DefaultWorkspacesController.
+ */
 @Controller
 public class DefaultWorkspacesController {
-    
+
+    /** The workspace service. */
     @Autowired
     private DefaultWorkspaceService workspaceService;
-    
-   
-    
+
+    /**
+     * Gets the workspaces.
+     *
+     * @param request the request
+     * @param response the response
+     * @return the workspaces
+     */
     @RequestMapping(value = "/rest/defaultWorkspaces/getdefaultworkspaces", method = RequestMethod.GET)
     @ResponseBody
-    public List<DefaultWorkspace> getWorkspaces(final HttpServletRequest request,
+    public List<DefaultWorkspace> getWorkspaces(
+            final HttpServletRequest request,
             final HttpServletResponse response) {
-        
-        return workspaceService.findAll();
-    }
-    
-    @RequestMapping(value = "/rest/defaultWorkspaces/addworkspace/{name}", method = RequestMethod.POST)
-    @ResponseBody
-    public List<DefaultWorkspace> save(@PathVariable(value = "name") final String name, final HttpServletRequest request,
-            final HttpServletResponse response) {
-        
-        DefaultWorkspace d = new DefaultWorkspace();
-        
-        d.setWorksp(name);
 
-        workspaceService.save(d);
-        
-        return workspaceService.findAll();
+        return this.workspaceService.findAll();
     }
 
-    
+    /**
+     * Removes the.
+     *
+     * @param id the id
+     * @param request the request
+     * @param response the response
+     * @return the list
+     */
     @RequestMapping(value = "/rest/defaultWorkspaces/removeworkspace/{id}", method = RequestMethod.POST)
     @ResponseBody
-    public List<DefaultWorkspace> remove(@PathVariable(value = "id") final long id, final HttpServletRequest request,
-            final HttpServletResponse response) {       
-        
-        workspaceService.delete(id);
+    public List<DefaultWorkspace> remove(
+            @PathVariable(value = "id") final long id,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
 
-        return workspaceService.findAll();
+        this.workspaceService.delete(id);
+
+        return this.workspaceService.findAll();
     }
-    
-    
+
+    /**
+     * Save.
+     *
+     * @param name the name
+     * @param request the request
+     * @param response the response
+     * @return the list
+     */
+    @RequestMapping(value = "/rest/defaultWorkspaces/addworkspace/{name}", method = RequestMethod.POST)
+    @ResponseBody
+    public List<DefaultWorkspace> save(
+            @PathVariable(value = "name") final String name,
+            final HttpServletRequest request,
+            final HttpServletResponse response) {
+
+        final DefaultWorkspace d = new DefaultWorkspace();
+
+        d.setWorksp(name);
+
+        this.workspaceService.save(d);
+
+        return this.workspaceService.findAll();
+    }
 
 }

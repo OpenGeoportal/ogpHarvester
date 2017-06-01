@@ -44,47 +44,47 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 @Component
 public class SimpleIngestJobFactory implements IngestJobFactory {
 
-	/**
-	 * Create a new {@link SimpleIngestJobFactory} instance.
-	 */
-	public SimpleIngestJobFactory() {
-	}
+    /**
+     * Create a new {@link SimpleIngestJobFactory} instance.
+     */
+    public SimpleIngestJobFactory() {
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.component.IngestJobFactory#newIngestJob
-	 * (org.opengeoportal.harvester.api.domain.Ingest)
-	 */
-	@Override
-	public BaseIngestJob newIngestJob(Ingest ingest) {
-		BaseIngestJob newInstance;
-		if (ingest == null) {
-			throw new IllegalArgumentException("ingest cannot be null");
-		}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.component.IngestJobFactory#newIngestJob
+     * (org.opengeoportal.harvester.api.domain.Ingest)
+     */
+    @Override
+    public BaseIngestJob newIngestJob(final Ingest ingest) {
+        BaseIngestJob newInstance;
+        if (ingest == null) {
+            throw new IllegalArgumentException("ingest cannot be null");
+        }
 
-		if (ingest instanceof IngestCsw) {
-			newInstance = new CswIngestJob();
-		} else if (ingest instanceof IngestGeonetwork) {
-			newInstance = new GeonetworkIngestJob();
-		} else if (ingest instanceof IngestOGP) {
-			newInstance = new OgpIngestJob();
-		} else if (ingest instanceof IngestWebDav) {
-			newInstance = new WebdavIngestJob();
-		} else if (ingest instanceof IngestFileUpload) {
+        if (ingest instanceof IngestCsw) {
+            newInstance = new CswIngestJob();
+        } else if (ingest instanceof IngestGeonetwork) {
+            newInstance = new GeonetworkIngestJob();
+        } else if (ingest instanceof IngestOGP) {
+            newInstance = new OgpIngestJob();
+        } else if (ingest instanceof IngestWebDav) {
+            newInstance = new WebdavIngestJob();
+        } else if (ingest instanceof IngestFileUpload) {
             newInstance = new SingleFileIngestJob();
-        }else {
-			throw new IllegalArgumentException(
-					"Cannot find a suitable Job class " + "for processing a "
-							+ ingest.getClass().getName() + "class");
-		}
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot find a suitable Job class " + "for processing a "
+                            + ingest.getClass().getName() + "class");
+        }
 
-		return newInstance;
-	}
+        return newInstance;
+    }
 }

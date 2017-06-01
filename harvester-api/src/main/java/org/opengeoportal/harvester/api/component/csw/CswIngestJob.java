@@ -1,25 +1,25 @@
 package org.opengeoportal.harvester.api.component.csw;
 
-import com.google.common.collect.Lists;
+import java.util.List;
+
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.JDOMException;
 import org.jdom.output.DOMOutputter;
-import org.opengeoportal.harvester.api.client.csw.*;
-import org.opengeoportal.harvester.api.client.csw.request.*;
+import org.opengeoportal.harvester.api.client.csw.CswClient;
+import org.opengeoportal.harvester.api.client.csw.request.GetRecordsRequest;
 import org.opengeoportal.harvester.api.client.csw.response.GetRecordsResponse;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
 import org.opengeoportal.harvester.api.domain.IngestCsw;
-import org.opengeoportal.harvester.api.domain.IngestReportError;
 import org.opengeoportal.harvester.api.domain.IngestReportErrorType;
+import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
 import org.opengeoportal.harvester.api.metadata.model.Metadata;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParser;
 import org.opengeoportal.harvester.api.metadata.parser.MetadataParserResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import org.jdom.JDOMException;
-import org.opengeoportal.harvester.api.exception.UnsupportedMetadataType;
+import com.google.common.collect.Lists;
 
 /**
  * Class that do the ingest retrieving the medatada from a remote CSW server and
@@ -35,10 +35,11 @@ public class CswIngestJob extends BaseIngestJob {
     @Override
     public void ingest() {
         try {
-            CswClient cswClient = new CswClient(ingest.getActualUrl());
-            IngestCsw ingestCsw = (IngestCsw) ingest;
+            final CswClient cswClient = new CswClient(
+                    this.ingest.getActualUrl());
+            final IngestCsw ingestCsw = (IngestCsw) this.ingest;
 
-            GetRecordsRequest request = cswClient.setupGetRecordsRequest(
+            final GetRecordsRequest request = cswClient.setupGetRecordsRequest(
                     ingestCsw.getCqlConstraint(),
                     ingestCsw.getFilterConstraint());
 
@@ -46,70 +47,74 @@ public class CswIngestJob extends BaseIngestJob {
             boolean processFinished = false;
             long failedRecordsCount = 0;
 
-            while (!(isInterruptRequested() || processFinished)) {
+            while (!(this.isInterruptRequested() || processFinished)) {
                 request.setStartPosition(start + "");
 
-                GetRecordsResponse response = cswClient.getRecords(request,
-                        start, CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
+                final GetRecordsResponse response = cswClient.getRecords(
+                        request, start,
+                        CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE);
 
-                List<Metadata> metadataList = Lists
+                final List<Metadata> metadataList = Lists
                         .newArrayListWithCapacity(response.getResults().size());
 
-                for (Element record : response.getResults()) {
+                for (final Element record : response.getResults()) {
                     org.w3c.dom.Document document = null;
                     try {
-                        Document doc = new Document((Element) record.clone());
+                        final Document doc = new Document(
+                                (Element) record.clone());
 
-                        DOMOutputter domOutputter = new DOMOutputter();
-                        document = domOutputter
-                                .output(doc);
+                        final DOMOutputter domOutputter = new DOMOutputter();
+                        document = domOutputter.output(doc);
 
-                        MetadataParser parser = parserProvider
+                        final MetadataParser parser = this.parserProvider
                                 .getMetadataParser(document);
-                        MetadataParserResponse parserResult = parser
+                        final MetadataParserResponse parserResult = parser
                                 .parse(document);
 
-                        Metadata metadata = parserResult.getMetadata();
-                        metadata.setInstitution(ingest.getNameOgpRepository());
+                        final Metadata metadata = parserResult.getMetadata();
+                        metadata.setInstitution(
+                                this.ingest.getNameOgpRepository());
 
-                        boolean valid = metadataValidator.validate(metadata,
-                                report);
+                        final boolean valid = this.metadataValidator
+                                .validate(metadata, this.report);
                         if (valid) {
                             metadataList.add(metadata);
                         } else {
                             failedRecordsCount++;
                         }
-                    } catch (JDOMException e) {
+                    } catch (final JDOMException e) {
                         failedRecordsCount++;
-                        saveException(e,
-                                IngestReportErrorType.WEB_SERVICE_ERROR, document);
-                    } catch (UnsupportedMetadataType e) {
+                        this.saveException(e,
+                                IngestReportErrorType.WEB_SERVICE_ERROR,
+                                document);
+                    } catch (final UnsupportedMetadataType e) {
                         failedRecordsCount++;
-                        saveException(e,
-                                IngestReportErrorType.WEB_SERVICE_ERROR, document);
-                    }
-                    catch (Exception e) {
+                        this.saveException(e,
+                                IngestReportErrorType.WEB_SERVICE_ERROR,
+                                document);
+                    } catch (final Exception e) {
                         failedRecordsCount++;
-                        saveException(e,
+                        this.saveException(e,
                                 IngestReportErrorType.SYSTEM_ERROR, document);
                     }
                 }
 
-                report.setFailedRecordsCount(failedRecordsCount);
-                metadataIngester.ingest(metadataList, report);
+                this.report.setFailedRecordsCount(failedRecordsCount);
+                this.metadataIngester.ingest(metadataList, this.report);
 
                 // --- check to see if we have to perform other searches
-                int recCount = response.getNumberOfRecordsMatched();
+                final int recCount = response.getNumberOfRecordsMatched();
 
-                processFinished = (start
-                        + CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE > recCount);
+                processFinished = ((start
+                        + CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE) > recCount);
 
                 start += CswClient.GETRECORDS_NUMBER_OF_RESULTS_PER_PAGE;
             }
 
-        } catch (Exception e) {
-            logger.error("Error in CSW Ingest: " + this.ingest.getName(), e);
-            saveException(e, IngestReportErrorType.SYSTEM_ERROR);
+        } catch (final Exception e) {
+            this.logger.error("Error in CSW Ingest: " + this.ingest.getName(),
+                    e);
+            this.saveException(e, IngestReportErrorType.SYSTEM_ERROR);
         }
     }
 }

@@ -29,37 +29,23 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
-import java.io.File;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.OrderColumn;
-
-import com.google.common.collect.Lists;
 
 @Entity
 @DiscriminatorValue("FILE")
 public class IngestFileUpload extends Ingest {
 
     private static final long serialVersionUID = -1449174289137331639L;
-    
-	public IngestFileUpload() {
-		super();
-		validRequiredFields = new HashSet<String>(Arrays.asList(new String[] {
-				"geographicExtent", "themeKeyword", "placeKeyword",
-				"webServices", "topic", "dateOfContent", "originator",
-				"dataType", "dataRepository" }));
-	}
+
+    public IngestFileUpload() {
+        super();
+        this.validRequiredFields = new HashSet<String>(
+                Arrays.asList(new String[] { "geographicExtent", "themeKeyword",
+                        "placeKeyword", "webServices", "topic", "dateOfContent",
+                        "originator", "dataType", "dataRepository" }));
+    }
 }

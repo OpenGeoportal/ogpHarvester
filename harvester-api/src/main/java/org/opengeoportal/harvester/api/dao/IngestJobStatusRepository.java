@@ -37,28 +37,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
-public interface IngestJobStatusRepository extends
-		JpaRepository<IngestJobStatus, Long> {
+public interface IngestJobStatusRepository
+        extends JpaRepository<IngestJobStatus, Long> {
 
-	/**
-	 * Get all IngestJobStatus from an Ingest.
-	 * 
-	 * @param ingestId
-	 *            the ingest identifier.
-	 * @return all jobstatuses of the ingest.
-	 */
-	List<IngestJobStatus> findByIngestId(Long ingestId);
+    /**
+     * Get all IngestJobStatus from an Ingest.
+     * 
+     * @param ingestId
+     *            the ingest identifier.
+     * @return all jobstatuses of the ingest.
+     */
+    List<IngestJobStatus> findByIngestId(Long ingestId);
 
-	/**
-	 * @param id
-	 * @param page
-	 * @return
-	 */
-	Page<IngestJobStatus> findByIngestIdAndEndTimeNotNullOrderByEndTimeDesc(
-			Long id, Pageable page);
+    /**
+     * @param id
+     * @param page
+     * @return
+     */
+    Page<IngestJobStatus> findByIngestIdAndEndTimeNotNullOrderByEndTimeDesc(
+            Long id, Pageable page);
 
 }

@@ -28,9 +28,9 @@
  * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
 /**
- * In this package you can find classes and interfaces related with the 
+ * In this package you can find classes and interfaces related with the
  * scheduling of ingest jobs.
- * 
+ *
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
  *
  */

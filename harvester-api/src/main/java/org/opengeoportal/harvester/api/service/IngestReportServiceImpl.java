@@ -38,38 +38,38 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author <a href="mailto:juanluisrp@geocat.net">Juan Luis Rodríguez</a>.
- * 
+ *
  */
 @Service
 public class IngestReportServiceImpl implements IngestReportService {
 
-	@Resource
-	private IngestReportRepository reportRepository;
+    @Resource
+    private IngestReportRepository reportRepository;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.opengeoportal.harvester.api.service.IngestReportService#save(org.
-	 * opengeoportal.harvester.api.domain.IngestReport)
-	 */
-	@Override
-	@Transactional
-	public IngestReport save(IngestReport report) {
-		return reportRepository.save(report);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.opengeoportal.harvester.api.service.IngestReportService#
+     * findReportByJobStatusId(java.lang.Long)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public IngestReport findReportByJobStatusId(final Long id) {
+        final IngestReport report = this.reportRepository.findByJobStatusId(id);
+        return report;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.opengeoportal.harvester.api.service.IngestReportService#
-	 * findReportByJobStatusId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public IngestReport findReportByJobStatusId(Long id) {
-		IngestReport report = reportRepository.findByJobStatusId(id);
-		return report;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.opengeoportal.harvester.api.service.IngestReportService#save(org.
+     * opengeoportal.harvester.api.domain.IngestReport)
+     */
+    @Override
+    @Transactional
+    public IngestReport save(final IngestReport report) {
+        return this.reportRepository.save(report);
+    }
 
 }

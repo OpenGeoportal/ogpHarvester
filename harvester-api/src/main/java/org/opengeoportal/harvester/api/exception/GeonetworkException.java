@@ -35,34 +35,34 @@ package org.opengeoportal.harvester.api.exception;
  */
 public class GeonetworkException extends MetadataRepositoryException {
 
-	private static final long serialVersionUID = 1597923228958472497L;
+    private static final long serialVersionUID = 1597923228958472497L;
 
-	/**
-	 * 
-	 */
-	public GeonetworkException() {
-	}
+    /**
+     * 
+     */
+    public GeonetworkException() {
+    }
 
-	/**
-	 * @param message
-	 */
-	public GeonetworkException(String message) {
-		super(message);
-	}
+    /**
+     * @param message
+     */
+    public GeonetworkException(final String message) {
+        super(message);
+    }
 
-	/**
-	 * @param cause
-	 */
-	public GeonetworkException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public GeonetworkException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public GeonetworkException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param cause
+     */
+    public GeonetworkException(final Throwable cause) {
+        super(cause);
+    }
 
 }

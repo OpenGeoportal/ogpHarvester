@@ -6,6 +6,11 @@ package org.opengeoportal.harvester.mvc.exception;
 public class UncompressStrategyException extends Exception {
 
     /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    /**
      * Instantiates a new uncompress strategy exception.
      */
     public UncompressStrategyException() {

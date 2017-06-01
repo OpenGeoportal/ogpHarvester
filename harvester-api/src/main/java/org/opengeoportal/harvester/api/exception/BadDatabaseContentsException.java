@@ -35,35 +35,36 @@ package org.opengeoportal.harvester.api.exception;
  */
 public class BadDatabaseContentsException extends RuntimeException {
 
-	private static final long serialVersionUID = 1338387588567815405L;
+    private static final long serialVersionUID = 1338387588567815405L;
 
-	/**
-	 * 
-	 */
-	public BadDatabaseContentsException() {
-	}
+    /**
+     * 
+     */
+    public BadDatabaseContentsException() {
+    }
 
-	/**
-	 * @param message
-	 */
-	public BadDatabaseContentsException(String message) {
-		super(message);
+    /**
+     * @param message
+     */
+    public BadDatabaseContentsException(final String message) {
+        super(message);
 
-	}
+    }
 
-	/**
-	 * @param cause
-	 */
-	public BadDatabaseContentsException(Throwable cause) {
-		super(cause);
-	}
+    /**
+     * @param message
+     * @param cause
+     */
+    public BadDatabaseContentsException(final String message,
+            final Throwable cause) {
+        super(message, cause);
+    }
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
-	public BadDatabaseContentsException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    /**
+     * @param cause
+     */
+    public BadDatabaseContentsException(final Throwable cause) {
+        super(cause);
+    }
 
 }

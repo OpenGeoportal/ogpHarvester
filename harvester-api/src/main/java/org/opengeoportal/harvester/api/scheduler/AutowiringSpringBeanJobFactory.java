@@ -40,62 +40,62 @@ import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 /**
  * This JobFactory autowires automatically the created quartz bean with spring
  * <code>@Autowired</code> dependencies.
- * 
+ *
  * @author jelies (thanks to <a href=
  *         "http://webcache.googleusercontent.com/search?q=cache:FH-N1i--sDgJ:blog.btmatthews.com/2011/09/24/inject-application-context-dependencies-in-quartz-job-beans/+&cd=7&hl=en&ct=clnk&gl=es"
  *         >Brian Matthews</a> )
- * 
+ *
  */
 public final class AutowiringSpringBeanJobFactory extends SpringBeanJobFactory
-		implements ApplicationContextAware {
+        implements ApplicationContextAware {
 
-	private transient AutowireCapableBeanFactory beanFactory;
+    private transient AutowireCapableBeanFactory beanFactory;
 
-	/**
-	 * Ingest service.
-	 */
-	@Autowired
-	private IngestService ingestService;
+    /**
+     * Ingest service.
+     */
+    @Autowired
+    private IngestService ingestService;
 
-	@Override
-	public void setApplicationContext(final ApplicationContext context) {
+    @Override
+    protected Object createJobInstance(final TriggerFiredBundle bundle)
+            throws Exception {
+        if (this.beanFactory == null) {
+            throw new IllegalStateException(
+                    "beanFactory must be initialized before calling "
+                            + "createJobInstance");
+        }
 
-		beanFactory = context.getAutowireCapableBeanFactory();
-	}
+        Object job = super.createJobInstance(bundle);
+        if (job instanceof IngestJob) {
+            final IngestJob ingestJob = (IngestJob) job;
+            ingestJob.setIngestService(this.ingestService);
+        }
 
-	@Override
-	protected Object createJobInstance(final TriggerFiredBundle bundle)
-			throws Exception {
-		if (beanFactory == null) {
-			throw new IllegalStateException(
-					"beanFactory must be initialized before calling "
-							+ "createJobInstance");
-		}
+        this.beanFactory.autowireBean(job);
+        job = this.beanFactory.applyBeanPostProcessorsAfterInitialization(job,
+                "ingestJob");
+        return job;
+    }
 
-		Object job = super.createJobInstance(bundle);
-		if (job instanceof IngestJob) {
-			IngestJob ingestJob = (IngestJob) job;
-			ingestJob.setIngestService(ingestService);
-		}
+    /**
+     * @return the ingestService
+     */
+    public IngestService getIngestService() {
+        return this.ingestService;
+    }
 
-		beanFactory.autowireBean(job);
-		job = beanFactory.applyBeanPostProcessorsAfterInitialization(job,
-				"ingestJob");
-		return job;
-	}
+    @Override
+    public void setApplicationContext(final ApplicationContext context) {
 
-	/**
-	 * @return the ingestService
-	 */
-	public IngestService getIngestService() {
-		return ingestService;
-	}
+        this.beanFactory = context.getAutowireCapableBeanFactory();
+    }
 
-	/**
-	 * @param ingestService
-	 *            the ingestService to set
-	 */
-	public void setIngestService(IngestService ingestService) {
-		this.ingestService = ingestService;
-	}
+    /**
+     * @param ingestService
+     *            the ingestService to set
+     */
+    public void setIngestService(final IngestService ingestService) {
+        this.ingestService = ingestService;
+    }
 }

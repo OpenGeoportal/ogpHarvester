@@ -1,239 +1,239 @@
 package org.opengeoportal.harvester.api.client.csw.request;
 
-import org.jdom.Element;
-import org.opengeoportal.harvester.api.client.geonetwork.Xml;
-import org.opengeoportal.harvester.api.client.csw.*;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/** Params:
-  *  - resultType                (0..1) Can be 'hits', 'results', 'validate'. Default is 'hits'
-  *  - outputFormat              (0..1) Can be only 'application/xml'
-  *  - namespace                 (0..1) Used for the GET request
-  *  - outputSchema              (0..1) Can be 'ogccore', 'profile'. Default is 'ogccore'
-  *  - startPosition             (0..1) Default is 1
-  *  - maxRecords                (0..1) Default is 10
-  *  - TypeNames                 (1..1) A set of 'dataset', 'datasetcollection', 'service', 'application'
-  *  - elementSetName            (0..1) Can be 'brief', 'summary', 'full'. Default is 'summary'
-  *  - constraintLanguage        (1..1) Can be 'CQL_TEXT', 'FILTER'. Must be included
-  *                                     when 'constraint' is specified
-  *  - constraintLanguageVersion (1..1) Example '1.0.0'
-  *  - constraint                (0..1) Query to execute
-  *  - distributedSearch         (0..1) TRUE|FALSE
-  *  - hopCount                  (0..1) default is 2
-  */
+import org.jdom.Element;
+import org.opengeoportal.harvester.api.client.csw.ConstraintLanguage;
+import org.opengeoportal.harvester.api.client.csw.Csw;
+import org.opengeoportal.harvester.api.client.csw.ElementSetName;
+import org.opengeoportal.harvester.api.client.csw.ResultType;
+import org.opengeoportal.harvester.api.client.csw.TypeName;
+import org.opengeoportal.harvester.api.client.geonetwork.Xml;
+
+/**
+ * Params: - resultType (0..1) Can be 'hits', 'results', 'validate'. Default is
+ * 'hits' - outputFormat (0..1) Can be only 'application/xml' - namespace (0..1)
+ * Used for the GET request - outputSchema (0..1) Can be 'ogccore', 'profile'.
+ * Default is 'ogccore' - startPosition (0..1) Default is 1 - maxRecords (0..1)
+ * Default is 10 - TypeNames (1..1) A set of 'dataset', 'datasetcollection',
+ * 'service', 'application' - elementSetName (0..1) Can be 'brief', 'summary',
+ * 'full'. Default is 'summary' - constraintLanguage (1..1) Can be 'CQL_TEXT',
+ * 'FILTER'. Must be included when 'constraint' is specified -
+ * constraintLanguageVersion (1..1) Example '1.0.0' - constraint (0..1) Query to
+ * execute - distributedSearch (0..1) TRUE|FALSE - hopCount (0..1) default is 2
+ */
 
 public class GetRecordsRequest extends CatalogRequest {
-	private String  outputFormat;
-	private String  startPosition;
-	private String  maxRecords;
-	private String  constrLangVersion;
-	private String  constraint;
-	private String  hopCount = "2";
-	private boolean distribSearch = false;
+    private String outputFormat;
+    private String startPosition;
+    private String maxRecords;
+    private String constrLangVersion;
+    private String constraint;
+    private String hopCount = "2";
+    private boolean distribSearch = false;
 
-	private ResultType resultType;
-	private ElementSetName elemSetName;
-	private ConstraintLanguage constrLang;
+    private ResultType resultType;
+    private ElementSetName elemSetName;
+    private ConstraintLanguage constrLang;
 
-	private Set<TypeName> hsTypeNames = new HashSet<TypeName>();
-	private List<String> alSortBy    = new ArrayList<String>();
+    private final Set<TypeName> hsTypeNames = new HashSet<TypeName>();
+    private final List<String> alSortBy = new ArrayList<String>();
 
-	
-    public GetRecordsRequest(URL cswServerUrl) {
+    public GetRecordsRequest(final URL cswServerUrl) {
         super(cswServerUrl);
     }
-	
-    
-	public void setResultType(ResultType type) {
-		resultType = type;
-	}
 
-
-	public void setOutputFormat(String format) {
-		outputFormat = format;
-	}
-	
-
-	public void setStartPosition(String start) {
-		startPosition = start;
-	}
-
-
-	public void setMaxRecords(String num) {
-		maxRecords = num;
-	}
-
-	public void setElementSetName(ElementSetName name) {
-		elemSetName = name;
-	}
-
-	public void addTypeName(TypeName typeName) {
-		hsTypeNames.add(typeName);
-	}
-
-	public void setConstraintLanguage(ConstraintLanguage lang) {
-		constrLang = lang;
-	}
-
-	public void setConstraintLangVersion(String version) {
-		constrLangVersion = version;
-	}
-
-	public void setConstraint(String constr) {
-		constraint = constr;
-	}
-
-	public void setHopCount(String hopCount) {
-        this.hopCount = hopCount;
+    private void addFilter(final Element constr) {
+        try {
+            constr.addContent(Xml.loadString(this.constraint, false));
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
     }
 
-	public void setDistribSearch(boolean distribSearch) {
-        this.distribSearch = distribSearch;
+    public void addTypeName(final TypeName typeName) {
+        this.hsTypeNames.add(typeName);
     }
 
-	protected String getRequestName() {
-        return "GetRecords";
-    }
-
-	protected void setupGetParams() {
-		addParam("request", getRequestName());
-		addParam("service", Csw.SERVICE);
-		addParam("version", getServerVersion());
-
-		addParam("resultType",     resultType);
-		addParam("namespace",      "xmlns(" + Csw.NAMESPACE_CSW.getPrefix() + "=" + Csw.NAMESPACE_CSW.getURI() + ")," 
-				+ "xmlns(" + Csw.NAMESPACE_GMD.getPrefix() + "=" + Csw.NAMESPACE_GMD.getURI() + ")"
-				);
-		addParam("outputFormat",   outputFormat);
-		addParam("outputSchema",   outputSchema);
-		addParam("startPosition",  startPosition);
-		addParam("maxRecords",     maxRecords);
-		addParam("elementSetName", elemSetName);
-		addParam("constraint",     constraint);
-
-		if (distribSearch) {
-			addParam("distributedSearch", "TRUE");
-
-            if (hopCount != null){
-                addParam("hopCount",       hopCount);
-            }
-		}
-
-		addParam("constraintLanguage",          constrLang);
-		addParam("constraint_language_version", constrLangVersion);
-
-		// FIXME : default typeNames to return results
-		// TODO : Check in Capabilities that typename exist
-		// TODO : Check that local node support typename used
-		if (hsTypeNames.size()==0)
-			addParam("typeNames", "csw:Record");
-		else
-			fill("typeNames", hsTypeNames);
-		fill("sortBy",    alSortBy);
-	}
-
-	protected Element getPostParams() {
-		Element params  = new Element(getRequestName(), Csw.NAMESPACE_CSW);
+    @Override
+    protected Element getPostParams() {
+        final Element params = new Element(this.getRequestName(),
+                Csw.NAMESPACE_CSW);
         // Add queryable namespaces to POST query
         params.addNamespaceDeclaration(Csw.NAMESPACE_DC);
 
-		//--- 'service' and 'version' are common mandatory attributes
-		setAttrib(params, "service", Csw.SERVICE);
-		setAttrib(params, "version", getServerVersion());
+        // --- 'service' and 'version' are common mandatory attributes
+        this.setAttrib(params, "service", Csw.SERVICE);
+        this.setAttrib(params, "version", this.getServerVersion());
 
-		setAttrib(params, "resultType",    resultType);
-		setAttrib(params, "outputFormat",  outputFormat);
-		//setAttrib(params, "outputSchema",  super.outputSchema, Csw.NAMESPACE_CSW.getPrefix() + ":");
-        setAttrib(params, "outputSchema",  outputSchema);
-		setAttrib(params, "startPosition", startPosition);
-		setAttrib(params, "maxRecords",    maxRecords);
+        this.setAttrib(params, "resultType", this.resultType);
+        this.setAttrib(params, "outputFormat", this.outputFormat);
+        // setAttrib(params, "outputSchema", super.outputSchema,
+        // Csw.NAMESPACE_CSW.getPrefix() + ":");
+        this.setAttrib(params, "outputSchema", this.outputSchema);
+        this.setAttrib(params, "startPosition", this.startPosition);
+        this.setAttrib(params, "maxRecords", this.maxRecords);
 
-		if (distribSearch)
-		{
-			Element ds = new Element("DistributedSearch", Csw.NAMESPACE_CSW);
-			ds.setText("TRUE");
+        if (this.distribSearch) {
+            final Element ds = new Element("DistributedSearch",
+                    Csw.NAMESPACE_CSW);
+            ds.setText("TRUE");
 
-			if (hopCount != null)
-			{
-				ds.setAttribute("hopCount", hopCount);
-			}
+            if (this.hopCount != null) {
+                ds.setAttribute("hopCount", this.hopCount);
+            }
 
-			params.addContent(ds);
-		}
+            params.addContent(ds);
+        }
 
-		params.addContent(getQuery());
+        params.addContent(this.getQuery());
 
-		return params;
-	}
+        return params;
+    }
 
-	
+    private Element getQuery() {
+        final Element query = new Element("Query", Csw.NAMESPACE_CSW);
+        // FIXME : default typeNames to return results
+        // TODO : Check in Capabilities that typename exist
+        // TODO : Check that local node support typename used
+        if (this.hsTypeNames.size() == 0) {
+            this.setAttrib(query, "typeNames", "csw:Record");
+        } else {
+            this.setAttribComma(query, "typeNames", this.hsTypeNames, "");
+        }
 
-	private Element getQuery() {
-		Element query = new Element("Query", Csw.NAMESPACE_CSW);
-		// FIXME : default typeNames to return results
-		// TODO : Check in Capabilities that typename exist
-		// TODO : Check that local node support typename used
-		if (hsTypeNames.size()==0)
-			setAttrib(query, "typeNames", "csw:Record");
-		else
-			setAttribComma(query, "typeNames", hsTypeNames, "");
-			
-		addParam (query, "ElementSetName", elemSetName);
+        this.addParam(query, "ElementSetName", this.elemSetName);
 
-		//--- handle constraint
+        // --- handle constraint
 
-		if (constraint != null && constrLang != null)
-		{
-			Element constr = new Element("Constraint", Csw.NAMESPACE_CSW);
-			query.addContent(constr);
+        if ((this.constraint != null) && (this.constrLang != null)) {
+            final Element constr = new Element("Constraint", Csw.NAMESPACE_CSW);
+            query.addContent(constr);
 
-			if (constrLang == ConstraintLanguage.CQL)
-				addParam(constr, "CqlText", constraint);
-			else
-				addFilter(constr);
+            if (this.constrLang == ConstraintLanguage.CQL) {
+                this.addParam(constr, "CqlText", this.constraint);
+            } else {
+                this.addFilter(constr);
+            }
 
-			setAttrib(constr, "version", constrLangVersion);
-		}
+            this.setAttrib(constr, "version", this.constrLangVersion);
+        }
 
-		//--- handle sortby
+        // --- handle sortby
 
-		if (alSortBy.size() != 0)
-		{
-			Element sortBy = new Element("SortBy", Csw.NAMESPACE_OGC);
-			query.addContent(sortBy);
+        if (this.alSortBy.size() != 0) {
+            final Element sortBy = new Element("SortBy", Csw.NAMESPACE_OGC);
+            query.addContent(sortBy);
 
-			for(String sortInfo : alSortBy)
-			{
-				String  field = sortInfo.substring(0, sortInfo.length() -2);
-				boolean ascen = sortInfo.endsWith(":A");
+            for (final String sortInfo : this.alSortBy) {
+                final String field = sortInfo.substring(0,
+                        sortInfo.length() - 2);
+                final boolean ascen = sortInfo.endsWith(":A");
 
-				Element sortProp = new Element("SortProperty", Csw.NAMESPACE_OGC);
-				sortBy.addContent(sortProp);
+                final Element sortProp = new Element("SortProperty",
+                        Csw.NAMESPACE_OGC);
+                sortBy.addContent(sortProp);
 
-				Element propName  = new Element("PropertyName", Csw.NAMESPACE_OGC).setText(field);
-				Element sortOrder = new Element("SortOrder",    Csw.NAMESPACE_OGC).setText(ascen ? "ASC" : "DESC");
+                final Element propName = new Element("PropertyName",
+                        Csw.NAMESPACE_OGC).setText(field);
+                final Element sortOrder = new Element("SortOrder",
+                        Csw.NAMESPACE_OGC).setText(ascen ? "ASC" : "DESC");
 
-				sortProp.addContent(propName);
-				sortProp.addContent(sortOrder);
-			}
-		}
+                sortProp.addContent(propName);
+                sortProp.addContent(sortOrder);
+            }
+        }
 
-		return query;
-	}
+        return query;
+    }
 
-	private void addFilter(Element constr) {
-		try
-		{
-			constr.addContent(Xml.loadString(constraint, false));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-	}
+    @Override
+    protected String getRequestName() {
+        return "GetRecords";
+    }
+
+    public void setConstraint(final String constr) {
+        this.constraint = constr;
+    }
+
+    public void setConstraintLanguage(final ConstraintLanguage lang) {
+        this.constrLang = lang;
+    }
+
+    public void setConstraintLangVersion(final String version) {
+        this.constrLangVersion = version;
+    }
+
+    public void setDistribSearch(final boolean distribSearch) {
+        this.distribSearch = distribSearch;
+    }
+
+    public void setElementSetName(final ElementSetName name) {
+        this.elemSetName = name;
+    }
+
+    public void setHopCount(final String hopCount) {
+        this.hopCount = hopCount;
+    }
+
+    public void setMaxRecords(final String num) {
+        this.maxRecords = num;
+    }
+
+    public void setOutputFormat(final String format) {
+        this.outputFormat = format;
+    }
+
+    public void setResultType(final ResultType type) {
+        this.resultType = type;
+    }
+
+    public void setStartPosition(final String start) {
+        this.startPosition = start;
+    }
+
+    @Override
+    protected void setupGetParams() {
+        this.addParam("request", this.getRequestName());
+        this.addParam("service", Csw.SERVICE);
+        this.addParam("version", this.getServerVersion());
+
+        this.addParam("resultType", this.resultType);
+        this.addParam("namespace",
+                "xmlns(" + Csw.NAMESPACE_CSW.getPrefix() + "="
+                        + Csw.NAMESPACE_CSW.getURI() + ")," + "xmlns("
+                        + Csw.NAMESPACE_GMD.getPrefix() + "="
+                        + Csw.NAMESPACE_GMD.getURI() + ")");
+        this.addParam("outputFormat", this.outputFormat);
+        this.addParam("outputSchema", this.outputSchema);
+        this.addParam("startPosition", this.startPosition);
+        this.addParam("maxRecords", this.maxRecords);
+        this.addParam("elementSetName", this.elemSetName);
+        this.addParam("constraint", this.constraint);
+
+        if (this.distribSearch) {
+            this.addParam("distributedSearch", "TRUE");
+
+            if (this.hopCount != null) {
+                this.addParam("hopCount", this.hopCount);
+            }
+        }
+
+        this.addParam("constraintLanguage", this.constrLang);
+        this.addParam("constraint_language_version", this.constrLangVersion);
+
+        // FIXME : default typeNames to return results
+        // TODO : Check in Capabilities that typename exist
+        // TODO : Check that local node support typename used
+        if (this.hsTypeNames.size() == 0) {
+            this.addParam("typeNames", "csw:Record");
+        } else {
+            this.fill("typeNames", this.hsTypeNames);
+        }
+        this.fill("sortBy", this.alSortBy);
+    }
 }

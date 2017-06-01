@@ -38,30 +38,30 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CustomRepositoryRepository extends
-		JpaRepository<CustomRepository, Long> {
+public interface CustomRepositoryRepository
+        extends JpaRepository<CustomRepository, Long> {
 
-	CustomRepository findByName(String name);
+    /**
+     * @param pageable
+     * @return
+     */
+    Page<CustomRepository> findByDeletedFalse(Pageable pageable);
 
-	/**
-	 * Find all not deleted repository with the name and service type passed.
-	 * 
-	 * @param name
-	 *            the name.
-	 * @param serviceType
-	 *            the service type {@link InstanceType}.
-	 * @param deleted 
-	 * @return the list of all {@link CustomRepository} with deleted=false, name
-	 *         and serviceType.
-	 */
-	List<CustomRepository> findByNameAndServiceTypeAndDeleted(String name,
-			InstanceType serviceType, boolean deleted);
-	
-	List<CustomRepository> findByDeletedFalse(Sort sort);
+    List<CustomRepository> findByDeletedFalse(Sort sort);
 
-	/**
-	 * @param pageable
-	 * @return
-	 */
-	Page<CustomRepository> findByDeletedFalse(Pageable pageable);
+    CustomRepository findByName(String name);
+
+    /**
+     * Find all not deleted repository with the name and service type passed.
+     * 
+     * @param name
+     *            the name.
+     * @param serviceType
+     *            the service type {@link InstanceType}.
+     * @param deleted
+     * @return the list of all {@link CustomRepository} with deleted=false, name
+     *         and serviceType.
+     */
+    List<CustomRepository> findByNameAndServiceTypeAndDeleted(String name,
+            InstanceType serviceType, boolean deleted);
 }

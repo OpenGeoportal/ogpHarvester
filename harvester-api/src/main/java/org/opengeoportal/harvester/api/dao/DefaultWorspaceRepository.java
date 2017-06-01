@@ -32,10 +32,9 @@ package org.opengeoportal.harvester.api.dao;
 import org.opengeoportal.harvester.api.domain.DefaultWorkspace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface DefaultWorspaceRepository extends
-		JpaRepository<DefaultWorkspace, Long> {
-    
-    DefaultWorkspace findByWorksp(String worksp);
+public interface DefaultWorspaceRepository
+        extends JpaRepository<DefaultWorkspace, Long> {
 
+    DefaultWorkspace findByWorksp(String worksp);
 
 }
