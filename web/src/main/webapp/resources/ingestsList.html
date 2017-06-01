@@ -14,7 +14,7 @@
 	</thead>
 	<tbody>
 		<tr data-ng-repeat="ingest in ingestPage.elements">
-			<td ng-show="ingest.type != 'FILE'" ><a href="#/editIngest/{{ingest.id}}" class="ingest-name" ng-show="ingest.type == 'TOI_FILE'"
+			<td ng-show="ingest.type != 'FILE'" ><a href="#/editIngest/{{ingest.id}}" class="ingest-name" 
 				data-tooltip="{{ingest.url}}" data-tooltip-append-to-body="true">{{ingest.name}}</a></td>
 			<td ng-show="ingest.type == 'FILE'" >{{ingest.name}}</td>
 			<td data-translate="{{'MANAGE_INGESTS.TOI_'+ingest.type}}"></td>
