@@ -20,13 +20,14 @@
         <!--<security:intercept-url pattern="/solrDelete" access="hasRole('ROLE_ADMIN')"/> -->
         <security:form-login login-page="/login" default-target-url="/" 
                             authentication-failure-url="/loginfailed" 
+                            authentication-success-handler-ref="authSuccessHandler" 
                             always-use-default-target="true"
         />
         <security:intercept-url pattern="/**"
                                         access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')" /> <!-- requires-channel="https"/> -->
         <security:logout />
     </security:http>
-
+    
     <!-- <security:ldap-server url="ldaps://ldap.tufts.edu:636/ou=People,dc=tufts,dc=edu" 
     /> -->
     <security:authentication-manager alias="authenticationManager">
@@ -41,4 +42,6 @@
         <!-- <security:ldap-authentication-provider user-search-filter="(uid={0})" 
         user-context-mapper-ref="userDetailsMapper.custom" /> -->
     </security:authentication-manager>
+    
+    <beans:bean id="authSuccessHandler"  class="org.opengeoportal.harvester.mvc.bean.AuthenticationSuccessHandlerImpl" autowire="constructor"/>
 </beans:beans>

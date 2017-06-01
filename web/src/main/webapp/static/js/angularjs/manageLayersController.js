@@ -22,6 +22,17 @@
             $scope.displayedCollection = [].concat($scope.jsonresult);
             $scope.actions = [$translate("MANAGE_LAYERS.DOWNLOAD"),
                 $translate("MANAGE_LAYERS.DELETE")];
+            
+            $scope.token = '';
+    		// Initialize the token for JWT authentication with DataIngest				
+    		$http({
+    			method : "GET",
+    			url : 'getDataIngestToken'
+    		}).then(function mySucces(response) {
+    			$scope.token = response.data;												
+    		}, function myError(response) {
+    			console.log('Invalid session');
+    		});
 
             $scope.GetValue = function (action, row_name) {
                  var res = row_name.split(":");
@@ -206,7 +217,8 @@
                                 });
                                 $http({
                                     method : "DELETE",
-                                    url : dataIngestURL + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds
+                                    url : dataIngestURL + "/workspaces/" + $scope.ws + "/datasets/" + $scope.ds,
+                                    headers: {'Authorization': $scope.token.replace(/^"(.+(?="$))"$/, '$1') }
                                 }).then(function mySuccess(response) {
                                     console.log(response.status + ": OK. Successfully deleted '" +
                                         $scope.ws + ":" + $scope.ds + "'");

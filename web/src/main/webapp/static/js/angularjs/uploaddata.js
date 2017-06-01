@@ -3,21 +3,34 @@
 
 	var upMod = angular.module('ogpHavester.controllers.uploadDataCtrl', ['ogpHarvester.services', 'ngRoute', 'ui.bootstrap', 'pascalprecht.translate', 'ngFileUpload', 'ngCookies'])
 
-	upMod.config(['$routeProvider',
+	upMod.config(['$routeProvider', 
 		function config($routeProvider, DataIngest) {
 		$routeProvider.when('/uploadData', {
 			template: 'resources/uploaddata.html',
 			controller: 'UploadDataCtrl'
 		});
+		
+		
 	}
 	]);
-
-
+	
 	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', '$filter', '$route', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env, $filter, $route)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
-
+		
+		
+		$scope.token = '';
+		// Initialize the token for JWT authentication with DataIngest				
+		$http({
+			method : "GET",
+			url : 'getDataIngestToken'
+		}).then(function mySucces(response) {
+			$scope.token = response.data;												
+		}, function myError(response) {
+			console.log('Invalid session');
+		});
+		
 		$scope.requiredFieldList = {"geographicExtent": false, 
 			"topic" : false, "dataType" : false, "themeKeyword" : false, "dateOfContent": false, 
 			"dataRepository": false, "placeKeyword" : false, "originator" : false, "webServices" : false};
@@ -36,7 +49,8 @@
 				if(download.locked && download.ticket>=0) {
 					$http({
 						method : "GET",
-						url : dataIngestURL+"/checkUploadStatus/"+download.ticket
+						url : dataIngestURL+"/checkUploadStatus/"+download.ticket,
+						headers: {'Authorization': $scope.token.replace(/^"(.+(?="$))"$/, '$1') }
 					}).then(function mySucces(response) {
 						if(response.status=='200') {
 							
@@ -139,11 +153,14 @@
 						if(download.isnew) {
 							method = 'POST';
 						}
+						
+						console.log($scope.token);
 
 
 						Upload.upload({
 							url: dataIngestURL+'/workspaces/'+download.workspace+'/datasets/'+download.dataset+optionalParams,
 							data: {file: download.zipFile},
+							headers: {'Authorization': $scope.token.replace(/^"(.+(?="$))"$/, '$1') },
 							method: method
 						}).then(function (resp) {
 							console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
