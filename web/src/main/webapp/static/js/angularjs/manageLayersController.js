@@ -255,6 +255,7 @@
 
         }])
 
+
         .controller('downloadWindowCtrl', ['$scope', '$interval', '$modalInstance', '$modal', '$http',
             '$window', '$translate', 'url', 'layer_title', 'msg',
             function ($scope, $interval, $modalInstance, $modal, $http, $window, $translate, url, layer_title, msg) {
@@ -262,41 +263,64 @@
                 $scope.layer_title = layer_title;
                 $scope.msg = msg;
 
+                var lock =0;
+
                 $scope.refreshView = $interval(function(){
                             $http({
                                 method : "GET",
                                 url : url
                             }).then(function mySucces(response) {
                                 if(response.status=='202') {
-                                    console.log(response.data);// Accepted: wait
+                                    console.log("Waiting... " + response.data);// Accepted: wait
                                 } else if(response.status=='200') {
-                                    $interval.cancel($scope.refreshView);
-                                    window.open(url, '_blank');
-                                    $modalInstance.dismiss();
+                                    stopSuccess();
                                 }else {
-                                    console.log(response);
+                                    console.log("Server response: " + response);
                                 }
                             }, function myError(response) {
-                                $interval.cancel($scope.refreshView);
-                                 console.error(response.data);
-                                $modalInstance.dismiss();
-
-                                var modalError = $modal.open({
-                                    templateUrl: 'resources/errorPopup.html',
-                                    controller: 'ErrorPopupCtrl',
-                                    resolve: {
-                                        title: function(){
-                                            return $translate("MANAGE_LAYERS.SERVER_ERROR");
-                                        },
-                                        text: function (){
-                                            return response.data;
-                                        }
-                                    },
-                                });
-
+                                stopError();
                             });
 
                 },1000);
+
+
+                function stopSuccess() {
+                    $interval.cancel($scope.refreshView);
+                    if (lock == 0) { // We guard this to ensure the file is not downloaded multiple times
+                        lock = 1;
+                        console.log("Downloading file...");
+                        window.open(url, '_blank');
+                        $modalInstance.close();
+                    }
+                }
+
+
+                function stopError() {
+                    $interval.cancel($scope.refreshView);
+
+                    if (lock == 0) {
+                        lock = 1;
+
+                        console.error("Error:" + response.data);
+                        $modalInstance.close();
+
+                        var modalError = $modal.open({
+                            templateUrl: 'resources/errorPopup.html',
+                            controller: 'ErrorPopupCtrl',
+                            resolve: {
+                                title: function () {
+                                    return $translate("MANAGE_LAYERS.SERVER_ERROR");
+                                },
+                                text: function () {
+                                    return response.data;
+                                }
+                            },
+                        });
+                    }
+                }
+
+
+
             }])
 
 
