@@ -278,7 +278,7 @@
                                     console.log("Server response: " + response);
                                 }
                             }, function myError(response) {
-                                stopError();
+                                stopError(response.data);
                             });
 
                 },1000);
@@ -295,13 +295,13 @@
                 }
 
 
-                function stopError() {
+                function stopError(data) {
                     $interval.cancel($scope.refreshView);
 
                     if (lock == 0) {
                         lock = 1;
 
-                        console.error("Error:" + response.data);
+                        console.error("Error:" + data.error);
                         $modalInstance.close();
 
                         var modalError = $modal.open({
@@ -312,7 +312,7 @@
                                     return $translate("MANAGE_LAYERS.SERVER_ERROR");
                                 },
                                 text: function () {
-                                    return response.data;
+                                    return data.error;
                                 }
                             },
                         });
