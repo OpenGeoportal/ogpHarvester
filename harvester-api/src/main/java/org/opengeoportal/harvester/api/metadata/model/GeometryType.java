@@ -11,7 +11,8 @@ public enum GeometryType {
 		LibraryRecord(DataType.Paper);
 		
 		private final DataType dataType;
-		enum DataType {Raster, Vector, Paper, Undefined};
+
+    enum DataType {Raster, Vector, Paper, Undefined}
 
 		GeometryType(DataType dataType){
 			this.dataType = dataType;
@@ -40,34 +41,26 @@ public enum GeometryType {
         }
         
 		public static GeometryType parseGeometryType(String geometryString){
-			geometryString = geometryString.trim();
-			//legacy case
-			if (geometryString.equalsIgnoreCase("Paper Map")){
-				return GeometryType.ScannedMap;
-			}
+            //trim the string and remove internal spaces
+            geometryString = geometryString.trim();//.replace(" ", "");
+
 			for (GeometryType geomType : GeometryType.values()){
 				if (geomType.toString().equalsIgnoreCase(geometryString)){
 					return geomType;
-				}
-			}
-			return GeometryType.Undefined;
+                } else if (geometryString.equalsIgnoreCase("ScannedMap")) {
+                    return GeometryType.ScannedMap;
+                }
+            }
+            return GeometryType.Undefined;
 		}
 		
 		public static Boolean isVector(GeometryType geometryType){
-			if (geometryType.dataType.equals(DataType.Vector)){
-				return true;
-			} else {
-				return false;
-			}
-		}
-		
-		public static Boolean isRaster(GeometryType geometryType){
-			if (geometryType.dataType.equals(DataType.Raster)){
-				return true;
-			} else {
-				return false;
-			}
-		}
+            return geometryType.dataType.equals(DataType.Vector);
+        }
+
+    public static Boolean isRaster(GeometryType geometryType){
+            return geometryType.dataType.equals(DataType.Raster);
+        }
 
 
 }

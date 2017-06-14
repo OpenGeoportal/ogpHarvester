@@ -150,6 +150,7 @@ public class OgpMetadataParser extends BaseMetadataParser {
 	 */
 	private void handleGeometryType(SolrRecord record,
 			MetadataParserResponse response, Metadata metadata) {
+
 		String geometryTypeString = record.getDataType();
 		GeometryType geom = GeometryType.parseGeometryType(geometryTypeString);
 

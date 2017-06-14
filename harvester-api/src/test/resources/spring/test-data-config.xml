@@ -14,9 +14,10 @@
 		http://www.mockito.org/spring/mockito http://www.mockito.org/spring/mockito.xsd">
 
 	<context:component-scan
-		base-package="org.opengeoportal.harvester.api.service,org.opengeoportal.harvester.api.component" />
-	<context:component-scan base-package="org.opengeoportal.harvester.api.scheduler"></context:component-scan>
+			base-package="org.opengeoportal.harvester.api.service,org.opengeoportal.harvester.api.component,
+		org.opengeoportal.harvester.api.scheduler"/>
 	<context:annotation-config />
+
 
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 
