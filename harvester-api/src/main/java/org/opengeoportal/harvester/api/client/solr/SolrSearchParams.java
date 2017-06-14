@@ -1,31 +1,31 @@
-/**
- * SolrSearchParams.java
- *
- * Copyright (C) 2013
- *
- * This file is part of Open Geoportal Harvester.
- *
- * This software is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option) any
- * later version.
- *
- * This software is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
- * details.
- *
- * You should have received a copy of the GNU General Public License along with
- * this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
- * As a special exception, if you link this library with other files to produce
- * an executable, this library does not by itself cause the resulting executable
- * to be covered by the GNU General Public License. This exception does not
- * however invalidate any other reasons why the executable file might be covered
- * by the GNU General Public License.
- *
- * Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
+/*
+  SolrSearchParams.java
+
+  Copyright (C) 2013
+
+  This file is part of Open Geoportal Harvester.
+
+  This software is free software; you can redistribute it and/or modify it
+  under the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your option) any
+  later version.
+
+  This software is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+  details.
+
+  You should have received a copy of the GNU General Public License along with
+  this library; if not, write to the Free Software Foundation, Inc., 51
+  Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+  As a special exception, if you link this library with other files to produce
+  an executable, this library does not by itself cause the resulting executable
+  to be covered by the GNU General Public License. This exception does not
+  however invalidate any other reasons why the executable file might be covered
+  by the GNU General Public License.
+
+  Authors:: Juan Luis Rodríguez (mailto:juanluisrp@geocat.net)
  */
 package org.opengeoportal.harvester.api.client.solr;
 
@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +49,6 @@ import org.springframework.data.solr.core.query.SimpleStringCriteria;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Multisets;
 
 /**
  * This class contains the fields values used to filter Solr medatada.
@@ -69,8 +65,8 @@ public class SolrSearchParams {
 	/**
 	 * The default operator for parsing queries.
 	 */
-	public static enum Operator {
-		/** OR operator. */
+    public enum Operator {
+        /** OR operator. */
 		OR,
 		/** AND operator. */
 		AND
@@ -193,12 +189,13 @@ public class SolrSearchParams {
 										.is(institution));
 					}
 				}
-
-				SimpleQuery query = new SimpleQuery(institutionCriteria);
-				DefaultQueryParser parser = new DefaultQueryParser();
-				String queryString = parser.getQueryString(query);
-				solrQuery.addFilterQuery(queryString);
-			} else {
+                if (institutionCriteria != null) {
+                    SimpleQuery query = new SimpleQuery(institutionCriteria);
+                    DefaultQueryParser parser = new DefaultQueryParser();
+                    String queryString = parser.getQueryString(query);
+                    solrQuery.addFilterQuery(queryString);
+                }
+            } else {
 				solrQuery.addFilterQuery(SolrRecord.INSTITUTION + ":*");
 			}
 
@@ -234,19 +231,23 @@ public class SolrSearchParams {
 			}
 			if (StringUtils.isNotBlank(originator)) {
 				String originatorCriteria = splitAndConcatenateUsingOperator(
-						Operator.AND, SolrRecord.ORIGINATOR, originator);
-				solrQuery.addFilterQuery(originatorCriteria);
+                        Operator.AND, SolrRecord.ORIGINATOR, originator, " ");
+                solrQuery.addFilterQuery(originatorCriteria);
 				solrQuery.add(PF, SolrRecord.ORIGINATOR + ":" + originator);
 			}
 			if (dataTypes != null && dataTypes.size() > 0) {
 				StringBuilder concatenatedType = new StringBuilder();
 				for (DataType dType : dataTypes) {
-					concatenatedType.append(dType.toString().replace(" ", "+")).append(" ");
-				}
+                    concatenatedType.append(handleSpaces(dType.toString())).append(";");
+                    List<String> alternates = dType.getAlternateValues();
+                    for (String alt : alternates) {
+                        concatenatedType.append(handleSpaces(alt)).append(";");
+                    }
+                }
 				String dataTypeCriteria = splitAndConcatenateUsingOperator(
 						Operator.OR, SolrRecord.DATA_TYPE,
-						concatenatedType.toString());
-				solrQuery.add("fq", dataTypeCriteria);
+                        concatenatedType.toString(), ";");
+                solrQuery.add("fq", dataTypeCriteria);
 			}
 
 			if (excludeRestrictedData) {
@@ -281,9 +282,16 @@ public class SolrSearchParams {
 		return solrQuery;
 	}
 
+    private static String handleSpaces(String rawstring) {
+        if (StringUtils.contains(rawstring, " ")) {
+            rawstring = "\"" + rawstring + "\"";
+        }
+        return rawstring;
+    }
+
 	/**
-	 * @return
-	 */
+     * @return String synonym query
+     */
 	private String generateSynonymsQuery() {
 		ListMultimap<String, String> fieldList = ArrayListMultimap.create();
 		if (StringUtils.isNotBlank(themeKeyword)) {
@@ -315,14 +323,15 @@ public class SolrSearchParams {
 	}
 
 	/**
-	 * @param operator
-	 * @param fieldName
-	 * @param fieldContent
-	 * @return
-	 */
+     * @param operator query operator
+     * @param fieldName Solr field
+     * @param fieldContent contents of Solr field
+     * @return clause of solr query as a String
+     */
 	private String splitAndConcatenateUsingOperator(Operator operator,
-			String fieldName, String fieldContent) {
-		String[] contentSplitted = StringUtils.split(fieldContent);
+                                                    String fieldName, String fieldContent, String separator) {
+        String[] contentSplitted = StringUtils.split(fieldContent, separator);
+
 		StringBuilder sb = new StringBuilder();
 		int length = contentSplitted.length;
 		for (int i = 0; i < length; i++) {

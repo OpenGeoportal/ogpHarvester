@@ -29,6 +29,9 @@
  */
 package org.opengeoportal.harvester.api.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author jlrodriguez
  *
@@ -50,5 +53,15 @@ public enum DataType {
         } else {
             return "";
         }
+    }
+
+    public List<String> getAlternateValues() {
+
+        List<String> alternates = new ArrayList<String>();
+        if (this.equals(DataType.SCANNED)) {
+            alternates.add("Scanned Map");
+            alternates.add("ScannedMap");
+        }
+        return alternates;
     }
 }
