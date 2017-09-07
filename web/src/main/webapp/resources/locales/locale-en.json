@@ -256,7 +256,9 @@
 		"DOWNLOAD": "Download",
 		"UPDATE": "Update",
 		"DELETE": "Delete",
-		"SERVER_ERROR": "Data Ingest Server Error"
+		"SERVER_ERROR": "Data Ingest Server Error",
+		"METHOD_NOT_ALLOWED": "Geoserver Error",
+		"CHECK_GEOSERVER": "Please check your geoserver configuration (is this layer whithin a group?)"
    },
 	"SPLASH":{
 		"HEADER": "Waiting",

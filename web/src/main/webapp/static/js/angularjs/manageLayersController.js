@@ -224,9 +224,27 @@
                                         $scope.ws + ":" + $scope.ds + "'");
                                     $route.reload();
                                     splash.close();
-                                }, function myError(response) {
+                                },
+                                    function myError(response) {
                                     console.log(response.statusText);
+                                    console.log(response.text);
                                     splash.close();
+
+                                    var modalError = $modal.open({
+                                        templateUrl: 'resources/errorPopup.html',
+                                        controller: 'ErrorPopupCtrl',
+                                        resolve: {
+                                            title: function () {
+                                                return $translate("MANAGE_LAYERS.METHOD_NOT_ALLOWED");
+                                            },
+                                            text: function () {
+                                                return $translate("MANAGE_LAYERS.CHECK_GEOSERVER");
+                                            }
+                                        },
+                                    });
+
+
+
                                 });
 
                             }
