@@ -68,8 +68,7 @@
 
             $http({
                 method : "GET",
-                //url : "http://localhost:8083/allDatasetsMockup",//TODO: remove this from production
-                url : "http://localhost:8083/allDatasets",
+                url : dataIngestURL+"/allDatasets",
                 isArray: true
             }).then(function mySuccess(response) {
                 $scope.jsonresult = response.data;
