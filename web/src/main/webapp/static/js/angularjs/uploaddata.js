@@ -177,7 +177,9 @@
 								download.locked = false;
 								$cookies['downloads'] = JSON.stringify($scope.downloads);
 							} else {
-								var msg = resp.data.replace("PUT", "UPDATE");
+								if(resp.data.indexOf('PUT')!=-1) {
+									var msg = resp.data.replace("PUT", "UPDATE");
+								}
 								download.status = $translate("UPLOAD_DATA.CUSTOM", {
 									custom : msg
 								});
