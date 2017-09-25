@@ -85,7 +85,7 @@ public class AuthenticationSuccessHandlerImpl
             session.setAttribute("dataIngest_token",
                     createResponse.getHeaders().get("Authorization").get(0));
             httpServletResponse.setStatus(HttpServletResponse.SC_OK);
-            httpServletResponse.sendRedirect("/");
+            httpServletResponse.sendRedirect("/ogp-harvester");
         } else {
             httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             httpServletResponse.sendRedirect("/loginfailed");
