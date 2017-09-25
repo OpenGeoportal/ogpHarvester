@@ -285,7 +285,7 @@
 		return {
 			getWorkspaces: function() {
 
-				return $http.get('/rest/defaultWorkspaces/getdefaultworkspaces', {
+				return $http.get('rest/defaultWorkspaces/getdefaultworkspaces', {
 					// manage response
 				});
 			},
