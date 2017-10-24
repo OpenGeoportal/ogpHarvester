@@ -54,6 +54,14 @@
 						<shortRevisionLength>8</shortRevisionLength>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>2.1</version>
+					<configuration>
+						<path>/ogp-harvester</path>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -87,6 +95,7 @@
                 <artifactId>postgresql</artifactId>
                 <version>${postgres.version}</version>
             </dependency>
+
 
 		</dependencies>
 	</dependencyManagement>
