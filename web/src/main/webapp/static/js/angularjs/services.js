@@ -306,7 +306,7 @@
 		// Public interface
 		return {
 			add: function(download, requiredFields) {
-				
+				var return_value = '';
 				Upload.upload({
 					url: 'rest/uploadMetadata/add',
 					data: {workspace: download.workspace, dataset: download.dataset, requiredFields : requiredFields, file: download.zipFile},
@@ -316,11 +316,11 @@
 					
 				}, function (resp) {
 					console.log('Error status: ' + resp.data);
-					download.status = $translate("UPLOAD_DATA.CUSTOM", {
-						custom : download.status + " - " + resp.data
-					});
+					return_value = ' - ' + resp.data;
 					
 				});
+				
+				return return_value;
 
 			}
 		};

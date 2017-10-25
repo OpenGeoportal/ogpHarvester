@@ -70,7 +70,7 @@
 							download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
 							$route.reload();
-							uploadMetadata.add(download, requiredFieldsStr);
+							download.status = download.status + uploadMetadata.add(download, requiredFieldsStr);
 							$cookies['downloads'] = JSON.stringify($scope.downloads);							
 						}
 					}, function myError(response) {
