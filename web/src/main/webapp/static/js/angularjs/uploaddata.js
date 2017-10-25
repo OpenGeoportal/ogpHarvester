@@ -171,7 +171,7 @@
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
-							if(resp.status=='500') {
+							if(resp.status=='500' || resp.status=='400') {
 								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
 								download.statusColor = 'red';
 								download.locked = false;
