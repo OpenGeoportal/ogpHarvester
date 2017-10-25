@@ -9,17 +9,17 @@
 			template: 'resources/uploaddata.html',
 			controller: 'UploadDataCtrl'
 		});
-		
-		
+
+
 	}
 	]);
-	
+
 	upMod.controller('UploadDataCtrl', ['$scope', 'Upload', '$http', '$q','$cookies', '$interval', '$translate', 'defaultWorkspaces', 'uploadMetadata', '$modal', '__env', '$filter', '$route', function ($scope, Upload, $http, $q, $cookies, $interval, $translate, defaultWorkspaces, uploadMetadata, $modal, __env, $filter, $route)  {
 
 		try { angular.module("ngFileUpload") } catch(err) { console.log(err); }
 		try { angular.module("ngCookies") } catch(err) { console.log(err); }
-		
-		
+
+
 		$scope.token = '';
 		// Initialize the token for JWT authentication with DataIngest				
 		$http({
@@ -30,10 +30,10 @@
 		}, function myError(response) {
 			console.log('Invalid session');
 		});
-		
+
 		$scope.requiredFieldList = {"geographicExtent": false, 
-			"topic" : false, "dataType" : false, "themeKeyword" : false, "dateOfContent": false, 
-			"dataRepository": false, "placeKeyword" : false, "originator" : false, "webServices" : false};
+				"topic" : false, "dataType" : false, "themeKeyword" : false, "dateOfContent": false, 
+				"dataRepository": false, "placeKeyword" : false, "originator" : false, "webServices" : false};
 
 		var dataIngestURL = __env.dataIngestAPIUrl;
 
@@ -43,7 +43,7 @@
 			$scope.downloads = [];
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
 		}
-		
+
 		$scope.refreshView = $interval(function(){
 			angular.forEach($scope.downloads, function(download) {	
 				if(download.locked && download.ticket>=0) {
@@ -53,7 +53,7 @@
 						headers: {'Authorization': $scope.token.replace(/^"(.+(?="$))"$/, '$1') }
 					}).then(function mySucces(response) {
 						if(response.status=='200') {
-							
+
 							var requiredFieldsStr = '';
 
 							angular.forEach($scope.requiredFieldList, function(value, key) {
@@ -65,12 +65,20 @@
 									}
 								}
 							}, requiredFieldsStr);
-							
+
 							download.ticket=-1;
-							download.status = $translate("UPLOAD_DATA.FILE_SENT");
 							download.statusColor = 'black';
-							$route.reload();
-							download.status = download.status + uploadMetadata.add(download, requiredFieldsStr);
+							
+							download.status =  $translate("UPLOAD_DATA.FILE_SENT");
+							
+							uploadMetadata.add(download, requiredFieldsStr).then(function() {
+								console.log('Metadata sent ');													
+							}, function (resp) {
+								console.log('Error status: ' + resp.data);
+								download.status = $translate("UPLOAD_DATA.FILE_SENT") + ' - ' + resp.data;								
+							});
+
+							
 							$cookies['downloads'] = JSON.stringify($scope.downloads);							
 						}
 					}, function myError(response) {
@@ -153,7 +161,7 @@
 						if(download.isnew) {
 							method = 'POST';
 						}
-						
+
 						console.log($scope.token);
 
 
@@ -171,21 +179,21 @@
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
-								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
-								download.statusColor = 'red';
-								download.locked = false;
-								$cookies['downloads'] = JSON.stringify($scope.downloads);
-                                var msg = resp.data;
-                                if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1){
-                                        msg = resp.data.replace("PUT", "UPDATE");}
+							download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
+							download.statusColor = 'red';
+							download.locked = false;
+							$cookies['downloads'] = JSON.stringify($scope.downloads);
+							var msg = resp.data;
+							if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1){
+								msg = resp.data.replace("PUT", "UPDATE");}
 
-                                download.status = $translate("UPLOAD_DATA.CUSTOM", {
-                                    custom : msg
+							download.status = $translate("UPLOAD_DATA.CUSTOM", {
+								custom : msg
 
-                                });
-                                download.statusColor = 'red';
-                                download.locked = false;
-                                $cookies['downloads'] = JSON.stringify($scope.downloads);
+							});
+							download.statusColor = 'red';
+							download.locked = false;
+							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						});
 					}
 				});

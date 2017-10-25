@@ -306,22 +306,12 @@
 		// Public interface
 		return {
 			add: function(download, requiredFields) {
-				var return_value = '';
-				Upload.upload({
+				return Upload.upload({
 					url: 'rest/uploadMetadata/add',
 					data: {workspace: download.workspace, dataset: download.dataset, requiredFields : requiredFields, file: download.zipFile},
 					method: 'POST'
-				}).then(function (resp) {
-					
-					
-				}, function (resp) {
-					console.log('Error status: ' + resp.data);
-					return_value = ' - ' + resp.data;
-					
 				});
 				
-				return return_value;
-
 			}
 		};
 	}
