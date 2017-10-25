@@ -184,6 +184,7 @@
 							download.locked = false;
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 							var msg = resp.data;
+							if (resp.data.message != null ) msg = resp.data.message;
 							if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1){
 								msg = resp.data.replace("PUT", "UPDATE");}
 
