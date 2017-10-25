@@ -176,16 +176,14 @@
 								download.statusColor = 'red';
 								download.locked = false;
 								$cookies['downloads'] = JSON.stringify($scope.downloads);
-							} else {
-								if(resp.data.indexOf('PUT')!=-1) {
+							} else if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1) {
 									var msg = resp.data.replace("PUT", "UPDATE");
-								}
-								download.status = $translate("UPLOAD_DATA.CUSTOM", {
-									custom : msg
-								});
-								download.statusColor = 'red';
-								download.locked = false;
-								$cookies['downloads'] = JSON.stringify($scope.downloads);
+                                    download.status = $translate("UPLOAD_DATA.CUSTOM", {
+                                        custom : msg
+                                    });
+                                    download.statusColor = 'red';
+                                    download.locked = false;
+                                    $cookies['downloads'] = JSON.stringify($scope.downloads);
 							}
 						});
 					}
