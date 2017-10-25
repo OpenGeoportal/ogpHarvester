@@ -171,12 +171,11 @@
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
-							if(resp.status=='500' || resp.status=='400') {
 								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
 								download.statusColor = 'red';
 								download.locked = false;
 								$cookies['downloads'] = JSON.stringify($scope.downloads);
-							} else if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1) {
+							if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1) {
 									var msg = resp.data.replace("PUT", "UPDATE");
                                     download.status = $translate("UPLOAD_DATA.CUSTOM", {
                                         custom : msg
@@ -184,6 +183,20 @@
                                     download.statusColor = 'red';
                                     download.locked = false;
                                     $cookies['downloads'] = JSON.stringify($scope.downloads);
+							} else if (resp.status != '200'){ // anything other than 200 throws an error
+							    switch(resp.status) {
+                                    case 400:
+                                        download.status = $translate("UPLOAD_DATA.CLIENT_ERROR");
+                                        break;
+                                    case 405:
+                                        download.status = $translate("UPLOAD_DATA.NOT_ALLOWED");
+                                        break;
+                                    default:
+                                        download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
+                                }
+                                download.statusColor = 'red';
+                                download.locked = false;
+                                $cookies['downloads'] = JSON.stringify($scope.downloads);
 							}
 						});
 					}
