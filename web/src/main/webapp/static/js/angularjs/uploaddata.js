@@ -171,22 +171,21 @@
 							$cookies['downloads'] = JSON.stringify($scope.downloads);
 						}, function (resp) {
 							console.log('Error status: ' + resp.status);
-							if(resp.status=='500') {
 								download.status = $translate("UPLOAD_DATA.GENERIC_ERROR");
 								download.statusColor = 'red';
 								download.locked = false;
 								$cookies['downloads'] = JSON.stringify($scope.downloads);
-							} else {
-								if(resp.data.indexOf('PUT')!=-1) {
-									var msg = resp.data.replace("PUT", "UPDATE");
-								}
-								download.status = $translate("UPLOAD_DATA.CUSTOM", {
-									custom : msg
-								});
-								download.statusColor = 'red';
-								download.locked = false;
-								$cookies['downloads'] = JSON.stringify($scope.downloads);
-							}
+                                var msg = resp.data;
+                                if (resp.data != undefined && resp.data.toString().indexOf('PUT')!=-1){
+                                        msg = resp.data.replace("PUT", "UPDATE");}
+
+                                download.status = $translate("UPLOAD_DATA.CUSTOM", {
+                                    custom : msg
+
+                                });
+                                download.statusColor = 'red';
+                                download.locked = false;
+                                $cookies['downloads'] = JSON.stringify($scope.downloads);
 						});
 					}
 				});
