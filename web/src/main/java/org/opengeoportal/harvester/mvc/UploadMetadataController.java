@@ -88,7 +88,8 @@ public class UploadMetadataController {
             @RequestParam("requiredFields") final String requiredFields,
             @RequestPart("file") final MultipartFile file,
             final HttpServletRequest request,
-            final HttpServletResponse response) {
+            final HttpServletResponse response,
+            @Value("#{dataIngest['nameOfOgpRepository']}") final String nameOgpRepository) {
 
         try {
             final File zipFile = FileConversionUtils.multipartToFile(file);
@@ -128,7 +129,7 @@ public class UploadMetadataController {
                 }
 
                 this.checkMetadata(metadataFiles[0], requiredFieldsArray);
-                this.addMetadataIngest(workspace, dataset, metadataFiles[0]);
+                this.addMetadataIngest(workspace, dataset, metadataFiles[0], nameOgpRepository);
 
             }
 
@@ -177,7 +178,7 @@ public class UploadMetadataController {
      * @throws UnsupportedMetadataType the unsupported metadata type
      */
     private boolean addMetadataIngest(final String workspace,
-            final String dataset, final File metadataFile)
+            final String dataset, final File metadataFile, final String nameOgpRepository)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {
 
         // MANAGE THE UPLOAD JOB QUEUE HERE
@@ -214,7 +215,7 @@ public class UploadMetadataController {
                 // Create the ingest process
                 ingest = new IngestFileUpload();
                 ingest.setName(name);
-                ingest.setNameOgpRepository("");
+                ingest.setNameOgpRepository(nameOgpRepository);
                 ingest.setFrequency(Frequency.EVERYXMINUTES);
                 ingest.setScheduled(true);
                 ingest.setUrl("LOCAL");

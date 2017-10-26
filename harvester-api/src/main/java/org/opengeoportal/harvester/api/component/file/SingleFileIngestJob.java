@@ -2,6 +2,7 @@ package org.opengeoportal.harvester.api.component.file;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -100,23 +101,39 @@ public class SingleFileIngestJob extends BaseIngestJob {
                         // Prepare JSON Object for the request
                         JSONObject request = null;
 
-                        final String json = "";
-
                         final JSONParser jsonParser = new JSONParser();
-                        request = (JSONObject) jsonParser.parse(json);
-                        request.put("wms", wms);
+                        request = (JSONObject) jsonParser.parse(currentLocation);
+                                                
+                        String[] wmsarray = (String[]) request.get("wms");
+                        
+                        if(wmsarray!=null && wmsarray.length>0) {
+                            
+                            final int n = wmsarray.length;
+                            wmsarray = Arrays.copyOf(wmsarray, n + 1);
+                            wmsarray[n] = wms;
+                        } else {
+                            wmsarray = new String[1];
+                            wmsarray[0] = wms;
+                        }
+                        
+                        request.put("wms", Arrays.toString(wmsarray));
                         request.put("wfs", wfs);
 
                         currentLocation = request.toString();
                     } else {
                         final JSONObject request = new JSONObject();
-                        request.put("wms", wms);
+                        
+                        String[] wmsarray = {wms};
+                        
+                        request.put("wms", Arrays.toString(wmsarray));
                         request.put("wfs", wfs);
 
                         currentLocation = request.toString();
                     }
 
+                    // wms and wfs are always present
                     metadata.setLocation(currentLocation);
+                    metadata.setGeoreferenced(true);
 
                     final boolean valid = this.metadataValidator
                             .validate(metadata, this.report);
