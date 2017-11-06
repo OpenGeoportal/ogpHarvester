@@ -17,3 +17,15 @@ This application has a few dependencies on other services:
 If you want to take advantage of the **containerized development environment**, which runs and orchestrates these services, clone and run [this docker composition](https://github.com/OpenGeoportal/Data-Ingest/docker); more information is available in the accompanying [README](https://github.com/OpenGeoportal/Data-Ingest/docker/README.md) file.
 
 The ogpharvester is already configured to work seamlessly with these services, and therefore no further setup is required. On the other hand, if you need to setup the ogpharvester, to work with a different solr instance or PostgreSQL database, be sure to review the configuration settings on `jdbc.properties` and `localSolr.properties`.
+
+INSTALL & RUN
+-------------
+This application was prepared to be deployed as a servlet, on Tomcat. If you want to run it as standalone, you can take advantage of the installed and configured Tomcat plugin. Just change to the `web` folder, and type:
+```bash
+mvn clean install -DskipTests tomcat7:run
+```
+
+You will be able to access the web ui, at:
+```bash
+http://localhost:8080/ogp-harvester
+```
