@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.opengeoportal.harvester.api.component.BaseIngestJob;
@@ -82,7 +83,10 @@ public class SingleFileIngestJob extends BaseIngestJob {
                     final MetadataParserResponse parsedMetadata = parser
                             .parse(doc);
 
+
                     final Metadata metadata = parsedMetadata.getMetadata();
+                    // Set the value for institution
+                    metadata.setInstitution(this.ingest.getNameOgpRepository());
 
                     // to make metadata coupled with the shape file layer
                     final String workspace = currentJob.getWorkspace();
@@ -103,32 +107,36 @@ public class SingleFileIngestJob extends BaseIngestJob {
 
                         final JSONParser jsonParser = new JSONParser();
                         request = (JSONObject) jsonParser.parse(currentLocation);
-                                                
-                        String[] wmsarray = (String[]) request.get("wms");
-                        
-                        if(wmsarray!=null && wmsarray.length>0) {
-                            
-                            final int n = wmsarray.length;
-                            wmsarray = Arrays.copyOf(wmsarray, n + 1);
-                            wmsarray[n] = wms;
+
+                        JSONArray wmsarray = (JSONArray) request.get("wms");
+
+
+                        if(wmsarray!=null && wmsarray.size()>0) {
+                            // if there are already values in the wms array
+                            // TODO: check if the URL is a duplicate
+                            wmsarray.add(wms);
                         } else {
-                            wmsarray = new String[1];
-                            wmsarray[0] = wms;
+                            wmsarray = new JSONArray();
+                            wmsarray.add(wms);
                         }
                         
-                        request.put("wms", Arrays.toString(wmsarray));
+                        // request.put("wms", Arrays.toString(wmsarray));
+                        request.put("wms", wmsarray);
                         request.put("wfs", wfs);
 
-                        currentLocation = request.toString();
+                        currentLocation = request.toJSONString();
                     } else {
                         final JSONObject request = new JSONObject();
                         
-                        String[] wmsarray = {wms};
+                        JSONArray wmsarray = new JSONArray();
+                        wmsarray.add(wms);
                         
-                        request.put("wms", Arrays.toString(wmsarray));
+                        // request.put("wms", Arrays.toString(wmsarray));
+                        request.put("wms", wmsarray);
                         request.put("wfs", wfs);
 
-                        currentLocation = request.toString();
+
+                        currentLocation = request.toJSONString();
                     }
 
                     // wms and wfs are always present
