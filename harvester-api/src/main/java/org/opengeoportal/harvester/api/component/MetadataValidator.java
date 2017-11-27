@@ -1,5 +1,6 @@
 package org.opengeoportal.harvester.api.component;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.opengeoportal.harvester.api.domain.Ingest;
@@ -32,9 +33,13 @@ public class MetadataValidator {
     }
 
     public boolean validate(final Metadata metadata,
-            final IngestReport report) {
-        final Set<String> requiredFields = this.ingest.getRequiredFields();
+            final IngestReport report, Set<String> requiredFields) {
         boolean isValid = true;
+
+        // if requiredFields is null, make it an empty set
+        if (requiredFields == null){
+            requiredFields = new HashSet<String>();
+        }
 
         for (final String field : this.ingest.getValidRequiredFields()) {
             final boolean hasValue = metadata.hasValueForProperty(field);
@@ -72,5 +77,12 @@ public class MetadataValidator {
         }
 
         return isValid;
+    }
+
+    public boolean validate(final Metadata metadata,
+                            final IngestReport report) {
+
+        return validate(metadata, report, this.ingest.getRequiredFields());
+
     }
 }

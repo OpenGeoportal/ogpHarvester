@@ -7,12 +7,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONObject;
 import org.opengeoportal.harvester.api.domain.Frequency;
 import org.opengeoportal.harvester.api.domain.Ingest;
@@ -29,6 +32,7 @@ import org.opengeoportal.harvester.api.util.JSONReader;
 import org.opengeoportal.harvester.api.util.UploadFileJob;
 import org.opengeoportal.harvester.api.util.UploadJobQueue;
 import org.opengeoportal.harvester.api.util.XmlUtil;
+import org.opengeoportal.harvester.mvc.exception.InvalidParameterValue;
 import org.opengeoportal.harvester.mvc.exception.PropertyNotSetException;
 import org.opengeoportal.harvester.mvc.utils.FileConversionUtils;
 import org.opengeoportal.harvester.mvc.utils.UncompressStrategyFactory;
@@ -121,15 +125,12 @@ public class UploadMetadataController {
                     return "The archive contains more than one metadata file.";
                 }
 
-                String[] requiredFieldsArray = null;
+                Set<String> requiredFieldsSet = this.commaDelimToSet(requiredFields);
 
-                if ((requiredFields != null) && (requiredFields.length() > 0)) {
+                this.validateRequiredFields(requiredFieldsSet);
 
-                    requiredFieldsArray = requiredFields.split(",");
-                }
-
-                this.checkMetadata(metadataFiles[0], requiredFieldsArray);
-                this.addMetadataIngest(workspace, dataset, metadataFiles[0], nameOgpRepository);
+                this.checkMetadata(metadataFiles[0], requiredFieldsSet);
+                this.addMetadataIngest(workspace, dataset, metadataFiles[0], nameOgpRepository, requiredFieldsSet);
 
             }
 
@@ -147,11 +148,22 @@ public class UploadMetadataController {
             try {
                 this.printOutputMessage(response,
                         HttpServletResponse.SC_BAD_REQUEST,
-                        "Metatdata format is not supported");
-                return "Metatdata format is not supported";
+                        "Metadata format is not supported");
+                return "Metadata format is not supported";
             } catch (final IOException e1) {
                 e1.printStackTrace();
             }
+        } catch (final InvalidParameterValue e){
+            try {
+                String msg = e.getMessage();
+                this.printOutputMessage(response,
+                        HttpServletResponse.SC_BAD_REQUEST,
+                        msg);
+                return msg;
+            } catch (final IOException e1) {
+                e1.printStackTrace();
+            }
+
         } catch (final IllegalStateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -178,7 +190,8 @@ public class UploadMetadataController {
      * @throws UnsupportedMetadataType the unsupported metadata type
      */
     private boolean addMetadataIngest(final String workspace,
-            final String dataset, final File metadataFile, final String nameOgpRepository)
+            final String dataset, final File metadataFile, final String nameOgpRepository,
+                                      final Set<String> requiredFields)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {
 
         // MANAGE THE UPLOAD JOB QUEUE HERE
@@ -186,6 +199,16 @@ public class UploadMetadataController {
         job.setWorkspace(workspace);
         job.setDataset(dataset);
         job.setFile(metadataFile);
+
+        // add the required fields here. Since file upload jobs share an Ingest instance, it's necessary to
+        // add the required fields to the UploadFileJob, so that the last ingest reports properly.
+        Set<String> jobRequiredFields = job.getRequiredFields();
+        // web services and data repository should always be added when the job is processed, so this is a double check.
+        jobRequiredFields.add("webServices");
+        jobRequiredFields.add("dataRepository");
+        if (requiredFields != null) {
+            jobRequiredFields.addAll(requiredFields);
+        }
 
         // Get the values for WMS and WFS from data-ingest (from uploded
         // shapefile)
@@ -220,6 +243,7 @@ public class UploadMetadataController {
                 ingest.setScheduled(true);
                 ingest.setUrl("LOCAL");
                 ingest.setBeginDate(new Date(System.currentTimeMillis()));
+
                 ingest = this.ingestService.saveAndSchedule(ingest);
             }
         } catch (final Exception e) {
@@ -228,6 +252,43 @@ public class UploadMetadataController {
         }
 
         return true;
+    }
+
+    private Set<String> commaDelimToSet(String commaDelim){
+        Set<String> fieldSet = new HashSet<String>();
+
+        if ((commaDelim != null) && (commaDelim.length() > 0)) {
+            String[] requiredFieldsArray = commaDelim.split(",");
+            for (String r : requiredFieldsArray) {
+                String field = r.trim();
+                if (field.length() > 0) {
+                    fieldSet.add(field);
+                }
+            }
+        }
+        return fieldSet;
+    }
+
+    /**
+     * validate that the passed required fields are valid required fields for the ingest type
+     * @param requiredFields
+     */
+    private void validateRequiredFields(Set<String> requiredFields){
+        IngestFileUpload ingest = new IngestFileUpload();
+        Set<String> validFields = ingest.getValidRequiredFields();
+        Set<String> invalidFields = new HashSet<String>();
+
+        for (String field: requiredFields){
+            if (!validFields.contains(field)){
+                invalidFields.add(field);
+            }
+        }
+
+        if (invalidFields.size() > 0){
+
+            String msg = StringUtils.join(invalidFields, ", ");
+            throw new InvalidParameterValue("[" + msg + "] are not valid required fields.");
+        }
     }
 
     /**
@@ -240,7 +301,7 @@ public class UploadMetadataController {
      * @throws UnsupportedMetadataType the unsupported metadata type
      */
     private void checkMetadata(final File metadataFile,
-            final String[] requiredFields)
+            final Set<String> requiredFields)
             throws FileNotFoundException, Exception, UnsupportedMetadataType {
 
         final FileInputStream in = new FileInputStream(metadataFile);

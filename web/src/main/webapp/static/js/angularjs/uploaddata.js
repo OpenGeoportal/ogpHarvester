@@ -33,17 +33,20 @@
 
 		$scope.requiredFieldList = {"geographicExtent": false, 
 				"topic" : false, "dataType" : false, "themeKeyword" : false, "dateOfContent": false, 
-				"dataRepository": false, "placeKeyword" : false, "originator" : false, "webServices" : false};
+				"placeKeyword" : false, "originator" : false};
 
 		var dataIngestURL = __env.dataIngestAPIUrl;
 
-		if($cookies['downloads']!=null) {
+		if($cookies['downloads'] !== null) {
 			$scope.downloads = JSON.parse($cookies['downloads']);
 		} else {
 			$scope.downloads = [];
 			$cookies['downloads'] = JSON.stringify($scope.downloads);
 		}
 
+		// TODO: grey out items that have errored or have been sent.
+		// TODO: is there a way to provide feedback about whether the metadata has been ingested to solr here? Or,
+		// is there a better way to do that on the 'manage ingests' page?
 		$scope.refreshView = $interval(function(){
 			angular.forEach($scope.downloads, function(download) {	
 				if(download.locked && download.ticket>=0) {
@@ -52,7 +55,7 @@
 						url : dataIngestURL+"/checkUploadStatus/"+download.ticket,
 						headers: {'Authorization': $scope.token.replace(/^"(.+(?="$))"$/, '$1') }
 					}).then(function mySucces(response) {
-						if(response.status=='200') {
+						if(response.status === '200') {
 
 							var requiredFieldsStr = '';
 

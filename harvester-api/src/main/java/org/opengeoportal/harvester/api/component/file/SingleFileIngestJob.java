@@ -2,7 +2,6 @@ package org.opengeoportal.harvester.api.component.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONArray;
@@ -120,7 +119,6 @@ public class SingleFileIngestJob extends BaseIngestJob {
                             wmsarray.add(wms);
                         }
                         
-                        // request.put("wms", Arrays.toString(wmsarray));
                         request.put("wms", wmsarray);
                         request.put("wfs", wfs);
 
@@ -131,7 +129,6 @@ public class SingleFileIngestJob extends BaseIngestJob {
                         JSONArray wmsarray = new JSONArray();
                         wmsarray.add(wms);
                         
-                        // request.put("wms", Arrays.toString(wmsarray));
                         request.put("wms", wmsarray);
                         request.put("wfs", wfs);
 
@@ -143,8 +140,10 @@ public class SingleFileIngestJob extends BaseIngestJob {
                     metadata.setLocation(currentLocation);
                     metadata.setGeoreferenced(true);
 
+                    // get the required fields from the currentJob object and pass them to the validator
+                    // do it this way, since file ingest jobs share an Ingest object
                     final boolean valid = this.metadataValidator
-                            .validate(metadata, this.report);
+                            .validate(metadata, this.report, currentJob.getRequiredFields());
 
                     if (valid) {
                         metadataList.add(metadata);

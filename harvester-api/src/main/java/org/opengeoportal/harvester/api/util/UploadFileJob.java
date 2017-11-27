@@ -1,6 +1,8 @@
 package org.opengeoportal.harvester.api.util;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UploadFileJob {
 
@@ -11,6 +13,8 @@ public class UploadFileJob {
     private File file;
     private long assigned = 0;
     private boolean completed = false;
+    private final Set<String> requiredFields = new HashSet<String>();
+
 
     public long getAssigned() {
         return this.assigned;
@@ -74,6 +78,10 @@ public class UploadFileJob {
 
     public void setWorkspace(final String workspace) {
         this.workspace = workspace;
+    }
+
+    public Set<String> getRequiredFields() {
+        return requiredFields;
     }
 
     @Override
