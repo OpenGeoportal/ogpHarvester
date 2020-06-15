@@ -33,7 +33,7 @@
 		<webjars-angularjs-bootstrap.version>0.6.0-1</webjars-angularjs-bootstrap.version>
 		<webjars-openlayers.version>2.13.1</webjars-openlayers.version>
 		<webjars-momentjs.version>2.4.0</webjars-momentjs.version>
-		<hibernate-validator.version>5.0.1.Final</hibernate-validator.version>
+		<hibernate-validator.version>5.3.5.Final</hibernate-validator.version>
 	</properties>
 	<dependencies>
 		<dependency>
