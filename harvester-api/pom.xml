@@ -24,7 +24,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<solr.version>4.6.0</solr.version>
 		<jodatime.version>2.3</jodatime.version>
-		<quartz.version>2.2.1</quartz.version>
+		<quartz.version>2.3.2</quartz.version>
 		<flyway.version>2.3.1</flyway.version>
 	</properties>
 
